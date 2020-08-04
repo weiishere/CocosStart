@@ -1,0 +1,27 @@
+.run_state_wrap{
+    font-size: 0.5rem;
+    background: #333;
+}
+.history_record{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    height: calc(100% - 1.5rem);
+    overflow: auto;
+    li{
+        color: #999;
+        font-size: 0.5rem;
+    }
+    .history_record_item{
+        display: flex;
+        flex-direction: row;
+        margin: 0.2rem 0;
+        border-bottom: solid 1px #333;
+        &>div:nth-child(1){
+            width: 4rem;
+        }
+        &>div:nth-child(2){
+            flex: 1;
+        }
+    }
+}
