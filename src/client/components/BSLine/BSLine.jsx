@@ -24,6 +24,7 @@ var downBorderColor = '#008F28';
 
 let rawData = JSON.parse(localStorage.getItem("klineDataForBs")) || []
 let markPointData = [];
+let persentPrice = 0;
 
 // function splitData(rawData) {
 //     var categoryData = [];
@@ -48,8 +49,9 @@ const option = (symbol, price) => {
     });
     return {
         title: {
-            text: `BS线(${symbol})--价格:$${Number(price)}`,
-            left: 0
+            text: `BS线(${symbol || localStorage.getItem("SymbleForBs")})`,
+            left: 0,
+            subtext: `当前价格：${Number(price)}U${persentPrice ? '/入场价：' + Number(persentPrice) + 'U' : ''}`
         },
         tooltip: {
             trigger: 'axis',
@@ -89,14 +91,14 @@ const option = (symbol, price) => {
         dataZoom: [
             {
                 type: 'inside',
-                start: 50,
+                start: 85,
                 end: 100
             },
             {
                 show: true,
                 type: 'slider',
                 top: '90%',
-                start: 50,
+                start: 85,
                 end: 100
             }
         ],
@@ -140,7 +142,7 @@ const option = (symbol, price) => {
 
 const initKlineData = (myChart, symbol) => {
     let now = new Date();
-    let lastHour = now.setHours(now.getHours() - 1);
+    let lastHour = now.setHours(now.getHours() - 4);
     requester({
         url: api.klines,
         params: {
@@ -174,6 +176,7 @@ const initKlineData = (myChart, symbol) => {
         }));
         //myChart.setOption(option(symbol, result.res.data[result.res.data.length - 1][4]));
         localStorage.setItem("klineDataForBs", JSON.stringify(arr));
+        localStorage.setItem("SymbleForBs", symbol);
     })
 }
 
@@ -214,6 +217,7 @@ export default function BSLine() {
         });
         EventHub.getInstance().addEventListener('mapTacticsList', payload => {
             const target = payload.find(item => item.target);
+            persentPrice = !target ? 0 : (target.buyState ? target.presentDeal.payPrice : 0);
             if (!target) return;
             if (target.historyForDeal.length === markPointData.length) return;
             markPointData = target.historyForDeal.map((item, i) => ({

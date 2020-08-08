@@ -1,18 +1,20 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 02:37:01
- * @LastEditTime: 2020-07-29 02:06:03
+ * @LastEditTime: 2020-08-08 18:24:08
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
- */ 
+ */
 import React from 'react';
 import echarts from 'echarts';
+import EventHub from '@client/EventHub'
+import dateFormat from 'format-datetime'
 import './style.less'
 
 
-const data = [["00",13],["01",15],["02",12],["03",2],["04",0],["05",7],["06",11],["07",17],["08",8],["09",6],["10",4],["11",11],
-["12",11],["13",15],["14",12],["15",6],["16",2],["17",11],["18",11],["19",14],["20",8],["21",21],["10",8],["22",4],["23",14]];
+const data = [["00", 13], ["01", 15], ["02", 12], ["03", 2], ["04", 0], ["05", 7], ["06", 11], ["07", 17], ["08", 8], ["09", 6], ["10", 4], ["11", 11],
+["12", 11], ["13", 15], ["14", 12], ["15", 6], ["16", 2], ["17", 11], ["18", 11], ["19", 14], ["20", 8], ["21", 21], ["10", 8], ["22", 4], ["23", 14]];
 
 var dateList = data.map(function (item) {
     return item[0];
@@ -49,26 +51,22 @@ var valueList = data.map(function (item) {
 //         data: valueList
 //     }]
 // };
-const option = {
-    title: {
-        text: '盈利/入场次数'
-    },
+let dataName = []
+let data1 = [];
+let data2 = [];
+const option = (symbol, presentTradeInfo) => ({
     tooltip: {
         trigger: 'axis',
-        axisPointer: {
-            type: 'cross',
-            label: {
-                backgroundColor: '#6a7985'
-            }
+        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+            type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
         }
     },
-    // legend: {
-    //     data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
-    // },
-    toolbox: {
-        feature: {
-            saveAsImage: {}
-        }
+    title: {
+        text: `挂单(${symbol || localStorage.getItem("SymbleForBs")})`,
+        subtext: presentTradeInfo && `最新成交：${dateFormat(new Date(presentTradeInfo.tradeTime), "HH:mm:ss")} 成交${Number(presentTradeInfo.quantity)}枚，均价：${Number(presentTradeInfo.price)}`
+    },
+    legend: {
+        data: ['卖盘(枚)', '买盘(枚)']
     },
     grid: {
         left: '3%',
@@ -78,51 +76,67 @@ const option = {
     },
     xAxis: [
         {
-            type: 'category',
-            boundaryGap: false,
-            data: ['7/22', '7/23', '7/24', '7/25', '7/26', '7/27', '7/28']
+            type: 'value',
+            axisLabel: {
+                formatter: (value, index) => value < 0 ? -value : value,
+            }
         }
     ],
     yAxis: [
         {
-            type: 'value'
+            type: 'category',
+            axisTick: {
+                show: false
+            },
+            data: dataName
         }
     ],
     series: [
         {
-            name: '入场次数',
-            type: 'line',
+            name: '卖盘(枚)',
+            type: 'bar',
             stack: '总量',
             label: {
-                normal: {
-                    show: true,
-                    position: 'top'
-                }
+                position: 'right',
+                show: true,
+                formatter: params => -params.value,
             },
-            areaStyle: {color:'rgba(0,0,0,0.9)'},
-            data: [20, 32, 1, 34, 9, 23, 20]
+            data: data1
         },
         {
-            name: '盈利次数',
-            type: 'line',
-            stack: '总量2',
-            areaStyle: {color:'#21202D'},
+            name: '买盘(枚)',
+            type: 'bar',
+            stack: '总量',
             label: {
-                normal: {
-                    show: true,
-                    position: 'top'
-                }
+                position: 'left',
+                show: true,
+                formatter: params => params.value,
             },
-            data: [30, 32, 31, 34, 39, 30, 30]
+            data: data2
         }
     ]
-};
+})
 
 export default function Rate() {
     const [index] = React.useState(0);
     React.useEffect(() => {
         var myChart = echarts.init(document.getElementById("rate"), 'dark');
-        myChart.setOption(option);
+        EventHub.getInstance().addEventListener('mapTacticsList', payload => {
+            const target = payload.find(item => item.target === true);
+            if (target && target.depth) {
+                console.log(target.depth);
+                const asks = target.depth.asks.reverse();
+                const bids = target.depth.bids.reverse();
+                dataName = asks.map((item, i) => `卖${Number(item.price)}U / 买${Number(bids[i].price)}U`)
+                data1 = asks.map(item => -Number(item.quantity));
+                data2 = bids.map(item => Number(item.quantity));
+                const _data = option((target ? target.symbol : ''), target.presentTrade);
+                localStorage.setItem("RateData", JSON.stringify(_data));
+                myChart.setOption(_data);
+            }
+        });
+        const _d = localStorage.getItem("RateData");
+        if (_d) myChart.setOption(JSON.parse(_d));
     }, []);
     return <div id='rate'></div>
 }

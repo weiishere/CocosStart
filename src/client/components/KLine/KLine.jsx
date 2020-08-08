@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 22:33:14
- * @LastEditTime: 2020-08-03 03:38:00
+ * @LastEditTime: 2020-08-07 15:00:52
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -122,7 +122,7 @@ const initKlineData = (myChart, symbol, callback) => {
         option: {
             failedBack: (error) => {
                 //message.error(error);
-                message.error({ content: error, key, duration: 2 });
+                message.error({ content: error, duration: 2 });
             }
         }
     }).then(result => {
@@ -182,6 +182,14 @@ export default function KLine() {
             //     localStorage.setItem("klineData", JSON.stringify(arr));
             //     message.success({ content: `K线成功切换为${payload[2]}`, key, duration: 2 });
             // })
+        });
+        EventHub.getInstance().addEventListener('switchTactics', payload => {
+            const key = 'loading';
+            const symbol = payload.symbol;
+            message.loading({ content: 'K线数据请求中..', key, duration: 0 });
+            initKlineData(myChart, symbol, () => {
+                message.destroy();
+            });
         });
         window.setInterval(() => {
             if (localStorage.getItem("klineSymbol")) initKlineData(myChart, localStorage.getItem("klineSymbol"),() => {

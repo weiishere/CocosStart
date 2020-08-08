@@ -11,5 +11,6 @@ export default {
     klines: 'klines',
     initTactics: '/api/initTactics',
     switchTactics: '/api/switchTactics',
-    tacticsOrder: '/api/tacticsOrder'
+    tacticsOrder: '/api/tacticsOrder',
+    updateParameter:'/api/updateParameter'
 }

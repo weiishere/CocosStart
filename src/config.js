@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-08-04 14:43:15
+ * @LastEditTime: 2020-08-08 11:52:50
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -17,11 +17,11 @@ const System = {
   Public_path: '/public/',
   api_base_url: 'https://api.binance.com/api/v3/',
   apiKey: 'N0TxBgVpvpPZFoGPaJ901Bdi2w7dtn0aozqP1MIXQ5EY51nDYtqUzAQgSRKKfeaM',
-  secretKey: '5f6BRKXLIRBG89nfKtcRg33jbAaMELQ3q2zi3PFLGXH0G7S6166inHtJ82SfGRe8'
+  apiSecret: '5f6BRKXLIRBG89nfKtcRg33jbAaMELQ3q2zi3PFLGXH0G7S6166inHtJ82SfGRe8'
 }
 
 const WsConfig = {
-  WS_server_url: 'http://8.210.244.193:8080/stomp',//'ws://8.210.27.48:8080/stomp',
+  WS_server_url: 'http://8.210.244.193:8081/stomp',//'ws://8.210.27.48:8080/stomp',
   WS_server_user: "",
   WS_server_pass: "",
   price_change_url: "/recommend-symbols"//"/price-change"

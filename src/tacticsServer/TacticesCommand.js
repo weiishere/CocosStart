@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-28 02:58:03
- * @LastEditTime: 2020-08-02 22:52:07
+ * @LastEditTime: 2020-08-06 14:05:09
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -10,8 +10,9 @@
 const Tactics = require('./Tactics');
 const SellIntoCorrections = require('./SellIntoCorrections');
 const { WsConfig, WsRoute } = require('../config')
-const client = require('binance-api-node').default()
-
+//const client = require('binance-api-node').default()
+const { client } = require('../lib/binancer');
+const { scoketCandles } = require('./binanceScoketBind')
 module.exports = class TacticesCommand {
     constructor() {
         this.scoket;
@@ -44,29 +45,12 @@ module.exports = class TacticesCommand {
             //初始化时给点数据
             client.candles({ symbol: symbol, interval: '5m', limit: 1 }).then(data => _tactics.KLineItem5m.present = data[0]);
             this.mapTotacticsList(_tactics.id, true);
-            this.scoketCandles(symbol, _tactics.id);
+            scoketCandles.call(this, symbol, _tactics.id);
             return _tactics;
         } catch (e) {
             console.error(`initTactics Error${e}`)
             return false;
         }
-    }
-    scoketCandles(symbol, tid) {
-        client.ws.candles(symbol, '5m', payload => {
-            //console.log(payload);
-            this.tacticsList.filter(item => item.symbol === symbol).forEach(item => {
-                if (payload.isFinal) {
-                    item.KLineItem5m.recent = payload;
-                } else {
-                    item.KLineItem5m.present = payload;
-                }
-            });
-        });
-        client.ws.candles(symbol, '1m', payload => {
-            this.tacticsList.filter(item => item.symbol === symbol).forEach(item => item.presentDeal.presentPrice = payload.close);
-            // this.mapTotacticsList(tid, false);
-            this.scoket.emit(WsRoute.KLINE_DATA, payload);
-        })
     }
     removeTactics(id) {
         let _tactics = this.tacticsList.find(item => item.id === id);

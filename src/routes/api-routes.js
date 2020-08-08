@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 17:34:25
- * @LastEditTime: 2020-07-28 00:57:09
+ * @LastEditTime: 2020-08-07 17:56:21
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -22,4 +22,5 @@ module.exports = router
   .get('/api/switchTactics', controllers.api.switchTactics)
   .post('/api/initTactics', controllers.api.initTactics)
   .post('/api/tacticsOrder', controllers.api.tacticsOrder)
+  .post('/api/updateParameter', controllers.api.updateParameter)
   

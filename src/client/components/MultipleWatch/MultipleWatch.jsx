@@ -21,6 +21,7 @@ let barData = [
 ]
 
 const option = () => {
+    const _batData = (barData.length === 0 ? JSON.parse(localStorage.getItem("nultipleData") || '[]') : barData);
     return {
         title: {
             text: `交易对实时涨幅（${localStorage.getItem("nultipleDataLastUpdate")}）`
@@ -29,7 +30,7 @@ const option = () => {
         dataset: {
             source: [
                 ['score', 'amount', 'symbol', 'product'],
-                ...(barData.length === 0 ? JSON.parse(localStorage.getItem("nultipleData") || '[]') : barData)
+                ..._batData
                 //...barData
             ]
         },
@@ -38,16 +39,19 @@ const option = () => {
             axisPointer: {
                 type: 'shadow'
             },
-            formatter: (params) => `交易对:${params[0].name}<br />分线涨幅:${params[0].value[0]}<br />5分线涨幅:${params[0].value[1]}<br />24小时:${params[0].value[2]}`
+            formatter: (params) => `交易对:${params[0].name}<br />分线涨幅:${params[0].value[1]}<br />5分线涨幅:${params[0].value[0]}<br />24小时:${params[0].value[2]}`
         },
         grid: { containLabel: true },
-        xAxis: { name: '涨幅%' },
-        yAxis: { name: '交易对', type: 'category' },
+        xAxis: { name: '涨幅(指数)' },
+        yAxis: {
+            name: '交易对', type: 'category',
+            data: _batData.map(item => item[3])
+        },
         visualMap: {
             orient: 'horizontal',
             left: 'center',
             min: 0,
-            max: barData.length > 0 ? barData.sort((a, b) => a[0] - b[0]).pop()[0] : 100,
+            max: _batData.length > 0 ? _batData.sort((a, b) => a[0] - b[0]).pop()[1] : 100,
             text: ['>100%', '<0%'],
             dimension: 0,
             inRange: {
@@ -83,20 +87,23 @@ export default class MultipleWatch extends React.PureComponent {
             // });
             scoket.on(WsRoute.MULTIPLE_PRICE_CHANGE, data => {
                 console.log('接收到最新行情信息');
-                let arr = JSON.parse(data.body).slice(0)
-                arr = arr.sort((a, b) => b.m5ChangeRate - a.m5ChangeRate).slice(0, 10);
-                barData = arr.map(
-                    item => [//item.changeRate > 0 ? item.m5ChangeRate * 100 : 0,
-                        item.m1ChangeRate * 100000,
-                        item.m5ChangeRate * 100000,
-                        item.h24QuoteQty, item.symbol,
-                        item.symbol.replace('USDT', '/USDT')]).sort((a, b) => a[0] - b[0]);
-
-                //console.log(option());
-                localStorage.setItem("nultipleData", JSON.stringify(barData));
-                localStorage.setItem("nultipleDataLastUpdate", dateFormat(new Date(), "MM-dd HH:mm:ss"));
-                const _option = option();
-                myChart.setOption(_option);
+                let arr = JSON.parse(data.body).slice(0);
+                if (arr.length !== 0) {
+                    arr = arr.sort((a, b) => b.m1ChangeRate - a.m1ChangeRate).slice(0, 10);
+                    barData = arr.map(
+                        item => [//item.changeRate > 0 ? item.m5ChangeRate * 100 : 0,
+                            item.m5ChangeRate * 100000,
+                            item.m1ChangeRate * 100000,
+                            item.h24QuoteQty, item.symbol,
+                            item.symbol.replace('USDT', '/USDT')]);
+                    const l = barData.length;
+                    for (let i = l; i < 10; i++) { barData.push([0, 0, '', '']); }
+                    barData = barData.reverse();
+                    localStorage.setItem("nultipleData", JSON.stringify(barData));
+                    localStorage.setItem("nultipleDataLastUpdate", dateFormat(new Date(), "MM-dd HH:mm:ss"));
+                    const _option = option();
+                    myChart.setOption(_option);
+                }
             });
         });
 

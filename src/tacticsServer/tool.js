@@ -1,13 +1,13 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 16:40:57
- * @LastEditTime: 2020-08-01 15:12:43
+ * @LastEditTime: 2020-08-07 14:08:09
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
  */
-const client = require('binance-api-node').default()
-
+//const client = require('binance-api-node').default()
+const { client } = require('../lib/binancer');
 module.exports = {
     getCostPrice: (buyPrice, sellPrice, serviceCharge) => {
         return {

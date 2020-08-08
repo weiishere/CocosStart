@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input, Tooltip, Button, Select, InputNumber, Tag, Modal, Popover } from 'antd';
-import { PlusOutlined, CaretRightOutlined, PauseOutlined, CloseOutlined, PauseCircleOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons'
+import { PlusOutlined, CaretRightOutlined, PauseOutlined, IssuesCloseOutlined, PauseCircleOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons'
 import { requester } from '@src/tool/Requester'
 import { message } from 'antd';
 import EventHub from '@client/EventHub'
@@ -22,12 +22,17 @@ export default function ControlPanel() {
     const key = 'loading';
     const addTactice = () => {
         message.loading({ content: 'loading..', key, duration: 0 });
+        let quickName, quickSymbol;
+        if (tacticeName.indexOf('&') !== -1) {
+            quickName = tacticeName.split('&')[0];
+            quickSymbol = tacticeName.split('&')[1];
+        }
         requester({
             url: api.initTactics,
             type: 'post',
             params: {
-                name: tacticeName,
-                symbol: symbolStr
+                name: quickName || tacticeName,
+                symbol: quickSymbol || symbolStr
             },
             option: {
                 baseUrl: 'API_server_url',
@@ -67,6 +72,28 @@ export default function ControlPanel() {
                 setDisables([true, true, true]);
                 setParamter([]);
                 setSymbolStr('')
+            }
+        });
+    }
+    const updateParameter = (key, value) => {
+        requester({
+            url: api.updateParameter,
+            type: 'post',
+            params: {
+                id: chooseTacticeId,
+                key, value
+            },
+            option: {
+                baseUrl: 'API_server_url',
+                faileBack: error => {
+                    message.error({ content: error, key, duration: 2 });
+                }
+            }
+        }).then(({ res }) => {
+            if (res.data.code === apiDateCode.success) {
+                message.success({ content: '参数更新成功', key, duration: 2 });
+            } else {
+                message.error({ content: res.data.msg, key, duration: 2 });
             }
         });
     }
@@ -116,7 +143,7 @@ export default function ControlPanel() {
     return <div className='customerSetWrap'>
         <div>
             {/* 待选:{symbolStr || 'null'} */}
-            <Input maxLength={10} size="small" placeholder='请输入实例名称' value={tacticeName} onChange={e => {
+            <Input maxLength={15} size="small" placeholder='请输入实例名称' value={tacticeName} onChange={e => {
                 setTacticeName(e.target.value)
             }} style={{ width: "8rem" }} />&nbsp;
             <Tooltip placement="bottom" title="创建实例">
@@ -144,7 +171,7 @@ export default function ControlPanel() {
                 <Option value="Yiminghe">yiminghe</Option> */}
             </Select>
             <div>
-                <Tooltip placement="bottom" title="运行实例">
+                <Tooltip placement="bottom" title="运行">
                     <Button onClick={() => {
                         powerSwitch(chooseTacticeId, 'run')
                     }} disabled={disables[0]} type="primary" shape="circle" danger icon={<CaretRightOutlined />} />
@@ -154,10 +181,10 @@ export default function ControlPanel() {
                         powerSwitch(chooseTacticeId, 'imitateRun')
                     }} disabled={disables[0]} type="primary" shape="circle" icon={<PlayCircleOutlined />} />
                 </Tooltip>
-                <Tooltip placement="bottom" title="停止实例">
-                    <Button onClick={() => {
-                        powerSwitch(chooseTacticeId, 'stop')
-                    }} disabled={disables[1]} type="primary" shape="circle" icon={<PauseOutlined />} />
+                <Tooltip placement="bottom" title={!disables[1] ? '停止实例' : '立即运行并入场'}>
+                    <Button disabled={chooseTacticeId === ''} onClick={() => {
+                        !disables[1] ? powerSwitch(chooseTacticeId, 'stop') : powerSwitch(chooseTacticeId, 'runAndBuy')
+                    }} type="primary" shape="circle" icon={!disables[1] ? <PauseOutlined /> : <IssuesCloseOutlined />} />
                 </Tooltip>
                 <Tooltip placement="bottom" title="删除实例">
                     <Button onClick={() => {
@@ -178,7 +205,8 @@ export default function ControlPanel() {
                             style={{ width: '15rem' }}
                             placeholder="请输入修改后的值"
                             enterButton="确认修改"
-                            onSearch={value => console.log('修改')}
+                            maxLength={10}
+                            onSearch={value => updateParameter(item.key, value)}
                             disabled={disables[0]}
                             onChange={e => {
                                 setModal(Object.assign({}, modal, { value: e.target.value }))

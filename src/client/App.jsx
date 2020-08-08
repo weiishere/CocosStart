@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 15:09:27
- * @LastEditTime: 2020-08-03 01:24:07
+ * @LastEditTime: 2020-08-08 13:01:07
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -74,10 +74,10 @@ export default function App() {
         </Row>
         <Row style={{ height: '60%' }}>
             <Col span={8}>
-                <Row style={{ height: '60%' }}>
+                <Row style={{ height: '45%' }}>
                     <Col span={24}><PlusMinus /></Col>
                 </Row>
-                <Row style={{ height: '40%' }}>
+                <Row style={{ height: '55%' }}>
                     <Col span={24}><Rate /></Col>
                 </Row>
             </Col>

@@ -1,14 +1,14 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-08-02 22:45:48
+ * @LastEditTime: 2020-08-08 18:15:43
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
  */
 
 const { TacticesCommand } = require('../tacticsServer')
-const { apiDateCode } = require('../config');
+const { apiDateCode, System } = require('../config');
 
 module.exports = {
   initTactics: async (ctx, next) => {
@@ -74,6 +74,11 @@ module.exports = {
             tactices.imitateRun = false;
             tactices.powerSwitch();
             break;
+          case 'runAndBuy':
+            //运行并马上入场
+            tactices.imitateRun = true;
+            tactices.powerSwitch(true);
+            break;
           case 'imitateRun':
             //模拟运行
             tactices.imitateRun = true;
@@ -96,6 +101,28 @@ module.exports = {
       }
       _tacticesCommand.mapTotacticsList(tactices.id);
     }
+    ctx.body = resultData;
+    next();
+  },
+  updateParameter: async (ctx, next) => {
+    const { id, key, value } = ctx.request.body;
+    const _tacticesCommand = TacticesCommand.getInstance();
+    const tactices = _tacticesCommand.tacticsList.find(item => item.id == id);
+    let resultData = {};
+    if (tactices) {
+      tactices.parameter[key] = value;
+      resultData = {
+        code: apiDateCode.success,
+        data: tactices.getInfo()
+      }
+      _tacticesCommand.mapTotacticsList(id);
+    } else {
+      resultData = {
+        msg: 'updateParameter:未找到对应的实例',
+        code: apiDateCode.nullError
+      }
+    }
+
     ctx.body = resultData;
     next();
   }

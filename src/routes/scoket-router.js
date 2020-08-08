@@ -2,12 +2,12 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 17:34:40
- * @LastEditTime: 2020-08-04 14:52:36
+ * @LastEditTime: 2020-08-06 14:53:13
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
  */
-const client = require('binance-api-node').default()
+//const client = require('binance-api-node').default()
 //const Stomp = require('stompjs')
 const { connectStomp, disConnectStomp } = require('../tool/StompInstance')
 const { WsConfig, WsRoute } = require('../config')
@@ -16,10 +16,10 @@ const { TacticesCommand } = require('../tacticsServer')
 let timer;
 
 const onHandler = (scoket) => {
-    scoket.on('send', data => {
-        console.log('客户端发送的内容：', data);
-        scoket.emit('getMsg', '我是返回的消息... ...');
-    });
+    // scoket.on('send', data => {
+    //     console.log('客户端发送的内容：', data);
+    //     scoket.emit('getMsg', '我是返回的消息... ...');
+    // });
 
     scoket.on('triggerWs', data => {
         connectStomp().then(stompClient => {
@@ -68,6 +68,7 @@ const emitHandler = (scoket) => {
     //     //scoket.emit('allTickers', tickers);
     // });
 }
+
 
 module.exports = (scoket) => {
     onHandler(scoket);
