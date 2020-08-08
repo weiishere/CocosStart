@@ -9,7 +9,7 @@
 import React from 'react';
 import dateFormat from 'format-datetime'
 import EventHub from '@client/EventHub'
-import $ from 'jquery';
+
 import './style.less'
 
 export default function HistoryRecord() {

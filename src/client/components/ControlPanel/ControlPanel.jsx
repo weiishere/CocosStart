@@ -145,13 +145,13 @@ export default function ControlPanel() {
             {/* 待选:{symbolStr || 'null'} */}
             <Input maxLength={15} size="small" placeholder='请输入实例名称' value={tacticeName} onChange={e => {
                 setTacticeName(e.target.value)
-            }} style={{ width: "8rem" }} />&nbsp;
+            }} style={{ width: "70%" }} />&nbsp;
             <Tooltip placement="bottom" title="创建实例">
                 <Button onClick={addTactice} type="primary" size={'small'} shape="circle" icon={<PlusOutlined />} />
             </Tooltip>
         </div>
         <div>
-            <Select size="small" style={{ width: "10rem" }} value={chooseTacticeId} onChange={e => {
+            <Select size="small" style={{ width: "90%" }} value={chooseTacticeId} onChange={e => {
                 location.replace(`#${e}`);
                 //switchTactics(tid);
             }}>
@@ -218,7 +218,7 @@ export default function ControlPanel() {
                     trigger="click"
                 ><Tag onClick={() => {
                     openEditModal(item)
-                }} key={item.key} color='#2E384E'>{item.desc}：{item.value}</Tag></Popover>)
+                }} key={item.key} color='#2E384E'>{item.desc}：{item.value}</Tag><br/></Popover>)
             }
             {/* <Tag color='#3b5999'>买入USDT数量:100</Tag>
             <Tag color='#3b5999'>买入检查频率:15s</Tag>

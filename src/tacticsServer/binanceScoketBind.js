@@ -23,16 +23,20 @@ const scoketCandles = function (symbol) {
             }
         });
     });
-    
+    // client.ws.ticker(symbol, ticker => {
+    //     targetTacticsList.forEach(item => item.presentDeal.presentPrice = Number(ticker.prevDayClose));
+    // })
     client.ws.candles(symbol, '1m', payload => {
-        targetTacticsList.forEach(item => item.presentDeal.presentPrice = Number(payload.close));
         this.scoket.emit(WsRoute.KLINE_DATA, payload);
     })
     client.ws.partialDepth({ symbol, level: 10 }, depth => {
         targetTacticsList.forEach(item => item.depth = depth);
     })
     client.ws.trades(symbol, trade => {
-        targetTacticsList.forEach(item => item.pushTrade(trade));
+        targetTacticsList.forEach(item =>{
+            item.presentDeal.presentPrice = Number(trade.price);
+            item.pushTrade(trade);
+        });
     });
 }
 

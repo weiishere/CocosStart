@@ -19,7 +19,7 @@ module.exports = {
     getBestSimbol: () => {
         return 'ETHUSDT';
     },
-    /**获取价格变动 */
+    /**获取瞬时价格 */
     getPresentPrice: async (symbol) => {
         const allPrice = await client.prices();
         return allPrice[symbol];
