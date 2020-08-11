@@ -124,7 +124,7 @@ export default function Rate() {
         EventHub.getInstance().addEventListener('mapTacticsList', payload => {
             const target = payload.find(item => item.target === true);
             if (target && target.depth) {
-                console.log(target.depth);
+                //console.log(target.depth);
                 const asks = target.depth.asks.reverse();
                 const bids = target.depth.bids.reverse();
                 dataName = asks.map((item, i) => `卖${Number(item.price)}U / 买${Number(bids[i].price)}U`)

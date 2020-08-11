@@ -8,7 +8,7 @@
  */
 //const client = require('binance-api-node').default()
 const { client } = require('../lib/binancer');
-module.exports = {
+module.exports = (_this) => ({
     getCostPrice: (buyPrice, sellPrice, serviceCharge) => {
         return {
             buy: buyPrice + buyPrice * serviceCharge,
@@ -20,11 +20,12 @@ module.exports = {
         return 'ETHUSDT';
     },
     /**获取瞬时价格 */
-    getPresentPrice: async (symbol) => {
+    getPresentPrice: async () => {
+        if (_this.presentDeal.presentPrice) return _this.presentDeal.presentPrice;
         const allPrice = await client.prices();
-        return allPrice[symbol];
+        return allPrice[_this.symbol];
     },
     getIncreasePriceRate: async (symbol, beginTime, interval) => {
-        
+
     }
-}
+})
