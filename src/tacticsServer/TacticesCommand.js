@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-28 02:58:03
- * @LastEditTime: 2020-08-12 15:48:34
+ * @LastEditTime: 2020-08-12 18:51:59
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -34,11 +34,11 @@ module.exports = class TacticesCommand {
     }
     initTactics(symbol, name, parameter) {
         try {
-            let _tactics = this.tacticsList.find(item => item.symbol === symbol);//一种币最多跑一个程序
+            let _tactics = this.tacticsList.find(item => item.tactics.symbol === symbol);//一种币最多跑一个程序
             if (!_tactics) {
                 _tactics = new SellIntoCorrections(name || `${symbol}_${this.tacticsList.length + 1}`, parameter);
                 _tactics.symbol = symbol;
-                this.tacticsList.push(_tactics);
+                this.tacticsList.push({ userId: 0, tactics: _tactics });
                 this.setPresentSymbleId(_tactics.id)
                 //this.mapTotacticsList(_tactics.id, false);
             }
@@ -53,9 +53,9 @@ module.exports = class TacticesCommand {
         }
     }
     removeTactics(id) {
-        let _tactics = this.tacticsList.find(item => item.id === id);
+        let _tactics = this.tacticsList.find(item => item.tactics.id === id);
         if (_tactics) _tactics.remove(() => {
-            this.tacticsList = this.tacticsList.filter(item => item.id !== id);
+            this.tacticsList = this.tacticsList.filter(item => item.tactics.id !== id);
             this.mapTotacticsList(id);
             _tactics = undefined;
         });
@@ -65,25 +65,25 @@ module.exports = class TacticesCommand {
         let result;
         if (isUnAuto === false) this.isRateDone = false;
         if (!tid) {
-            result = this.tacticsList.map(item => item.getInfo());
+            result = this.tacticsList.map(item => item.tactics.getInfo());
         } else {
             result = this.tacticsList.map(item => {
-                if (item.id === tid) {
+                if (item.tactics.id === tid) {
                     return {
                         target: true,
-                        ...item.getInfo()
+                        ...item.tactics.getInfo()
                     };
                 } else {
                     return {
                         target: false,
-                        ...item.getSimplyInfo()
+                        ...item.tactics.getSimplyInfo()
                     };
                 }
             })
         }
         //console.log(result);
         this.scoket.emit(WsRoute.TACTICS_LIST, result);
-        return this.tacticsList.find(item => item.id === tid);
+        return this.tacticsList.find(item => item.tactics.id === tid).map(item => item.tactics);
     };
     // mapTotacticsListTest(scoket) {
     //     this.scoket.emit(WsRoute.TACTICS_LIST, { eee: 9000 });
