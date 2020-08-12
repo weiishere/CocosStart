@@ -8,8 +8,10 @@
  */
 const bian_api = require('./binance-api');
 const api = require('./api');
+const user = require('./user');
 
 module.exports = {
     bian_api,
-    api
+    api,
+    user
 }

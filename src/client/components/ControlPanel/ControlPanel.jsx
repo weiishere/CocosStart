@@ -1,6 +1,6 @@
 import React from 'react';
-import { Input, Tooltip, Button, Select, InputNumber, Tag, Modal, Popover } from 'antd';
-import { PlusOutlined, CaretRightOutlined, PauseOutlined, IssuesCloseOutlined, PauseCircleOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons'
+import { Input, Tooltip, Button, Select, InputNumber, Tag, Modal, Popover, Switch } from 'antd';
+import { PlusOutlined, CaretRightOutlined, PauseOutlined, IssuesCloseOutlined, PauseCircleOutlined, CloseOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons'
 import { requester } from '@src/tool/Requester'
 import { message } from 'antd';
 import EventHub from '@client/EventHub'
@@ -161,7 +161,7 @@ export default function ControlPanel() {
                             {
                                 !option.runState ? <PauseCircleOutlined /> : <PlayCircleOutlined />
                             }
-                            &nbsp;&nbsp;{option.name}
+                            &nbsp;&nbsp;{option.name}-({option.symbol})
                         </Tooltip>
                     </Option>)
                 }
@@ -171,20 +171,37 @@ export default function ControlPanel() {
                 <Option value="Yiminghe">yiminghe</Option> */}
             </Select>
             <div>
-                <Tooltip placement="bottom" title="运行">
-                    <Button onClick={() => {
-                        powerSwitch(chooseTacticeId, 'run')
-                    }} disabled={disables[0]} type="primary" shape="circle" danger icon={<CaretRightOutlined />} />
+
+                <Popover
+                    key={`popover-0`}
+                    content={<div className="popover_botton">
+                        <Tooltip placement="bottom" title="运行">
+                            <Button onClick={() => {
+                                powerSwitch(chooseTacticeId, 'run')
+                            }} disabled={disables[0]} type="primary" shape="circle" danger icon={<CaretRightOutlined />} />
+                        </Tooltip>
+                        <Tooltip placement="bottom" title="模拟运行">
+                            <Button onClick={() => {
+                                powerSwitch(chooseTacticeId, 'imitateRun')
+                            }} disabled={disables[0]} type="primary" shape="circle" icon={<PlayCircleOutlined />} />
+                        </Tooltip>
+                        <Tooltip placement="bottom" title='立即运行并入场'>
+                            <Button disabled={disables[0]} onClick={() => powerSwitch(chooseTacticeId, 'runAndBuy')}
+                                type="primary" shape="circle" icon={<IssuesCloseOutlined />} />
+                        </Tooltip>
+                    </div>}
+                    title="选择运行模式"
+                    trigger="click"
+                >
+                    <Button disabled={disables[0]} type="primary" shape="circle" danger icon={<CaretRightOutlined />} />
+                </Popover>
+                <Tooltip placement="bottom" title='暂停实例'>
+                    <Button disabled={disables[1]} onClick={() => powerSwitch(chooseTacticeId, 'pause')}
+                        type="primary" shape="circle" icon={<PauseOutlined />} />
                 </Tooltip>
-                <Tooltip placement="bottom" title="模拟运行">
-                    <Button onClick={() => {
-                        powerSwitch(chooseTacticeId, 'imitateRun')
-                    }} disabled={disables[0]} type="primary" shape="circle" icon={<PlayCircleOutlined />} />
-                </Tooltip>
-                <Tooltip placement="bottom" title={!disables[1] ? '停止实例' : '立即运行并入场'}>
-                    <Button disabled={chooseTacticeId === ''} onClick={() => {
-                        !disables[1] ? powerSwitch(chooseTacticeId, 'stop') : powerSwitch(chooseTacticeId, 'runAndBuy')
-                    }} type="primary" shape="circle" icon={!disables[1] ? <PauseOutlined /> : <IssuesCloseOutlined />} />
+                <Tooltip placement="bottom" title='停止实例'>
+                    <Button disabled={disables[1]} onClick={() => powerSwitch(chooseTacticeId, 'stop')}
+                        type="primary" shape="circle" icon={<CloseOutlined />} />
                 </Tooltip>
                 <Tooltip placement="bottom" title="删除实例">
                     <Button onClick={() => {
@@ -199,7 +216,7 @@ export default function ControlPanel() {
                     key={`popover-${item.key}`}
                     content={<div>
                         修改参数--{item.desc}:<br /><br />
-                        <Search
+                        {typeof (item.value) === 'number' ? <Search
                             type='number'
                             value={modal.value}
                             style={{ width: '15rem' }}
@@ -211,14 +228,29 @@ export default function ControlPanel() {
                             onChange={e => {
                                 setModal(Object.assign({}, modal, { value: e.target.value }))
                             }}
-                        />
+                        /> : <center><Switch disabled={disables[0]} checked={item.value} onChange={checked => {
+                            updateParameter(item.key, checked)
+                        }} /></center>}
+                        {/* <Search
+                            type='number'
+                            value={modal.value}
+                            style={{ width: '15rem' }}
+                            placeholder="请输入修改后的值"
+                            enterButton="确认修改"
+                            maxLength={10}
+                            onSearch={value => updateParameter(item.key, value)}
+                            disabled={disables[0]}
+                            onChange={e => {
+                                setModal(Object.assign({}, modal, { value: e.target.value }))
+                            }}
+                        /> */}
                         {/* <a style={{ verticalAlign: 'bottom' }} onClick={() => setModal(Object.assign({}, modal, { key: '' }))}>cancel</a> */}
                     </div>}
                     title={item.title}
                     trigger="click"
                 ><Tag onClick={() => {
                     openEditModal(item)
-                }} key={item.key} color='#2E384E'>{item.desc}：{item.value}</Tag><br/></Popover>)
+                }} key={item.key} color='#2E384E'>{item.desc}：{typeof (item.value) === 'number' ? item.value : (item.value ? '是' : '否')}</Tag><br /></Popover>)
             }
             {/* <Tag color='#3b5999'>买入USDT数量:100</Tag>
             <Tag color='#3b5999'>买入检查频率:15s</Tag>

@@ -12,5 +12,6 @@ export default {
     initTactics: '/api/initTactics',
     switchTactics: '/api/switchTactics',
     tacticsOrder: '/api/tacticsOrder',
-    updateParameter:'/api/updateParameter'
+    updateParameter: '/api/updateParameter',
+    getUser: '/api/getUser'
 }

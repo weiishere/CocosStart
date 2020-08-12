@@ -84,6 +84,10 @@ module.exports = {
             tactices.imitateRun = true;
             tactices.powerSwitch();
             break;
+          case 'pause':
+            //暂停
+            tactices.powerPause();
+            break;
           case 'stop':
             //停止
             tactices.powerSwitch();

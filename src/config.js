@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-08-08 11:52:50
+ * @LastEditTime: 2020-08-12 17:50:48
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -21,7 +21,7 @@ const System = {
 }
 
 const WsConfig = {
-  WS_server_url: 'http://8.210.244.193:8081/stomp',//'ws://8.210.27.48:8080/stomp',
+  WS_server_url: 'http://8.210.244.193:8080/stomp',//'ws://8.210.27.48:8080/stomp',
   WS_server_user: "",
   WS_server_pass: "",
   price_change_url: "/recommend-symbols"//"/price-change"

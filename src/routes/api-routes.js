@@ -20,7 +20,7 @@ module.exports = router
   })
   .get('/bian-api/test-connect', controllers.bian_api.TestConnect)
   .get('/api/switchTactics', controllers.api.switchTactics)
+  .get('/api/getUser', controllers.user.getUser)
   .post('/api/initTactics', controllers.api.initTactics)
   .post('/api/tacticsOrder', controllers.api.tacticsOrder)
   .post('/api/updateParameter', controllers.api.updateParameter)
-  

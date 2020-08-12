@@ -30,16 +30,30 @@ export const switchTactics = (id) => {
                 }
             }
         }).then(({ res }) => {
-            if(res.data.data.name){
+            if (res.data.data.name) {
                 message.success({ content: `实例成功切换为${res.data.data.name}`, key, duration: 2 });
                 console.log(res.data.data)
                 EventHub.getInstance().dispatchEvent('switchTactics', res.data.data);
-            }else{
+            } else {
                 message.warn({ content: `请求完成(无数据)`, key, duration: 2 });
             }
         })
         //EventHub.getInstance().dispatchEvent('loadSingleTactics', location.hash);
     } else {
         message.error('无效的ID');
+    }
+}
+
+export const getQueryString = (name) => {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var reg_rewrite = new RegExp("(^|/)" + name + "/([^/]*)(/|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    var q = window.location.pathname.substr(1).match(reg_rewrite);
+    if (r != null) {
+        return (r[2]);
+    } else if (q != null) {
+        return (q[2]);
+    } else {
+        return null;
     }
 }
