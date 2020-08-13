@@ -12,7 +12,7 @@ import { message } from 'antd';
 import api from '@client/api';
 
 let lastTacticsId = '';
-export const switchTactics = (id) => {
+export const switchTactics = (uid, id) => {
     if (/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id)) {
         //切换Tactics
         if (switchTactics === id) return;
@@ -21,7 +21,7 @@ export const switchTactics = (id) => {
         message.loading({ content: '交易实例数据请求中..', key, duration: 0 });
         requester({
             url: api.switchTactics,
-            params: { id },
+            params: { uid, id },
             option: {
                 baseUrl: 'API_server_url',
                 failedBack: (error) => {

@@ -9,8 +9,9 @@
 const uuid = require('uuid');
 
 module.exports = class Tactics {
-    constructor(name, parameter) {
+    constructor(uid, name, parameter) {
         this.name = name;
+        this.uid = uid;
         this.parameter = parameter;
         this.id = uuid.v1()
     }

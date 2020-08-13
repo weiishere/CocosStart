@@ -12,7 +12,7 @@ const { apiDateCode, System } = require('../config');
 
 module.exports = {
   initTactics: async (ctx, next) => {
-    const { name, symbol } = ctx.request.body;
+    const { uid, name, symbol } = ctx.request.body;
     let resultData = {};
     if (!name || !symbol) {
       resultData = {
@@ -20,7 +20,7 @@ module.exports = {
         code: apiDateCode.nullError
       }
     } else {
-      const result = TacticesCommand.getInstance().initTactics(symbol, name || '', {});
+      const result = TacticesCommand.getInstance().initTactics(uid, symbol, name || '', {});
       if (result) {
         resultData = {
           code: apiDateCode.success,
@@ -32,7 +32,7 @@ module.exports = {
     next();
   },
   switchTactics: async (ctx, next) => {
-    const { id } = ctx.query;
+    const { uid, id } = ctx.query;
     let resultData = {};
     if (!id) {
       resultData = {
@@ -42,7 +42,7 @@ module.exports = {
     } else {
       const _tacticesCommand = TacticesCommand.getInstance();
       _tacticesCommand.setPresentSymbleId(id);
-      const tactics = _tacticesCommand.mapTotacticsList(id, false);
+      const tactics = _tacticesCommand.mapTotacticsList(uid, id, false);
       resultData = {
         code: apiDateCode.success,
         data: tactics ? tactics.getInfo() : {}
@@ -67,6 +67,7 @@ module.exports = {
           msg: 'tacticsOrder:未找到对于的实例',
           code: apiDateCode.nullError
         }
+
       } else {
         switch (order) {
           case 'run':
@@ -98,12 +99,13 @@ module.exports = {
             _tacticesCommand.removeTactics(tid);
             break;
         }
+        _tacticesCommand.mapTotacticsList(tactices.uid, tactices.id);
         resultData = {
           code: apiDateCode.success,
           data: tactices ? tactices.getInfo() : {}
         }
       }
-      _tacticesCommand.mapTotacticsList(tactices.id);
+
     }
     ctx.body = resultData;
     next();
@@ -119,7 +121,7 @@ module.exports = {
         code: apiDateCode.success,
         data: tactices.getInfo()
       }
-      _tacticesCommand.mapTotacticsList(id);
+      _tacticesCommand.mapTotacticsList(tactices.uid, id);
     } else {
       resultData = {
         msg: 'updateParameter:未找到对应的实例',

@@ -11,9 +11,9 @@ const { apiDateCode, System } = require('../config');
 
 const userList = [
     {
-        id: 12345,
+        id: '12345',
         name: 'weishere',
-        scoket: null
+        scokets: []//{tid,scoket}
     }
 ]
 
@@ -37,8 +37,16 @@ module.exports = {
         ctx.body = resultData;
         next();
     },
-    initScoket: (uid, scoket) => {
+    initScoket: (uid, tid, scoketId) => {
         const _user = userList.find(item => item.id === uid);
-        if (_user) _user.scoket = scoket;
+        if (_user) {
+            _user.scokets.push({ tid, scoketId });
+        }
+    },
+    removeScoket: (uid, scoketId) => {
+        const _user = userList.find(item => item.id === uid);
+        if (_user) {
+            _user.scokets = _user.scokets.filter(item => item.scoketId !== scoketId);
+        }
     }
 }

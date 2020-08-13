@@ -14,8 +14,8 @@ const { client } = require('../lib/binancer');
 
 
 module.exports = class SellIntoCorrections extends Tactics {
-    constructor(name, parameter) {
-        super(name, parameter);
+    constructor(uid, name, parameter) {
+        super(uid, name, parameter);
         this.runState = false;//运行状态  false:stop,true:run
         this.imitateRun = false;//是否是模拟状态
         this.buyState = false;//购买状态  true:in,false:out
@@ -113,7 +113,8 @@ module.exports = class SellIntoCorrections extends Tactics {
             }
         }
         const _tacticesCommand = require('./TacticesCommand').getInstance();
-        if (this.presentSymbleId === this.id) _tacticesCommand.mapTotacticsList(_tacticesCommand.presentSymbleId, true);
+        _tacticesCommand.mapTotacticsList(this.uid, this.id, true);
+        //if (this.presentSymbleId === this.id) _tacticesCommand.mapTotacticsList(this.uid, _tacticesCommand.presentSymbleId, true);
     }
     changeSymbol(symbol) {
         this.nextSymbol = symbol;
@@ -280,7 +281,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                     //亏损率大于一个值,判断当前盈利率，选择是否止盈
                     if (_profit / this.presentDeal.costing < this.parameter.lowertRiseRate) {
                         //盈利率小于某一个值的话，就不予止盈，否则没太大意义（避免某一下的急跌造成割肉，却没赚到什么）
-                        this.addHistory('info', `相比最大历史盈利，下降量${_riseStopLossRate.toFixed(6)}，大于${this.parameter.riseStopLossRate}，但低于最低出场盈利率${this.parameter.lowertRiseRate}，继续观察...`,true);
+                        this.addHistory('info', `相比最大历史盈利，下降量${_riseStopLossRate.toFixed(6)}，大于${this.parameter.riseStopLossRate}，但低于最低出场盈利率${this.parameter.lowertRiseRate}，继续观察...`, true);
                         return false;
                     } else {
                         this.addHistory('info', `相比最大历史盈利，下降量${_riseStopLossRate.toFixed(6)}，大于${this.parameter.riseStopLossRate}，且高于最低出场盈利率${this.parameter.lowertRiseRate}，进行止盈操作！`);
@@ -289,7 +290,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                     }
                 } else {
                     //亏损率还未大于一个值，持续观察
-                    this.addHistory('info', `盈利下降量${_riseStopLossRate.toFixed(6)}，继续观察盈利情况...`,true);
+                    this.addHistory('info', `盈利下降量${_riseStopLossRate.toFixed(6)}，继续观察盈利情况...`, true);
                     return false;
                 }
             }

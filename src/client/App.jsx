@@ -29,21 +29,34 @@ import api from '@client/api';
 import { apiDateCode } from '@src/config';
 import './style/style.less'
 
-
+const getHash = () => {
+    let hash = location.hash + '';
+    return hash.substring(1, hash.length);
+}
 export default function App() {
     const [tacticeName, setTacticeName] = React.useState('');
     const [symbol, setSymbol] = React.useState('');
     const [user, setUser] = React.useState(null);
     React.useEffect(() => {
-        
+        const uid = getQueryString('uid');
         //加载选中币
-        let hash = location.hash + '';
-        switchTactics(hash.substring(1, hash.length));
+
         EventHub.getInstance().addEventListener('switchTactics', payload => {
             setTacticeName(payload.name);
             setSymbol(payload.symbol);
+            connectScoket(res.data.data.id, getHash()).then(scoket => {
+                scoket.on(WsRoute.TACTICS_LIST, data => {
+                    //广播mapTacticsList
+                    EventHub.getInstance().dispatchEvent('mapTacticsList', data);
+                });
+                scoket.on(WsRoute.KLINE_DATA, data => {
+                    //广播kline数据
+                    EventHub.getInstance().dispatchEvent('klineData', data);
+                });
+                scoket.emit('bindTid', { scoketId: scoket.id, tid: getHash() });
+            });
         });
-        const uid = getQueryString('uid');
+
         if (uid) {
             //请求用户信息
             const key = 'laoding-1'
@@ -55,17 +68,8 @@ export default function App() {
                 }
             }).then(({ res }) => {
                 message.destroy();
-                if(res.data.code === apiDateCode.success){
-                    connectScoket(res.data.data.id).then(scoket => {
-                        scoket.on(WsRoute.TACTICS_LIST, data => {
-                            //广播mapTacticsList
-                            EventHub.getInstance().dispatchEvent('mapTacticsList', data);
-                        });
-                        scoket.on(WsRoute.KLINE_DATA, data => {
-                            //广播kline数据
-                            EventHub.getInstance().dispatchEvent('klineData', data);
-                        });
-                    });
+                if (res.data.code === apiDateCode.success) {
+                    switchTactics(uid, getHash());
                 }
                 setUser(res.data.code === apiDateCode.success ? res.data.data : null);
             })
@@ -79,15 +83,14 @@ export default function App() {
             <>
                 <Row style={{ height: '40%' }}>
                     <Col span={8} style={{ height: '100%' }}>
-                        <MultipleWatch />
+                        <MultipleWatch uid={user.id} />
                     </Col>
                     <Col span={8} style={{ height: '100%' }}>
                         <span className='head-title'>控制面板-({tacticeName}-{symbol})</span>
                         <section className='customerWrap'>
-                            <div><ControlPanel /></div>
+                            <div><ControlPanel uid={user.id} /></div>
                             <div>
-
-                                <HistoryRecord />
+                                <HistoryRecord uid={user.id} />
                             </div>
                         </section>
                     </Col>
@@ -145,6 +148,6 @@ if (("onhashchange" in window) && ((typeof document.documentMode === "undefined"
     // 浏览器支持onhashchange事件
     window.onhashchange = () => {
         let hash = location.hash + '';
-        switchTactics(hash.substring(1, hash.length));
+        switchTactics(getQueryString('uid'), hash.substring(1, hash.length));
     };  // TODO，对应新的hash执行的操作函数
 }

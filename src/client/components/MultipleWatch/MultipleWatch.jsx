@@ -72,6 +72,46 @@ const option = () => {
     }
 }
 
+export default function MultipleWatch({uid}) {
+    React.useEffect(() => {
+        let myChart = echarts.init(document.getElementById("multiple_watch"), 'dark');
+        const { price_change_url } = WsConfig;
+        connectScoket(uid).then(scoket => {
+            scoket.emit('triggerWs', { wsUrl: price_change_url });
+            scoket.on(WsRoute.MULTIPLE_PRICE_CHANGE, data => {
+                console.log('接收到最新行情信息');
+                let arr = JSON.parse(data.body).slice(0);
+                if (arr.length !== 0) {
+                    arr = arr.sort((a, b) => b.m1ChangeRate - a.m1ChangeRate).slice(0, 10);
+                    barData = arr.map(
+                        item => [//item.changeRate > 0 ? item.m5ChangeRate * 100 : 0,
+                            item.m5ChangeRate * 100000,
+                            item.m1ChangeRate * 100000,
+                            item.h24QuoteQty, item.symbol,
+                            item.symbol.replace('USDT', '/USDT')]);
+                    const l = barData.length;
+                    for (let i = l; i < 10; i++) { barData.push([0, 0, '', '']); }
+                    barData = barData.reverse();
+                    localStorage.setItem("nultipleData", JSON.stringify(barData));
+                    localStorage.setItem("nultipleDataLastUpdate", dateFormat(new Date(), "MM-dd HH:mm:ss"));
+                    const _option = option();
+                    myChart.setOption(_option);
+                }
+            });
+        });
+
+
+        myChart.setOption(option());
+        const nultipleData = JSON.parse(localStorage.getItem("nultipleData") || '[]');
+        //EventHub.getInstance().dispatchEvent('chooseSymbol', nultipleData.length === 0 ? '' : nultipleData[0]);
+        myChart.on('click', function (params) {
+            console.log(params.name);
+            EventHub.getInstance().dispatchEvent('chooseSymbol', { symbol: params.name, name: params.name.replace('USDT', '/USDT') });
+        });
+    }, []);
+    return <div id='multiple_watch'></div>;
+}
+/*
 export default class MultipleWatch extends React.PureComponent {
     componentDidMount() {
         //alert(document.querySelector("#multiple_watch"))
@@ -119,4 +159,4 @@ export default class MultipleWatch extends React.PureComponent {
     render() {
         return <div id='multiple_watch'></div>
     }
-}
+}*/

@@ -11,7 +11,7 @@ const { Option } = Select;
 const { Search } = Input;
 import './style.less'
 
-export default function ControlPanel() {
+export default function ControlPanel({ uid }) {
     const [tacticeName, setTacticeName] = React.useState('');
     const [symbolStr, setSymbolStr] = React.useState('');
     const [opations, setOpations] = React.useState([]);
@@ -31,6 +31,7 @@ export default function ControlPanel() {
             url: api.initTactics,
             type: 'post',
             params: {
+                uid,
                 name: quickName || tacticeName,
                 symbol: quickSymbol || symbolStr
             },

@@ -12,7 +12,7 @@ import io from 'socket.io-client';
 const ScoketListener = [];
 let scoket;
 
-export const connectScoket = function (uid) {
+export const connectScoket = function (uid, tid) {
     if (!scoket) {
         return new Promise(resolve => {
             scoket = io();
@@ -21,7 +21,7 @@ export const connectScoket = function (uid) {
                 ScoketListener.forEach(item => {
                     item(scoket);
                 });
-                scoket.emit('checkin', uid);
+                scoket.emit('checkin', { uid, tid });
                 resolve(scoket);
             });
         })
@@ -30,15 +30,13 @@ export const connectScoket = function (uid) {
             //console.log('The webscoket is connected--2');
             if (!scoket.connected) {
                 scoket.on('connect', function () {
-                    scoket.emit('checkin', uid);
+                    scoket.emit('checkin', { uid, tid });
                     resolve(scoket);
                 });
             } else {
                 resolve(scoket);
             }
-
         })
-
     }
 
     // scoket.on('connect', function () {
