@@ -41,8 +41,7 @@ module.exports = {
       }
     } else {
       const _tacticesCommand = TacticesCommand.getInstance();
-      _tacticesCommand.setPresentSymbleId(id);
-      const tactics = _tacticesCommand.mapTotacticsList(uid, id, false);
+      const tactics = _tacticesCommand.mapTotacticsList(uid, id, true);
       resultData = {
         code: apiDateCode.success,
         data: tactics ? tactics.getInfo() : {}
@@ -99,7 +98,7 @@ module.exports = {
             _tacticesCommand.removeTactics(tid);
             break;
         }
-        _tacticesCommand.mapTotacticsList(tactices.uid, tactices.id);
+        _tacticesCommand.mapTotacticsList(tactices.uid, tactices.id, true);
         resultData = {
           code: apiDateCode.success,
           data: tactices ? tactices.getInfo() : {}
@@ -121,7 +120,7 @@ module.exports = {
         code: apiDateCode.success,
         data: tactices.getInfo()
       }
-      _tacticesCommand.mapTotacticsList(tactices.uid, id);
+      _tacticesCommand.mapTotacticsList(tactices.uid, id,true);
     } else {
       resultData = {
         msg: 'updateParameter:未找到对应的实例',

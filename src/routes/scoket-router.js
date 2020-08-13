@@ -2,7 +2,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 17:34:40
- * @LastEditTime: 2020-08-12 18:31:33
+ * @LastEditTime: 2020-08-13 22:21:39
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -13,15 +13,13 @@ const { connectStomp, disConnectStomp } = require('../tool/StompInstance')
 const { WsConfig, WsRoute } = require('../config')
 const { price_change_url } = WsConfig;
 const { TacticesCommand } = require('../tacticsServer')
-const { userList, initScoket } = require('../controllers/user')
+const { userRooms } = require('../controllers/user')
 let timer;
 
-const onHandler = (scoket) => {
-    // scoket.on('send', data => {
-    //     console.log('客户端发送的内容：', data);
-    //     scoket.emit('getMsg', '我是返回的消息... ...');
-    // });
-
+module.exports = (scoket, io) => {
+    const _tacticesCommand = TacticesCommand.getInstance();
+    let userId;
+    let tacticsId;
     scoket.on('triggerWs', data => {
         connectStomp().then(stompClient => {
             stompClient.subscribe(data.wsUrl, (msg) => {
@@ -30,47 +28,54 @@ const onHandler = (scoket) => {
             })
         })
     });
-    scoket.on('checkin', (data) => {
-        console.log(data.uid + "--" + data.tid);
-        if (data.uid) initScoket(data.uid + '', data.tid, scoket.id);
+    scoket.on('checkin', payload => {
+        //console.log(uid);
+        const { uid, tid } = payload;
+        userId = uid;
+        if (!uid) return;
+        if (tacticsId) tacticsId = tid;
+        const r = userRooms.find(item => item.uid === uid);
+        if (r) {
+            //tid中不能存在重复的scoketId，且tid必须有效（存在于tacticsList）
+            if (!r.tids.some(item => item.scoketId === scoket.id) && _tacticesCommand.tacticsList.some(item => item.id === tid)) {
+                r.tids.push({ tid, scoketId: scoket.id });
+            }
+        } else {
+            if (_tacticesCommand.tacticsList.some(item => item.id === tid)) {
+                userRooms.push({ uid, tids: [{ tid, scoketId: scoket.id }] });
+            } else {
+                userRooms.push({ uid, tids: [] });
+            }
+        }
+        scoket.join(uid);//加入到用户群
     });
-    scoket.on('bindTid', (data) => {
-        console.log(data.scoketId + "--" + data.tid);
+    scoket.on('regTid', tid => {
+        const r = userRooms.find(item => item.uid === userId);
+        if (r) {
+            let tidObj = r.tids.find(item => (item.scoketId === scoket.id));
+            if (tidObj) {
+                tidObj.tid = tid;
+            } else {
+                if (!r.tids.some(item => item.scoketId === scoket.id) && _tacticesCommand.tacticsList.some(item => item.id === tid)) {
+                    r.tids.push({ tid, scoketId: scoket.id });
+                }
+            }
+            _tacticesCommand.mapTotacticsList(r.uid, tid, true);
+        }
+        tacticsId = tid;
+    });
+    scoket.on('leave', function () {
+        socket.emit('disconnect');
     });
     //关闭ws连接
     scoket.on("disconnect", () => {
-
-    })
-}
-const emitHandler = (scoket) => {
-    const _tacticesCommand = TacticesCommand.getInstance();
-    //_tacticesCommand.setScoket(scoket);
-    timer && clearInterval(timer);
-    timer = setInterval(() => {
-        if (_tacticesCommand.isRateDone) {
-            userList.forEach(user => {
-                user.scokets.forEach(item => {
-                    //_tacticesCommand.setScoket(item.scoket);
-                    _tacticesCommand.mapTotacticsList(user.id, item.tid, true);
-                });
-            });
-            //_tacticesCommand.mapTotacticsList(_tacticesCommand.presentSymbleId, true)
-        } else {
-            //如果手动调取过mapTotacticsList方法
-            _tacticesCommand.isRateDone = true;
+        const r = userRooms.find(item => item.uid === userId);
+        if (r) {
+            r.tids = r.tids.filter(item => item.scoketId !== tacticsId);
         }
-    }, 5000);
-
-    // client.ws.trades(['ETHBTC', 'BNBBTC'], trade => {
-
-    // });
-    // client.ws.allTickers(tickers => {
-    //     //scoket.emit('allTickers', tickers);
-    // });
-}
-
-
-module.exports = (scoket) => {
-    onHandler(scoket);
-    emitHandler(scoket);
+        // if (r.tids.length === 0) {
+        //     //如果tid都没了，就删掉room
+        //     userRooms = userRooms.filter(ur => ur.uid !== userId);
+        // }
+    })
 }

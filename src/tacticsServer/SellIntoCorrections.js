@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-08-12 15:53:12
+ * @LastEditTime: 2020-08-13 19:16:04
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -11,7 +11,7 @@ const Tactics = require('./Tactics');
 const Helper = require('./Helper');
 const { clearInterval } = require('stompjs');
 const { client } = require('../lib/binancer');
-
+const { scoketCandles } = require('./binanceScoketBind');
 
 module.exports = class SellIntoCorrections extends Tactics {
     constructor(uid, name, parameter) {
@@ -118,6 +118,13 @@ module.exports = class SellIntoCorrections extends Tactics {
     }
     changeSymbol(symbol) {
         this.nextSymbol = symbol;
+    }
+    setSymbol(symbol) {
+        if (this.runState) return false;//运行期间不允许更改
+        this.symbol = symbol;
+        //初始化时给点5分线数据
+        client.candles({ symbol, interval: '5m', limit: 1 }).then(data => this.KLineItem5m.present = data[0]);
+        scoketCandles();
     }
     /** 接收每次推过来的交易信息，如果有符合当前正在交易的数据，就要截获数据 */
     pushTrade(trade) {

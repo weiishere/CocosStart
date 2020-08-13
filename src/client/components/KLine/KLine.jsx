@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 22:33:14
- * @LastEditTime: 2020-08-07 15:00:52
+ * @LastEditTime: 2020-08-13 21:09:03
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -133,7 +133,7 @@ const initKlineData = (myChart, symbol, callback) => {
         }
         rawData = arr;
         myChart.setOption(option(symbol));
-        localStorage.setItem("klineSymbol", symbol);
+        //localStorage.setItem("klineSymbol", symbol);
         localStorage.setItem("klineData", JSON.stringify(arr));
         callback && callback();
     })
@@ -146,56 +146,25 @@ export default function KLine() {
         var myChart = echarts.init(document.getElementById("k-line"), 'dark');
         myChart.setOption(option(localStorage.getItem("klineSymbol") || ''));
         
-        
-
-        EventHub.getInstance().addEventListener('chooseSymbol', payload => {
+        const change = (symbol) => {
+            localStorage.setItem("klineSymbol", symbol);
             const key = 'loading';
-            const symbol = payload.symbol;
             message.loading({ content: 'K线数据请求中..', key, duration: 0 });
-            initKlineData(myChart, symbol, () => {
+            initKlineData(myChart, localStorage.getItem("klineSymbol"), () => {
                 message.success({ content: `K线成功切换为${symbol}`, key, duration: 2 });
             });
-            // requester({
-            //     url: api.klines,
-            //     params: {
-            //         symbol: payload[2],//"STXUSDT",
-            //         interval: "5m",
-            //         startTime: lastHour,
-            //         //endTime:lastHour
-            //     },
-            //     option: {
-            //         failedBack: (error) => {
-            //             //message.error(error);
-            //             message.error({ content: error, key, duration: 2 });
-            //         }
-            //     }
-            // }).then(result => {
-            //     //console.log(result);
-            //     let arr = [];
-            //     for (let i = 0; i < result.res.data.length; i++) {
-            //         arr.push(result.res.data[i].slice(0));
-            //         arr[i][0] = dateFormat(new Date(+result.res.data[i][0]), "HH:mm")
-            //     }
-            //     rawData = arr;
-            //     myChart.setOption(option(payload[2]));
-            //     localStorage.setItem("klineSymbol", payload[2]);
-            //     localStorage.setItem("klineData", JSON.stringify(arr));
-            //     message.success({ content: `K线成功切换为${payload[2]}`, key, duration: 2 });
-            // })
+        }
+        EventHub.getInstance().addEventListener('chooseSymbol', payload => {
+            change(payload.symbol);
         });
         EventHub.getInstance().addEventListener('switchTactics', payload => {
-            const key = 'loading';
-            const symbol = payload.symbol;
-            message.loading({ content: 'K线数据请求中..', key, duration: 0 });
-            initKlineData(myChart, symbol, () => {
-                message.destroy();
-            });
+            change(payload.symbol);
         });
         window.setInterval(() => {
-            if (localStorage.getItem("klineSymbol")) initKlineData(myChart, localStorage.getItem("klineSymbol"),() => {
+            if (localStorage.getItem("klineSymbol")) initKlineData(myChart, localStorage.getItem("klineSymbol"), () => {
                 //message.success('K线已刷新');
             });
-        }, 15000);
+        }, 10000);
     }, []);
     return <div id='k-line'></div>
 }

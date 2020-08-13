@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 15:09:27
- * @LastEditTime: 2020-08-12 17:49:34
+ * @LastEditTime: 2020-08-13 22:17:14
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -37,24 +37,27 @@ export default function App() {
     const [tacticeName, setTacticeName] = React.useState('');
     const [symbol, setSymbol] = React.useState('');
     const [user, setUser] = React.useState(null);
+    let sokt;
     React.useEffect(() => {
         const uid = getQueryString('uid');
         //加载选中币
+        connectScoket(uid, getHash()).then(scoket => {
+            sokt = scoket;
+            scoket.on(WsRoute.TACTICS_LIST, data => {
+                //广播mapTacticsList
+                EventHub.getInstance().dispatchEvent('mapTacticsList', data);
+            });
+            // scoket.on(WsRoute.KLINE_DATA, data => {
+            //     //广播kline数据
+            //     EventHub.getInstance().dispatchEvent('klineData', data);
+            // });
+            
+        });
 
         EventHub.getInstance().addEventListener('switchTactics', payload => {
             setTacticeName(payload.name);
             setSymbol(payload.symbol);
-            connectScoket(res.data.data.id, getHash()).then(scoket => {
-                scoket.on(WsRoute.TACTICS_LIST, data => {
-                    //广播mapTacticsList
-                    EventHub.getInstance().dispatchEvent('mapTacticsList', data);
-                });
-                scoket.on(WsRoute.KLINE_DATA, data => {
-                    //广播kline数据
-                    EventHub.getInstance().dispatchEvent('klineData', data);
-                });
-                scoket.emit('bindTid', { scoketId: scoket.id, tid: getHash() });
-            });
+            sokt.emit('regTid', getHash());
         });
 
         if (uid) {

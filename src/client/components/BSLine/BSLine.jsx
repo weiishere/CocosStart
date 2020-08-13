@@ -142,7 +142,7 @@ const option = (symbol, price) => {
 
 const initKlineData = (myChart, symbol) => {
     let now = new Date();
-    let lastHour = now.setHours(now.getHours() - 4);
+    let lastHour = now.setHours(now.getHours() - 3);
     requester({
         url: api.klines,
         params: {
@@ -185,41 +185,25 @@ export default function BSLine() {
     let symbol = '';
     let updateCount = 0;
     React.useEffect(() => {
-
         //let lastHour = now.setHours(now.getHours() - 1);
         let lastIsFinal = false;
         const myChart = echarts.init(document.getElementById("bs-line"), "dark");
         myChart.setOption(option('', 0));
-        EventHub.getInstance().addEventListener('switchTactics', payload => {
-            const key = 'loading';
-            symbol = payload.symbol;
-            markPointData = [];
-            //message.loading({ content: 'K线数据请求中2..', key, duration: 0 });
-            initKlineData(myChart, payload.symbol);
-        });
-        EventHub.getInstance().addEventListener('klineData', payload => {
-            if (payload.symbol === symbol) {
-                const { startTime, isFinal, open, close, low, high } = payload;
-                initKlineData(myChart, payload.symbol);
-                // const arr = [dateFormat(new Date(+startTime), "HH:mm"), open, high, low, close];
-                // if (isFinal) {
-                //     if (!lastIsFinal) {
-                //         rawData = rawData.concat([[dateFormat(new Date(+startTime), "HH:mm"), close, close, close, close]]);
-                //         lastIsFinal = true;
-                //     }
-                // } else {
-                //     lastIsFinal = false;
-                //     rawData[rawData.length - 1] = arr;
-                // }
-                // myChart.setOption(option(symbol, close));
-                // localStorage.setItem("klineDataForBs", JSON.stringify(rawData));
-            }
-        });
+        // EventHub.getInstance().addEventListener('switchTactics', payload => {
+        //     markPointData = [];
+        //     initKlineData(myChart, payload.symbol);
+        // });
+        // EventHub.getInstance().addEventListener('klineData', payload => {
+        //     if (payload.symbol === symbol) {
+        //         const { startTime, isFinal, open, close, low, high } = payload;
+        //         initKlineData(myChart, payload.symbol);
+        //     }
+        // });
         EventHub.getInstance().addEventListener('mapTacticsList', payload => {
             const target = payload.find(item => item.target);
             persentPrice = !target ? 0 : (target.buyState ? target.presentDeal.payPrice : 0);
             if (!target) return;
-            if (target.historyForDeal.length === markPointData.length) return;
+            if (target.historyForDeal.length !== markPointData.length) { }
             markPointData = target.historyForDeal.map((item, i) => ({
                 name: '标点' + i,
                 coord: [dateFormat(new Date(item.time), "HH:mm"), item.content.price],
@@ -228,8 +212,12 @@ export default function BSLine() {
                     color: item.type === 'buy' ? 'red' : 'green'//'rgb(41,60,85)'
                 }
             }));
-            initKlineData(myChart, symbol);
+            symbol = target.symbol;
+            initKlineData(myChart, target.symbol);
         });
+        // window.setInterval(() => {
+        //     initKlineData(myChart, symbol);
+        // }, 3000);
     }, []);
     return <div id='bs-line'></div>
 }

@@ -16,9 +16,10 @@ const userList = [
         scokets: []//{tid,scoket}
     }
 ]
-
+let userRooms = [];//{uid:12345,tids:[{scoketId,tid}]}
 module.exports = {
     userList,
+    userRooms,
     getUser: async (ctx, next) => {
         const { uid } = ctx.query;
         const _user = userList.find(item => item.id == uid);
@@ -36,17 +37,17 @@ module.exports = {
         }
         ctx.body = resultData;
         next();
-    },
-    initScoket: (uid, tid, scoketId) => {
-        const _user = userList.find(item => item.id === uid);
-        if (_user) {
-            _user.scokets.push({ tid, scoketId });
-        }
-    },
-    removeScoket: (uid, scoketId) => {
-        const _user = userList.find(item => item.id === uid);
-        if (_user) {
-            _user.scokets = _user.scokets.filter(item => item.scoketId !== scoketId);
-        }
     }
+    // initScoket: (uid, tid, scoketId) => {
+    //     const _user = userList.find(item => item.id === uid);
+    //     if (_user) {
+    //         _user.scokets.push({ tid, scoketId });
+    //     }
+    // },
+    // removeScoket: (uid, scoketId) => {
+    //     const _user = userList.find(item => item.id === uid);
+    //     if (_user) {
+    //         _user.scokets = _user.scokets.filter(item => item.scoketId !== scoketId);
+    //     }
+    // }
 }
