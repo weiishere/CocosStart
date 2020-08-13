@@ -2,7 +2,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 17:34:40
- * @LastEditTime: 2020-08-13 22:21:39
+ * @LastEditTime: 2020-08-13 22:52:45
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -71,7 +71,7 @@ module.exports = (scoket, io) => {
     scoket.on("disconnect", () => {
         const r = userRooms.find(item => item.uid === userId);
         if (r) {
-            r.tids = r.tids.filter(item => item.scoketId !== tacticsId);
+            r.tids = r.tids.filter(item => item.scoketId !== scoket.id);
         }
         // if (r.tids.length === 0) {
         //     //如果tid都没了，就删掉room
