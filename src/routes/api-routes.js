@@ -21,6 +21,8 @@ module.exports = router
   .get('/bian-api/test-connect', controllers.bian_api.TestConnect)
   .get('/api/switchTactics', controllers.api.switchTactics)
   .get('/api/getUser', controllers.user.getUser)
+  .get('/api/getAdvancedRestran',controllers.api.getAdvancedRestran)
   .post('/api/initTactics', controllers.api.initTactics)
   .post('/api/tacticsOrder', controllers.api.tacticsOrder)
   .post('/api/updateParameter', controllers.api.updateParameter)
+  .post('/api/updateAdvancedRestran', controllers.api.updateAdvancedRestran)

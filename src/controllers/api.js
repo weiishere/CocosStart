@@ -115,12 +115,12 @@ module.exports = {
     const tactices = _tacticesCommand.tacticsList.find(item => item.id == id);
     let resultData = {};
     if (tactices) {
-      tactices.parameter[key] = value;
+      tactices.parameterBackup[key] = tactices.parameter[key] = value;
       resultData = {
         code: apiDateCode.success,
         data: tactices.getInfo()
       }
-      _tacticesCommand.mapTotacticsList(tactices.uid, id,true);
+      _tacticesCommand.mapTotacticsList(tactices.uid, id, true);
     } else {
       resultData = {
         msg: 'updateParameter:未找到对应的实例',
@@ -128,6 +128,40 @@ module.exports = {
       }
     }
 
+    ctx.body = resultData;
+    next();
+  },
+  //获取高级约束数据结构
+  getAdvancedRestran: async (ctx, next) => {
+    const restrainHelper = require('../tacticsServer/restrainHelper');
+    const data = {
+      premiseForBuy: restrainHelper.premiseForBuy.map(item => ({ key: item.key, desc: item.desc })),
+      premiseForSell: restrainHelper.premiseForSell.map(item => ({ key: item.key, desc: item.desc })),
+      dynamicParam: restrainHelper.dynamicParam.map(item => ({ key: item.key, desc: item.desc }))
+    }
+    ctx.body = {
+      code: apiDateCode.success,
+      data
+    };
+    next();
+  },
+  updateAdvancedRestran: async (ctx, next) => {
+    const { id, item, keys } = ctx.request.body;
+    const _tacticesCommand = TacticesCommand.getInstance();
+    const tactices = _tacticesCommand.tacticsList.find(item => item.id == id);
+    let resultData = {};
+    if (tactices) {
+      tactices.advancedOption[item] = keys.split(',');
+      resultData = {
+        code: apiDateCode.success,
+        data: tactices.getInfo()
+      }
+    } else {
+      resultData = {
+        msg: 'updateParameter:未找到对应的实例',
+        code: apiDateCode.nullError
+      }
+    }
     ctx.body = resultData;
     next();
   }

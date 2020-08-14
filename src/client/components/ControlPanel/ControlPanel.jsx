@@ -1,9 +1,10 @@
 import React from 'react';
 import { Input, Tooltip, Button, Select, InputNumber, Tag, Modal, Popover, Switch } from 'antd';
-import { PlusOutlined, CaretRightOutlined, PauseOutlined, IssuesCloseOutlined, PauseCircleOutlined, CloseOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons'
+import { PlusOutlined, CaretRightOutlined, PauseOutlined, IssuesCloseOutlined, PauseCircleOutlined, SettingOutlined, CloseOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons'
 import { requester } from '@src/tool/Requester'
 import { message } from 'antd';
 import EventHub from '@client/EventHub'
+import AdvancedSetPanel from './AdvancedSetPanel'
 import { apiDateCode } from '@src/config'
 import { switchTactics } from '@client/utils'
 import api from '@client/api';
@@ -19,6 +20,8 @@ export default function ControlPanel({ uid }) {
     const [paramter, setParamter] = React.useState([]);
     const [modal, setModal] = React.useState({ visible: false, title: '', key: '', value: undefined });
     const [disables, setDisables] = React.useState([true, true, true]);
+    const [modalVisible, setModalVisible] = React.useState(false);
+    const [targetTactice, setTargetTactice] = React.useState(null);
     const key = 'loading';
     const addTactice = () => {
         message.loading({ content: 'loading..', key, duration: 0 });
@@ -116,20 +119,21 @@ export default function ControlPanel({ uid }) {
                 symbol: item.symbol,
                 runState: item.runState
             })));
-            const targetSymbol = payload.find(item => item.target === true);
-            //targetSymbol && setParamter(targetSymbol.paramDesc.map(item => ({ paramDesc: item, value: targetSymbol.param[item] })));
+            const _targetTactice = payload.find(item => item.target === true);
+            //_targetTactice && setParamter(_targetTactice.paramDesc.map(item => ({ paramDesc: item, value: _targetTactice.param[item] })));
             let paramArr = [];
-            if (targetSymbol) {
-                for (let key of Object.keys(targetSymbol.paramDesc)) {
-                    paramArr.push({ key, value: targetSymbol.param[key], desc: targetSymbol.paramDesc[key] })
+            if (_targetTactice) {
+                for (let key of Object.keys(_targetTactice.paramDesc)) {
+                    paramArr.push({ key, value: _targetTactice.param[key], desc: _targetTactice.paramDesc[key][1], isNoAdv: _targetTactice.paramDesc[key][0] })
                 }
-                targetSymbol.runState ? setDisables([true, false, true]) : setDisables([false, true, false]);
+                _targetTactice.runState ? setDisables([true, false, true]) : setDisables([false, true, false]);
                 setParamter(paramArr);
             }
         });
         //运行币切换
         EventHub.getInstance().addEventListener('switchTactics', payload => {
             setChooseTacticeId(payload.id);
+            setTargetTactice(payload)
             if (payload.runState) {
                 setDisables([true, false, true]);
             } else {
@@ -213,7 +217,7 @@ export default function ControlPanel({ uid }) {
         </div>
         <div className='paramPanel'>
             {
-                paramter.map(item => <Popover
+                paramter.filter(item => item.isNoAdv).map(item => <Popover
                     key={`popover-${item.key}`}
                     content={<div>
                         修改参数--{item.desc}:<br /><br />
@@ -224,10 +228,10 @@ export default function ControlPanel({ uid }) {
                             placeholder="请输入修改后的值"
                             enterButton="确认修改"
                             maxLength={10}
-                            onSearch={value => updateParameter(item.key, value)}
+                            onSearch={value => updateParameter(item.key, +value)}
                             disabled={disables[0]}
                             onChange={e => {
-                                setModal(Object.assign({}, modal, { value: e.target.value }))
+                                setModal(Object.assign({}, modal, { value: +e.target.value }))
                             }}
                         /> : <center><Switch disabled={disables[0]} checked={item.value} onChange={checked => {
                             updateParameter(item.key, checked)
@@ -253,29 +257,16 @@ export default function ControlPanel({ uid }) {
                     openEditModal(item)
                 }} key={item.key} color='#2E384E'>{item.desc}：{typeof (item.value) === 'number' ? item.value : (item.value ? '是' : '否')}</Tag><br /></Popover>)
             }
-            {/* <Tag color='#3b5999'>买入USDT数量:100</Tag>
-            <Tag color='#3b5999'>买入检查频率:15s</Tag>
-            <Tag color='#3b5999'>买入确认频率:15s</Tag>
-            <Tag color='#3b5999'>确认买入涨幅:0.05%</Tag>
-            <Tag color='#3b5999'>埋伏入场下跌率:0.1%</Tag>
-            <Tag color='#3b5999'>卖出检查频率:100</Tag>
-            <Tag color='#3b5999'>卖出确认频率:100</Tag>
-            <Tag color='#3b5999'>止盈跌幅:100</Tag>
-            <Tag color='#3b5999'>止损跌幅:100</Tag> */}
+            <center>{chooseTacticeId && <Button onClick={() => { setModalVisible(true) }} type="link" icon={<SettingOutlined />}>高级设置</Button>}</center>
         </div>
-        {/* <Modal
-            title={modal.title}
-            visible={modal.visible}
-            width={}
-            onOk={() => {
-                setModal({},Object.assign(modal, { visible: false }))
-            }}
-            onCancel={() => {
-                setModal({},Object.assign(modal, { visible: false }))
-            }}
+        {<Modal
+            title={`高级配置-${targetTactice && targetTactice.name}`}
+            visible={modalVisible}
+            width={600}
+            onOk={() => { setModalVisible(false) }}
+            onCancel={() => { setModalVisible(false) }}
         >
-            {modal.title}：<Input value={modal.value}/>
-
-        </Modal> */}
+            <AdvancedSetPanel tactice={targetTactice} paramter={paramter} updateParameter={updateParameter} disables={disables} />
+        </Modal>}
     </div>
 }

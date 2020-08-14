@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 16:36:15
- * @LastEditTime: 2020-07-27 23:35:22
+ * @LastEditTime: 2020-08-14 12:09:46
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -9,6 +9,8 @@
 const path = require('path');
 const webpack = require('webpack');
 //const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin')
 var APP_PATH = path.resolve(path.resolve(__dirname), '');
 const alias = require('./alias')
 
@@ -22,7 +24,7 @@ module.exports = {
         filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'dist'),
         // 指定在浏览器中引用时输出目录的公共URL，例如打包出来 app.bundle.js，那么访问地址就是: localhost:3000/__bundle__/app.bundle.js。否则就会报 404 not found
-        publicPath: '/__bundle__/'
+        publicPath: '/dist/'
     },
     resolve: {
         extensions: ['.js', '.jsx', '.json'], //表示这几种文件的后缀名可以省略，按照从前到后的方式来进行补全
@@ -90,6 +92,18 @@ module.exports = {
     plugins: [
         new webpack.optimize.OccurrenceOrderPlugin(),
         //new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoEmitOnErrorsPlugin()
+        new webpack.NoEmitOnErrorsPlugin(),
+        new HtmlWebpackPlugin({
+            template:'./src/index.html'
+        }),
+        //这个主要是将生成的vendor.dll.js文件加上hash值插入到页面中。
+        new AddAssetHtmlWebpackPlugin({
+            filepath: path.resolve(__dirname, './dist/dll/vendor.dll.js'), // 指你要往生成的Html中加入什么内容
+            includeSourcemap: false,
+            hash: true,
+        }),
+        new webpack.DllReferencePlugin({
+        	manifest: path.resolve(__dirname, './dist/dll/vendor.manifest.json')  // +
+        })
     ]
 };

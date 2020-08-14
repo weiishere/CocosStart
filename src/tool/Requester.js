@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-25 17:00:53
- * @LastEditTime: 2020-07-28 00:20:27
+ * @LastEditTime: 2020-08-14 11:32:27
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -11,20 +11,20 @@ const axios = require('axios');
 const {System } = require('../config');
 //axios.defaults.withCredentials = true;
 axios.defaults.timeout = 10000;
-const Binance = require('binance-node-api')
+//const Binance = require('binance-node-api')
 let api;
 
-const apiInstance = () => {
-    if (api) {
-        return api;
-    } else {
-        const { apiKey, secretKey } = System;
-        const config = { apiKey, secretKey };
-        api = Object.create(Binance)
-        api.init(config);
-        return api
-    }
-}
+// const apiInstance = () => {
+//     if (api) {
+//         return api;
+//     } else {
+//         const { apiKey, secretKey } = System;
+//         const config = { apiKey, secretKey };
+//         api = Object.create(Binance)
+//         api.init(config);
+//         return api
+//     }
+// }
 
 // export type optionType = {
 //   requestTarget: string;
