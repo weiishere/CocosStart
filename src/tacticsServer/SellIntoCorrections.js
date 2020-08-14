@@ -358,14 +358,14 @@ module.exports = class SellIntoCorrections extends Tactics {
     }
     /**利润,即若按照当前价格卖掉，获得的回报减去成本价(购买数量*当前价格)*(1-费率)-成本 */
     getProfit(amount) {
+        //需要通过深度图获取理论交易均价，再做判断，不能再根据市价
         if (this.imitateRun) {
             let _amount = amount || this.presentDeal.amount;
-            return Number(_amount * this.getTheoryPrice(_amount).avePrive * (1 - this.parameter.serviceCharge) - this.presentDeal.costing);
+            return Number(_amount * this.getTheoryPrice(_amount).avePrive * (1 - this.parameter.serviceCharge)
+                - this.presentDeal.costing);
         } else {
-            //需要通过深度图获取理论交易均价，再做判断，不能再根据市价
             let _amount = amount || this.presentDeal.amount;
-            return Number(_amount *
-                this.getTheoryPrice(_amount) * (1 - (this.parameter.serviceCharge * (1 - this.parameter.serviceChargeDiscounts)))
+            return Number(_amount * this.getTheoryPrice(_amount).avePrive * (1 - (this.parameter.serviceCharge * (1 - this.parameter.serviceChargeDiscounts)))
                 - this.presentDeal.costing);
         }
 
@@ -375,26 +375,26 @@ module.exports = class SellIntoCorrections extends Tactics {
         let _amount = 0;
         let total = 0, avePrive = 0;
         let tradesList = [];
-        if (!this.imitateRun) {
-            for (let i = 0; i < this.depth.bids.length; i++) {
-                const item = this.depth.bids[i];
-                if (_amount < amount) {
-                    const singleTradesAmount = item.quantity > amount - _amount ? amount - _amount : item.quantity;
-                    tradesList.push({
-                        price: item.price,
-                        amount: singleTradesAmount
-                    });
-                    total += item.price * singleTradesAmount;
-                    _amount += singleTradesAmount;
-                } else {
-                    break;
-                }
+        //if (!this.imitateRun) {
+        for (let i = 0; i < this.depth.bids.length; i++) {
+            const item = this.depth.bids[i];
+            if (_amount < amount) {
+                const singleTradesAmount = item.quantity > amount - _amount ? amount - _amount : item.quantity;
+                tradesList.push({
+                    price: item.price,
+                    amount: singleTradesAmount
+                });
+                total += item.price * singleTradesAmount;
+                _amount += singleTradesAmount;
+            } else {
+                break;
             }
-            avePrive = total / amount;
-        } else {
-            tradesList.push({ price: this.presentDeal.presentPrice, amount: amount });
-            avePrive = this.presentDeal.presentPrice;
         }
+        avePrive = total / amount;
+        // } else {
+        //     tradesList.push({ price: this.presentDeal.presentPrice, amount: amount });
+        //     avePrive = this.presentDeal.presentPrice;
+        // }
         return {
             tradesList,
             avePrive
