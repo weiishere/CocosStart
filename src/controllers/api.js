@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-08-08 18:15:43
+ * @LastEditTime: 2020-08-17 15:06:32
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -137,7 +137,8 @@ module.exports = {
     const data = {
       premiseForBuy: restrainHelper.premiseForBuy.map(item => ({ key: item.key, desc: item.desc })),
       premiseForSell: restrainHelper.premiseForSell.map(item => ({ key: item.key, desc: item.desc })),
-      dynamicParam: restrainHelper.dynamicParam.map(item => ({ key: item.key, desc: item.desc }))
+      dynamicParam: restrainHelper.dynamicParam.map(item => ({ key: item.key, desc: item.desc })),
+      symbolElecter: restrainHelper.symbolElecter.map(item => ({ key: item.key, desc: item.desc })),
     }
     ctx.body = {
       code: apiDateCode.success,
@@ -158,7 +159,7 @@ module.exports = {
       }
     } else {
       resultData = {
-        msg: 'updateParameter:未找到对应的实例',
+        msg: 'updateParameter:未找到对应的信息',
         code: apiDateCode.nullError
       }
     }

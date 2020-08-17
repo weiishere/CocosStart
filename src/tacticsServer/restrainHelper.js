@@ -74,6 +74,16 @@ const helpers = {
                 }
             }
         }
+    ],
+    //选币方案
+    symbolElecter: [
+        {
+            key: 'LossToRiseInflexion',
+            desc: '下跌拐点型，30分钟下跌5%以上，然后回调1%',
+            method: () => {
+                
+            }
+        }
     ]
 }
 

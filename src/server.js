@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 16:47:54
- * @LastEditTime: 2020-08-14 12:48:09
+ * @LastEditTime: 2020-08-17 19:44:54
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -9,18 +9,18 @@
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
-const body =  require('koa-bodyparser');
+const body = require('koa-bodyparser');
 const Koa = require('koa');
 const staticServer = require('koa-static');
 const serverScoket = require('./server-scoket');
-const {System} = require('./config')
-
+const { System } = require('./config')
+const { connectDB } = require('./db/mongoMaster');
 // import ApiRoutes from './routes/api-routes.js'
 const ApiRoutes = require('./routes/api-routes.js');
 
 const config = require('../webpack.config.js');
 const app = new Koa();
-
+const { Symbol } = require('./db');
 
 const compiler = webpack(config);
 
@@ -56,9 +56,15 @@ app.use(devMiddleware(compiler, {
 app.use(staticServer(__dirname + System.Public_path))
     .use(ApiRoutes.routes())
     .use(ApiRoutes.allowedMethods());
-
-//启动scoket
-serverScoket(app).listen(System.Server_port, () => {
-    console.log(`Service listening on port ${System.Server_port}!\n`);
+//启动数据库
+connectDB(() => {
+    //启动scoket
+    serverScoket(app).listen(System.Server_port, () => {
+        console.log(`Service listening on port ${System.Server_port}!\n`);
+    });
 });
 
+
+
+
+Symbol.create({ name: 'ETHUSDT' }, () => { });

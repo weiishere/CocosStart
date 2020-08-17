@@ -109,6 +109,9 @@ export default function AdvancedSetPanel({ tactice, paramter, updateParameter, d
                 <TabPane tab="动态调整" key="3">
                     {advancedRestran.dynamicParam.map(item => <div className='adv_content'><label><Switch />&nbsp;{item.desc}</label></div>)}
                 </TabPane>
+                <TabPane tab="选币方案" key="4">
+                    {advancedRestran.symbolElecter.map(item => <div className='adv_content'><label><Switch />&nbsp;{item.desc}</label></div>)}
+                </TabPane>
             </Tabs>
         </li>}
     </div>

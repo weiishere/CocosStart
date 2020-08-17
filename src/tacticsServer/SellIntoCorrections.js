@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-08-14 19:24:15
+ * @LastEditTime: 2020-08-17 17:53:18
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -25,7 +25,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             recent: null,//最近的完整K线
             present: null//当前正在运行的k线
         }
-        this.USDTPrice = 0;
+        //this.USDTPrice = 0;
         //this.KLineItem1m = {}
         // this.KLineItem5mForRecent = null;
         // this.KLineItem5mForPresent = null;
@@ -61,11 +61,12 @@ module.exports = class SellIntoCorrections extends Tactics {
             maxStayTime: 120//亏损但未达到止损值的情况下，最久呆的时间(分钟)
         }, parameter || {});
 
-        //基于基本逻辑下的高级约束(入场约束，出场约束，动态参数)
+        //基于基本逻辑下的高级约束(入场约束，出场约束，动态参数，选币方案)
         this.advancedOption = {
             premiseForBuy: [],
             premiseForSell: [],
-            dynamicParam: []
+            dynamicParam: [],
+            symbolElecter: []
         }
 
         //参数的说明，也表示需要进行界面设定的参数
@@ -172,6 +173,14 @@ module.exports = class SellIntoCorrections extends Tactics {
             //开始运行
             let fn = async () => {
                 clearTimeout(this.mainTimer);
+                //动态高级
+                for (let i = 0; i < restrainHelper.dynamicParam.length; i++) {
+                    const helper = restrainHelper.dynamicParam[i];
+                    if (this.advancedOption.dynamicParam.some(item => item === helper.key)) {
+                        const record = helper.method(this);
+                        this.addHistory('info', `参数已经自动调整：${record}`);
+                    }
+                }
                 if (!this.buyState) {
                     if (this.fristNowBuy) {
                         //立即买入
@@ -591,6 +600,7 @@ module.exports = class SellIntoCorrections extends Tactics {
     getInfo() {
         return {
             id: this.id,
+            uid:this.uid,
             name: this.name,
             symbol: this.symbol,
             param: this.parameter,
@@ -608,9 +618,27 @@ module.exports = class SellIntoCorrections extends Tactics {
             depth: this.depth
         }
     }
+    getDBInfo() {
+        return {
+            id: this.id,
+            uid: this.uid,
+            name: this.name,
+            symbol: this.symbol,
+            param: this.parameter,
+            presentDeal: this.presentDeal,
+            history: this.history.slice(this.history.length > 100 ? this.history.length - 100 : 0, this.history.length),
+            historyForDeal: this.historyForDeal,
+            runState: this.runState,
+            buyState: this.buyState,
+            imitateRun: this.imitateRun,
+            profitSymbol: this.profitSymbol,
+            advancedOption: this.advancedOption,
+        }
+    }
     getSimplyInfo() {
         return {
             id: this.id,
+            uid:this.uid,
             name: this.name,
             symbol: this.symbol,
             runState: this.runState,
