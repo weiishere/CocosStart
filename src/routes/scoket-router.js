@@ -2,7 +2,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 17:34:40
- * @LastEditTime: 2020-08-13 22:52:45
+ * @LastEditTime: 2020-08-19 21:51:34
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -37,7 +37,7 @@ module.exports = (scoket, io) => {
         const r = userRooms.find(item => item.uid === uid);
         if (r) {
             //tid中不能存在重复的scoketId，且tid必须有效（存在于tacticsList）
-            if (!r.tids.some(item => item.scoketId === scoket.id) && _tacticesCommand.tacticsList.some(item => item.id === tid)) {
+            if (!r.tids.some(item => item.scoketId === scoket.id) && (!tid || _tacticesCommand.tacticsList.some(item => item.id === tid))) {
                 r.tids.push({ tid, scoketId: scoket.id });
             }
         } else {

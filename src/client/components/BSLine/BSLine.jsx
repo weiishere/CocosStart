@@ -164,45 +164,50 @@ const initKlineData = (myChart, symbol) => {
             arr[i][0] = dateFormat(new Date(+result.res.data[i][0]), "HH:mm")
         }
         rawData = arr;
-        let _option = myChart.getOption();
-        let oldOption = option(symbol, result.res.data[result.res.data.length - 1][4]);
-
-        myChart.setOption(Object.assign({}, _option, {
-            title: oldOption.title,
-            xAxis: oldOption.xAxis,
-            yAxis: oldOption.yAxis,
-            series: oldOption.series,
-            markPoint: oldOption.markPoint
-        }));
-        //myChart.setOption(option(symbol, result.res.data[result.res.data.length - 1][4]));
-        localStorage.setItem("klineDataForBs", JSON.stringify(arr));
-        localStorage.setItem("SymbleForBs", symbol);
+        setOptionForNoCover(myChart, symbol, result.res.data[result.res.data.length - 1][4])
     })
+}
+
+const setOptionForNoCover = (myChart, symbol, price) => {
+    let _option = myChart.getOption();
+    let oldOption = option(symbol, price);
+
+    myChart.setOption(Object.assign({}, _option, {
+        title: oldOption.title,
+        xAxis: oldOption.xAxis,
+        yAxis: oldOption.yAxis,
+        series: oldOption.series,
+        markPoint: oldOption.markPoint
+    }));
+    localStorage.setItem("klineDataForBs", JSON.stringify(rawData));
+    localStorage.setItem("SymbleForBs", symbol);
 }
 
 export default function BSLine() {
     const [index] = React.useState(0);
     let symbol = '';
-    let updateCount = 0;
+    let lastKlineDate;
     React.useEffect(() => {
         //let lastHour = now.setHours(now.getHours() - 1);
         let lastIsFinal = false;
         const myChart = echarts.init(document.getElementById("bs-line"), "dark");
         myChart.setOption(option('', 0));
-        // EventHub.getInstance().addEventListener('switchTactics', payload => {
-        //     markPointData = [];
-        //     initKlineData(myChart, payload.symbol);
-        // });
+        EventHub.getInstance().addEventListener('switchTactics', payload => {
+            markPointData = [];
+            initKlineData(myChart, payload.symbol);
+        });
         // EventHub.getInstance().addEventListener('klineData', payload => {
         //     if (payload.symbol === symbol) {
         //         const { startTime, isFinal, open, close, low, high } = payload;
-        //         initKlineData(myChart, payload.symbol);
+        //         isFinal && console.log(dateFormat(new Date(startTime), "HH:mm"));
         //     }
         // });
+
         EventHub.getInstance().addEventListener('mapTacticsList', payload => {
             const target = payload.find(item => item.target);
             persentPrice = !target ? 0 : (target.buyState ? target.presentDeal.payPrice : 0);
             if (!target) return;
+            symbol = target.symbol;
             if (target.historyForDeal.length !== markPointData.length) { }
             markPointData = target.historyForDeal.map((item, i) => ({
                 name: '标点' + i,
@@ -212,12 +217,21 @@ export default function BSLine() {
                     color: item.type === 'buy' ? 'red' : 'green'//'rgb(41,60,85)'
                 }
             }));
-            symbol = target.symbol;
-            initKlineData(myChart, target.symbol);
+            if (target.KLineItem1m.startTime) {
+                const { startTime, isFinal, open, close, low, high } = target.KLineItem1m;
+                const date = dateFormat(new Date(startTime), "HH:mm");
+                if (rawData[rawData.length - 1][0] !== date) {
+                    rawData.push([date, close, close, close, close]);
+                } else {
+                    rawData[rawData.length - 1] = [date, open, high, low, close];
+                }
+                setOptionForNoCover(myChart, target.symbol, close);
+                //myChart.setOption(option(target.symbol, close));
+            }
         });
         // window.setInterval(() => {
         //     initKlineData(myChart, symbol);
-        // }, 3000);
+        // }, 60000);//1分钟矫正一次
     }, []);
     return <div id='bs-line'></div>
 }

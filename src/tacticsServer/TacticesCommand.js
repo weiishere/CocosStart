@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-28 02:58:03
- * @LastEditTime: 2020-08-13 21:28:43
+ * @LastEditTime: 2020-08-18 22:09:49
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -10,10 +10,9 @@
 const Tactics = require('./Tactics');
 const SellIntoCorrections = require('./SellIntoCorrections');
 const { WsConfig, WsRoute } = require('../config')
-//const client = require('binance-api-node').default()
 const { client } = require('../lib/binancer');
-//const { scoketCandles } = require('./binanceScoketBind');
 const { userRooms } = require('../controllers/user')
+const { Task } = require('../db')
 
 module.exports = class TacticesCommand {
     constructor() {
@@ -21,6 +20,8 @@ module.exports = class TacticesCommand {
         this.presentSymbleId = '';//当前选中的交易
         this.tacticsList = [];
         this.isRateDone = true;//是否已经完成了正常数据发送
+        this.initTasks();
+        this.fn();
     }
     static getInstance() {
         if (!this.tacticesCommand) {
@@ -28,30 +29,71 @@ module.exports = class TacticesCommand {
         }
         return this.tacticesCommand;
     }
+    async fn() {
+        await this.syncData();
+        setTimeout(() => {
+            this.fn()
+        }, 5000);
+    }
+    /**取数据库数据同步至tacticsList，并根据状态启动 */
+    async initTasks() {
+        const tasks = await Task.find({});
+        tasks.forEach(({ uid, name, taskJson }) => {
+            const mod = JSON.parse(taskJson);
+            let tactics = new SellIntoCorrections(uid, name, mod.parameter);
+            tactics = Object.assign(tactics, mod);
+            this.tacticsList.push(tactics);
+            tactics.setSymbol(tactics.symbol);
+            if (tactics.runState) {
+                tactics.runState = false;//powerSwitch函数在启动轮询前会反向设置runState
+                tactics.powerSwitch();
+            }
+        })
+    }
+    /** 同步数据至数据库 */
+    async syncData() {
+        return new Promise(resolve => {
+            this.tacticsList.forEach(async tesk => {
+                const result = await Task.findOneAndUpdate({
+                    tid: tesk.id,
+                    uid: tesk.uid,
+                    name: tesk.name,
+                    taskJson: JSON.stringify(tesk.getInfo())
+                }, function (err) { console.error(err) });
+            });
+            resolve(true);
+        });
+    }
+    /**启动K线逻辑 */
+    async runSymbolSync(){
+        
+    }
+    
     setScoket(scoketIO) {
         this.scoketIO = scoketIO;
     }
     initTactics(uid, symbol, name, parameter) {
-        //try {
-        let _tactics = this.tacticsList.find(item => (item.symbol === symbol && item.uid === uid));//一个用户亦种币最多跑一个程序
-        if (!_tactics) {
-            _tactics = new SellIntoCorrections(uid, name || `${symbol}_${this.tacticsList.length + 1}`, parameter);
-            this.tacticsList.push(_tactics);
+        try {
+            let _tactics = this.tacticsList.find(item => (item.symbol === symbol && item.uid === uid));//一个用户亦种币最多跑一个程序
+            if (!_tactics) {
+                _tactics = new SellIntoCorrections(uid, name || `${symbol}_${this.tacticsList.length + 1}`, parameter);
+                this.tacticsList.push(_tactics);
+            }
+            _tactics.setSymbol(symbol);
+            this.mapTotacticsList(uid, _tactics.id, true);
+            this.syncData();
+            return _tactics;
+        } catch (e) {
+            console.error(`initTactics Error${e}`)
+            return false;
         }
-        _tactics.setSymbol(symbol);
-        this.mapTotacticsList(uid, _tactics.id, true);
-        //scoketCandles.call(this, symbol, _tactics.id);
-        return _tactics;
-        // } catch (e) {
-        //     console.error(`initTactics Error${e}`)
-        //     return false;
-        // }
     }
     removeTactics(id) {
         let _tactics = this.tacticsList.find(item => item.id === id);
-        if (_tactics) _tactics.remove(() => {
+        if (_tactics) _tactics.remove(async () => {
             this.tacticsList = this.tacticsList.filter(item => item.id !== id);
             this.mapTotacticsList(_tactics.uid, id, true);
+            await Task.findOneAndRemove(_tactics.id, function (err) { console.error(err) });
             _tactics = undefined;
         });
     }

@@ -22,6 +22,7 @@ module.exports = router
   .get('/api/switchTactics', controllers.api.switchTactics)
   .get('/api/getUser', controllers.user.getUser)
   .get('/api/getAdvancedRestran',controllers.api.getAdvancedRestran)
+  .post('/api/switchSymbol', controllers.api.switchSymbol)
   .post('/api/initTactics', controllers.api.initTactics)
   .post('/api/tacticsOrder', controllers.api.tacticsOrder)
   .post('/api/updateParameter', controllers.api.updateParameter)

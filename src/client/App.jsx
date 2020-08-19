@@ -47,10 +47,10 @@ export default function App() {
                 //广播mapTacticsList
                 EventHub.getInstance().dispatchEvent('mapTacticsList', data);
             });
-            // scoket.on(WsRoute.KLINE_DATA, data => {
-            //     //广播kline数据
-            //     EventHub.getInstance().dispatchEvent('klineData', data);
-            // });
+            scoket.on(WsRoute.KLINE_DATA, data => {
+                //广播kline数据
+                EventHub.getInstance().dispatchEvent('klineData', data);
+            });
             
         });
 

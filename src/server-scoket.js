@@ -1,14 +1,13 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 17:35:44
- * @LastEditTime: 2020-08-13 17:20:01
+ * @LastEditTime: 2020-08-18 23:22:48
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
  */
 //const KoaRouter = require('koa-router');
 const ScoketRoutes = require('./routes/scoket-router');
-const { setIo } = require('./tool/ScoketInstance');
 // const JSONTransport = require('nodemailer/lib/json-transport');
 // const router = new KoaRouter();
 const { userRooms } = require('./controllers/user');
@@ -21,7 +20,6 @@ module.exports = function serverScoket(app) {
     const io = require('socket.io')(server);
     io.on('connection', socket => {
         ScoketRoutes(socket);
-        setIo(io);
     })
     _tacticesCommand.setScoket(io);
     timer = setInterval(() => {

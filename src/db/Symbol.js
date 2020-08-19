@@ -1,18 +1,18 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-17 17:53:50
- * @LastEditTime: 2020-08-17 19:45:47
+ * @LastEditTime: 2020-08-19 16:30:38
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
  */
 
 const { mongoose } = require('./mongoMaster');
-
+const dateFormat = require('format-datetime');
 
 const symbolModel = mongoose.model('Symbol', new mongoose.Schema({
     name: String,
-    updateDate: { type: Date, default: Date.now },
+    updateDate: String,//{ type: Date, default: Date.now },
     klineData5m: { type: Array, default: [] },
     klineData1m: { type: Array, default: [] },
     klineData1h: { type: Array, default: [] },
@@ -32,6 +32,14 @@ module.exports = {
             error(err)
         }
     },
+    findOneAndUpdate: async function (symbolEntity, error) {
+        try {
+            var query = { name: symbolEntity.name }
+            return await symbolModel.findOneAndUpdate(query, { updateDate: dateFormat(new Date(), "yyyy/MM/dd HH:mm:ss"), ...symbolEntity }, { upsert: true });
+        } catch (err) {
+            error(err)
+        }
+    },
     find: async function (symbolStr, keys, error) {
         const result = await symbolModel.find({ 'name': symbolStr }, keys.join(' ')).exec(function (err) { if (err) error(err); });
         return result;
@@ -40,6 +48,9 @@ module.exports = {
         //     if (err) return error(err);
         //     callback(data);
         // });
+    },
+    findAll: async function (error) {
+        return await symbolModel.find({}).exec(function (err) { if (err) error(err); });
     },
     delete: async function (symbol, error) {
         // symbolModel.remove({ _id: id }, function (err) {

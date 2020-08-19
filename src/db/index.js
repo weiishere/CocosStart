@@ -1,4 +1,4 @@
-const Symbol = require('./Symbol');
+const Symbol = require('./symbol');
 const User = require('./User');
 const Task = require('./Task');
 

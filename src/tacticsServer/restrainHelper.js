@@ -1,11 +1,14 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-14 13:49:13
- * @LastEditTime: 2020-08-14 19:27:49
+ * @LastEditTime: 2020-08-19 18:56:51
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
  */
+const { Symbol } = require('../db');
+const { default: Item } = require('antd/lib/list/Item');
+
 const helpers = {
     //入场条件
     premiseForBuy: [
@@ -80,11 +83,45 @@ const helpers = {
         {
             key: 'LossToRiseInflexion',
             desc: '下跌拐点型，30分钟下跌5%以上，然后回调1%',
-            method: () => {
-                
+            method: async () => {
+                return [];
+            }
+        },
+        {
+            key: 'bollStandard',
+            desc: 'BOLL布林指标',
+            method: async () => {
+                const symbolList = await Symbol.findAll();
+                symbolList.forEach(item => {
+                    const symbolItem = item.klineData5m;
+                });
+                return []
             }
         }
     ]
 }
 
 module.exports = { ...helpers };
+
+
+/*
+中轨线（MB）、上轨线（UP）和下轨线（DN）的计算，其计算方法如下：
+日BOLL指标的计算公式
+中轨线=N日的移动平均线
+上轨线=中轨线+两倍的标准差
+下轨线=中轨线－两倍的标准差
+
+日BOLL指标的计算过程
+1）计算MA
+MA=N日内的收盘价之和÷N
+
+2）计算标准差MD
+MD=平方根N日的（C－MA）的两次方之和除以N
+
+3）计算MB、UP、DN线
+MB=N日的MA
+UP=MB+2×MD
+DN=MB－2×MD
+
+各大股票交易软件默认N是20，所以MB等于当日20日均线值
+ */

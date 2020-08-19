@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-08-17 15:06:32
+ * @LastEditTime: 2020-08-19 21:53:40
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -26,6 +26,27 @@ module.exports = {
           code: apiDateCode.success,
           data: result.getInfo()
         }
+      }
+    }
+    ctx.body = resultData;
+    next();
+  },
+  switchSymbol: async (ctx, next) => {
+    const { tid, symbol } = ctx.request.body;
+    let resultData = {};
+    if (!tid || !symbol) {
+      resultData = {
+        msg: 'switchTactics:参数id或者symbol不能为空',
+        code: apiDateCode.nullError
+      }
+    } else {
+      const _tacticesCommand = TacticesCommand.getInstance();
+      const tactice = _tacticesCommand.tacticsList.find(item => item.id === tid);
+      tactice.setSymbol(symbol);
+      _tacticesCommand.mapTotacticsList(tactice.uid, tactice.id, true);
+      resultData = {
+        code: apiDateCode.success,
+        data: tactice ? tactice.getInfo() : {}
       }
     }
     ctx.body = resultData;
@@ -152,7 +173,7 @@ module.exports = {
     const tactices = _tacticesCommand.tacticsList.find(item => item.id == id);
     let resultData = {};
     if (tactices) {
-      tactices.advancedOption[item] = keys.split(',');
+      tactices.advancedOption[item] = keys ? keys.split(',') : [];
       resultData = {
         code: apiDateCode.success,
         data: tactices.getInfo()

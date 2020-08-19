@@ -104,13 +104,22 @@ export default function AdvancedSetPanel({ tactice, paramter, updateParameter, d
                         &nbsp; {item.desc}</label></div>)}
                 </TabPane>
                 <TabPane tab="出场约束" key="2">
-                    {advancedRestran.premiseForSell.map(item => <div className='adv_content'><label><Switch />&nbsp;{item.desc}</label></div>)}
+                    {advancedRestran.premiseForSell.map(item => <div className='adv_content'><label>
+                        <Switch checked={advancedOption.premiseForSell.some(key => key === item.key)}
+                            onChange={(checked) => onChange('premiseForSell', item.key, checked)} />
+                        &nbsp;{item.desc}</label></div>)}
                 </TabPane>
                 <TabPane tab="动态调整" key="3">
-                    {advancedRestran.dynamicParam.map(item => <div className='adv_content'><label><Switch />&nbsp;{item.desc}</label></div>)}
+                    {advancedRestran.dynamicParam.map(item => <div className='adv_content'><label>
+                        <Switch checked={advancedOption.dynamicParam.some(key => key === item.key)}
+                            onChange={(checked) => onChange('dynamicParam', item.key, checked)} />
+                        &nbsp;{item.desc}</label></div>)}
                 </TabPane>
                 <TabPane tab="选币方案" key="4">
-                    {advancedRestran.symbolElecter.map(item => <div className='adv_content'><label><Switch />&nbsp;{item.desc}</label></div>)}
+                    {advancedRestran.symbolElecter.map(item => <div className='adv_content'><label>
+                        <Switch checked={advancedOption.symbolElecter.some(key => key === item.key)}
+                            onChange={(checked) => onChange('symbolElecter', item.key, checked)} />
+                        &nbsp;{item.desc}</label></div>)}
                 </TabPane>
             </Tabs>
         </li>}

@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 16:47:54
- * @LastEditTime: 2020-08-17 19:44:54
+ * @LastEditTime: 2020-08-19 18:57:28
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -13,10 +13,12 @@ const body = require('koa-bodyparser');
 const Koa = require('koa');
 const staticServer = require('koa-static');
 const serverScoket = require('./server-scoket');
+const childProcess = require('child_process')
 const { System } = require('./config')
 const { connectDB } = require('./db/mongoMaster');
 // import ApiRoutes from './routes/api-routes.js'
 const ApiRoutes = require('./routes/api-routes.js');
+const SymbolServer = require('./symbolServer/symbolServer');
 
 const config = require('../webpack.config.js');
 const app = new Koa();
@@ -57,14 +59,18 @@ app.use(staticServer(__dirname + System.Public_path))
     .use(ApiRoutes.routes())
     .use(ApiRoutes.allowedMethods());
 //启动数据库
-connectDB(() => {
+connectDB(async () => {
+    if (process.env.CHILD_PROCESS === '1') {
+        //再开一个进程，初始化symbolk线数据
+        childProcess.fork('./src/symbolServer/index.js')
+    }
     //启动scoket
     serverScoket(app).listen(System.Server_port, () => {
         console.log(`Service listening on port ${System.Server_port}!\n`);
     });
-});
+}, 'master进程');
 
 
 
 
-Symbol.create({ name: 'ETHUSDT' }, () => { });
+//Symbol.create({ name: 'ETHUSDT' }, () => { });

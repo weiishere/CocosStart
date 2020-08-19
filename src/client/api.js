@@ -10,10 +10,11 @@
 export default {
     klines: 'klines',
     initTactics: '/api/initTactics',
+    switchSymbol: '/api/switchSymbol',
     switchTactics: '/api/switchTactics',
     tacticsOrder: '/api/tacticsOrder',
     updateParameter: '/api/updateParameter',
     updateAdvancedRestran: '/api/updateAdvancedRestran',
     getUser: '/api/getUser',
-    getAdvancedRestran: '/api/getAdvancedRestran'
+    getAdvancedRestran: '/api/getAdvancedRestran',
 }

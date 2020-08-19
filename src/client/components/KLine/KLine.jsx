@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 22:33:14
- * @LastEditTime: 2020-08-13 21:09:03
+ * @LastEditTime: 2020-08-18 16:22:39
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -141,12 +141,15 @@ const initKlineData = (myChart, symbol, callback) => {
 
 export default function KLine() {
     const [index] = React.useState(0);
-    //let symbol = '';
+    let theSymbol = '';
+    let lastKlineDate;
+    let isTimer = true;
     React.useEffect(() => {
         var myChart = echarts.init(document.getElementById("k-line"), 'dark');
         myChart.setOption(option(localStorage.getItem("klineSymbol") || ''));
-        
+
         const change = (symbol) => {
+            theSymbol = symbol;
             localStorage.setItem("klineSymbol", symbol);
             const key = 'loading';
             message.loading({ content: 'K线数据请求中..', key, duration: 0 });
@@ -160,11 +163,25 @@ export default function KLine() {
         EventHub.getInstance().addEventListener('switchTactics', payload => {
             change(payload.symbol);
         });
+        EventHub.getInstance().addEventListener('mapTacticsList', payload => {
+            const target = payload.find(item => item.target);
+            if (target.KLineItem1m.startTime && target.symbol === theSymbol) {
+                isTimer = true;
+                const { startTime, isFinal, open, close, low, high } = target.KLineItem5m.present;
+                const date = dateFormat(new Date(startTime), "HH:mm");
+                if (rawData[rawData.length - 1][0] !== date) {
+                    rawData.push([date, close, close, close, close]);
+                } else {
+                    rawData[rawData.length - 1] = [date, open, high, low, close];
+                }
+                myChart.setOption(option(target.symbol));
+            } else {
+                isTimer = false;
+            }
+        });
         window.setInterval(() => {
-            if (localStorage.getItem("klineSymbol")) initKlineData(myChart, localStorage.getItem("klineSymbol"), () => {
-                //message.success('K线已刷新');
-            });
-        }, 10000);
+            if (localStorage.getItem("klineSymbol")) initKlineData(myChart, localStorage.getItem("klineSymbol"), () => { });
+        }, 60000);
     }, []);
     return <div id='k-line'></div>
 }

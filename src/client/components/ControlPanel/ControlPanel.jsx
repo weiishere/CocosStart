@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input, Tooltip, Button, Select, InputNumber, Tag, Modal, Popover, Switch } from 'antd';
-import { PlusOutlined, CaretRightOutlined, PauseOutlined, IssuesCloseOutlined, PauseCircleOutlined, SettingOutlined, CloseOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons'
+import { PlusOutlined, CaretRightOutlined, PauseOutlined, IssuesCloseOutlined, SwapOutlined, PauseCircleOutlined, SettingOutlined, CloseOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons'
 import { requester } from '@src/tool/Requester'
 import { message } from 'antd';
 import EventHub from '@client/EventHub'
@@ -46,7 +46,7 @@ export default function ControlPanel({ uid }) {
             }
         }).then(({ res }) => {
             if (res.data.code === apiDateCode.success) {
-                message.success({ content: '操作成功', key, duration: 2 });
+                message.success({ content: '新增实例成功', key, duration: 1 });
                 //console.log(res.data.id)
                 location.replace(`#${res.data.data.id}`);
             } else {
@@ -101,6 +101,30 @@ export default function ControlPanel({ uid }) {
             }
         });
     }
+    //切币
+    const switchSymbol = () => {
+        message.loading({ content: 'loading..', key, duration: 0 });
+        let quickSymbol;
+        if (tacticeName.indexOf('&') !== -1) {
+            quickSymbol = tacticeName.split('&')[1];
+        }
+        requester({
+            url: api.switchSymbol,
+            type: 'post',
+            params: { tid: chooseTacticeId, symbol: quickSymbol || symbolStr },
+            option: {
+                baseUrl: 'API_server_url',
+                faileBack: error => { message.error({ content: error, key, duration: 2 }); }
+            }
+        }).then(({ res }) => {
+            if (res.data.code === apiDateCode.success) {
+                message.success({ content: '切币操作成功', key, duration: 1 });
+                location.replace(`#${res.data.data.id}`);
+            } else {
+                message.error({ content: res.data.msg, key, duration: 2 });
+            }
+        });
+    }
     React.useEffect(() => {
         // window.setTimeout(() => {
         //     alert('update')
@@ -150,9 +174,12 @@ export default function ControlPanel({ uid }) {
             {/* 待选:{symbolStr || 'null'} */}
             <Input maxLength={15} size="small" placeholder='请输入实例名称' value={tacticeName} onChange={e => {
                 setTacticeName(e.target.value)
-            }} style={{ width: "70%" }} />&nbsp;
+            }} style={{ width: "60%" }} />&nbsp;
             <Tooltip placement="bottom" title="创建实例">
                 <Button onClick={addTactice} type="primary" size={'small'} shape="circle" icon={<PlusOutlined />} />
+            </Tooltip>&nbsp;
+            <Tooltip placement="bottom" title="切币">
+                <Button disabled={disables[0]} onClick={switchSymbol} type="primary" size={'small'} shape="circle" icon={<SwapOutlined />} />
             </Tooltip>
         </div>
         <div>

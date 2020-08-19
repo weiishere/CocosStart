@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-06 13:56:49
- * @LastEditTime: 2020-08-13 21:27:35
+ * @LastEditTime: 2020-08-18 15:48:14
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -56,19 +56,22 @@ const scoketCandles = () => {
     doneFn = [];//清空
     const candles5m = client.ws.candles(symbols, '5m', payload => {
         TacticesCommand.getInstance().tacticsList.filter(item => item.symbol === payload.symbol).forEach(item => {
+            item.KLineItem5m.present = payload;
             if (payload.isFinal) {
                 item.KLineItem5m.recent = payload;
-            } else {
-                item.KLineItem5m.present = payload;
+                TacticesCommand.getInstance().mapTotacticsList(item.uid, item.id);
             }
         });
     });
     doneFn.push(candles5m);
     const candles1m = client.ws.candles(symbols, '1m', payload => {
         //this.scoket.emit(WsRoute.KLINE_DATA, payload);
-        // targetTacticsList(this.tacticsList, payload.symbol).forEach(item => {
-        //     item.KLineItem1m = payload;
-        // });
+        TacticesCommand.getInstance().tacticsList.filter(item => item.symbol === payload.symbol).forEach(item => {
+            item.KLineItem1m = payload;
+            if (payload.isFinal) {
+                TacticesCommand.getInstance().mapTotacticsList(item.uid, item.id);
+            }
+        });
     })
     doneFn.push(candles1m);
     symbols.forEach(symbol => {
