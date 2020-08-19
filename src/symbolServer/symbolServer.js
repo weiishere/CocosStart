@@ -52,13 +52,13 @@ module.exports = class SymbolServer {
                         const result = await requester({
                             url: 'klines',
                             params: { symbol, interval: "5m", startTime: lastTime },
-                            option: { failedBack: (error) => message.error({ content: error, key, duration: 2 }) }
+                            option: { failedBack: (error) => console.error(error) }
                         });
                         resolve(result);
                     } catch (e) {
                         console.error(e);
                     }
-                }, 100);
+                }, 150);
             })
         }
         for (let symbolKey in prices) {
