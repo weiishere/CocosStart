@@ -148,7 +148,7 @@ module.exports = class TacticesCommand {
         const tickers = await client.allBookTickers();
         this.allTicker = tickers;
         setTimeout(() => {
-            getAllTicker();
+            this.getAllTicker();
         }, 60 * 60 * 1000);
     }
 }
