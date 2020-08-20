@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-06 13:56:49
- * @LastEditTime: 2020-08-18 15:48:14
+ * @LastEditTime: 2020-08-20 16:52:18
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -89,6 +89,12 @@ const scoketCandles = () => {
         });
     });
     doneFn.push(trades);
+    const ticker = client.ws.ticker(symbols, ticker => {
+        TacticesCommand.getInstance().tacticsList.filter(item => item.symbol === ticker.symbol).forEach(item => {
+            item.presentDeal.ticker = ticker;
+        });
+      })
+    doneFn.push(ticker);
 }
 
 module.exports = {

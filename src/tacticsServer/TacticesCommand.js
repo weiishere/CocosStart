@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-28 02:58:03
- * @LastEditTime: 2020-08-18 22:09:49
+ * @LastEditTime: 2020-08-20 17:02:11
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -21,7 +21,9 @@ module.exports = class TacticesCommand {
         this.tacticsList = [];
         this.isRateDone = true;//是否已经完成了正常数据发送
         this.initTasks();
-        this.fn();
+        this.getAllTicker();
+        this.allTicker = null;
+        this.syncDataGo();
     }
     static getInstance() {
         if (!this.tacticesCommand) {
@@ -29,11 +31,9 @@ module.exports = class TacticesCommand {
         }
         return this.tacticesCommand;
     }
-    async fn() {
+    async syncDataGo() {
         await this.syncData();
-        setTimeout(() => {
-            this.fn()
-        }, 5000);
+        setTimeout(() => { this.syncDataGo() }, 5000);
     }
     /**取数据库数据同步至tacticsList，并根据状态启动 */
     async initTasks() {
@@ -65,10 +65,10 @@ module.exports = class TacticesCommand {
         });
     }
     /**启动K线逻辑 */
-    async runSymbolSync(){
-        
+    async runSymbolSync() {
+
     }
-    
+
     setScoket(scoketIO) {
         this.scoketIO = scoketIO;
     }
@@ -144,4 +144,11 @@ module.exports = class TacticesCommand {
         //this.scoket.emit(WsRoute.TACTICS_LIST, result);
         return this.tacticsList.find(item => item.id === tid);
     };
+    async getAllTicker() {
+        const tickers = await client.allBookTickers();
+        this.allTicker = tickers;
+        setTimeout(() => {
+            getAllTicker();
+        }, 60 * 60 * 1000);
+    }
 }

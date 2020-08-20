@@ -119,7 +119,7 @@ export default function ControlPanel({ uid }) {
         }).then(({ res }) => {
             if (res.data.code === apiDateCode.success) {
                 message.success({ content: '切币操作成功', key, duration: 1 });
-                location.replace(`#${res.data.data.id}`);
+                EventHub.getInstance().dispatchEvent('switchTactics', res.data.data);
             } else {
                 message.error({ content: res.data.msg, key, duration: 2 });
             }
@@ -293,7 +293,7 @@ export default function ControlPanel({ uid }) {
             onOk={() => { setModalVisible(false) }}
             onCancel={() => { setModalVisible(false) }}
         >
-            <AdvancedSetPanel tactice={targetTactice} paramter={paramter} updateParameter={updateParameter} disables={disables} />
+            <AdvancedSetPanel modalVisible={modalVisible} tactice={targetTactice} paramter={paramter} updateParameter={updateParameter} disables={disables} />
         </Modal>}
     </div>
 }

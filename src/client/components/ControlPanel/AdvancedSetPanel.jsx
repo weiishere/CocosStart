@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Input, message, Switch, Tabs } from 'antd';
+import { Input, message, Switch, Tabs, Tooltip } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons'
 const { Search } = Input;
 import clone from 'clone';
 import { requester } from '@src/tool/Requester'
@@ -9,7 +10,7 @@ import EventHub from '@client/EventHub'
 import './style.less'
 const { TabPane } = Tabs;
 
-export default function AdvancedSetPanel({ tactice, paramter, updateParameter, disables }) {
+export default function AdvancedSetPanel({ modalVisible, tactice, paramter, updateParameter, disables }) {
     const [paramters, setParamters] = React.useState(paramter);
     const [advancedRestran, setAdvancedRestran] = React.useState(null);
     const [advancedOption, setAdvancedOption] = React.useState(tactice.advancedOption);
@@ -64,8 +65,10 @@ export default function AdvancedSetPanel({ tactice, paramter, updateParameter, d
         })
     }
     React.useEffect(() => {
-        getAdvancedRestranList();
-    }, []);
+        modalVisible && getAdvancedRestranList();
+        modalVisible && setParamters(paramter);
+    }, [modalVisible]);
+
     return <div className='advanced_set_panel'>
         <h4>参数配置</h4>
         <ul>
@@ -101,25 +104,25 @@ export default function AdvancedSetPanel({ tactice, paramter, updateParameter, d
                     {advancedRestran.premiseForBuy.map(item => <div className='adv_content'><label>
                         <Switch checked={advancedOption.premiseForBuy.some(key => key === item.key)}
                             onChange={(checked) => onChange('premiseForBuy', item.key, checked)} />
-                        &nbsp; {item.desc}</label></div>)}
+                        &nbsp; {item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
                 </TabPane>
                 <TabPane tab="出场约束" key="2">
                     {advancedRestran.premiseForSell.map(item => <div className='adv_content'><label>
                         <Switch checked={advancedOption.premiseForSell.some(key => key === item.key)}
                             onChange={(checked) => onChange('premiseForSell', item.key, checked)} />
-                        &nbsp;{item.desc}</label></div>)}
+                        &nbsp;{item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
                 </TabPane>
                 <TabPane tab="动态调整" key="3">
                     {advancedRestran.dynamicParam.map(item => <div className='adv_content'><label>
                         <Switch checked={advancedOption.dynamicParam.some(key => key === item.key)}
                             onChange={(checked) => onChange('dynamicParam', item.key, checked)} />
-                        &nbsp;{item.desc}</label></div>)}
+                        &nbsp;{item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
                 </TabPane>
                 <TabPane tab="选币方案" key="4">
                     {advancedRestran.symbolElecter.map(item => <div className='adv_content'><label>
                         <Switch checked={advancedOption.symbolElecter.some(key => key === item.key)}
                             onChange={(checked) => onChange('symbolElecter', item.key, checked)} />
-                        &nbsp;{item.desc}</label></div>)}
+                        &nbsp;{item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
                 </TabPane>
             </Tabs>
         </li>}

@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-08-19 19:37:00
+ * @LastEditTime: 2020-08-20 20:19:56
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -39,6 +39,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         ];
         this.history = []
         this.depth = null;//深度
+        this.ticker = null;
         //关于交易的一些历史记录（用于BS线）
         this.historyForDeal = [];
         this.checkBuyTime = 0;
@@ -62,7 +63,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             //isLiveRiseStopLossRate: true,
             stopLossRate: 0.1,//下跌情况（亏损）下跌止损点
             maxStayTime: 120,//亏损但未达到止损值的情况下，最久呆的时间(分钟)
-            faildBuyTimeForChange: 10,//进场失败次数，用于切币
+            faildBuyTimeForChange: 3,//进场失败次数，用于切币
             pauseFaildChangeSymbol: true,//若需切币且推荐币为空，是否暂停
         }, parameter || {});
 
@@ -215,7 +216,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             const sellOrder = this.presentDeal.sellOrderInfo ? this.presentDeal.sellOrderInfo.orderId : 0;//在买的时候sellOrderInfo有可能还不存在
             if (trade.buyerOrderId === this.presentDeal.buyOrderInfo.orderId || trade.sellerOrderId === sellOrder) {
                 //能到这里，说明有挂单在处理，不可能同时有两种状态的挂单，要么买要么卖（至少当前不考虑）
-                console.log(trade);
+                //console.log(trade);
                 this.presentDeal.tradesDoneAmount += trade.quantity;
                 if (trade.buyerOrderId === this.presentDeal.buyOrderInfo.orderId) {
                     //买
@@ -238,6 +239,7 @@ module.exports = class SellIntoCorrections extends Tactics {
     async powerSwitch(nowBuy) {
         this.fristNowBuy = nowBuy;
         this.runState = !this.runState;
+        this.checkBuyTime = 0;
         this.addHistory('order', `实例将${(this.runState ? "开始运行" : "停止")}${this.imitateRun ? "模拟程序" : ""}`);
         if (this.runState) {
             //开始运行
@@ -567,47 +569,51 @@ module.exports = class SellIntoCorrections extends Tactics {
                         //这里成本暂时等于usdt量加手续费，之后获取订单后会更新
                         costing: 0,//this.parameter.usdtAmount * (1 + (this.parameter.serviceCharge * (1 - this.parameter.serviceChargeDiscounts))),
                         //通过BNB交手续费，那么这里导致数量不会扣减，就是实际到账数量
-                        amount: (this.parameter.usdtAmount / price),
+                        amount: +(this.parameter.usdtAmount / price).toFixed(1),
                         historyProfit: 0,//当前交易的历史盈利
                         tradesDoneAmount: 0//处理完成的币数量
                     });
-                //挂单
-                this.presentDeal.buyOrderInfo = await client.order({
-                    symbol: this.symbol,
-                    type: 'MARKET',
-                    side: 'BUY',
-                    quantity: this.presentDeal.amount
-                });
-                this.addHistory('info', `已挂单买入交易，理论均价：${price}，理论交易数量:${this.presentDeal.amount}`);
-                //let dealResult = null;
-                let dealResult = await new Promise(async (resolve) => {
-                    const fn = async () => {
-                        const clean = await client.ws.user(msg => {
-                            console.log('userMsg', msg);
-                        })
-                        const _dealResult = await client.getOrder({
-                            symbol: this.symbol,
-                            orderId: this.presentDeal.buyOrderInfo.orderId,
-                        });
-                        if (!_dealResult.isWorking) {
-                            resolve(_dealResult);
-                        } else {
-                            await fn();
+                try {
+                    //挂单
+                    this.presentDeal.buyOrderInfo = await client.order({
+                        symbol: this.symbol,
+                        type: 'MARKET',
+                        side: 'BUY',
+                        quantity: this.presentDeal.amount
+                    });
+                    this.addHistory('info', `已挂单买入交易，理论均价：${price}，理论交易数量:${this.presentDeal.amount}`);
+                    //let dealResult = null;
+                    let dealResult = await new Promise(async (resolve) => {
+                        const fn = async () => {
+                            // const clean = await client.ws.user(msg => {
+                            //     console.log('userMsg', msg);
+                            // })
+                            const _dealResult = await client.getOrder({
+                                symbol: this.symbol,
+                                orderId: this.presentDeal.buyOrderInfo.orderId,
+                            });
+                            if (_dealResult.status === 'FILLED') {
+                                resolve(_dealResult);
+                            } else {
+                                await fn();
+                            }
                         }
-                    }
-                    await fn();
-                });
-                this.presentDeal.payPrice = dealResult.price;
-                this.presentDeal.amount = this.presentDeal.tradesDoneAmount = dealResult.executedQty;//购买的数量
-                this.presentDeal.costing = this.parameter.usdtAmount;//dealResult.price * dealResult.executedQty;//交易均价*交易数量
-                this.addHistory('buy', {
-                    symbol: this.symbol,
-                    dealAmount: this.presentDeal.amount,
-                    orderId: this.presentDeal.buyOrderInfo.orderId,
-                    profit: this.getProfit(),
-                    price: dealResult.price,
-                    costing: this.presentDeal.costing
-                });
+                        await fn();
+                    });
+                    this.presentDeal.payPrice = dealResult.price;
+                    this.presentDeal.amount = this.presentDeal.tradesDoneAmount = +dealResult.executedQty;//购买的数量
+                    this.presentDeal.costing = dealResult.price * dealResult.executedQty;//交易均价*交易数量
+                    this.addHistory('buy', {
+                        symbol: this.symbol,
+                        dealAmount: this.presentDeal.amount,
+                        orderId: this.presentDeal.buyOrderInfo.orderId,
+                        profit: this.getProfit(),
+                        price: dealResult.price,
+                        costing: this.presentDeal.costing
+                    });
+                } catch (e) {
+                    console.error(e);
+                }
             }
         } else if (order === 'sell') {
             if (this.imitateRun) {
@@ -626,44 +632,50 @@ module.exports = class SellIntoCorrections extends Tactics {
                 //真实卖出
                 //this.dealTimer && clearInterval(this.dealTimer);
                 this.presentDeal = Object.assign(this.presentDeal, {
-                    tradesDoneAmount: 0//处理完成的币数量，之后的程序使用getProfit函数记得加上参数this.presentDeal.amount
+                    tradesDoneAmount: 0//处理完成的币数量，归零用于卖出运算，之后的程序使用getProfit函数记得加上参数this.presentDeal.amount
                 });
-                //挂单
-                this.presentDeal.sellOrderInfo = await client.order({
-                    symbol: this.symbol,
-                    type: 'MARKET',
-                    side: 'SELL',
-                    quantity: this.presentDeal.amount
-                });
-                this.addHistory('info', `已挂单卖出交易，理论交易数量:${this.presentDeal.amount}`);
-                let dealResult = await new Promise(async (resolve) => {
-                    const fn = async () => {
-                        const clean = await client.ws.user(msg => {
-                            console.log('userMsg-2', msg);
-                        })
-                        const _dealResult = await client.getOrder({
-                            symbol: this.symbol,
-                            orderId: this.presentDeal.sellOrderInfo.orderId,
-                        });
-                        if (!_dealResult.isWorking) {
-                            resolve(_dealResult);
-                        } else {
-                            await fn();
+                try {
+                    //挂单
+                    this.presentDeal.sellOrderInfo = await client.order({
+                        symbol: this.symbol,
+                        type: 'MARKET',
+                        side: 'SELL',
+                        quantity: this.presentDeal.amount
+                    });
+                    this.addHistory('info', `已挂单卖出交易，理论交易数量:${this.presentDeal.amount}`);
+                    let dealResult = await new Promise(async (resolve) => {
+                        const fn = async () => {
+                            // const clean = await client.ws.user(msg => {
+                            //     console.log('userMsg-2', msg);
+                            // })
+                            const _dealResult = await client.getOrder({
+                                symbol: this.symbol,
+                                orderId: this.presentDeal.sellOrderInfo.orderId,
+                            });
+                            if (_dealResult.status === 'FILLED') {
+                                resolve(_dealResult);
+                            } else {
+                                setTimeout(async () => {
+                                    await fn();
+                                }, 150);
+                            }
                         }
-                    }
-                    await fn();
-                });
-                this.presentDeal.payPrice = dealResult.price;//实际交易均价
-                this.presentDeal.amount = this.presentDeal.tradesDoneAmount = dealResult.executedQty;//实际交易数量
-                this.presentDeal.costing = dealResult.price * dealResult.executedQty;//回本，交易均价*交易数量
-                this.addHistory('sell', {
-                    symbol: this.symbol,
-                    dealAmount: this.presentDeal.amount,
-                    orderId: this.presentDeal.sellOrderInfo.orderId,
-                    profit: this.getProfit(this.presentDeal.amount),
-                    price: this.presentDeal.payPrice
-                });
-                this.profitSymbol.push({ symbol: this.symbol, profit: this.getProfit(this.presentDeal.amount) });
+                        await fn();
+                    });
+                    this.presentDeal.payPrice = dealResult.price;//实际交易均价
+                    this.presentDeal.amount = this.presentDeal.tradesDoneAmount = dealResult.executedQty;//实际交易数量
+                    this.presentDeal.costing = dealResult.price * dealResult.executedQty;//回本，交易均价*交易数量
+                    this.addHistory('sell', {
+                        symbol: this.symbol,
+                        dealAmount: this.presentDeal.amount,
+                        orderId: this.presentDeal.sellOrderInfo.orderId,
+                        profit: this.getProfit(this.presentDeal.amount),
+                        price: this.presentDeal.payPrice
+                    });
+                    this.profitSymbol.push({ symbol: this.symbol, profit: this.getProfit(this.presentDeal.amount) });
+                } catch (e) {
+                    console.error(e);
+                }
             }
             //if (this.nextSymbol) this.symbol = this.nextSymbol;//出场成功之后切换币
         }
@@ -695,7 +707,8 @@ module.exports = class SellIntoCorrections extends Tactics {
             KLineItem5m: this.KLineItem5m,
             presentTrade: this.presentTrade,
             advancedOption: this.advancedOption,
-            depth: this.depth
+            depth: this.depth,
+            ticker: this.ticker
         }
     }
     getDBInfo() {

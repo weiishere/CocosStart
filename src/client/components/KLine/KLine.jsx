@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 22:33:14
- * @LastEditTime: 2020-08-18 16:22:39
+ * @LastEditTime: 2020-08-20 17:39:15
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -50,6 +50,10 @@ const option = (symbol) => {
                     width: 2,
                     opacity: 1
                 }
+            },
+            formatter: function (param) {
+                return `${param[0].axisValue}<br/>开盘：${param[0].value[1]}<br/>收盘：${param[0].value[2]}<br/>
+                最高：${param[0].value[4]}<br/>最低：${param[0].value[3]}<br/>涨跌：${((param[0].value[2] - param[0].value[1]) / param[0].value[2] * 100).toFixed(2)}`;
             }
         },
         xAxis: {
@@ -165,7 +169,7 @@ export default function KLine() {
         });
         EventHub.getInstance().addEventListener('mapTacticsList', payload => {
             const target = payload.find(item => item.target);
-            if (target.KLineItem1m.startTime && target.symbol === theSymbol) {
+            if (target && target.KLineItem1m.startTime && target.symbol === theSymbol) {
                 isTimer = true;
                 const { startTime, isFinal, open, close, low, high } = target.KLineItem5m.present;
                 const date = dateFormat(new Date(startTime), "HH:mm");

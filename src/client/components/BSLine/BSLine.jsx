@@ -63,6 +63,10 @@ const option = (symbol, price) => {
                     width: 2,
                     opacity: 1
                 }
+            },
+            formatter: function (param) {
+                return `${param[0].axisValue}<br/>开盘：${param[0].value[1]}<br/>收盘：${param[0].value[2]}<br/>
+                最高：${param[0].value[4]}<br/>最低：${param[0].value[3]}<br/>涨跌：${((param[0].value[2] - param[0].value[1]) / param[0].value[2]*100).toFixed(2)}`;
             }
         },
         // legend: {

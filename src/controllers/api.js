@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-08-19 21:53:40
+ * @LastEditTime: 2020-08-20 18:05:23
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -97,7 +97,7 @@ module.exports = {
             break;
           case 'runAndBuy':
             //运行并马上入场
-            tactices.imitateRun = true;
+            tactices.imitateRun = false;
             tactices.powerSwitch(true);
             break;
           case 'imitateRun':
@@ -156,10 +156,10 @@ module.exports = {
   getAdvancedRestran: async (ctx, next) => {
     const restrainHelper = require('../tacticsServer/restrainHelper');
     const data = {
-      premiseForBuy: restrainHelper.premiseForBuy.map(item => ({ key: item.key, desc: item.desc })),
-      premiseForSell: restrainHelper.premiseForSell.map(item => ({ key: item.key, desc: item.desc })),
-      dynamicParam: restrainHelper.dynamicParam.map(item => ({ key: item.key, desc: item.desc })),
-      symbolElecter: restrainHelper.symbolElecter.map(item => ({ key: item.key, desc: item.desc })),
+      premiseForBuy: restrainHelper.premiseForBuy.map(item => ({ key: item.key, label: item.label, desc: item.desc })),
+      premiseForSell: restrainHelper.premiseForSell.map(item => ({ key: item.key, label: item.label, desc: item.desc })),
+      dynamicParam: restrainHelper.dynamicParam.map(item => ({ key: item.key, label: item.label, desc: item.desc })),
+      symbolElecter: restrainHelper.symbolElecter.map(item => ({ key: item.key, label: item.label, desc: item.desc })),
     }
     ctx.body = {
       code: apiDateCode.success,
