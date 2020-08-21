@@ -24,6 +24,7 @@ module.exports = class TacticesCommand {
         this.getAllTicker();
         this.allTicker = null;
         this.syncDataGo();
+        this.startWaveSpeedData();
     }
     static getInstance() {
         if (!this.tacticesCommand) {
@@ -153,5 +154,17 @@ module.exports = class TacticesCommand {
         client.ws.allTickers(tickers => {
             this.allTicker = tickers.filter(item => /USDT$/.test(item)).sort((a, b) => b.priceChangePercent - a.priceChangePercent);
         })
+    }
+    /**定时器处理波动速度数据 */
+    startWaveSpeedData() {
+        setInterval(() => {
+            this.tacticsList.forEach(item => {
+                if (item.presentTrade) {
+                    //1秒取一次样
+                    if (item.presentSpeedArr.length === 35) item.presentSpeedArr.shift();
+                    item.presentSpeedArr.push(item.presentTrade.price);
+                }
+            })
+        }, 1000);
     }
 }

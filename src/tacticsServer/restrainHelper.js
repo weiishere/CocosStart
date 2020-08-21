@@ -7,7 +7,7 @@
  * @~~
  */
 const { Symbol } = require('../db');
-const tacticesCommand = require('./TacticesCommand');
+const { client } = require('../lib/binancer');
 
 const helpers = {
     //入场条件
@@ -16,15 +16,11 @@ const helpers = {
             key: 'last5kRise',
             label: '上5分线涨势',
             desc: '上一条5分线是涨势',
-            method: (tactics) => {
+            method: async (tactics) => {
                 //上一条5分线显示上涨
                 if (!tactics.KLineItem5m.recent) {
-                    client.candles({ symbol, interval: '5m', limit: 2 }).then(data => {
-                        if (data[1].isFinal) {
-                            tactics.KLineItem5m.recent = data[1];
-                        } else {
-                            tactics.KLineItem5m.recent = data[0];
-                        }
+                    await client.candles({ symbol: tactics.symbol, interval: '5m', limit: 2 }).then(data => {
+                        tactics.KLineItem5m.recent = data[0]
                     });
                 }
                 if (tactics.KLineItem5m.recent.close - tactics.KLineItem5m.recent.open > 0) {
@@ -64,13 +60,13 @@ const helpers = {
         {
             key: 'fastRise',
             label: '波动出现高速下跌',
-            desc: '无论盈亏，10秒内的取样值都没高于0.01个点,每次采样的变化速率都是跌，且总下跌量相对当前价格超过-2%（）',
+            desc: '无论盈亏，10秒内的取样值都没高于0.01个点,每次采样的变化速率都是跌，且10秒累计下跌量相对当前价格超过-2%（）',
             method: (tactics) => {
                 const speed = tactics.getWaveSpeedList(10);
                 for (let i = 0, l = speed.length; i < l; i++) {
-                    if (speed[i] / tactics.presentDeal.presentPrice > 0.0001) return false;
+                    if (speed[i] / tactics.presentPrice > 0.0001) return false;
                 }
-                return speed.reduce((pre, cur) => pre + cur, 0) / tactics.presentDeal.presentPrice < -0.02 ? true : false;
+                return speed.reduce((pre, cur) => pre + cur, 0) / tactics.presentPrice < -0.02 ? true : false;
             }
         },
         {
@@ -82,7 +78,7 @@ const helpers = {
                 for (let i = 0, l = speed.length; i < l; i++) {
                     if (speed[i] > 0) return false;
                 }
-                speed.reduce((pre, cur) => pre + cur, 0) / tactics.presentDeal.presentPrice < -0.01 ? true : false;
+                return speed.reduce((pre, cur) => pre + cur, 0) / tactics.presentPrice < -0.01 ? true : false;
             }
         }
     ],
@@ -90,10 +86,23 @@ const helpers = {
     dynamicParam: [
         {
             key: 'setStopLossRateByHitory',
-            label: '根据历史价格调整止损值',
-            desc: '(当天最高价-当天开盘价) / 当天开盘价',
+            label: '根据24小时ticker动态调整止损值',
+            desc: '24小时ticker动态调整止损值：(当天最高价-当天开盘价) / 当天开盘价',
             method: (tactics) => {
-                //
+                const allTicker = require('./TacticesCommand').getInstance().allTicker;
+                let ticker = [];
+                if (allTicker) {
+                    ticker = allTicker.find(item => item.symbol === tactics.symbol);
+                } else {
+                    return;
+                }
+                if (ticker) {
+                    const stopLossRate = (ticker.high - ticker.open) / ticker.open;
+                    if (stopLossRate !== tactics.parameter.stopLossRate) {
+                        tactics.parameter.stopLossRate = stopLossRate;
+                        tactics.addHistory('info', `止损点已经动态调整为：` + stopLossRate, true, { color: '#dee660' });
+                    }
+                }
             }
         },
         {
@@ -101,7 +110,9 @@ const helpers = {
             label: '根据涨幅调整止盈拐点跌幅',
             desc: '涨幅过大时调整拐点止盈点，及时出货，保障利润，盈利大于10个点，则拐点调为10%，出场更敏感',
             method: (tactics) => {
+                if (!tactics.buyState) return;
                 let riseRate = tactics.getProfit() / tactics.presentDeal.costing;
+                let lastriseStopLossRate = tactics.parameter.riseStopLossRate;
                 if (riseRate >= 0.15) {
                     //盈利大于10个点
                     tactics.parameter.riseStopLossRate = tactics.parameterBackup.riseStopLossRate * 0.1;
@@ -117,7 +128,10 @@ const helpers = {
                     //小于0.01，意思没动
                     tactics.parameter.riseStopLossRate = tactics.parameterBackup.riseStopLossRate;
                 }
-                tactics.addHistory('info', `止盈点已经动态调整为：` + tactics.parameter.riseStopLossRate, true);
+                if (lastriseStopLossRate !== tactics.parameter.riseStopLossRate) {
+                    tactics.addHistory('info', `止盈点已经动态调整为：${tactics.parameter.riseStopLossRate}%`, true, { color: "#dee660" });
+                }
+
             }
         },
         {
@@ -125,14 +139,19 @@ const helpers = {
             label: '大跌幅后一直横盘调整拐点止损值',
             desc: '历史跌幅过大（超过90%止损值）但未出场，之后后调整拐点止损值，即用于大亏损后恢复一定的比例(相对最大亏损)时候就止损',
             method: (tactics) => {
+                if (!tactics.buyState) return;
+                if (tactics.presentDeal.historyProfit > 0) return;
                 let lossRate = tactics.presentDeal.historyProfit / tactics.presentDeal.costing;//lossRate肯定为负才说明是亏
                 let lossStopLossRate = tactics.parameterBackup.lossStopLossRate;
                 if (lossRate / tactics.parameter.stopLossRate >= -0.9) {
                     //最大亏损大于在8-10个点，回本7个点就止损
                     lossStopLossRate = 60;//回最大亏损的60就割肉
-                } else 
+                    tactics.addHistory('info', `拐点止损(回本增幅%)动态调整为：` + lossStopLossRate, true);
+                }
                 tactics.parameter.lossStopLossRate = lossStopLossRate;
-                tactics.addHistory('info', `拐点止损(回本增幅%)：` + lossStopLossRate, true);
+                if (lossStopLossRate === tactics.parameterBackup.lossStopLossRate) {
+                    tactics.addHistory('info', `拐点止损(回本增幅%)动态恢复为：` + lossStopLossRate, true);
+                }
             }
         },
         {

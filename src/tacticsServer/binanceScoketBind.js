@@ -28,7 +28,7 @@ const targetTacticsList = (tacticsList, symbol) => tacticsList.filter(item => it
 //         });
 //     });
 //     // client.ws.ticker(symbol, ticker => {
-//     //     targetTacticsList.forEach(item => item.presentDeal.presentPrice = Number(ticker.prevDayClose));
+//     //     targetTacticsList.forEach(item => item.presentPrice = Number(ticker.prevDayClose));
 //     // })
 //     client.ws.candles(symbol, '1m', payload => {
 //         //this.scoket.emit(WsRoute.KLINE_DATA, payload);
@@ -41,7 +41,7 @@ const targetTacticsList = (tacticsList, symbol) => tacticsList.filter(item => it
 //     })
 //     client.ws.trades(symbol, trade => {
 //         targetTacticsList(this.tacticsList, trade.symbol).forEach(item => {
-//             item.presentDeal.presentPrice = Number(trade.price);
+//             item.presentPrice = Number(trade.price);
 //             item.pushTrade(trade);
 //         });
 //     });
@@ -84,6 +84,7 @@ const scoketCandles = () => {
     const trades = client.ws.trades(symbols, trade => {
         TacticesCommand.getInstance().tacticsList.filter(item => item.symbol === trade.symbol).forEach(item => {
             //item.pushTrade(trade);
+            item.presentPrice = Number(trade.price);
             item.presentTrade = trade;
         });
     });

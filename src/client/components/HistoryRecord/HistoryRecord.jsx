@@ -42,7 +42,7 @@ export default function HistoryRecord() {
             ele.scrollTop = ele.scrollHeight;
             if (target && target.runState) {
                 if (target.buyState) {
-                    setStateStr(`出场检测中，交易信息≈${(+(+target.presentDeal.payPrice).toFixed(5)) }U/${+(+target.presentDeal.amount.toFixed(5))}枚`);
+                    setStateStr(`出场检测中，交易信息≈${(+(+target.presentDeal.payPrice).toFixed(5))}U/${+(+target.presentDeal.amount.toFixed(5))}枚`);
                 } else {
                     setStateStr('入场检测中...');
                 }
@@ -62,14 +62,13 @@ export default function HistoryRecord() {
                     (() => {
                         switch (item.type) {
                             case 'buy':
-                                return <div style={{ color: 'red' }}>买入{item.content.symbol.replace('USDT', '')}币{item.content.dealAmount}枚，
+                                return <div style={{ color: item.color || '#999' }}>买入{item.content.symbol.replace('USDT', '')}币{item.content.dealAmount}枚，
                                 均价:{Number(item.content.price)} U，成本{item.content.costing} U</div>
-
                             case 'sell':
-                                return <div style={{ color: 'green' }}>卖出{item.content.symbol.replace('USDT', '')}币{item.content.dealAmount}枚，
+                                return <div style={{ color: item.color || '#999' }}>卖出{item.content.symbol.replace('USDT', '')}币{item.content.dealAmount}枚，
                                 均价:{Number(item.content.price)}，回本{item.content.costing} U，盈亏:{item.content.profit} U</div>
                             case 'info':
-                                return item.content
+                                return <div style={{ color: item.color || '#999' }}>{item.content}</div>
                             default:
                                 return item.content
                         }

@@ -9,9 +9,9 @@
 
 const Tactics = require('./Tactics');
 const restrainHelper = require('./restrainHelper');
-const { clearInterval, setInterval } = require('stompjs');
 const { client } = require('../lib/binancer');
 const { scoketCandles } = require('./binanceScoketBind');
+
 
 module.exports = class SellIntoCorrections extends Tactics {
     constructor(uid, name, parameter) {
@@ -72,7 +72,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.advancedOption = {
             premiseForBuy: ['last5kRise'],
             premiseForSell: ['fastRise'],
-            dynamicParam: ['setRiseStopLossRate'],
+            dynamicParam: ['setStopLossRateByHitory', 'setRiseStopLossRate'],
             symbolElecter: []
         }
 
@@ -100,9 +100,9 @@ module.exports = class SellIntoCorrections extends Tactics {
             faildBuyTimeForChange: [false, "未盈利情况下需切币的进场失败次数"],
             pauseFaildChangeSymbol: [false, "若n次上场失败且推荐币为空，是否待机等待。(启用可能会重启；反则任务停止，亦自动切币也失效)"]
         };
+        this.presentPrice = 0;//当前价格
         //当前的交易信息
         this.presentDeal = {
-            presentPrice: 0,//当前价格
             costing: 0,//成本,
             payPrice: 0,//买入价格
             amount: 0,//购买后持有的相应代币数量
@@ -116,15 +116,17 @@ module.exports = class SellIntoCorrections extends Tactics {
         }
     }
     /**添加历史记录，isDouble：如果重复两条记录，是否允许重复添加 */
-    addHistory(type, content, isDouble) {
+    addHistory(type, content, isDouble, option) {
         if (isDouble && this.history.length !== 0 && this.history[this.history.length - 1].type === type && this.history[this.history.length - 1].content === content) {
             this.history[this.history.length - 1].time = Date.parse(new Date());
             return;
         }
+        const theOption = Object.assign({ color: '#999', iconType: '' }, option || {});
         type !== 'profitChange' && this.history.push({
             type: type,//order、info、buy、sell
             time: Date.parse(new Date()),
-            content: content//`实例已${(this.runState ? "运行" : "停止")}${this.imitateRun ? "模拟" : ""}`
+            content: content,//`实例已${(this.runState ? "运行" : "停止")}${this.imitateRun ? "模拟" : ""}`
+            color: theOption.color
         })
         if (type === 'buy' || type === 'sell') {
             this.historyForDeal.push({ ...this.history[this.history.length - 1] });
@@ -135,8 +137,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 _historyForDeal.content.profit = content;
             }
         }
-        const _tacticesCommand = require('./TacticesCommand').getInstance();
-        _tacticesCommand.mapTotacticsList(this.uid, this.id, true);
+        require('./TacticesCommand').getInstance().mapTotacticsList(this.uid, this.id, true);
         //if (this.presentSymbleId === this.id) _tacticesCommand.mapTotacticsList(this.uid, _tacticesCommand.presentSymbleId, true);
     }
     /**寻找新币，返回待选列表，和当前用户下的实例中，此实例用到的交易对（可能排名前面的正在使用中） */
@@ -197,12 +198,6 @@ module.exports = class SellIntoCorrections extends Tactics {
     /** 接收每次推过来的交易信息，如果有符合当前正在交易的数据，就要截获数据  */
     pushTrade(trade) {
         this.presentTrade = trade;
-        if (this.lastTradeTime && (trade.eventTime - this.lastTradeTime) > 2000) {
-            //2秒取一次样
-            if (this.presentSpeedArr.length === 20) this.presentSpeedArr.shift();
-            this.presentSpeedArr.push(price);
-        }
-        this.lastTradeTime = +trade.eventTime;
     }
     /**nowBuy=true表示跳过入场判断，立即入场 */
     async powerSwitch(nowBuy) {
@@ -217,8 +212,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 for (let i = 0; i < restrainHelper.dynamicParam.length; i++) {
                     const helper = restrainHelper.dynamicParam[i];
                     if (this.advancedOption.dynamicParam.some(item => item === helper.key)) {
-                        const record = helper.method(this);
-                        this.addHistory('info', `参数已经自动调整：${record}`);
+                        helper.method(this);
                     }
                 }
                 if (!this.buyState) {
@@ -295,7 +289,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             const helper = restrainHelper.premiseForBuy[i];
             if (this.advancedOption.premiseForBuy.some(item => item === helper.key)) {
                 if (!helper.method(this)) {
-                    this.addHistory('info', `入场约束“${helper.desc}”不符合，重新等待入场...`, true);
+                    this.addHistory('info', `入场约束“${helper.desc}”不符合，重新等待入场...`, true, { color: '#5bb3ab' });
                     return false;
                 }
             }
@@ -309,12 +303,12 @@ module.exports = class SellIntoCorrections extends Tactics {
             if (Math.abs(this.KLineItem5m.present.close - this.KLineItem5m.present.open) / this.KLineItem5m.present.open > this.parameter.riseBuyRange) {
                 //记录当前价格
                 const tempPrice = await this.getPresentPrice();//await Helper.getInstance(this).getPresentPrice();
-                //console.log(Number(tempPrice) === this.presentDeal.presentPrice ? '价格一致' : '不一致'); console.log(tempPrice + "--" + this.presentDeal.presentPrice);
+                //console.log(Number(tempPrice) === this.presentPrice ? '价格一致' : '不一致'); console.log(tempPrice + "--" + this.presentPrice);
                 this.addHistory('info', `5分线上涨幅度超过${this.parameter.riseBuyRange}，获取当前价格${Number(tempPrice)}，等待${this.parameter.riseStayCheckRateForBuy / 1000}s后价格...`);
                 return await new Promise((resolve) => {
                     setTimeout(async () => {
                         const price = await this.getPresentPrice();//await Helper.getInstance(this).getPresentPrice();
-                        //console.log(Number(price) === this.presentDeal.presentPrice ? '价格一致' : '不一致'); console.log(price + "--" + this.presentDeal.presentPrice);
+                        //console.log(Number(price) === this.presentPrice ? '价格一致' : '不一致'); console.log(price + "--" + this.presentPrice);
                         if (price - tempPrice < 0) {
                             this.addHistory('info', `${this.parameter.riseStayCheckRateForBuy / 1000}s后差价为${Number(price - tempPrice)},出现下跌，重新等待入场时机...`);
                             resolve(false);
@@ -447,7 +441,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             }
         }
 
-        //console.log(price + '---' + this.presentDeal.presentPrice)
+        //console.log(price + '---' + this.presentPrice)
         // this.addHistory('info', `暂时标定不卖出，继续...`);
         // return false;
     }
@@ -480,8 +474,8 @@ module.exports = class SellIntoCorrections extends Tactics {
         }
         avePrive = total / amount;
         // } else {
-        //     tradesList.push({ price: this.presentDeal.presentPrice, amount: amount });
-        //     avePrive = this.presentDeal.presentPrice;
+        //     tradesList.push({ price: this.presentPrice, amount: amount });
+        //     avePrive = this.presentPrice;
         // }
         return {
             tradesList,
@@ -490,13 +484,13 @@ module.exports = class SellIntoCorrections extends Tactics {
     }
     /**获取瞬时市场价格(应该只用于检测入场的时候使用这个，在卖出的时候都应该通过深度图获取理论交易价来判断) */
     async getPresentPrice() {
-        if (this.presentDeal.presentPrice) return this.presentDeal.presentPrice;
+        if (this.presentPrice) return this.presentPrice;
         const allPrice = await client.prices();
         return allPrice[this.symbol];
     }
     async deal(order) {
-        const price = this.presentDeal.presentPrice = await this.getPresentPrice();
-        //console.log(Number(price) === this.presentDeal.presentPrice ? '价格一致' : '不一致'); console.log(price + "--" + this.presentDeal.presentPrice);
+        const price = this.presentPrice = await this.getPresentPrice();
+        //console.log(Number(price) === this.presentPrice ? '价格一致' : '不一致'); console.log(price + "--" + this.presentPrice);
         if (order === 'buy') {
             if (this.imitateRun) {
                 this.presentDeal = Object.assign(this.presentDeal,
@@ -513,7 +507,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                     profit: this.getProfit(),
                     price: price,
                     costing: this.presentDeal.costing
-                });
+                }, false, { color: 'red' });
             } else {
                 //真实购买，入场数量可以通过市价获取，需要通过推送获取到最终的交易均价，再获取到成本
                 //this.dealTimer && clearInterval(this.dealTimer);
@@ -554,8 +548,8 @@ module.exports = class SellIntoCorrections extends Tactics {
                         orderInfo: this.presentDeal.buyOrderInfo,
                         profit: this.getProfit(),
                         price: this.presentDeal.payPrice,
-                        costing: this.presentDeal.costing
-                    });
+                        costing: this.presentDeal.costing,
+                    }, false, { color: 'red' });
                 } catch (e) {
                     console.error(e);
                 }
@@ -572,7 +566,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                     price: price,
                     profit: this.getProfit(),
                     costing: this.presentDeal.amount * (1 - this.parameter.serviceCharge) * price
-                });
+                }, false, { color: 'green' });
             } else {
                 //真实卖出
                 //this.dealTimer && clearInterval(this.dealTimer);
@@ -619,7 +613,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                         orderInfo: this.presentDeal.sellOrderInfo,
                         profit: this.presentDeal.costing - costingBuy,//卖出回本减去买入的成本，为什么不用getProfit，因为getProfit是理论利润
                         price: this.presentDeal.payPrice
-                    });
+                    }, false, { color: 'green' });
                     this.profitSymbol.push({ symbol: this.symbol, profit: this.presentDeal.costing - costingBuy });
                 } catch (e) {
                     console.error(e);
@@ -654,6 +648,7 @@ module.exports = class SellIntoCorrections extends Tactics {
     }
     /**获取波动速度列表，level是取最近的变更值深度，越深越准，值必须大于等于1，小于等于20 */
     getWaveSpeedList(level) {
+        if (this.presentSpeedArr.length <= 1) return [];
         const arr = this.presentSpeedArr.splice(this.presentSpeedArr.length - level + 2);
         let speedArr = [];
         for (let i = 0, l = arr.length; i < l; i++) {
