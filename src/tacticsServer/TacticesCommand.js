@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-28 02:58:03
- * @LastEditTime: 2020-08-20 17:02:11
+ * @LastEditTime: 2020-08-21 15:28:14
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -145,10 +145,13 @@ module.exports = class TacticesCommand {
         return this.tacticsList.find(item => item.id === tid);
     };
     async getAllTicker() {
-        const tickers = await client.allBookTickers();
-        this.allTicker = tickers;
-        setTimeout(() => {
-            this.getAllTicker();
-        }, 60 * 60 * 1000);
+        // const tickers = await client.allBookTickers();
+        // this.allTicker = tickers;
+        // setTimeout(() => {
+        //     this.getAllTicker();
+        // }, 60 * 60 * 1000);
+        client.ws.allTickers(tickers => {
+            this.allTicker = tickers.filter(item => /USDT$/.test(item)).sort((a, b) => b.priceChangePercent - a.priceChangePercent);
+        })
     }
 }

@@ -20,8 +20,13 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
         _paramters.find(item => item.key === key).value = value;
         setParamters(_paramters);
     }
-    const getAdvancedRestranList = () => {
+    const getAdvancedRestranList = (callback) => {
         let key = 'loading';
+        if (advancedRestran) { 
+            callback(); 
+            return; 
+        };
+        
         message.loading({ content: '加载配置规则数据..', key, duration: 0 });
         requester({
             url: api.getAdvancedRestran,
@@ -33,6 +38,7 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
         }).then(({ res }) => {
             message.destroy();
             setAdvancedRestran(res.data.data);
+            callback && callback()
         });
     }
     const updateAdvancedRestran = (item, callBack) => {
@@ -65,8 +71,11 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
         })
     }
     React.useEffect(() => {
-        modalVisible && getAdvancedRestranList();
-        modalVisible && setParamters(paramter);
+        modalVisible && getAdvancedRestranList(() => {
+            modalVisible && setParamters(paramter);
+            modalVisible && setAdvancedOption({ ...tactice.advancedOption });
+        });
+
     }, [modalVisible]);
 
     return <div className='advanced_set_panel'>

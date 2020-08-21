@@ -83,8 +83,8 @@ const scoketCandles = () => {
 
     const trades = client.ws.trades(symbols, trade => {
         TacticesCommand.getInstance().tacticsList.filter(item => item.symbol === trade.symbol).forEach(item => {
-            item.pushTrade(trade);
-            //TacticesCommand.getInstance().mapTotacticsList(item.uid, item.id, true);
+            //item.pushTrade(trade);
+            item.presentTrade = trade;
         });
     });
     doneFn.push(trades);

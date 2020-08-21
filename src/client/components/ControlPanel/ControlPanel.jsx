@@ -152,6 +152,7 @@ export default function ControlPanel({ uid }) {
                 }
                 _targetTactice.runState ? setDisables([true, false, true]) : setDisables([false, true, false]);
                 setParamter(paramArr);
+                setTargetTactice(_targetTactice)
             }
         });
         //运行币切换
@@ -293,7 +294,13 @@ export default function ControlPanel({ uid }) {
             onOk={() => { setModalVisible(false) }}
             onCancel={() => { setModalVisible(false) }}
         >
-            <AdvancedSetPanel modalVisible={modalVisible} tactice={targetTactice} paramter={paramter} updateParameter={updateParameter} disables={disables} />
+            <AdvancedSetPanel 
+            modalVisible={modalVisible} 
+            tactice={targetTactice} 
+            paramter={paramter} 
+            updateParameter={updateParameter} 
+            //advancedOption={advancedOption}
+            disables={disables} />
         </Modal>}
     </div>
 }

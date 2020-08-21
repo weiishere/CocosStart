@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 02:37:01
- * @LastEditTime: 2020-08-13 19:38:14
+ * @LastEditTime: 2020-08-21 14:53:01
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -97,7 +97,7 @@ const option = (symbol, presentTradeInfo) => ({
             type: 'bar',
             stack: '总量',
             label: {
-                position: 'right',
+                position: 'left',
                 show: true,
                 formatter: params => -params.value,
             },
@@ -108,7 +108,7 @@ const option = (symbol, presentTradeInfo) => ({
             type: 'bar',
             stack: '总量',
             label: {
-                position: 'left',
+                position: 'right',
                 show: true,
                 formatter: params => params.value,
             },

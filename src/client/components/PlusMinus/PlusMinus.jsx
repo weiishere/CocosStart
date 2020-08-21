@@ -122,7 +122,10 @@ export default function PlusMinus() {
                 //     value: item.content.profit, name: Number(item.content.profit), label: {position: 'top'}, itemStyle: { color: item.content.profit < 0 ? 'green' : 'red' }
                 // }));
                 data = target.historyForDeal.filter(item => item.type === 'sell').map(item => ({
-                    value: item.content.profit, name: Number(item.content.profit.toFixed(3)), label: { position: 'top' }, itemStyle: { color: item.content.profit < 0 ? 'green' : 'red' },
+                    value: item.content.profit, 
+                    name: Number(item.content.profit.toFixed(3)), 
+                    label: { position: 'top' }, 
+                    itemStyle: { color: item.content.profit < 0 ? 'green' : 'red' },
                     time: item.time
                 }));
                 //如果最后一个type=buy，就需要加入，用来记录当前的利润变化
@@ -136,7 +139,7 @@ export default function PlusMinus() {
                     });
                 }
                 const l = data.length;
-                for (let i = l; i < 10; i++) {
+                for (let i = l; i < 15; i++) {
                     data.push({ value: 0, name: '', time: 0 });
                 }
                 myChart.setOption(option());
