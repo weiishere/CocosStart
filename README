@@ -1,1 +1,5 @@
 Quantitative App for binancer
+
+打dll包：yarn dll
+启动：yarn start
+启动多线程（k线初始化）:yarn restart
