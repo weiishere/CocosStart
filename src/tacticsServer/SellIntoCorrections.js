@@ -696,55 +696,54 @@ module.exports = class SellIntoCorrections extends Tactics {
         return speedArr;
     };
     getInfo() {
-        //去掉数据量大点的字段
-        return {
-            id: this.id,
-            uid: this.uid,
-            name: this.name,
-            symbol: this.symbol,
-            param: this.parameter,
-            paramDesc: this.parameterDesc,
-            presentDeal: this.presentDeal,
-            history: this.history.slice(this.history.length > 100 ? this.history.length - 100 : 0, this.history.length),
-            historyForDeal: this.historyForDeal,
-            runState: this.runState,
-            buyState: this.buyState,
-            imitateRun: this.imitateRun,
-            profitSymbol: this.profitSymbol,
-            KLineItem1m: this.KLineItem1m,
-            KLineItem5m: this.KLineItem5m,
-            presentTrade: this.presentTrade,
-            advancedOption: this.advancedOption,
-            depth: this.depth,
-            ticker: this.ticker
-        }
+        let result = {};
+        ['id', 
+         'uid',
+         'name', 
+         'symbol', 
+         'parameter', 
+         'parameterDesc', 
+         'presentDeal',
+         'history', 
+         'historyForDeal', 
+         'runState', 
+         'buyState', 
+         'imitateRun',
+         'profitSymbol', 
+         'KLineItem1m', 
+         'KLineItem5m', 
+         'presentTrade', 
+         'advancedOption', 
+         'depth', 
+         'ticker'].forEach(item => result[item] = this[item]);
+        return result;
     }
     getDBInfo() {
-        return {
-            id: this.id,
-            uid: this.uid,
-            name: this.name,
-            symbol: this.symbol,
-            param: this.parameter,
-            presentDeal: this.presentDeal,
-            history: this.history.slice(this.history.length > 100 ? this.history.length - 100 : 0, this.history.length),
-            historyForDeal: this.historyForDeal,
-            runState: this.runState,
-            buyState: this.buyState,
-            imitateRun: this.imitateRun,
-            profitSymbol: this.profitSymbol,
-            advancedOption: this.advancedOption,
-        }
+        let result = {};
+        ['id', 
+         'uid',
+         'name', 
+         'symbol', 
+         'parameter', 
+         'presentDeal',
+         'history', 
+         'historyForDeal', 
+         'runState', 
+         'buyState', 
+         'imitateRun',
+         'profitSymbol',
+         'advancedOption'].forEach(item => result[item] = this[item]);
+        return result;
     }
     getSimplyInfo() {
-        return {
-            id: this.id,
-            uid: this.uid,
-            name: this.name,
-            symbol: this.symbol,
-            runState: this.runState,
-            imitateRun: this.imitateRun,
-            buyState: this.buyState
-        }
+        let result = {};
+        ['id', 
+         'uid',
+         'name', 
+         'symbol', 
+         'runState', 
+         'imitateRun',
+         'buyState'].forEach(item => result[item] = this[item]);
+        return result;
     }
 }

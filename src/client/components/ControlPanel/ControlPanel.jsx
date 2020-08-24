@@ -159,11 +159,11 @@ export default function ControlPanel({ uid }) {
                 runState: item.runState
             })));
             const _targetTactice = payload.find(item => item.target === true);
-            //_targetTactice && setParamter(_targetTactice.paramDesc.map(item => ({ paramDesc: item, value: _targetTactice.param[item] })));
+            //_targetTactice && setParamter(_targetTactice.parameterDesc.map(item => ({ parameterDesc: item, value: _targetTactice.parameter[item] })));
             let paramArr = [];
             if (_targetTactice) {
-                for (let key of Object.keys(_targetTactice.paramDesc)) {
-                    paramArr.push({ key, value: _targetTactice.param[key], desc: _targetTactice.paramDesc[key][1], isNoAdv: _targetTactice.paramDesc[key][0] })
+                for (let key of Object.keys(_targetTactice.parameterDesc)) {
+                    paramArr.push({ key, value: _targetTactice.parameter[key], desc: _targetTactice.parameterDesc[key][1], isNoAdv: _targetTactice.parameterDesc[key][0] })
                 }
                 _targetTactice.runState ? setDisables([true, false, true]) : setDisables([false, true, false]);
                 setParamter(paramArr);
