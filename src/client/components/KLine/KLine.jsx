@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 22:33:14
- * @LastEditTime: 2020-08-20 17:39:15
+ * @LastEditTime: 2020-08-24 18:11:12
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -70,10 +70,19 @@ const option = (symbol) => {
         grid: {
             bottom: 80
         },
+
         dataZoom: [{
-            textStyle: {
-                color: '#8392A5'
-            },
+            type: 'inside',
+            start: 50,
+            end: 100
+        },
+        {
+            show: true,
+            type: 'slider',
+            start: 50,
+            end: 100
+        }, {
+            textStyle: { color: '#8392A5' },
             handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
             handleSize: '80%',
             dataBackground: {
@@ -91,9 +100,7 @@ const option = (symbol) => {
                 shadowColor: 'rgba(0, 0, 0, 0.6)',
                 shadowOffsetX: 2,
                 shadowOffsetY: 2
-            }
-        }, {
-            type: 'inside'
+            },
         }],
         animation: false,
         series: [
@@ -112,9 +119,22 @@ const option = (symbol) => {
     };
 }
 
+const setOptionForNoCover = (myChart, symbol) => {
+    let _option = myChart.getOption();
+    let oldOption = option(symbol);
+    localStorage.setItem("klineSymbol", symbol);
+    console.log("设置klineSymbol为："+symbol);
+    myChart.setOption(Object.assign({}, _option, {
+        title: oldOption.title,
+        xAxis: oldOption.xAxis,
+        yAxis: oldOption.yAxis,
+        series: oldOption.series
+    }));
+}
+
 const initKlineData = (myChart, symbol, callback) => {
     let now = new Date();
-    let lastHour = now.setHours(now.getHours() - 4);
+    let lastHour = now.setHours(now.getHours() - 12);
     requester({
         url: api.klines,
         params: {
@@ -136,9 +156,8 @@ const initKlineData = (myChart, symbol, callback) => {
             arr[i][0] = dateFormat(new Date(+result.res.data[i][0]), "HH:mm")
         }
         rawData = arr;
-        myChart.setOption(option(symbol));
-        //localStorage.setItem("klineSymbol", symbol);
         localStorage.setItem("klineData", JSON.stringify(arr));
+        setOptionForNoCover(myChart, symbol);
         callback && callback();
     })
 }
@@ -155,6 +174,7 @@ export default function KLine() {
         const change = (symbol) => {
             theSymbol = symbol;
             localStorage.setItem("klineSymbol", symbol);
+            console.log("设置klineSymbol为："+symbol);
             const key = 'loading';
             message.loading({ content: 'K线数据请求中..', key, duration: 0 });
             initKlineData(myChart, localStorage.getItem("klineSymbol"), () => {
@@ -178,7 +198,8 @@ export default function KLine() {
                 } else {
                     rawData[rawData.length - 1] = [date, open, high, low, close];
                 }
-                myChart.setOption(option(target.symbol));
+                setOptionForNoCover(myChart, target.symbol);
+                //myChart.setOption(option(target.symbol));
             } else {
                 isTimer = false;
             }

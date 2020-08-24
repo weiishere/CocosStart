@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-28 02:58:03
- * @LastEditTime: 2020-08-21 15:28:14
+ * @LastEditTime: 2020-08-24 14:19:23
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -145,6 +145,16 @@ module.exports = class TacticesCommand {
         //this.scoket.emit(WsRoute.TACTICS_LIST, result);
         return this.tacticsList.find(item => item.id === tid);
     };
+    pushBetterSymbol(uid, id, symbolList) {
+        const r = userRooms.find(r => r.uid === uid);
+        if (r) {
+            r.tids.forEach(({ tid, scoketId }) => {
+                if (tid === id) {
+                    this.scoketIO.to(scoketId).emit(WsRoute.MULTIPLE_PRICE_CHANGE, symbolList);
+                }
+            })
+        }
+    }
     async getAllTicker() {
         // const tickers = await client.allBookTickers();
         // this.allTicker = tickers;
@@ -152,7 +162,7 @@ module.exports = class TacticesCommand {
         //     this.getAllTicker();
         // }, 60 * 60 * 1000);
         client.ws.allTickers(tickers => {
-            this.allTicker = tickers.filter(item => /USDT$/.test(item)).sort((a, b) => b.priceChangePercent - a.priceChangePercent);
+            this.allTicker = tickers.filter(item => /USDT$/.test(item.symbol)).sort((a, b) => b.priceChangePercent - a.priceChangePercent);
         })
     }
     /**定时器处理波动速度数据 */

@@ -186,6 +186,27 @@ module.exports = {
     }
     ctx.body = resultData;
     next();
+  },
+  //刷新推荐币
+  refreshSymbol: async (ctx, next) => {
+    const { tid } = ctx.query;
+    const tactices = TacticesCommand.getInstance().tacticsList.find(item => item.id == tid);
+    let resultData = {};
+    if (tactices) {
+      const { symbols } = await tactices.findSymbol();
+      resultData = {
+        code: apiDateCode.success,
+        data: symbols
+      }
+    } else {
+      resultData = {
+        msg: 'updateParameter:未找到对应的实例',
+        code: apiDateCode.nullError
+      }
+    }
+
+    ctx.body = resultData;
+    next();
   }
 };
 

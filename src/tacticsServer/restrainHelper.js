@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-14 13:49:13
- * @LastEditTime: 2020-08-21 19:37:29
+ * @LastEditTime: 2020-08-24 17:22:07
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -192,14 +192,62 @@ const helpers = {
             method: async () => {
                 //获取所有的币，
                 const blackList = ['BUSDUSDT', 'TUSDUSDT', 'USDCUSDT', 'PAXUSDT', 'AUDUSDT', 'EURUSDT', 'GBPUSDT', 'BTCUSDT', 'LTCUSDT', 'ETHUSDT', 'BCHUSDT', 'EOSUSDT'];
-                const allSymbols = tacticesCommand.getInstance().allTicker;
+                const allSymbols = require('./TacticesCommand').getInstance().allTicker;
                 let index = 1000;//推荐级别千位
                 let resultList = [];
                 for (let i in allSymbols) {
                     if (allSymbols.hasOwnProperty(i) && !blackList.some(item => item === i)) {
-                        resultList.push({ symbol: i, score: --index });
+                        const { priceChangePercent, high, low, volume, volumeQuote, totalTrades,prevDayClose } = allSymbols[i];
+                        resultList.push({
+                            symbol: allSymbols[i].symbol, score: --index,
+                            data: {
+                                priceChangePercent, high, low, volume, volumeQuote, totalTrades,prevDayClose
+                            }
+                        });
                     }
                 }
+                return resultList;
+            }
+        },
+        {
+            key: 'history24h',
+            label: '24小时状态分析',
+            desc: '24小时ticker涨幅大于0且小于40%（越接近40%的一半即20%，评分更高），当前接近24小时最高价(离最高价差值浮动1%内，越接近评分更高)，且交易量大于500万',
+            method: async () => {
+                //获取所有的币
+                const allSymbols = require('./TacticesCommand').getInstance().allTicker;
+                let resultList = [];
+                let index = 100000;//推荐级别十万位
+                for (let i in allSymbols) {
+                    let score = 0;
+                    const item = allSymbols[i];
+                    if (!allSymbols.hasOwnProperty(i)) continue;
+                    if (+item.volumeQuote < 5000000) continue;//交易量大于5000000
+                    const masxRise = 40;//最高涨幅限定
+                    //涨幅0~40%内
+                    if (+item.priceChangePercent < 0 || +item.priceChangePercent > masxRise) {
+                        continue;
+                    } else {
+                        //越接近20分越高
+                        const s1 = Math.abs((masxRise / 2) - item.priceChangePercent);
+                        score += (((masxRise / 2) - s1) / (masxRise / 2)) * 100;//100是最高分
+                    }
+                    //最高价价差1%范围内
+                    const r2 = Math.abs((item.curDayClose - item.high) / item.curDayClose);
+                    if (r2 > 0.01) {
+                        continue;
+                    } else {
+                        //越接近分越高
+                        score += ((0.01 - r2) / 0.01) * 100;
+                    }
+                    const { priceChangePercent, high, low, volume, volumeQuote, totalTrades,prevDayClose } = item;
+                    resultList.push({
+                        symbol: item.symbol, score: index + score, data: {
+                            priceChangePercent, high, low, volume, volumeQuote, totalTrades,prevDayClose
+                        }
+                    });
+                }
+                resultList = resultList.sort((a, b) => b.score - a.score);
                 return resultList;
             }
         }

@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-08-21 19:15:38
+ * @LastEditTime: 2020-08-24 15:50:37
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -73,7 +73,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             premiseForBuy: ['last5kRise'],
             premiseForSell: ['fastRise'],
             dynamicParam: ['setStopLossRateByHitory', 'setRiseStopLossRate'],
-            symbolElecter: []
+            symbolElecter: ['blacklist', 'history24h']
         }
 
         //参数的说明，也表示需要进行界面设定的参数
@@ -147,10 +147,15 @@ module.exports = class SellIntoCorrections extends Tactics {
             const helper = restrainHelper.symbolElecter[i];
             if (this.advancedOption.symbolElecter.some(item => item === helper.key)) {
                 const _symbolList = await helper.method(this);
-                symbolList = symbolList.concat(_symbolList);
+                if (symbolList.length !== 0) {
+                    symbolList = symbolList.filter(v => _symbolList.some(it => it.symbol === v.symbol));//取交集
+                } else {
+                    symbolList = symbolList.concat(_symbolList);
+                }
             }
         }
         const symbols = Array.from(new Set(symbolList));//去重!!!这里要考虑一下symbol排序优先级
+        //const symbols = a.concat(b.filter(v => !a.includes(v)));
         let chooseIndex = -1;
         if (symbols.length !== 0) {
             chooseIndex = 0;
@@ -161,6 +166,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 }
             }
         }
+        require('./TacticesCommand').getInstance().pushBetterSymbol(this.uid, this.id, symbols);
         return { symbols, chooseItem: symbols[chooseIndex] };
     }
     /**切币函数，返回切币是否成功 bool*/

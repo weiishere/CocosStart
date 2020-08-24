@@ -17,4 +17,5 @@ export default {
     updateAdvancedRestran: '/api/updateAdvancedRestran',
     getUser: '/api/getUser',
     getAdvancedRestran: '/api/getAdvancedRestran',
+    refreshSymbol:'/api/refreshSymbol'
 }

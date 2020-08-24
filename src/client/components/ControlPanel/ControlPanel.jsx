@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input, Tooltip, Button, Select, InputNumber, Tag, Modal, Popover, Switch } from 'antd';
-import { PlusOutlined, CaretRightOutlined, PauseOutlined, IssuesCloseOutlined, SwapOutlined, PauseCircleOutlined, SettingOutlined, CloseOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons'
+import { PlusOutlined, CaretRightOutlined, PauseOutlined, IssuesCloseOutlined, SwapOutlined, ReloadOutlined, PauseCircleOutlined, SettingOutlined, PoweroffOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons'
 import { requester } from '@src/tool/Requester'
 import { message } from 'antd';
 import EventHub from '@client/EventHub'
@@ -76,6 +76,21 @@ export default function ControlPanel({ uid }) {
                 setDisables([true, true, true]);
                 setParamter([]);
                 setSymbolStr('')
+            }
+        });
+    }
+    const refreshSymbol = () => {
+        message.loading({ content: 'loading..', key, duration: 0 });
+        requester({
+            url: api.refreshSymbol,
+            params: { tid: chooseTacticeId },
+            option: {
+                baseUrl: 'API_server_url',
+                faileBack: error => message.error({ content: error, key, duration: 2 })
+            }
+        }).then(({ res }) => {
+            if (res.data.code === apiDateCode.success) {
+                message.destroy();
             }
         });
     }
@@ -204,7 +219,9 @@ export default function ControlPanel({ uid }) {
                 <Option value="Yiminghe">yiminghe</Option> */}
             </Select>
             <div>
-
+                <Tooltip placement="bottom" title="立即刷新推荐币">
+                    <Button onClick={refreshSymbol} type="primary" shape="circle" icon={<ReloadOutlined />} />
+                </Tooltip>
                 <Popover
                     key={`popover-0`}
                     content={<div className="popover_botton">
@@ -234,7 +251,7 @@ export default function ControlPanel({ uid }) {
                 </Tooltip>
                 <Tooltip placement="bottom" title='停止实例'>
                     <Button disabled={disables[1]} onClick={() => powerSwitch(chooseTacticeId, 'stop')}
-                        type="primary" shape="circle" icon={<CloseOutlined />} />
+                        type="primary" shape="circle" icon={<PoweroffOutlined />} />
                 </Tooltip>
                 <Tooltip placement="bottom" title="删除实例">
                     <Button onClick={() => {
@@ -291,16 +308,19 @@ export default function ControlPanel({ uid }) {
             title={`高级配置-${targetTactice && targetTactice.name}`}
             visible={modalVisible}
             width={600}
+            footer={[
+                <Button key="OK" type="primary" onClick={() => { setModalVisible(false) }}>关闭</Button>,
+            ]}
             onOk={() => { setModalVisible(false) }}
             onCancel={() => { setModalVisible(false) }}
         >
-            <AdvancedSetPanel 
-            modalVisible={modalVisible} 
-            tactice={targetTactice} 
-            paramter={paramter} 
-            updateParameter={updateParameter} 
-            //advancedOption={advancedOption}
-            disables={disables} />
+            <AdvancedSetPanel
+                modalVisible={modalVisible}
+                tactice={targetTactice}
+                paramter={paramter}
+                updateParameter={updateParameter}
+                //advancedOption={advancedOption}
+                disables={disables} />
         </Modal>}
     </div>
 }
