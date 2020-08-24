@@ -8,8 +8,44 @@
  */
 const { Symbol } = require('../db');
 const { client } = require('../lib/binancer');
+const getParam = (groupName, key) => {
+    return restrain[groupName].find(item => item.key === key).param;
+}
+/** 获取布林线
+ * 
+中轨线（MB）,上轨线（UP）和下轨线（DN）的计算，其计算方法如下：
+日BOLL指标的计算公式
+中轨线=N日的移动平均线
+上轨线=中轨线+两倍的标准差
+下轨线=中轨线－两倍的标准差
 
-const helpers = {
+日BOLL指标的计算过程
+1）计算MA
+MA=N日内的收盘价之和÷N
+
+2）计算标准差MD
+MD=平方根N日的（C－MA）的两次方之和除以N
+（C指收盘价）
+
+3）计算MB,UP,DN线
+MB=N日的MA
+UP=MB+2×MD
+DN=MB－2×MD
+
+各大股票交易软件默认N是20，所以MB等于当日20日均线值
+*/
+const bolllLine = (klineData5m) => {
+    const day = 20;
+    const klineData5mFor20 = [...klineData5m].splice(klineData5m.length - day);
+    const MA = klineData5mFor20.reduce((pre, cur) => pre + cur[4], 0) / day;
+    const MD = Math.sqrt(klineData5mFor20.reduce((pre, cur) => pre + Math.pow((cur[4] - MA), 2), 0) / day);
+    const MB = MA * day;
+    const UP = MB + 2 * MD;
+    const DN = MB - 2 * MD;
+    return { UP, MB, DN };
+}
+
+const restrain = {
     //入场条件
     premiseForBuy: [
         {
@@ -88,6 +124,7 @@ const helpers = {
             key: 'setStopLossRateByHitory',
             label: '根据24小时ticker动态调整止损值',
             desc: '24小时ticker动态调整止损值：(当天最高价-当天开盘价) / 当天开盘价',
+            param: {},
             method: (tactics) => {
                 const allTicker = require('./TacticesCommand').getInstance().allTicker;
                 let ticker = [];
@@ -109,6 +146,7 @@ const helpers = {
             key: 'setRiseStopLossRate',
             label: '根据涨幅调整止盈拐点跌幅',
             desc: '涨幅过大时调整拐点止盈点，及时出货，保障利润，盈利大于10个点，则拐点调为10%，出场更敏感',
+            param: {},
             method: (tactics) => {
                 if (!tactics.buyState) return;
                 let riseRate = tactics.getProfit() / tactics.presentDeal.costing;
@@ -138,6 +176,7 @@ const helpers = {
             key: 'setLossStopRiseRate',
             label: '大跌幅后一直横盘调整拐点止损值',
             desc: '历史跌幅过大（超过90%止损值）但未出场，之后后调整拐点止损值，即用于大亏损后恢复一定的比例(相对最大亏损)时候就止损',
+            param: {},
             method: (tactics) => {
                 if (!tactics.buyState) return;
                 if (tactics.presentDeal.historyProfit > 0) return;
@@ -158,6 +197,7 @@ const helpers = {
             key: 'setStopLossRateByHastyLoss',
             label: '5分内短时间内急跌',
             desc: '5分钟内急跌且突破了止损值，这时要扩大止损值(✖️2)',
+            param: {},
             method: (tactics) => {
 
             }
@@ -169,16 +209,18 @@ const helpers = {
             key: 'LossToRiseInflexion',
             label: '深沟检测',
             desc: '下跌拐点型，30分钟下跌5%以上，然后回调1%',
-            method: async () => {
-                return [];
+            param: {},
+            method: async (lastSymbolList, tactics) => {
+                return lastSymbolList;
             }
         },
         {
             key: 'bollStandard',
             label: 'BOLL布林指标',
             desc: '使用BOLL布林指标线来辅助选币',
-            method: async () => {
-                const symbolList = await Symbol.findAll();
+            param: {},
+            method: async (lastSymbolList, tactics) => {
+                const symbolList = await Symbol.find({});
                 symbolList.forEach(item => {
                     const symbolItem = item.klineData5m;
                 });
@@ -189,19 +231,21 @@ const helpers = {
             key: 'blacklist',
             label: '黑名单',
             desc: '筛选掉黑名单交易对',
-            method: async () => {
-                //获取所有的币，
-                const blackList = ['BUSDUSDT', 'TUSDUSDT', 'USDCUSDT', 'PAXUSDT', 'AUDUSDT', 'EURUSDT', 'GBPUSDT', 'BTCUSDT', 'LTCUSDT', 'ETHUSDT', 'BCHUSDT', 'EOSUSDT'];
-                const allSymbols = require('./TacticesCommand').getInstance().allTicker;
+            param: {
+                blackList: ['BUSDUSDT', 'TUSDUSDT', 'USDCUSDT', 'PAXUSDT', 'AUDUSDT', 'EURUSDT', 'GBPUSDT', 'BTCUSDT', 'LTCUSDT', 'ETHUSDT', 'BCHUSDT', 'EOSUSDT']
+            },
+            method: async (lastSymbolList, tactics) => {
+                const { blackList } = getParam('symbolElecter', 'blacklist');
+                //const allSymbols = require('./TacticesCommand').getInstance().allTicker;
                 let index = 1000;//推荐级别千位
                 let resultList = [];
-                for (let i in allSymbols) {
-                    if (allSymbols.hasOwnProperty(i) && !blackList.some(item => item === i)) {
-                        const { priceChangePercent, high, low, volume, volumeQuote, totalTrades,prevDayClose } = allSymbols[i];
+                for (let i in lastSymbolList) {
+                    if (lastSymbolList.hasOwnProperty(i) && !blackList.some(item => item === lastSymbolList[i].symbol)) {
+                        const { priceChangePercent, high, low, volume, volumeQuote, totalTrades, curDayClose } = lastSymbolList[i].data;
                         resultList.push({
-                            symbol: allSymbols[i].symbol, score: --index,
+                            symbol: lastSymbolList[i].symbol, score: --index + lastSymbolList[i].score,
                             data: {
-                                priceChangePercent, high, low, volume, volumeQuote, totalTrades,prevDayClose
+                                priceChangePercent, high, low, volume, volumeQuote, totalTrades, curDayClose
                             }
                         });
                     }
@@ -212,38 +256,42 @@ const helpers = {
         {
             key: 'history24h',
             label: '24小时状态分析',
-            desc: '24小时ticker涨幅大于0且小于40%（越接近40%的一半即20%，评分更高），当前接近24小时最高价(离最高价差值浮动1%内，越接近评分更高)，且交易量大于500万',
-            method: async () => {
-                //获取所有的币
-                const allSymbols = require('./TacticesCommand').getInstance().allTicker;
+            desc: '24小时ticker涨幅大于0且小于40%（越接近40%的一半即20%，评分更高），当前接近24小时最低价(离最高价差值在一定范围内浮动内，越接近评分更高)，且交易量大于500万',
+            param: {
+                maxVolumeQuote: 5000000,//最高交易量
+                maxRise: 40,//最高涨幅限定
+                maxBalance: 0.1//最高涨幅限定值差异度范围
+            },
+            method: async (lastSymbolList, tactics) => {
+                const { maxVolumeQuote, maxRise, maxBalance } = getParam('symbolElecter', 'history24h');
+                //const allSymbols = require('./TacticesCommand').getInstance().allTicker;
                 let resultList = [];
                 let index = 100000;//推荐级别十万位
-                for (let i in allSymbols) {
+                for (let i in lastSymbolList) {
                     let score = 0;
-                    const item = allSymbols[i];
-                    if (!allSymbols.hasOwnProperty(i)) continue;
-                    if (+item.volumeQuote < 5000000) continue;//交易量大于5000000
-                    const masxRise = 40;//最高涨幅限定
+                    const item = lastSymbolList[i];
+                    if (!lastSymbolList.hasOwnProperty(i)) continue;
+                    if (+item.data.volumeQuote < maxVolumeQuote) continue;//交易量大于5000000
                     //涨幅0~40%内
-                    if (+item.priceChangePercent < 0 || +item.priceChangePercent > masxRise) {
+                    if (+item.data.priceChangePercent < 0 || +item.data.priceChangePercent > maxRise) {
                         continue;
                     } else {
                         //越接近20分越高
-                        const s1 = Math.abs((masxRise / 2) - item.priceChangePercent);
-                        score += (((masxRise / 2) - s1) / (masxRise / 2)) * 100;//100是最高分
+                        const s1 = Math.abs((maxRise / 2) - item.data.priceChangePercent);
+                        score += (((maxRise / 2) - s1) / (maxRise / 2)) * 100;//100是最高分
                     }
-                    //最高价价差1%范围内
-                    const r2 = Math.abs((item.curDayClose - item.high) / item.curDayClose);
-                    if (r2 > 0.01) {
+                    //最高价价差范围内
+                    const r2 = Math.abs((item.data.curDayClose - item.data.high) / item.data.curDayClose);
+                    if (r2 > maxBalance) {
                         continue;
                     } else {
                         //越接近分越高
-                        score += ((0.01 - r2) / 0.01) * 100;
+                        score += ((maxBalance - r2) / maxBalance) * 200;
                     }
-                    const { priceChangePercent, high, low, volume, volumeQuote, totalTrades,prevDayClose } = item;
+                    const { priceChangePercent, high, low, volume, volumeQuote, totalTrades, curDayClose } = item.data;
                     resultList.push({
-                        symbol: item.symbol, score: index + score, data: {
-                            priceChangePercent, high, low, volume, volumeQuote, totalTrades,prevDayClose
+                        symbol: item.symbol, score: index + score + item.score, data: {
+                            priceChangePercent, high, low, volume, volumeQuote, totalTrades, curDayClose
                         }
                     });
                 }
@@ -254,27 +302,6 @@ const helpers = {
     ]
 }
 
-module.exports = { ...helpers };
+module.exports = { ...restrain };
 
 
-/*
-中轨线（MB）,上轨线（UP）和下轨线（DN）的计算，其计算方法如下：
-日BOLL指标的计算公式
-中轨线=N日的移动平均线
-上轨线=中轨线+两倍的标准差
-下轨线=中轨线－两倍的标准差
-
-日BOLL指标的计算过程
-1）计算MA
-MA=N日内的收盘价之和÷N
-
-2）计算标准差MD
-MD=平方根N日的（C－MA）的两次方之和除以N
-
-3）计算MB,UP,DN线
-MB=N日的MA
-UP=MB+2×MD
-DN=MB－2×MD
-
-各大股票交易软件默认N是20，所以MB等于当日20日均线值
- */

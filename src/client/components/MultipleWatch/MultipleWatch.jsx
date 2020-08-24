@@ -94,10 +94,10 @@ export default function MultipleWatch({ uid }) {
                             //item.data.low,
                             item.symbol.replace('USDT', '/USDT'), 
                             item.symbol, 
-                            item.data.prevDayClose,
+                            item.data.curDayClose,
                             item.data.low]);
                     const l = barData.length;
-                    for (let i = l; i < 10; i++) { barData.push([0, 0, 0, 0, '']); }
+                    for (let i = l; i < 10; i++) { barData.push([0, 0, 0, '', '']); }
                     barData = barData.reverse();
                     localStorage.setItem("nultipleData", JSON.stringify(barData));
                     localStorage.setItem("nultipleDataLastUpdate", dateFormat(new Date(), "MM-dd HH:mm:ss"));

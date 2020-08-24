@@ -123,7 +123,6 @@ const setOptionForNoCover = (myChart, symbol) => {
     let _option = myChart.getOption();
     let oldOption = option(symbol);
     localStorage.setItem("klineSymbol", symbol);
-    console.log("设置klineSymbol为："+symbol);
     myChart.setOption(Object.assign({}, _option, {
         title: oldOption.title,
         xAxis: oldOption.xAxis,

@@ -95,13 +95,13 @@ const option = (symbol, price) => {
         dataZoom: [
             {
                 type: 'inside',
-                start: 85,
+                start: 75,
                 end: 100
             },
             {
                 show: true,
                 type: 'slider',
-                start: 85,
+                start: 75,
                 end: 100
             },
             {

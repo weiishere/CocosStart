@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Input, message, Switch, Tabs, Tooltip } from 'antd';
+import { Input, message, Switch, Tabs, Tooltip, Radio } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons'
 const { Search } = Input;
 import clone from 'clone';
@@ -22,11 +22,11 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
     }
     const getAdvancedRestranList = (callback) => {
         let key = 'loading';
-        if (advancedRestran) { 
-            callback(); 
-            return; 
+        if (advancedRestran) {
+            callback();
+            return;
         };
-        
+
         message.loading({ content: '加载配置规则数据..', key, duration: 0 });
         requester({
             url: api.getAdvancedRestran,
@@ -46,7 +46,7 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
         message.loading({ content: '加载配置规则数据..', key, duration: 0 });
         requester({
             url: api.updateAdvancedRestran, type: 'post',
-            params: { id: tactice.id, item, keys: advancedOption[item].join(',') },
+            params: { id: tactice.id, item, keys: item === 'premiseJoin' ? JSON.stringify(advancedOption[item]) : advancedOption[item].join(',') },
             option: {
                 baseUrl: 'API_server_url',
                 faileBack: error => message.error({ content: error, key, duration: 2 })
@@ -56,15 +56,20 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
             callBack && callBack();
         });
     }
-    const onChange = (item, key, checked) => {
-        if (checked) {
-            if (advancedOption[item].indexOf(key) === -1) {
-                advancedOption[item].push(key)
+    const onChange = (item, key, value) => {
+        if (typeof value === 'boolean') {
+            if (value) {
+                if (advancedOption[item].indexOf(key) === -1) {
+                    advancedOption[item].push(key)
+                }
+            } else {
+                if (advancedOption[item].indexOf(key) !== -1) {
+                    advancedOption[item] = advancedOption[item].filter(item => item !== key);
+                }
             }
         } else {
-            if (advancedOption[item].indexOf(key) !== -1) {
-                advancedOption[item] = advancedOption[item].filter(item => item !== key);
-            }
+            //修改约束关系
+            advancedOption.premiseJoin[key] = value;
         }
         updateAdvancedRestran(item, () => {
             setAdvancedOption({ ...advancedOption });
@@ -79,7 +84,7 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
     }, [modalVisible]);
 
     return <div className='advanced_set_panel'>
-        <h4>参数配置</h4>
+        <h4>高级参数配置</h4>
         <ul>
             {
                 paramters.filter(item => !item.isNoAdv).map(item => <li>
@@ -106,22 +111,32 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                 </li>)
             }
         </ul>
-        <h4>约束和动态参数</h4>
+        <h4>高级约束配置</h4>
         {advancedRestran && <li>
             <Tabs defaultActiveKey="1" type="card">
                 <TabPane tab="入场约束" key="1">
+                    约束关系：<Radio.Group name="radiogroup" defaultValue={advancedOption.premiseJoin.premiseForBuy}
+                        onChange={(e) => onChange('premiseJoin', 'premiseForBuy', e.target.value)}>
+                        <Radio value='and'>且</Radio>
+                        <Radio value='or'>或</Radio>
+                    </Radio.Group>
                     {advancedRestran.premiseForBuy.map(item => <div className='adv_content'><label>
                         <Switch checked={advancedOption.premiseForBuy.some(key => key === item.key)}
                             onChange={(checked) => onChange('premiseForBuy', item.key, checked)} />
                         &nbsp; {item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
                 </TabPane>
                 <TabPane tab="出场约束" key="2">
+                    约束关系：<Radio.Group name="radiogroup" defaultValue={advancedOption.premiseJoin.premiseForSell}
+                        onChange={(e) => onChange('premiseJoin', 'premiseForSell', e.target.value)}>
+                        <Radio value='and'>且</Radio>
+                        <Radio value='or'>或</Radio>
+                    </Radio.Group>
                     {advancedRestran.premiseForSell.map(item => <div className='adv_content'><label>
                         <Switch checked={advancedOption.premiseForSell.some(key => key === item.key)}
                             onChange={(checked) => onChange('premiseForSell', item.key, checked)} />
                         &nbsp;{item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
                 </TabPane>
-                <TabPane tab="动态调整" key="3">
+                <TabPane tab="动态参数" key="3">
                     {advancedRestran.dynamicParam.map(item => <div className='adv_content'><label>
                         <Switch checked={advancedOption.dynamicParam.some(key => key === item.key)}
                             onChange={(checked) => onChange('dynamicParam', item.key, checked)} />

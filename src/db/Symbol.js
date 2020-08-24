@@ -40,16 +40,15 @@ module.exports = {
             error(err)
         }
     },
-    find: async function (symbolStr, keys, error) {
-        const result = await symbolModel.find({ 'name': symbolStr }, keys.join(' ')).exec(function (err) { if (err) error(err); });
-        return result;
-        // const query = symbolModel.find({ 'name': symbolStr }, keys.join(' '));
-        // query.exec(function (err, data) {
-        //     if (err) return error(err);
-        //     callback(data);
-        // });
+    find: async function (query) {
+        try {
+            return await symbolModel.find(query).exec();
+        } catch (err) {
+            error(err)
+        }
     },
     findAll: async function (error) {
+        const result = await symbolModel.find({ 'name': 'ETHUSDT' }).exec(function (err) { if (err) error(err); });
         return await symbolModel.find({}).exec(function (err) { if (err) error(err); });
     },
     delete: async function (symbol, error) {

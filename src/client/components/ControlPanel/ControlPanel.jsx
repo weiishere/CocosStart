@@ -219,8 +219,8 @@ export default function ControlPanel({ uid }) {
                 <Option value="Yiminghe">yiminghe</Option> */}
             </Select>
             <div>
-                <Tooltip placement="bottom" title="立即刷新推荐币">
-                    <Button onClick={refreshSymbol} type="primary" shape="circle" icon={<ReloadOutlined />} />
+                <Tooltip placement="bottom" title={`立即刷新推荐币`}>
+                    <Button disabled={!chooseTacticeId ? true : false} onClick={refreshSymbol} type="primary" shape="circle" icon={<ReloadOutlined />} />
                 </Tooltip>
                 <Popover
                     key={`popover-0`}

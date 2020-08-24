@@ -154,12 +154,12 @@ module.exports = {
   },
   //获取高级约束数据结构
   getAdvancedRestran: async (ctx, next) => {
-    const restrainHelper = require('../tacticsServer/restrainHelper');
+    const restrainGroup = require('../tacticsServer/restrainGroup');
     const data = {
-      premiseForBuy: restrainHelper.premiseForBuy.map(item => ({ key: item.key, label: item.label, desc: item.desc })),
-      premiseForSell: restrainHelper.premiseForSell.map(item => ({ key: item.key, label: item.label, desc: item.desc })),
-      dynamicParam: restrainHelper.dynamicParam.map(item => ({ key: item.key, label: item.label, desc: item.desc })),
-      symbolElecter: restrainHelper.symbolElecter.map(item => ({ key: item.key, label: item.label, desc: item.desc })),
+      premiseForBuy: restrainGroup.premiseForBuy.map(item => ({ key: item.key, label: item.label, desc: item.desc })),
+      premiseForSell: restrainGroup.premiseForSell.map(item => ({ key: item.key, label: item.label, desc: item.desc })),
+      dynamicParam: restrainGroup.dynamicParam.map(item => ({ key: item.key, label: item.label, desc: item.desc })),
+      symbolElecter: restrainGroup.symbolElecter.map(item => ({ key: item.key, label: item.label, desc: item.desc })),
     }
     ctx.body = {
       code: apiDateCode.success,
@@ -173,7 +173,12 @@ module.exports = {
     const tactices = _tacticesCommand.tacticsList.find(item => item.id == id);
     let resultData = {};
     if (tactices) {
-      tactices.advancedOption[item] = keys ? keys.split(',') : [];
+      if (item === 'premiseJoin') {
+        tactices.advancedOption.premiseJoin = JSON.parse(keys);
+      } else {
+        tactices.advancedOption[item] = keys ? keys.split(',') : [];
+      }
+
       resultData = {
         code: apiDateCode.success,
         data: tactices.getInfo()

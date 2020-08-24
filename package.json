@@ -1,7 +1,7 @@
 {
-  "name": "koa2-api-scaffold",
+  "name": "quantitative-app-binancer",
   "version": "1.0.4",
-  "description": "Koa2 RESTful API 服务器的脚手架",
+  "description": "Quantitative App for binancer",
   "author": "weishere",
   "license": "WTFPL",
   "scripts": {

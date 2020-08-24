@@ -8,7 +8,7 @@
  */
 
 const Tactics = require('./Tactics');
-const restrainHelper = require('./restrainHelper');
+const restrainGroup = require('./restrainGroup');
 const { client } = require('../lib/binancer');
 const { scoketCandles } = require('./binanceScoketBind');
 
@@ -64,7 +64,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             //isLiveRiseStopLossRate: true,
             stopLossRate: 0.1,//下跌情况（亏损）下跌止损点
             maxStayTime: 120,//亏损但未达到止损值的情况下，最久呆的时间(分钟)
-            faildBuyTimeForChange: 3,//进场失败次数，用于切币
+            faildBuyTimeForChange: 10,//进场失败次数，用于切币
             pauseFaildChangeSymbol: true,//若需切币且推荐币为空，是否暂停
         }, parameter || {});
 
@@ -72,6 +72,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.advancedOption = {
             premiseForBuy: ['last5kRise'],
             premiseForSell: ['fastRise'],
+            premiseJoin: { premiseForBuy: 'or', premiseForSell: 'and' },
             dynamicParam: ['setStopLossRateByHitory', 'setRiseStopLossRate'],
             symbolElecter: ['blacklist', 'history24h']
         }
@@ -142,26 +143,32 @@ module.exports = class SellIntoCorrections extends Tactics {
     }
     /**寻找新币，返回待选列表，和当前用户下的实例中，此实例用到的交易对（可能排名前面的正在使用中） */
     async findSymbol() {
-        let symbolList = [];
-        for (let i = 0; i < restrainHelper.symbolElecter.length; i++) {
-            const helper = restrainHelper.symbolElecter[i];
-            if (this.advancedOption.symbolElecter.some(item => item === helper.key)) {
-                const _symbolList = await helper.method(this);
-                if (symbolList.length !== 0) {
-                    symbolList = symbolList.filter(v => _symbolList.some(it => it.symbol === v.symbol));//取交集
-                } else {
-                    symbolList = symbolList.concat(_symbolList);
-                }
+        let symbolList = require('./TacticesCommand').getInstance().allTicker.map(({ symbol, priceChangePercent, high, low, volume, volumeQuote, totalTrades, curDayClose }) => ({
+            symbol: symbol, score: 0,
+            data: {
+                priceChangePercent, high, low, volume, volumeQuote, totalTrades, curDayClose
+            }
+        }));
+        let symbols = symbolList;
+        for (let i = 0; i < restrainGroup.symbolElecter.length; i++) {
+            const restrain = restrainGroup.symbolElecter[i];
+            if (this.advancedOption.symbolElecter.some(item => item === restrain.key)) {
+                symbols = await restrain.method(symbols, this);
+                // if (symbolList.length !== 0) {
+                //     symbolList = symbolList.filter(v => _symbolList.some(it => it.symbol === v.symbol));//取交集
+                // } else {
+                //     symbolList = symbolList.concat(_symbolList);
+                // }
             }
         }
-        const symbols = Array.from(new Set(symbolList));//去重!!!这里要考虑一下symbol排序优先级
+        symbols = Array.from(new Set(symbols));//去重!!!这里要考虑一下symbol排序优先级
         //const symbols = a.concat(b.filter(v => !a.includes(v)));
         let chooseIndex = -1;
         if (symbols.length !== 0) {
             chooseIndex = 0;
             const tacticsList = require('./TacticesCommand').getInstance().tacticsList;
             for (let i = 0; i < symbols.length; i++) {
-                if (tacticsList.some(item => item.symbol === symbols[i])) {
+                if (tacticsList.some(item => item.symbol === symbols[i].symbol)) {
                     chooseIndex++;
                 }
             }
@@ -215,10 +222,10 @@ module.exports = class SellIntoCorrections extends Tactics {
             let fn = async () => {
                 clearTimeout(this.mainTimer);
                 //动态高级
-                for (let i = 0; i < restrainHelper.dynamicParam.length; i++) {
-                    const helper = restrainHelper.dynamicParam[i];
-                    if (this.advancedOption.dynamicParam.some(item => item === helper.key)) {
-                        helper.method(this);
+                for (let i = 0; i < restrainGroup.dynamicParam.length; i++) {
+                    const restrain = restrainGroup.dynamicParam[i];
+                    if (this.advancedOption.dynamicParam.some(item => item === restrain.key)) {
+                        restrain.method(this);
                     }
                 }
                 if (!this.buyState) {
@@ -291,16 +298,28 @@ module.exports = class SellIntoCorrections extends Tactics {
             return false;
         }
         //高级
-        for (let i = 0; i < restrainHelper.premiseForBuy.length; i++) {
-            const helper = restrainHelper.premiseForBuy[i];
-            if (this.advancedOption.premiseForBuy.some(item => item === helper.key)) {
-                if (!helper.method(this)) {
-                    this.addHistory('info', `入场约束“${helper.desc}”不符合，重新等待入场...`, true, { color: '#5bb3ab' });
-                    return false;
+        let allowResult = restrainGroup.premiseForBuy.length === 0 ? true : false;//如果没有约束则直接放过
+        for (let i = 0; i < restrainGroup.premiseForBuy.length; i++) {
+            const restrain = restrainGroup.premiseForBuy[i];
+            if (this.advancedOption.premiseForBuy.some(item => item === restrain.key)) {
+                if (!restrain.method(this)) {
+                    if (this.advancedOption.premiseJoin.premiseForBuy === 'and') {
+                        this.addHistory('info', `入场约束“${restrain.desc}”不符合，重新等待入场...`, true, { color: '#5bb3ab' });
+                        return false;
+                    }
+                } else {
+                    if (this.advancedOption.premiseJoin.premiseForBuy === 'or') {
+                        allowResult = true;
+                        break;
+                    }
                 }
             }
         }
-        //const isContinue = restrainHelper.premiseForBuy.some(item => this.advancedOption.some(i => i === item.key) && !item.method(this));
+        if (this.advancedOption.premiseJoin.premiseForBuy === 'or' && !allowResult) {
+            this.addHistory('info', `入场约束均不符合条件，重新等待入场...`, true, { color: '#5bb3ab' });
+            return false
+        };
+        //const isContinue = restrainGroup.premiseForBuy.some(item => this.advancedOption.some(i => i === item.key) && !item.method(this));
 
         //this.addHistory('info', `获取最近5分线数据成功，判断入场时机...`, true);
         //如果当前是上涨且判断涨幅满足
@@ -338,15 +357,27 @@ module.exports = class SellIntoCorrections extends Tactics {
     }
     async sell() {
         //高级
-        for (let i = 0; i < restrainHelper.premiseForSell.length; i++) {
-            const helper = restrainHelper.premiseForSell[i];
-            if (this.advancedOption.premiseForSell.some(item => item === helper.key)) {
-                if (helper.method(this)) {
-                    this.addHistory('info', `出场约束“${helper.desc}”符合，立即逃离现场...`, true);
-                    if (await this.deal('sell')) return false;
+        let allowResult = restrainGroup.premiseForSell.length === 0 ? true : false;//如果没有约束则直接放过
+        for (let i = 0; i < restrainGroup.premiseForSell.length; i++) {
+            const restrain = restrainGroup.premiseForSell[i];
+            if (this.advancedOption.premiseForSell.some(item => item === restrain.key)) {
+                if (!restrain.method(this)) {
+                    if (this.advancedOption.premiseJoin.premiseForSell === 'and') {
+                        this.addHistory('info', `入场约束“${restrain.desc}”不符合，重新等待入场...`, true, { color: '#5bb3ab' });
+                        return false;
+                    }
+                } else {
+                    if (this.advancedOption.premiseJoin.premiseForSell === 'or') {
+                        allowResult = true;
+                        break;
+                    }
                 }
             }
         }
+        if (this.advancedOption.premiseJoin.premiseForSell === 'or' && !allowResult) {
+            this.addHistory('info', `入场约束均不符合条件，重新等待入场...`, true, { color: '#5bb3ab' });
+            return false;
+        };
         const _profit = this.getProfit();
         //this.profitSymbol[this.profitSymbol.length - 1] = { symbol: this.symbol, profit: _profit };
         this.addHistory('profitChange', _profit);
@@ -655,7 +686,7 @@ module.exports = class SellIntoCorrections extends Tactics {
     /**获取波动速度列表，level是取最近的变更值深度，越深越准，值必须大于等于1，小于等于20 */
     getWaveSpeedList(level) {
         if (this.presentSpeedArr.length <= 1) return [];
-        const arr = this.presentSpeedArr.splice(this.presentSpeedArr.length - level + 2);
+        const arr = [...this.presentSpeedArr].splice(this.presentSpeedArr.length - level + 2);
         let speedArr = [];
         for (let i = 0, l = arr.length; i < l; i++) {
             if (i !== 0) {
