@@ -3,14 +3,16 @@
  * @Date: 2020-08-14 13:49:13
  * @LastEditTime: 2020-08-24 17:22:07
  * @LastEditors: weishere.huang
- * @Description: 
+ * @Description: premiseForBuy：不能进，premiseForSell：必须出
  * @~~
  */
 const { Symbol } = require('../db');
 const { client } = require('../lib/binancer');
+const EventHub = require('../tool/EventHub');
 const getParam = (groupName, key) => {
     return restrain[groupName].find(item => item.key === key).param;
 }
+let symbolStorage = {};
 /** 获取布林线
  * 
 中轨线（MB）,上轨线（UP）和下轨线（DN）的计算，其计算方法如下：
@@ -44,9 +46,13 @@ const bolllLine = (klineData5m) => {
     const DN = MB - 2 * MD;
     return { UP, MB, DN };
 }
+//接受子线程的数据：symbolStorage
+EventHub.getInstance().addEventListener('symbolStorage', data => {
+    symbolStorage = data;
+});
 
 const restrain = {
-    //入场条件
+    /**入场前提条件    true：满足入场前提条件-false：不满足前提条件 */
     premiseForBuy: [
         {
             key: 'last5kRise',
@@ -91,7 +97,7 @@ const restrain = {
             method: (tactics) => { return true; }
         }
     ],
-    //强制出场条件
+    /**强制出场条件    true：满足出场条件-false：不满足 */
     premiseForSell: [
         {
             key: 'fastRise',
@@ -118,7 +124,7 @@ const restrain = {
             }
         }
     ],
-    //动态调整参数
+    /**动态调整参数   入场之后每次循环都会执行 */
     dynamicParam: [
         {
             key: 'setStopLossRateByHitory',
@@ -126,18 +132,13 @@ const restrain = {
             desc: '24小时ticker动态调整止损值：(当天最高价-当天开盘价) / 当天开盘价',
             param: {},
             method: (tactics) => {
-                const allTicker = require('./TacticesCommand').getInstance().allTicker;
-                let ticker = [];
-                if (allTicker) {
-                    ticker = allTicker.find(item => item.symbol === tactics.symbol);
-                } else {
-                    return;
-                }
-                if (ticker) {
-                    const stopLossRate = (ticker.high - ticker.open) / ticker.open;
-                    if (stopLossRate !== tactics.parameter.stopLossRate) {
-                        tactics.parameter.stopLossRate = stopLossRate;
-                        tactics.addHistory('info', `止损点已经动态调整为：` + stopLossRate, true, { color: '#dee660' });
+                // const allTicker = require('./TacticesCommand').getInstance().allTicker;
+                // let ticker = [];
+                if (tactics.ticker) {
+                    const _stopLossRate = (tactics.ticker.high - tactics.ticker.open) / tactics.ticker.open;
+                    if (_stopLossRate !== tactics.parameter.stopLossRate) {
+                        tactics.parameter.stopLossRate = _stopLossRate;
+                        tactics.addHistory('info', `止损点已经动态调整为：` + stopLossRate, true, { color: '#dee660', subType: 'dp' });
                     }
                 }
             }
@@ -145,61 +146,92 @@ const restrain = {
         {
             key: 'setRiseStopLossRate',
             label: '根据涨幅调整止盈拐点跌幅',
-            desc: '涨幅过大时调整拐点止盈点，及时出货，保障利润，盈利大于10个点，则拐点调为10%，出场更敏感',
-            param: {},
+            desc: '涨幅过大时调整拐点止盈点，及时出货，保障利润，盈利大于10个点，则拐点调为原止盈点的10%，出场更敏感',
+            param: { step: 0.15 },
             method: (tactics) => {
                 if (!tactics.buyState) return;
+                const { step } = getParam('dynamicParam', 'setRiseStopLossRate');//获取步进值
                 let riseRate = tactics.getProfit() / tactics.presentDeal.costing;
-                let lastriseStopLossRate = tactics.parameter.riseStopLossRate;
+                let lastriseStopLossRate = tactics.parameterBackup.riseStopLossRate;
                 if (riseRate >= 0.15) {
                     //盈利大于10个点
-                    tactics.parameter.riseStopLossRate = tactics.parameterBackup.riseStopLossRate * 0.1;
+                    lastriseStopLossRate = lastriseStopLossRate * (0.1 + step * 0);
                 } else if (riseRate >= 0.1 && riseRate < 0.15) {
-                    tactics.parameter.riseStopLossRate = tactics.parameterBackup.riseStopLossRate * 0.25;
-                } else if (riseRate >= 0.8 && riseRate < 0.1) {
-                    tactics.parameter.riseStopLossRate = tactics.parameterBackup.riseStopLossRate * 0.4;
-                } else if (riseRate >= 0.06 && riseRate < 0.8) {
-                    tactics.parameter.riseStopLossRate = tactics.parameterBackup.riseStopLossRate * 0.55;
-                } else if (riseRate >= 0.04 && riseRate < 0.6) {
-                    tactics.parameter.riseStopLossRate = tactics.parameterBackup.riseStopLossRate * 0.7;
-                } else if (riseRate < 0.4) {
-                    //小于0.01，意思没动
-                    tactics.parameter.riseStopLossRate = tactics.parameterBackup.riseStopLossRate;
+                    lastriseStopLossRate = lastriseStopLossRate * (0.1 + step * 1);
+                } else if (riseRate >= 0.08 && riseRate < 0.1) {
+                    lastriseStopLossRate = lastriseStopLossRate * (0.1 + step * 2);
+                } else if (riseRate >= 0.06 && riseRate < 0.08) {
+                    lastriseStopLossRate = lastriseStopLossRate * (0.1 + step * 3);
+                } else if (riseRate >= 0.04 && riseRate < 0.06) {
+                    lastriseStopLossRate = lastriseStopLossRate * (0.1 + step * 4);
+                } else if (riseRate < 0.04) {
+                    //小于0.04，意思没动
+                    lastriseStopLossRate = lastriseStopLossRate;
                 }
                 if (lastriseStopLossRate !== tactics.parameter.riseStopLossRate) {
-                    tactics.addHistory('info', `止盈点已经动态调整为：${tactics.parameter.riseStopLossRate}%`, true, { color: "#dee660" });
+                    tactics.parameter.riseStopLossRate = lastriseStopLossRate;
+                    tactics.addHistory('info', `止盈点已经动态调整为：${tactics.parameter.riseStopLossRate}%`, true, { color: "#dee660", subType: 'dp' });
                 }
 
             }
         },
         {
             key: 'setLossStopRiseRate',
-            label: '大跌幅后一直横盘调整拐点止损值',
+            label: '大跌幅后一直横盘调整拐点止损值(割肉)',
             desc: '历史跌幅过大（超过90%止损值）但未出场，之后后调整拐点止损值，即用于大亏损后恢复一定的比例(相对最大亏损)时候就止损',
-            param: {},
+            param: {
+                maxRate: 0.9,//历史最大跌幅
+                lossRate: 60 //拐点止损涨幅
+            },
             method: (tactics) => {
                 if (!tactics.buyState) return;
                 if (tactics.presentDeal.historyProfit > 0) return;
-                let lossRate = tactics.presentDeal.historyProfit / tactics.presentDeal.costing;//lossRate肯定为负才说明是亏
+                const { maxRate, lossRate } = getParam('dynamicParam', 'setLossStopRiseRate');
                 let lossStopLossRate = tactics.parameterBackup.lossStopLossRate;
-                if (lossRate / tactics.parameter.stopLossRate >= -0.9) {
-                    //最大亏损大于在8-10个点，回本7个点就止损
-                    lossStopLossRate = 60;//回最大亏损的60就割肉
-                    tactics.addHistory('info', `拐点止损(回本增幅%)动态调整为：` + lossStopLossRate, true);
+                let _lossRate = tactics.presentDeal.historyProfit / tactics.presentDeal.costing;//lossRate肯定为负才说明是亏
+                if (_lossRate / tactics.parameter.stopLossRate >= -maxRate) {
+                    //最大亏损大于达到止损值的90%了
+                    lossStopLossRate = lossRate;//回最大亏损的60就割肉
+                } else {
+                    if (tactics.parameter.lossStopLossRate !== tactics.parameterBackup.lossStopLossRate) {
+                        tactics.parameter.lossStopLossRate = tactics.parameterBackup.lossStopLossRate;
+                        tactics.addHistory('info', `拐点止损值恢复原参数`, true, { color: "#dee660", subType: 'dp' });
+                    }
                 }
-                tactics.parameter.lossStopLossRate = lossStopLossRate;
-                if (lossStopLossRate === tactics.parameterBackup.lossStopLossRate) {
-                    tactics.addHistory('info', `拐点止损(回本增幅%)动态恢复为：` + lossStopLossRate, true);
+                if (lossStopLossRate !== tactics.parameterBackup.lossStopLossRate && tactics.parameter.lossStopLossRate !== tactics.parameterBackup.lossStopLossRate) {
+                    tactics.parameter.lossStopLossRate = lossStopLossRate;
+                    tactics.addHistory('info', `拐点止损(回本增幅%)动态调整为：` + lossStopLossRate, true, { color: "#dee660", subType: 'dp' });
                 }
             }
         },
         {
             key: 'setStopLossRateByHastyLoss',
-            label: '5分内短时间内急跌',
-            desc: '5分钟内急跌且突破了止损值，这时要扩大止损值(✖️2)',
-            param: {},
+            label: '短时间内急跌放大止损',
+            desc: '5分钟内急跌(6个点以上)且突破了止损值，这时要扩大止损值防止下车',
+            param: {
+                maxLoss: 0.06,
+                addExpand: 1.05
+            },
             method: (tactics) => {
-
+                const { maxLoss } = getParam('dynamicParam', 'setStopLossRateByHastyLoss');
+                let stopLossRate = tactics.parameterBackup.stopLossRate;
+                //上一个5分线的开盘价跟当前价格比对
+                const presentPrice = tactics.getPresentPrice();
+                if ((tactics.KLineItem5m.recent.open - presentPrice) / tactics.KLineItem5m.recent.open > maxLoss) {
+                    const _stopLossRate = Math.abs(Number(tactics.getProfit() / tactics.presentDeal.costing));
+                    if (_stopLossRate >= stopLossRate) {
+                        stopLossRate = _stopLossRate + 0.0001;
+                    }
+                } else {
+                    if (tactics.parameter.stopLossRate !== tactics.parameterBackup.stopLossRate) {
+                        tactics.parameter.stopLossRate = tactics.parameterBackup.stopLossRate;
+                        tactics.addHistory('info', `止损值恢复原参数`, true, { color: "#dee660", subType: 'dp' });
+                    }
+                }
+                if (stopLossRate !== tactics.parameter.stopLossRate && tactics.parameter.stopLossRate !== tactics.parameterBackup.stopLossRate) {
+                    tactics.parameter.stopLossRate = stopLossRate;
+                    tactics.addHistory('info', `发生短时间急跌，止损止动态调整为：${stopLossRate}，阻止被甩掉下车...`, true, { color: "#dee660", subType: 'dp' });
+                }
             }
         },
     ],
@@ -211,6 +243,19 @@ const restrain = {
             desc: '下跌拐点型，30分钟下跌5%以上，然后回调1%',
             param: {},
             method: async (lastSymbolList, tactics) => {
+
+                return lastSymbolList;
+            }
+        },
+        {
+            key: 'fastRise',
+            label: '短时间急拉币(5分钟1个点)',
+            desc: '短时间在急拉的币，在5分钟就达到日涨幅的10%',
+            param: {
+                rise: 0.1
+            },
+            method: async (lastSymbolList, tactics) => {
+
                 return lastSymbolList;
             }
         },

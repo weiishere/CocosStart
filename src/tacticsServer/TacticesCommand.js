@@ -44,7 +44,7 @@ module.exports = class TacticesCommand {
             let tactics = new SellIntoCorrections(uid, name, mod.parameter);
             tactics = Object.assign(tactics, mod);
             this.tacticsList.push(tactics);
-            tactics.setSymbol(tactics.symbol);
+            tactics.initialize(tactics.symbol);
             if (tactics.runState) {
                 tactics.runState = false;//powerSwitch函数在启动轮询前会反向设置runState
                 tactics.powerSwitch();
@@ -80,7 +80,7 @@ module.exports = class TacticesCommand {
                 _tactics = new SellIntoCorrections(uid, name || `${symbol}_${this.tacticsList.length + 1}`, parameter);
                 this.tacticsList.push(_tactics);
             }
-            _tactics.setSymbol(symbol);
+            _tactics.initialize(symbol);
             this.mapTotacticsList(uid, _tactics.id, true);
             this.syncData();
             return _tactics;

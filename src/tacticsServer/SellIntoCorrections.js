@@ -58,8 +58,8 @@ module.exports = class SellIntoCorrections extends Tactics {
             checkSellRate: 5000,
             riseStayCheckRateForSell: 8000,//止损等待时间
             stopRiseRate: 0.2,//强制止盈涨幅
-            lowestRiseRate: 0.01,//最低盈利，少了这个值不割肉
-            riseStopLossRate: 8,//上涨情况（盈利）下跌止盈点
+            lowestRiseRate: 0.005,//最低盈利，少了这个值不止盈
+            riseStopLossRate: 8,//上涨情况（盈利）下跌止盈点（拐点止盈）
             lossStopLossRate: 0,//下跌情况（亏损）上涨止损点
             //isLiveRiseStopLossRate: true,
             stopLossRate: 0.1,//下跌情况（亏损）下跌止损点
@@ -82,14 +82,14 @@ module.exports = class SellIntoCorrections extends Tactics {
             //serviceCharge: "币安手续费(千一)",
             //serviceChargeDiscounts: "优惠费率(实付费用(1-0.25))",
 
-            lowestRiseRate: [true, "最低出场盈利(相对成本)"],
+            lowestRiseRate: [true, "最低出场盈利率(相对成本)"],
             riseStopLossRate: [true, "止盈拐点跌幅%(相对盈利)"],
             stopLossRate: [true, "止损(相对成本跌幅)"],
             //isLiveRiseStopLossRate: [true, "是否动态设置拐点跌幅"],
             checkBuyRate: [true, "买入检查频率"],
             riseStayCheckRateForBuy: [false, "买入确认频率"],
             riseBuyRange: [true, "买入确认涨幅"],
-            autoSymbol: [true, "是否自动切币"],
+            autoSymbol: [true, "是否自动切币(待机任务会自动启动)"],
             //autoRun: [true, "有推荐币是否自动入场(需先启动)"],
             //ambushRange: "埋伏入场下跌率",
             checkSellRate: [true, "卖出检查频率"],
@@ -98,7 +98,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             stopRiseRate: [false, "强制止盈(相对成本涨幅),为0则关闭"],
             usdtAmount: [false, "每次入场USDT数量"],
             maxStayTime: [false, "场内持续时间(分钟)"],
-            faildBuyTimeForChange: [false, "未盈利情况下需切币的进场失败次数"],
+            faildBuyTimeForChange: [false, "未盈利情况下需切币的进场失败次数(<100)，若“自动切币”功能打开，超过100次会强制切币"],
             pauseFaildChangeSymbol: [false, "若n次上场失败且推荐币为空，是否待机等待。(启用可能会重启；反则任务停止，亦自动切币也失效)"]
         };
         this.presentPrice = 0;//当前价格
@@ -115,6 +115,14 @@ module.exports = class SellIntoCorrections extends Tactics {
             // tradesDoneQuantity: 0,//当前交易已经处理完成的币数量（如果tradesDoneQuantity=amount即完成）随着pushTrade弃用而弃用！！
             // tradesDoneAmount: 0//已经完成的金额，随着pushTrade弃用而弃用！！
         }
+    }
+    /**初始化，启动的时候调用 */
+    initialize(symbol) {
+        //if (this.runState) return false;//运行期间不允许更改
+        this.symbol = symbol;
+        //初始化时给点5分线数据
+        client.candles({ symbol, interval: '5m', limit: 1 }).then(data => this.KLineItem5m.present = data[0]);
+        scoketCandles();
     }
     /**添加历史记录，isDouble：如果重复两条记录，是否允许重复添加 */
     addHistory(type, content, isDouble, option) {
@@ -176,13 +184,14 @@ module.exports = class SellIntoCorrections extends Tactics {
         require('./TacticesCommand').getInstance().pushBetterSymbol(this.uid, this.id, symbols);
         return { symbols, chooseItem: symbols[chooseIndex] };
     }
-    /**切币函数，返回切币是否成功 bool*/
+    /**切币函数，没有新币返回false，没有切币条件或者切币成功返回true*/
     async checkChangeSymbol() {
         this.checkBuyTime++;
-        if (this.presentDeal.historyProfit <= 0 && this.checkBuyTime === this.parameter.faildBuyTimeForChange) {
-            //如果出亏损出场，而且检测了10次依然未能再次进场，则切币（开始寻找新币）
+        if ((this.presentDeal.historyProfit < 0 && this.checkBuyTime === this.parameter.faildBuyTimeForChange) ||
+            (this.presentDeal.historyProfit >= 0 && this.checkBuyTime >= 100)) {
+            //如果出亏损出场，而且检测了n次依然未能再次进场，或者 在上次盈利情况下，已经连续检测了100次了，则切币（开始寻找新币）
             //寻找新币
-            const { symbols, chooseItem } = await this.findSymbol();
+            const { chooseItem } = await this.findSymbol();
             if (!chooseItem) {
                 //没有好的币种
                 return false;
@@ -192,22 +201,15 @@ module.exports = class SellIntoCorrections extends Tactics {
                     // client.candles({ chooseItem, interval: '5m', limit: 1 }).then(data => this.KLineItem5m.present = data[0]);
                     // scoketCandles();
                     //this.addHistory('info', `${this.parameter.faildBuyTimeForChange}次入场失败后，且无新推荐币种(${chooseItem})...`);
-                    this.addHistory('info', `获取到新推荐币种(${chooseItem})，实例即将自动启动...`);
-                    this.setSymbol(chooseItem);
+                    this.addHistory('info', `获取到新推荐币种(${chooseItem})，实例即将自动启动...`, true, { color: '#b1eac5', type: 'changeSymbol', data: { symbol: chooseItem } });
+                    this.initialize(chooseItem);
                 }
                 return true;
             }
         }
         return true;
     }
-    /**启动的时候调用 */
-    setSymbol(symbol) {
-        //if (this.runState) return false;//运行期间不允许更改
-        this.symbol = symbol;
-        //初始化时给点5分线数据
-        client.candles({ symbol, interval: '5m', limit: 1 }).then(data => this.KLineItem5m.present = data[0]);
-        scoketCandles();
-    }
+
     /** 接收每次推过来的交易信息，如果有符合当前正在交易的数据，就要截获数据  */
     pushTrade(trade) {
         this.presentTrade = trade;
@@ -216,6 +218,7 @@ module.exports = class SellIntoCorrections extends Tactics {
     async powerSwitch(nowBuy) {
         this.fristNowBuy = nowBuy;
         this.runState = !this.runState;
+        this.checkBuyTime = 0;
         this.addHistory('order', `实例将${(this.runState ? "开始运行" : "停止")}${this.imitateRun ? "模拟程序" : ""}`);
         if (this.runState) {
             //开始运行
@@ -284,15 +287,18 @@ module.exports = class SellIntoCorrections extends Tactics {
         //如果上个交易亏损且检测次数满了，且没有币就会返回false，且不动，如果待机没开就停止了，如果待机开了，就等待有币了就会返回true，重新启动
         const chooseResult = await this.checkChangeSymbol();//切币检测
         if (!chooseResult) {
+            //没有币推荐
             if (!this.parameter.pauseFaildChangeSymbol) {
+                this.addHistory('info', `进场${this.parameter.faildBuyTimeForChange}次后失败，需切币但暂无推荐币种，实例即将停止...`, true);
                 await this.stop();
                 return false;
             }
             //没有选择的币，暂停，等待推荐币后自动启动
-            this.addHistory('info', `进场${this.parameter.faildBuyTimeForChange}次后失败，需切币但暂无推荐币种，待机等待中...`, true);
+            this.addHistory('info', `进场${this.parameter.faildBuyTimeForChange}次后失败，需切币但暂无推荐币种，待机继续检测新币中...`, true);
             return false;
+        } else {
+            //进场尝试次数还没有达到设定值，或者获取到了新币
         }
-        this.checkBuyTime = 0;//设置为0，有币之后才可能就会触发自动启动
         if (!this.KLineItem5m.present) {
             this.addHistory('info', `获取最近5分线数据...`, true);
             return false;
@@ -357,25 +363,27 @@ module.exports = class SellIntoCorrections extends Tactics {
     }
     async sell() {
         //高级
-        let allowResult = restrainGroup.premiseForSell.length === 0 ? true : false;//如果没有约束则直接放过
+        let allowResult = restrainGroup.premiseForSell.length === 0 ? false : true;//如果没有约束则直接放过
         for (let i = 0; i < restrainGroup.premiseForSell.length; i++) {
             const restrain = restrainGroup.premiseForSell[i];
             if (this.advancedOption.premiseForSell.some(item => item === restrain.key)) {
-                if (!restrain.method(this)) {
-                    if (this.advancedOption.premiseJoin.premiseForSell === 'and') {
-                        this.addHistory('info', `入场约束“${restrain.desc}”不符合，重新等待入场...`, true, { color: '#5bb3ab' });
-                        return false;
+                if (restrain.method(this)) {
+                    if (this.advancedOption.premiseJoin.premiseForSell === 'or') {
+                        //只要有一个满足就出场
+                        this.addHistory('info', `符合出场约束“${restrain.desc}”，即将进行出场操作...`, true, { color: '#5bb3ab' });
+                        return (await this.deal('sell'));
                     }
                 } else {
-                    if (this.advancedOption.premiseJoin.premiseForSell === 'or') {
-                        allowResult = true;
+                    if (this.advancedOption.premiseJoin.premiseForSell === 'and') {
+                        allowResult = false;//只要有一个不满足出场条件，就不出场
                         break;
                     }
                 }
             }
         }
-        if (this.advancedOption.premiseJoin.premiseForSell === 'or' && !allowResult) {
-            this.addHistory('info', `入场约束均不符合条件，重新等待入场...`, true, { color: '#5bb3ab' });
+        if (this.advancedOption.premiseJoin.premiseForSell === 'and' && allowResult) {
+            this.addHistory('info', `出场约束满足所配置的所以条件，进行出场操作`, true, { color: '#5bb3ab' });
+            return (await this.deal('sell'));
             return false;
         };
         const _profit = this.getProfit();
@@ -592,6 +600,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 }
             }
         } else if (order === 'sell') {
+            this.checkBuyTime = 0;
             if (this.imitateRun) {
                 //模拟卖出
                 //获得回收金额
@@ -697,53 +706,53 @@ module.exports = class SellIntoCorrections extends Tactics {
     };
     getInfo() {
         let result = {};
-        ['id', 
-         'uid',
-         'name', 
-         'symbol', 
-         'parameter', 
-         'parameterDesc', 
-         'presentDeal',
-         'history', 
-         'historyForDeal', 
-         'runState', 
-         'buyState', 
-         'imitateRun',
-         'profitSymbol', 
-         'KLineItem1m', 
-         'KLineItem5m', 
-         'presentTrade', 
-         'advancedOption', 
-         'depth', 
-         'ticker'].forEach(item => result[item] = this[item]);
+        ['id',
+            'uid',
+            'name',
+            'symbol',
+            'parameter',
+            'parameterDesc',
+            'presentDeal',
+            'history',
+            'historyForDeal',
+            'runState',
+            'buyState',
+            'imitateRun',
+            'profitSymbol',
+            'KLineItem1m',
+            'KLineItem5m',
+            'presentTrade',
+            'advancedOption',
+            'depth',
+            'ticker'].forEach(item => result[item] = this[item]);
         return result;
     }
     getDBInfo() {
         let result = {};
-        ['id', 
-         'uid',
-         'name', 
-         'symbol', 
-         'parameter', 
-         'presentDeal',
-         'history', 
-         'historyForDeal', 
-         'runState', 
-         'buyState', 
-         'imitateRun',
-         'profitSymbol',
-         'advancedOption'].forEach(item => result[item] = this[item]);
+        ['id',
+            'uid',
+            'name',
+            'symbol',
+            'parameter',
+            'presentDeal',
+            'history',
+            'historyForDeal',
+            'runState',
+            'buyState',
+            'imitateRun',
+            'profitSymbol',
+            'advancedOption'].forEach(item => result[item] = this[item]);
         return result;
     }
     getSimplyInfo() {
         let result = {};
-        ['id', 
-         'uid',
-         'name', 
-         'symbol', 
-         'runState', 
-         'imitateRun',
-         'buyState'].forEach(item => result[item] = this[item]);
+        ['id',
+            'uid',
+            'name',
+            'symbol',
+            'runState',
+            'imitateRun',
+            'buyState'].forEach(item => result[item] = this[item]);
         return result;
     }
 }

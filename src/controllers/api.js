@@ -42,7 +42,7 @@ module.exports = {
     } else {
       const _tacticesCommand = TacticesCommand.getInstance();
       const tactice = _tacticesCommand.tacticsList.find(item => item.id === tid);
-      tactice.setSymbol(symbol);
+      tactice.initialize(symbol);
       _tacticesCommand.mapTotacticsList(tactice.uid, tactice.id, true);
       resultData = {
         code: apiDateCode.success,

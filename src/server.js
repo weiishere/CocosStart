@@ -18,8 +18,7 @@ const { System } = require('./config')
 const { connectDB } = require('./db/mongoMaster');
 // import ApiRoutes from './routes/api-routes.js'
 const ApiRoutes = require('./routes/api-routes.js');
-const SymbolServer = require('./symbolServer/symbolServer');
-
+const EventHub = require('./tool/EventHub');
 const config = require('../webpack.config.js');
 const app = new Koa();
 const { Symbol } = require('./db');
@@ -62,7 +61,10 @@ app.use(staticServer(__dirname + System.Public_path))
 connectDB(async () => {
     if (process.env.CHILD_PROCESS === '1') {
         //再开一个进程，初始化symbolk线数据
-        childProcess.fork('./src/symbolServer/index.js')
+        const cp = childProcess.fork('./src/symbolServer/index.js');
+        cp.on("message", function ({ type, data }) {
+            EventHub.getInstance().dispatchEvent(type, data);
+        });
     }
     //启动scoket
     serverScoket(app).listen(System.Server_port, () => {

@@ -90,10 +90,8 @@ const scoketCandles = () => {
     });
     doneFn.push(trades);
     const ticker = client.ws.ticker(symbols, ticker => {
-        TacticesCommand.getInstance().tacticsList.filter(item => item.symbol === ticker.symbol).forEach(item => {
-            item.presentDeal.ticker = ticker;
-        });
-      })
+        TacticesCommand.getInstance().tacticsList.filter(item => item.symbol === ticker.symbol).forEach(item => { item.ticker = ticker; });
+    })
     doneFn.push(ticker);
 }
 

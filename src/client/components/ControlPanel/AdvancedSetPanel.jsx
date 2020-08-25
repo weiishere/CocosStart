@@ -114,7 +114,7 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
         <h4>高级约束配置</h4>
         {advancedRestran && <li>
             <Tabs defaultActiveKey="1" type="card">
-                <TabPane tab="入场约束" key="1">
+                <TabPane tab={<div>入场约束&nbsp;<Tooltip title="入场优先级先于基础出场逻辑（符合条件还需进行基础判断）"><QuestionCircleOutlined /></Tooltip></div>} key="1">
                     约束关系：<Radio.Group name="radiogroup" defaultValue={advancedOption.premiseJoin.premiseForBuy}
                         onChange={(e) => onChange('premiseJoin', 'premiseForBuy', e.target.value)}>
                         <Radio value='and'>且</Radio>
@@ -125,7 +125,7 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                             onChange={(checked) => onChange('premiseForBuy', item.key, checked)} />
                         &nbsp; {item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
                 </TabPane>
-                <TabPane tab="出场约束" key="2">
+                <TabPane tab={<div>出场约束&nbsp;<Tooltip title="出场优先级高于基础出场逻辑（符合条件立即卖出）"><QuestionCircleOutlined /></Tooltip></div>} key="2">
                     约束关系：<Radio.Group name="radiogroup" defaultValue={advancedOption.premiseJoin.premiseForSell}
                         onChange={(e) => onChange('premiseJoin', 'premiseForSell', e.target.value)}>
                         <Radio value='and'>且</Radio>

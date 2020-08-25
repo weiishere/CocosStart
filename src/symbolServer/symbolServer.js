@@ -12,7 +12,16 @@ const { Symbol } = require('../db');
 
 
 const ProgressBar = require('progress')
-
+const bolllLine = (klineData5m) => {
+    const day = 20;
+    const klineData5mFor20 = [...klineData5m].splice(klineData5m.length - day);
+    const MA = klineData5mFor20.reduce((pre, cur) => pre + cur[4], 0) / day;
+    const MD = Math.sqrt(klineData5mFor20.reduce((pre, cur) => pre + Math.pow((cur[4] - MA), 2), 0) / day);
+    const MB = MA * day;
+    const UP = MB + 2 * MD;
+    const DN = MB - 2 * MD;
+    return { UP, MB, DN };
+}
 const attributeCount = function (obj) {
     let count = 0;
     for (let i in obj) { if (obj.hasOwnProperty(i) && /USDT$/.test(i)) count++; }
@@ -26,6 +35,10 @@ module.exports = class SymbolServer {
             // }
         }
         this.loopInitDB = false;
+        setInterval(() => {
+            //10秒向主进程发送一个数据
+            process.send({ type: 'symbolStorage', data: this.symbolStorage });
+        }, 10000);
     }
     static getInstance() {
         if (!this.SymbolServer) {
@@ -39,7 +52,7 @@ module.exports = class SymbolServer {
         const prices = await client.prices();
         const now = new Date();
         const lastTime = now.setHours(now.getHours() - 3);
-        const bar = new ProgressBar('Initialize KLine data [:bar] :current/:total :percent :etas', {
+        const bar = new ProgressBar('Initialize KLine data [:bar] 进度:current/:total :percent 剩余:etas', {
             complete: '=',
             incomplete: ' ',
             width: 50,
@@ -82,9 +95,9 @@ module.exports = class SymbolServer {
     }
     /**订阅最新K线流 */
     async incrementKlineData() {
-        const prices = await client.prices();
-        for (let symbolKey in prices) {
-            if (symbolKey && prices.hasOwnProperty(symbolKey) && /USDT$/.test(symbolKey)) {
+        //const prices = await client.prices();
+        for (let symbolKey in this.symbolStorage) {
+            if (symbolKey && this.symbolStorage.hasOwnProperty(symbolKey) && /USDT$/.test(symbolKey)) {
                 client.ws.candles(symbolKey, '5m', payload => {
                     const { symbol, startTime, closeTime, open, close, high, low, volume, quoteVolume, trades, buyVolume, quoteBuyVolume } = payload;
                     const rawData = this.symbolStorage[symbol].klineData5m;

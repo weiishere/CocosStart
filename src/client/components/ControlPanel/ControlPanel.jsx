@@ -92,6 +92,9 @@ export default function ControlPanel({ uid }) {
             if (res.data.code === apiDateCode.success) {
                 message.destroy();
             }
+            if (res.data.data.length === 0) {
+                message.info('暂无符合条件的交易对~');
+            }
         });
     }
     const updateParameter = (key, value) => {
