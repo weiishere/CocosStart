@@ -111,7 +111,7 @@ const restrain = {
                     const _stopLossRate = (tactics.ticker.high - tactics.ticker.open) / tactics.ticker.open;
                     if (_stopLossRate !== tactics.parameter.stopLossRate) {
                         tactics.parameter.stopLossRate = _stopLossRate;
-                        tactics.addHistory('info', `止损点已经动态调整为：` + stopLossRate, true, { color: '#dee660', subType: 'dp' });
+                        tactics.addHistory('info', `止损点已经动态调整为：` + _stopLossRate, true, { color: '#dee660', subType: 'dp' });
                     }
                 }
             }
@@ -226,7 +226,7 @@ const restrain = {
                         const { UP, DN } = symbolObj.boll5m[symbolObj.boll5m.length - 1];
                         if (!UP || !DN) {
                             console.log('未取得boll线数据：' + item.symbol);
-                    return lastSymbolList;
+                            return lastSymbolList;
                         }
                         const klineData = symbolObj.klineData5m[symbolObj.klineData5m.length - 2];//到处第二条线
                         const close = +klineData[4];//收盘价
@@ -272,12 +272,13 @@ const restrain = {
             desc: '24小时ticker涨幅大于0且小于40%（越接近40%的一半即20%，评分更高），当前接近24小时最低价(离最高价差值在一定范围内浮动内，越接近评分更高)，且交易量大于500万',
             param: {
                 maxVolumeQuote: 5000000,//最高交易量
-                maxRise: 40,//最高涨幅限定
+                //maxRise: 40,//最高涨幅限定
                 maxBalance: 0.1//最高涨幅限定值差异度范围
             },
             method: async (lastSymbolList, tactics) => {
-                const { maxVolumeQuote, maxRise, maxBalance } = getParam('symbolElecter', 'history24h');
-                //const allSymbols = require('./TacticesCommand').getInstance().allTicker;
+                const { maxVolumeQuote, maxBalance } = getParam('symbolElecter', 'history24h');
+                const riseSymbols = require('./TacticesCommand').getInstance().allTicker.filter(item => +item.priceChangePercent > 0);
+                const maxRise = riseSymbols.reduce((pre, cur) => pre + (+cur.priceChangePercent), 0) / riseSymbols.length;//最高涨幅，取为上涨币种的平均上涨值
                 let resultList = [];
                 let index = 100000;//推荐级别十万位
                 for (let i in lastSymbolList) {

@@ -56,19 +56,21 @@ const bollLine = (klineData5m) => {
 }
 module.exports = class SymbolServer {
     constructor() {
-        this.symbolStorage = {
-            // ETHUSDT: {
-            //     klineData5m
-            // }
-        }
+        this.symbolStorage = {}
         this.loopInitDB = false;
-
+        this.initSymbolStorageFromDb();
     }
     static getInstance() {
         if (!this.SymbolServer) {
             this.SymbolServer = new SymbolServer();
         }
         return this.SymbolServer;
+    }
+    async initSymbolStorageFromDb() {
+        //从数据库读取
+        (await Symbol.find({})).map(({ name, klineData5m, boll5m }) => {
+            this.symbolStorage[name] = { klineData5m, boll5m }
+        })
     }
     /**初始化symbol数据库 */
     async initializeKline() {
@@ -105,7 +107,7 @@ module.exports = class SymbolServer {
                     //console.log(symbolKey, res.data);
                     this.symbolStorage[symbolKey] = {
                         klineData5m: res.data,
-                        boll5m: [{}]
+                        boll5m: this.symbolStorage[symbolKey].boll5m ? [...this.symbolStorage[symbolKey].boll5m] : [{}]
                     }
                     bar.tick();
                 }

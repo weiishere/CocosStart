@@ -28,20 +28,17 @@ const option = (symbol) => {
     const dates = rawData.map(function (item) {
         return item[0];
     });
-    const length = rawData.length;
+    const _default = '';//rawData[rawData.length - 1][1];
     let bollLineData = { UP: [], MB: [], DN: [] };
-    rawData.map(function (item, i) {
+    rawData.forEach(function (item, i) {
         let dn, mb, up;
-        if (i >= length - bollData.DN.length) {
-            dn = bollData.DN[i - (length - bollData.DN.length)];
-            mb = bollData.MB[i - (length - bollData.MB.length)];
-            up = bollData.UP[i - (length - bollData.UP.length)];
-        } else {
-            dn = mb = up = +rawData[rawData.length - 1][1];
-        }
-        bollLineData.UP.push(up);
-        bollLineData.MB.push(mb);
-        bollLineData.DN.push(dn);
+        up = bollData.UP.find(bd => item[0] === bd.formartStartTime.split(' ')[1]);
+        mb = bollData.MB.find(bd => item[0] === bd.formartStartTime.split(' ')[1]);
+        dn = bollData.DN.find(bd => item[0] === bd.formartStartTime.split(' ')[1]);
+
+        bollLineData.UP.push(up ? up.UP : _default);
+        bollLineData.MB.push(mb ? mb.MB : _default);
+        bollLineData.DN.push(dn ? dn.DN : _default);
     });
     const data = rawData.map(function (item) {
         return [+item[1], +item[4], +item[3], +item[2]];
@@ -73,6 +70,10 @@ const option = (symbol) => {
                 return `${param[0].axisValue}<br/>开盘：${param[0].value[1]}<br/>收盘：${param[0].value[2]}<br/>
                 最高：${param[0].value[4]}<br/>最低：${param[0].value[3]}<br/>涨跌：${((param[0].value[2] - param[0].value[1]) / param[0].value[2] * 100).toFixed(2)}`;
             }
+        },
+        legend: {
+            data: ['BOLL-UP','BOLL-MB','BOLL-DN'],
+            top:"6%"
         },
         xAxis: {
             type: 'category',
@@ -134,11 +135,28 @@ const option = (symbol) => {
                 }
             },
             {
+                name:'BOLL-UP',
+                data: bollLineData.UP,
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                lineStyle: { width: 1,  }
+            },
+            {
+                name:'BOLL-MB',
+                data: bollLineData.MB,
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                lineStyle: { width: 1,  }
+            },
+            {
+                name:'BOLL-DN',
                 data: bollLineData.DN,
                 type: 'line',
                 smooth: true,
                 symbol: 'none',
-                lineStyle: { width: 1 }
+                lineStyle: { width: 1,  }
             }
         ]
     };
@@ -173,7 +191,8 @@ const initKlineData = (myChart, symbol, callback) => {
         let arr = [];
         for (let i = 0; i < result.res.data.length; i++) {
             arr.push(result.res.data[i].slice(0));
-            arr[i][0] = dateFormat(new Date(+result.res.data[i][0]), "HH:mm")
+            arr[i][0] = dateFormat(new Date(+result.res.data[i][0]), "HH:mm");
+            arr[i][arr[i].length - 1] = +result.res.data[i][0];
         }
         rawData = arr;
         localStorage.setItem("klineData", JSON.stringify(arr));
@@ -187,14 +206,13 @@ const initKlineData = (myChart, symbol, callback) => {
         option: { baseUrl: 'API_server_url', failedBack: (error) => message.error({ content: error, duration: 2 }) }
     }).then(({ res }) => {
         bollData = { UP: [], MB: [], DN: [] };
-        res.data.data.forEach(({ UP, MB, DN }) => {
-            bollData.UP.push(UP);
-            bollData.MB.push(MB);
-            bollData.DN.push(DN);
+        res.data.data.forEach(({ formartStartTime, UP, MB, DN }) => {
+            bollData.UP.push({ formartStartTime, UP });
+            bollData.MB.push({ formartStartTime, MB });
+            bollData.DN.push({ formartStartTime, DN });
         });
         setOptionForNoCover(myChart, symbol);
     });
-
 }
 
 export default function KLine() {
@@ -228,9 +246,9 @@ export default function KLine() {
                 const { startTime, isFinal, open, close, low, high } = target.KLineItem5m.present;
                 const date = dateFormat(new Date(startTime), "HH:mm");
                 if (rawData[rawData.length - 1][0] !== date) {
-                    rawData.push([date, close, close, close, close]);
+                    rawData.push([date, close, close, close, close, startTime]);
                 } else {
-                    rawData[rawData.length - 1] = [date, open, high, low, close];
+                    rawData[rawData.length - 1] = [date, open, high, low, close, startTime];
                 }
                 setOptionForNoCover(myChart, target.symbol);
                 //myChart.setOption(option(target.symbol));
