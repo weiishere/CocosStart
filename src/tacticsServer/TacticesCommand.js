@@ -7,7 +7,6 @@
  * @~~
  */
 
-const Tactics = require('./Tactics');
 const SellIntoCorrections = require('./SellIntoCorrections');
 const { WsConfig, WsRoute } = require('../config')
 const { client } = require('../lib/binancer');

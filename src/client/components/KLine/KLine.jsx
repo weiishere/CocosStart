@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 22:33:14
- * @LastEditTime: 2020-08-24 18:11:12
+ * @LastEditTime: 2020-08-26 19:10:00
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -17,14 +17,32 @@ import { message } from 'antd';
 import './style.less'
 
 let rawData = JSON.parse(localStorage.getItem("klineData")) || [];//[['2015/12/31', '3570.47', '3539.18', '-33.69', '-0.94%', '3538.35', '3580.6', '176963664', '25403106', '-']].reverse();
-
+let bollData = {
+    UP: [],
+    MB: [],
+    DN: []
+};
 
 const option = (symbol) => {
     //const _rewData =rawData.length===0?[]: JSON.parse(localStorage.getItem("klineData")) || [];
     const dates = rawData.map(function (item) {
         return item[0];
     });
-
+    const length = rawData.length;
+    let bollLineData = { UP: [], MB: [], DN: [] };
+    rawData.map(function (item, i) {
+        let dn, mb, up;
+        if (i >= length - bollData.DN.length) {
+            dn = bollData.DN[i - (length - bollData.DN.length)];
+            mb = bollData.MB[i - (length - bollData.MB.length)];
+            up = bollData.UP[i - (length - bollData.UP.length)];
+        } else {
+            dn = mb = up = +rawData[rawData.length - 1][1];
+        }
+        bollLineData.UP.push(up);
+        bollLineData.MB.push(mb);
+        bollLineData.DN.push(dn);
+    });
     const data = rawData.map(function (item) {
         return [+item[1], +item[4], +item[3], +item[2]];
     });
@@ -114,6 +132,13 @@ const option = (symbol) => {
                     borderColor: '#0CF49B',
                     borderColor0: '#FD1050'
                 }
+            },
+            {
+                data: bollLineData.DN,
+                type: 'line',
+                smooth: true,
+                symbol: 'none',
+                lineStyle: { width: 1 }
             }
         ]
     };
@@ -139,14 +164,10 @@ const initKlineData = (myChart, symbol, callback) => {
         params: {
             symbol: symbol,
             interval: "5m",
-            startTime: lastHour,
-            //endTime:lastHour
+            startTime: lastHour
         },
         option: {
-            failedBack: (error) => {
-                //message.error(error);
-                message.error({ content: error, duration: 2 });
-            }
+            failedBack: (error) => { message.error({ content: error, duration: 2 }) }
         }
     }).then(result => {
         let arr = [];
@@ -158,7 +179,22 @@ const initKlineData = (myChart, symbol, callback) => {
         localStorage.setItem("klineData", JSON.stringify(arr));
         setOptionForNoCover(myChart, symbol);
         callback && callback();
-    })
+    });
+
+    requester({
+        url: api.getBollLine,
+        params: { symbol: symbol },
+        option: { baseUrl: 'API_server_url', failedBack: (error) => message.error({ content: error, duration: 2 }) }
+    }).then(({ res }) => {
+        bollData = { UP: [], MB: [], DN: [] };
+        res.data.data.forEach(({ UP, MB, DN }) => {
+            bollData.UP.push(UP);
+            bollData.MB.push(MB);
+            bollData.DN.push(DN);
+        });
+        setOptionForNoCover(myChart, symbol);
+    });
+
 }
 
 export default function KLine() {
@@ -173,7 +209,6 @@ export default function KLine() {
         const change = (symbol) => {
             theSymbol = symbol;
             localStorage.setItem("klineSymbol", symbol);
-            console.log("设置klineSymbol为："+symbol);
             const key = 'loading';
             message.loading({ content: 'K线数据请求中..', key, duration: 0 });
             initKlineData(myChart, localStorage.getItem("klineSymbol"), () => {

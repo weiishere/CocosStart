@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-18 23:49:06
- * @LastEditTime: 2020-08-19 16:22:21
+ * @LastEditTime: 2020-08-26 18:20:52
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -9,23 +9,50 @@
 const { requester } = require('../tool/Requester')
 const { client } = require('../lib/binancer');
 const { Symbol } = require('../db');
-
+const dateFormat = require('format-datetime');
 
 const ProgressBar = require('progress')
-const bolllLine = (klineData5m) => {
-    const day = 20;
-    const klineData5mFor20 = [...klineData5m].splice(klineData5m.length - day);
-    const MA = klineData5mFor20.reduce((pre, cur) => pre + cur[4], 0) / day;
-    const MD = Math.sqrt(klineData5mFor20.reduce((pre, cur) => pre + Math.pow((cur[4] - MA), 2), 0) / day);
-    const MB = MA * day;
-    const UP = MB + 2 * MD;
-    const DN = MB - 2 * MD;
-    return { UP, MB, DN };
-}
 const attributeCount = function (obj) {
     let count = 0;
     for (let i in obj) { if (obj.hasOwnProperty(i) && /USDT$/.test(i)) count++; }
     return count;
+}
+/** 获取布林线
+ * 
+中轨线（MB）,上轨线（UP）和下轨线（DN）的计算，其计算方法如下：
+日BOLL指标的计算公式
+中轨线=N日的移动平均线
+上轨线=中轨线+两倍的标准差
+下轨线=中轨线－两倍的标准差
+
+日BOLL指标的计算过程
+1）计算MA
+MA=N日内的收盘价之和÷N
+
+2）计算标准差MD
+MD=平方根N日的（C－MA）的两次方之和除以N
+（C指收盘价）
+
+3）计算MB,UP,DN线
+MB=（N-1）的MA
+UP=MB+2×MD
+DN=MB－2×MD
+
+各大股票交易软件默认N是20，所以MB等于当日20日均线值
+*/
+const bollLine = (klineData5m) => {
+    const count = 20;
+    const klineData5mFor20 = [...klineData5m].splice(klineData5m.length - count - 1, count);//最后一根K线可能未完结，不纳入计算
+    const getMA = (rem) => {
+        const klineData5mSplice = rem === 20 ? klineData5mFor20 : [...klineData5m].splice(klineData5m.length - rem - 1, rem);
+        return klineData5mSplice.reduce((pre, cur) => pre + (+cur[4]), 0) / rem;
+    }
+    const MA = getMA(count);
+    const MD = Math.sqrt(klineData5mFor20.reduce((pre, cur) => pre + Math.pow((cur[4] - MA), 2), 0) / count);
+    const MB = getMA(count - 1);
+    const UP = MB + 2 * MD;
+    const DN = MB - 2 * MD;
+    return { MA, UP, MB, DN };
 }
 module.exports = class SymbolServer {
     constructor() {
@@ -35,10 +62,7 @@ module.exports = class SymbolServer {
             // }
         }
         this.loopInitDB = false;
-        setInterval(() => {
-            //10秒向主进程发送一个数据
-            process.send({ type: 'symbolStorage', data: this.symbolStorage });
-        }, 10000);
+
     }
     static getInstance() {
         if (!this.SymbolServer) {
@@ -80,7 +104,8 @@ module.exports = class SymbolServer {
                 if (res.statusText === 'OK') {
                     //console.log(symbolKey, res.data);
                     this.symbolStorage[symbolKey] = {
-                        klineData5m: res.data
+                        klineData5m: res.data,
+                        boll5m: [{}]
                     }
                     bar.tick();
                 }
@@ -100,12 +125,14 @@ module.exports = class SymbolServer {
             if (symbolKey && this.symbolStorage.hasOwnProperty(symbolKey) && /USDT$/.test(symbolKey)) {
                 client.ws.candles(symbolKey, '5m', payload => {
                     const { symbol, startTime, closeTime, open, close, high, low, volume, quoteVolume, trades, buyVolume, quoteBuyVolume } = payload;
-                    const rawData = this.symbolStorage[symbol].klineData5m;
-                    if (rawData[rawData.length - 1][0] !== startTime) {
-                        rawData.shift();
-                        rawData.push([startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume]);
+                    const { klineData5m, boll5m } = this.symbolStorage[symbol];
+                    if (klineData5m[klineData5m.length - 1][0] !== startTime) {
+                        if (boll5m.length === klineData5m.length) boll5m.shift();
+                        klineData5m.shift();
+                        boll5m.push({});
+                        klineData5m.push([startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume]);
                     } else {
-                        rawData[rawData.length - 1] = [startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume];
+                        klineData5m[klineData5m.length - 1] = [startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume];
                     }
                 })
             }
@@ -114,13 +141,15 @@ module.exports = class SymbolServer {
     }
     /**同步至数据库(5分钟一次) */
     async syncDataToDB() {
+        this.bollAndSendLoop();
         console.log('symbolStorage开始同步至数据库!');
         console.time('同步完成，耗时');
         for (let symbolKey in this.symbolStorage) {
             if (this.symbolStorage.hasOwnProperty(symbolKey)) {
                 await Symbol.findOneAndUpdate({
                     name: symbolKey,
-                    klineData5m: JSON.stringify(this.symbolStorage[symbolKey].klineData5m)
+                    boll5m: this.symbolStorage[symbolKey].boll5m,
+                    klineData5m: this.symbolStorage[symbolKey].klineData5m
                 }, e => { console.log(e); });
             }
         }
@@ -128,6 +157,23 @@ module.exports = class SymbolServer {
         setTimeout(async () => {
             await this.syncDataToDB();
         }, 5 * 60 * 1000);
+    }
+    bollAndSendLoop() {
+        //10秒更新一次boll线并向主进程发送一个数据
+        for (let i in this.symbolStorage) {
+            if (this.symbolStorage.hasOwnProperty(i)) {
+                const { klineData5m, boll5m } = this.symbolStorage[i];
+                if (!klineData5m.length) continue;
+                let startTime = klineData5m[klineData5m.length - 1][0];
+                if (startTime === boll5m[boll5m.length - 1].startTime) continue; //若最后一条线的时间还没有变，则不计算
+                const { UP, MB, DN } = bollLine(klineData5m);
+                let formartStartTime = dateFormat(new Date(startTime), "yyyy/MM/dd HH:mm");
+                //console.log({ startTime, formartStartTime, UP, MB, DN });
+                boll5m[boll5m.length - 1] = { startTime, formartStartTime, UP, MB, DN };
+            }
+        }
+        process.send({ type: 'symbolStorage', data: this.symbolStorage });
+        setTimeout(() => { this.bollAndSendLoop() }, 10000);
     }
 }
 

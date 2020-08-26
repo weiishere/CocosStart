@@ -16,7 +16,8 @@ const symbolModel = mongoose.model('Symbol', new mongoose.Schema({
     klineData5m: { type: Array, default: [] },
     klineData1m: { type: Array, default: [] },
     klineData1h: { type: Array, default: [] },
-    klineData1d: { type: Array, default: [] }
+    klineData1d: { type: Array, default: [] },
+    boll5m: { type: Array, default: [] }
 }));
 
 

@@ -17,5 +17,6 @@ export default {
     updateAdvancedRestran: '/api/updateAdvancedRestran',
     getUser: '/api/getUser',
     getAdvancedRestran: '/api/getAdvancedRestran',
-    refreshSymbol:'/api/refreshSymbol'
+    refreshSymbol:'/api/refreshSymbol',
+    getBollLine:'/api/getBollLine'
 }

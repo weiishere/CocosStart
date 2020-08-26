@@ -1,12 +1,12 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-08-20 18:05:23
+ * @LastEditTime: 2020-08-26 18:43:56
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
  */
-
+const { Symbol } = require('../db');
 const { TacticesCommand } = require('../tacticsServer')
 const { apiDateCode, System } = require('../config');
 
@@ -211,6 +211,15 @@ module.exports = {
     }
 
     ctx.body = resultData;
+    next();
+  },
+  getBollLine: async (ctx, next) => {
+    const { symbol } = ctx.query;
+    const result = await Symbol.find({ name: symbol });
+    ctx.body = {
+      code: apiDateCode.success,
+      data: result[0].boll5m
+    };
     next();
   }
 };

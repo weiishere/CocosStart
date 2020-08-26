@@ -1,51 +1,19 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-14 13:49:13
- * @LastEditTime: 2020-08-24 17:22:07
+ * @LastEditTime: 2020-08-26 17:16:25
  * @LastEditors: weishere.huang
  * @Description: premiseForBuy：不能进，premiseForSell：必须出
  * @~~
  */
-const { Symbol } = require('../db');
+
 const { client } = require('../lib/binancer');
 const EventHub = require('../tool/EventHub');
 const getParam = (groupName, key) => {
     return restrain[groupName].find(item => item.key === key).param;
 }
-let symbolStorage = {};
-/** 获取布林线
- * 
-中轨线（MB）,上轨线（UP）和下轨线（DN）的计算，其计算方法如下：
-日BOLL指标的计算公式
-中轨线=N日的移动平均线
-上轨线=中轨线+两倍的标准差
-下轨线=中轨线－两倍的标准差
+let symbolStorage = null;
 
-日BOLL指标的计算过程
-1）计算MA
-MA=N日内的收盘价之和÷N
-
-2）计算标准差MD
-MD=平方根N日的（C－MA）的两次方之和除以N
-（C指收盘价）
-
-3）计算MB,UP,DN线
-MB=N日的MA
-UP=MB+2×MD
-DN=MB－2×MD
-
-各大股票交易软件默认N是20，所以MB等于当日20日均线值
-*/
-const bolllLine = (klineData5m) => {
-    const day = 20;
-    const klineData5mFor20 = [...klineData5m].splice(klineData5m.length - day);
-    const MA = klineData5mFor20.reduce((pre, cur) => pre + cur[4], 0) / day;
-    const MD = Math.sqrt(klineData5mFor20.reduce((pre, cur) => pre + Math.pow((cur[4] - MA), 2), 0) / day);
-    const MB = MA * day;
-    const UP = MB + 2 * MD;
-    const DN = MB - 2 * MD;
-    return { UP, MB, DN };
-}
 //接受子线程的数据：symbolStorage
 EventHub.getInstance().addEventListener('symbolStorage', data => {
     symbolStorage = data;
@@ -102,25 +70,30 @@ const restrain = {
         {
             key: 'fastRise',
             label: '波动出现高速下跌',
-            desc: '无论盈亏，10秒内的取样值都没高于0.01个点,每次采样的变化速率都是跌，且10秒累计下跌量相对当前价格超过-2%（）',
+            desc: '无论盈亏，10秒内的取样值(相对上一秒价格)涨跌幅都没高于0.001个点,每次采样的变化速率都是跌，且10秒累计下跌量相对10秒前价格跌幅超过1个点，要预防插针请关闭',
+            param: { scond: 10, maxRiseRate: 0.001, riseRate: 0.01 },
             method: (tactics) => {
-                const speed = tactics.getWaveSpeedList(10);
+                const { scond, maxRiseRate, riseRate } = getParam('premiseForSell', 'fastRise');
+                const speed = tactics.getWaveSpeedList(scond);
                 for (let i = 0, l = speed.length; i < l; i++) {
-                    if (speed[i] / tactics.presentPrice > 0.0001) return false;
+                    if (speed[i] / tactics.presentSpeedArr[tactics.presentSpeedArr - i - 1] > maxRiseRate) return false;
                 }
-                return speed.reduce((pre, cur) => pre + cur, 0) / tactics.presentPrice < -0.02 ? true : false;
+                return speed.reduce((pre, cur) => pre + cur, 0) / tactics.presentSpeedArr[tactics.presentSpeedArr.length - scond] < -riseRate ? true : false;
             }
         },
         {
             key: 'awaysRise',
             label: '亏损情况下，中高速的持续性下跌',
             desc: '亏损情况下，30秒的取样都是下跌，且30秒相对当前价格累计额下跌量超过-1%，要预防插针请关闭',
+            param: { scond: 30, riseRate: 0.01 },
             method: (tactics) => {
-                const speed = tactics.getWaveSpeedList(30);
+                if (tactics.presentDeal.historyProfit > 0) return false;
+                const { scond, riseRate } = getParam('premiseForSell', 'awaysRise');
+                const speed = tactics.getWaveSpeedList(scond);
                 for (let i = 0, l = speed.length; i < l; i++) {
                     if (speed[i] > 0) return false;
                 }
-                return speed.reduce((pre, cur) => pre + cur, 0) / tactics.presentPrice < -0.01 ? true : false;
+                return speed.reduce((pre, cur) => pre + cur, 0) / tactics.presentPrice < -riseRate ? true : false;
             }
         }
     ],
@@ -206,7 +179,7 @@ const restrain = {
         },
         {
             key: 'setStopLossRateByHastyLoss',
-            label: '短时间内急跌放大止损',
+            label: '短时间内急跌放大止损(预发插针)',
             desc: '5分钟内急跌(6个点以上)且突破了止损值，这时要扩大止损值防止下车',
             param: {
                 maxLoss: 0.06,
@@ -238,38 +211,33 @@ const restrain = {
     //选币方案
     symbolElecter: [
         {
-            key: 'LossToRiseInflexion',
-            label: '深沟检测',
-            desc: '下跌拐点型，30分钟下跌5%以上，然后回调1%',
-            param: {},
-            method: async (lastSymbolList, tactics) => {
-
-                return lastSymbolList;
-            }
-        },
-        {
-            key: 'fastRise',
-            label: '短时间急拉币(5分钟1个点)',
-            desc: '短时间在急拉的币，在5分钟就达到日涨幅的10%',
-            param: {
-                rise: 0.1
-            },
-            method: async (lastSymbolList, tactics) => {
-
-                return lastSymbolList;
-            }
-        },
-        {
             key: 'bollStandard',
             label: 'BOLL布林指标',
             desc: '使用BOLL布林指标线来辅助选币',
             param: {},
-            method: async (lastSymbolList, tactics) => {
-                const symbolList = await Symbol.find({});
-                symbolList.forEach(item => {
-                    const symbolItem = item.klineData5m;
-                });
-                return []
+            method: async (lastSymbolList) => {
+                try {
+                    if (!symbolStorage) {
+                        console.log('lastSymbolList还未收到数据(子线程未开？)');
+                        return lastSymbolList;
+                    }
+                    return lastSymbolList.filter(item => {
+                        const symbolObj = symbolStorage[item.symbol];
+                        const { UP, DN } = symbolObj.boll5m[symbolObj.boll5m.length - 1];
+                        if (!UP || !DN) {
+                            console.log('未取得boll线数据：' + item.symbol);
+                    return lastSymbolList;
+                        }
+                        const klineData = symbolObj.klineData5m[symbolObj.klineData5m.length - 2];//到处第二条线
+                        const close = +klineData[4];//收盘价
+                        const open = +klineData[1];//收盘价
+                        const low = +klineData[3];//最低价
+                        return (open < close && (close >= UP || low <= DN));//必须是阳线且收盘价大于UP，最低价小于DN
+                    });
+                } catch (e) {
+                    console.log('bollStandard选币发生错误：' + e);
+                    return lastSymbolList;
+                }
             }
         },
         {
@@ -342,6 +310,28 @@ const restrain = {
                 }
                 resultList = resultList.sort((a, b) => b.score - a.score);
                 return resultList;
+            }
+        },
+        {
+            key: 'LossToRiseInflexion',
+            label: '深沟检测',
+            desc: '下跌拐点型，30分钟下跌5%以上，然后回调1%',
+            param: {},
+            method: async (lastSymbolList, tactics) => {
+
+                return lastSymbolList;
+            }
+        },
+        {
+            key: 'fastRise',
+            label: '短时间急拉币(5分钟1个点)',
+            desc: '短时间在急拉的币，在5分钟就达到日涨幅的10%',
+            param: {
+                rise: 0.1
+            },
+            method: async (lastSymbolList, tactics) => {
+
+                return lastSymbolList;
             }
         }
     ]
