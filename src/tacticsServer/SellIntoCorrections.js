@@ -126,13 +126,17 @@ module.exports = class SellIntoCorrections extends Tactics {
         client.candles({ symbol, interval: '5m', limit: 1 }).then(data => this.KLineItem5m.present = data[0]);
         scoketCandles();
     }
-    /**添加历史记录，isDouble：如果重复两条记录，是否允许重复添加 */
+    /**添加历史记录:isDouble：如果重复两条记录，是否允许重复添加
+     * @type:info/profitChange
+     * @content
+     * @isDouble
+     */
     addHistory(type, content, isDouble, option) {
         if (isDouble && this.history.length !== 0 && this.history[this.history.length - 1].type === type && this.history[this.history.length - 1].content === content) {
             this.history[this.history.length - 1].time = Date.parse(new Date());
             return;
         }
-        const theOption = Object.assign({ color: '#999', iconType: '' }, option || {});
+        const theOption = Object.assign({ color: '#999', iconType: '', isMap: (type === 'info' ? false : true) }, option || {});
         type !== 'profitChange' && this.history.push({
             type: type,//order、info、buy、sell
             time: Date.parse(new Date()),
@@ -140,15 +144,22 @@ module.exports = class SellIntoCorrections extends Tactics {
             color: theOption.color
         })
         if (type === 'buy' || type === 'sell') {
-            this.historyForDeal.push({ ...this.history[this.history.length - 1] });
+            this.historyForDeal.push({ ...this.history[this.history.length - 1], symbol: this.symbol });
         } else if (type === 'profitChange') {
-            let _historyForDeal = this.historyForDeal[this.historyForDeal.length - 1];
-            if (_historyForDeal) {
-                _historyForDeal['changeTime'] = Date.parse(new Date());
-                _historyForDeal.content.profit = content;
+            let hfdItem = this.historyForDeal[this.historyForDeal.length - 1];
+            if (hfdItem) {
+                hfdItem['symbol'] = this.symbol;
+                hfdItem['changeTime'] = Date.parse(new Date());
+                hfdItem.content.profit = content;
             }
         }
-        require('./TacticesCommand').getInstance().mapTotacticsList(this.uid, this.id, true);
+        if (theOption.isMap) {
+            require('./TacticesCommand').getInstance().mapTotacticsList(this.uid, this.id, (type === 'profitChange' ? false : true));
+        }
+        require('./TacticesCommand').getInstance().pushHistory(this.uid, this.id, {
+            history: this.history,
+            historyForDeal: this.historyForDeal
+        });
         //if (this.presentSymbleId === this.id) _tacticesCommand.mapTotacticsList(this.uid, _tacticesCommand.presentSymbleId, true);
     }
     /**寻找新币，返回待选列表，和当前用户下的实例中，此实例用到的交易对（可能排名前面的正在使用中） */
@@ -203,7 +214,11 @@ module.exports = class SellIntoCorrections extends Tactics {
                     // client.candles({ chooseItem, interval: '5m', limit: 1 }).then(data => this.KLineItem5m.present = data[0]);
                     // scoketCandles();
                     //this.addHistory('info', `${this.parameter.faildBuyTimeForChange}次入场失败后，且无新推荐币种(${chooseItem})...`);
-                    this.addHistory('info', `获取到新推荐币种(${chooseItem})，实例即将自动启动...`, true, { color: '#b1eac5', type: 'changeSymbol', data: { symbol: chooseItem } });
+                    this.addHistory('info', `获取到新推荐币种(${chooseItem})，实例即将自动启动...`, true, {
+                        color: '#b1eac5',
+                        type: 'changeSymbol',
+                        data: { symbol: chooseItem }
+                    });
                     this.initialize(chooseItem);
                 }
                 return true;
@@ -265,12 +280,12 @@ module.exports = class SellIntoCorrections extends Tactics {
     powerPause() {
         if (this.mainTimer) clearTimeout(this.mainTimer);
         this.runState = false;
-        this.addHistory('info', `实例${this.name}已经发送暂停指令(执行完最后的逻辑)...`);
+        this.addHistory('info', `实例${this.name}已经发送暂停指令(执行完最后的逻辑)...`, false, { isMap: true });
     }
     async remove(deleteFn) {
         if (this.runState) await this.stop();
         deleteFn(this);
-        this.addHistory('info', `实例${this.name}已经删除...`);
+        this.addHistory('info', `实例${this.name}已经删除...`, false, { isMap: true });
     }
     async stop() {
         this.mainTimer && clearInterval(this.mainTimer);
@@ -282,7 +297,7 @@ module.exports = class SellIntoCorrections extends Tactics {
 
         }
         this.runState = false;
-        this.addHistory('info', `实例${this.name}已经停止...`);
+        this.addHistory('info', `实例${this.name}已经停止...`, false, { isMap: true });
     }
     async buy() {
         //次数未满之前肯定返回true，没有切币判断，都返回true

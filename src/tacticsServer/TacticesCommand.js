@@ -212,6 +212,16 @@ module.exports = class TacticesCommand {
             })
         }
     }
+    pushHistory(uid, id, historyObj) {
+        const r = userRooms.find(r => r.uid === uid);
+        if (r) {
+            const obj = r.tids.find(item => item.tid === id);
+            if (obj) {
+                this.scoketIO.to(obj.scoketId).emit(WsRoute.HISTORY_LIST, historyObj);
+            }
+            
+        }
+    }
     async getAllTicker() {
         // const tickers = await client.allBookTickers();
         // this.allTicker = tickers;

@@ -30,7 +30,8 @@ const WsConfig = {
 const WsRoute = {
   MULTIPLE_PRICE_CHANGE: 'multiple_price_change',
   TACTICS_LIST: 'tacticsList',
-  KLINE_DATA:'kline_data'
+  KLINE_DATA:'kline_data',
+  HISTORY_LIST:'history_list'
 }
 
 const apiDateCode = {

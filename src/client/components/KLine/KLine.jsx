@@ -58,19 +58,19 @@ const optionForKdj = () => ({
         {
             name: 'K',
             type: 'line',
-            lineStyle: { width: 1, },
+            lineStyle: { width: 1, },symbol: 'none',
             data: KDJData.K.map(item => item.K)
         },
         {
             name: 'D',
             type: 'line',
-            lineStyle: { width: 1, },
+            lineStyle: { width: 1, },symbol: 'none',
             data: KDJData.D.map(item => item.D)
         },
         {
             name: 'J',
             type: 'line',
-            lineStyle: { width: 1, },
+            lineStyle: { width: 1, },symbol: 'none',
             data: KDJData.J.map(item => item.J)
         }
     ]
