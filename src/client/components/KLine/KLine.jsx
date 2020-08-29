@@ -16,13 +16,65 @@ import EventHub from '@client/EventHub'
 import { message } from 'antd';
 import './style.less'
 
+let symbolTicker = {};
 let rawData = JSON.parse(localStorage.getItem("klineData")) || [];//[['2015/12/31', '3570.47', '3539.18', '-33.69', '-0.94%', '3538.35', '3580.6', '176963664', '25403106', '-']].reverse();
 let bollData = {
     UP: [],
     MB: [],
     DN: []
 };
-
+let KDJData = {
+    K: [],
+    D: [],
+    J: []
+};
+const optionForKdj = () => ({
+    title: {
+        text: ''
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data: ['K', 'D', 'J']
+    },
+    grid: {
+        top: '20%',
+        left: 20,
+        right: 60,
+        bottom: 0,
+        containLabel: true
+    },
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: KDJData.K.map(item => item.formartStartTime.split(' ')[1])
+    },
+    yAxis: {
+        type: 'value',
+        splitLine: { show: false }
+    },
+    series: [
+        {
+            name: 'K',
+            type: 'line',
+            lineStyle: { width: 1, },
+            data: KDJData.K.map(item => item.K)
+        },
+        {
+            name: 'D',
+            type: 'line',
+            lineStyle: { width: 1, },
+            data: KDJData.D.map(item => item.D)
+        },
+        {
+            name: 'J',
+            type: 'line',
+            lineStyle: { width: 1, },
+            data: KDJData.J.map(item => item.J)
+        }
+    ]
+});
 const option = (symbol) => {
     //const _rewData =rawData.length===0?[]: JSON.parse(localStorage.getItem("klineData")) || [];
     const dates = rawData.map(function (item) {
@@ -32,9 +84,9 @@ const option = (symbol) => {
     let bollLineData = { UP: [], MB: [], DN: [] };
     rawData.forEach(function (item, i) {
         let dn, mb, up;
-        up = bollData.UP.find(bd => item[0] === bd.formartStartTime.split(' ')[1]);
-        mb = bollData.MB.find(bd => item[0] === bd.formartStartTime.split(' ')[1]);
-        dn = bollData.DN.find(bd => item[0] === bd.formartStartTime.split(' ')[1]);
+        up = bollData.UP.find(bd => item[0] === (bd.formartStartTime ? bd.formartStartTime.split(' ')[1] : '17:10'));
+        mb = bollData.MB.find(bd => item[0] === (bd.formartStartTime ? bd.formartStartTime.split(' ')[1] : '17:10'));
+        dn = bollData.DN.find(bd => item[0] === (bd.formartStartTime ? bd.formartStartTime.split(' ')[1] : '17:10'));
 
         bollLineData.UP.push(up ? up.UP : _default);
         bollLineData.MB.push(mb ? mb.MB : _default);
@@ -45,7 +97,8 @@ const option = (symbol) => {
     });
     return {
         title: {
-            text: `K线行情（${symbol}）`
+            text: `5分线(${symbol})`,
+            subtext: symbolTicker ? `H:${+symbolTicker.high} / L:${+symbolTicker.low} / O:${+symbolTicker.open} / C:${+symbolTicker.curDayClose} 日幅:${symbolTicker.priceChangePercent}%` : ''
         },
         backgroundColor: '#21202D',
         // legend: {
@@ -72,8 +125,8 @@ const option = (symbol) => {
             }
         },
         legend: {
-            data: ['BOLL-UP','BOLL-MB','BOLL-DN'],
-            top:"6%"
+            data: ['UP', 'MB', 'DN'],
+            top: "1%"
         },
         xAxis: {
             type: 'category',
@@ -87,7 +140,7 @@ const option = (symbol) => {
 
         },
         grid: {
-            bottom: 80
+            bottom: 60
         },
 
         dataZoom: [{
@@ -135,28 +188,28 @@ const option = (symbol) => {
                 }
             },
             {
-                name:'BOLL-UP',
+                name: 'UP',
                 data: bollLineData.UP,
                 type: 'line',
                 smooth: true,
                 symbol: 'none',
-                lineStyle: { width: 1,  }
+                lineStyle: { width: 1, }
             },
             {
-                name:'BOLL-MB',
+                name: 'MB',
                 data: bollLineData.MB,
                 type: 'line',
                 smooth: true,
                 symbol: 'none',
-                lineStyle: { width: 1,  }
+                lineStyle: { width: 1, }
             },
             {
-                name:'BOLL-DN',
+                name: 'DN',
                 data: bollLineData.DN,
                 type: 'line',
                 smooth: true,
                 symbol: 'none',
-                lineStyle: { width: 1,  }
+                lineStyle: { width: 1, }
             }
         ]
     };
@@ -172,9 +225,12 @@ const setOptionForNoCover = (myChart, symbol) => {
         yAxis: oldOption.yAxis,
         series: oldOption.series
     }));
+    const myChartKdj = echarts.init(document.getElementById("kdj-line"), 'dark');
+    myChartKdj.setOption(optionForKdj());
 }
 
 const initKlineData = (myChart, symbol, callback) => {
+    if (!symbol) return;
     let now = new Date();
     let lastHour = now.setHours(now.getHours() - 12);
     requester({
@@ -201,15 +257,21 @@ const initKlineData = (myChart, symbol, callback) => {
     });
 
     requester({
-        url: api.getBollLine,
+        url: api.getIndicatorLine,
         params: { symbol: symbol },
         option: { baseUrl: 'API_server_url', failedBack: (error) => message.error({ content: error, duration: 2 }) }
     }).then(({ res }) => {
         bollData = { UP: [], MB: [], DN: [] };
-        res.data.data.forEach(({ formartStartTime, UP, MB, DN }) => {
+        KDJData = { K: [], D: [], J: [] };
+        res.data.data.boll5m.forEach(({ formartStartTime, UP, MB, DN }) => {
             bollData.UP.push({ formartStartTime, UP });
             bollData.MB.push({ formartStartTime, MB });
             bollData.DN.push({ formartStartTime, DN });
+        });
+        res.data.data.KDJ5m.forEach(({ formartStartTime, K, D, J }) => {
+            KDJData.K.push({ formartStartTime, K: (K ? parseInt(K) : '') });
+            KDJData.D.push({ formartStartTime, D: (D ? parseInt(D) : '') });
+            KDJData.J.push({ formartStartTime, J: (J ? parseInt(J) : '') });
         });
         setOptionForNoCover(myChart, symbol);
     });
@@ -219,7 +281,6 @@ export default function KLine() {
     const [index] = React.useState(0);
     let theSymbol = '';
     let lastKlineDate;
-    let isTimer = true;
     React.useEffect(() => {
         var myChart = echarts.init(document.getElementById("k-line"), 'dark');
         myChart.setOption(option(localStorage.getItem("klineSymbol") || ''));
@@ -241,8 +302,11 @@ export default function KLine() {
         });
         EventHub.getInstance().addEventListener('mapTacticsList', payload => {
             const target = payload.find(item => item.target);
+            if (target && target.symbol !== theSymbol) {
+                //change(target.symbol);
+            }
             if (target && target.KLineItem1m.startTime && target.symbol === theSymbol) {
-                isTimer = true;
+                symbolTicker = target.ticker;
                 const { startTime, isFinal, open, close, low, high } = target.KLineItem5m.present;
                 const date = dateFormat(new Date(startTime), "HH:mm");
                 if (rawData[rawData.length - 1][0] !== date) {
@@ -252,13 +316,11 @@ export default function KLine() {
                 }
                 setOptionForNoCover(myChart, target.symbol);
                 //myChart.setOption(option(target.symbol));
-            } else {
-                isTimer = false;
             }
         });
         window.setInterval(() => {
             if (localStorage.getItem("klineSymbol")) initKlineData(myChart, localStorage.getItem("klineSymbol"), () => { });
         }, 60000);
     }, []);
-    return <div id='k-line'></div>
+    return <><div id='k-line'></div><div id='kdj-line'></div></>
 }

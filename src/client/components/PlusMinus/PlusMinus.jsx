@@ -36,6 +36,12 @@ const option = () => {
             trigger: 'axis',
             axisPointer: {            // 坐标轴指示器，坐标轴触发有效
                 type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            },
+            formatter: function (param) {
+                const { data, axisValue } = param[0];
+                return axisValue ? `${axisValue}<br/>交易对：${data.symbol}
+                ${data.inCosting ? '<br/>入场成本：' + data.inCosting : ''}
+                ${data.outCosting ? '<br/>出场成本：' + data.outCosting : ''}<br/>盈亏：${data.value}` : ''
             }
         },
         grid: {
@@ -68,45 +74,9 @@ const option = () => {
                     show: true,
                     formatter: '{b}'
                 },
-                data:showData
+                data: showData
             }
         ]
-        // tooltip: {
-        //     //trigger: 'axis',
-        //     axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-        //         type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-        //     }
-        // },
-        // grid: {
-        //     top: 80,
-        //     bottom: 30
-        // },
-        // xAxis: {
-        //     type: 'category',
-        //     //position: 'left',
-        //     splitLine: {
-        //         lineStyle: {
-        //             type: 'dashed'
-        //         }
-        //     }
-        // },
-        // yAxis: {
-        //     type: 'value',
-
-        //     //data: ['ten', 'nine', 'eight', 'seven', 'six', 'five', 'four', 'three', 'two', 'one']
-        // },
-        // series: [
-        //     {
-        //         name: '盈亏',
-        //         type: 'bar',
-        //         stack: '总量',
-        //         label: {
-        //             show: false,
-        //             formatter: '{b}'
-        //         },
-        //         data
-        //     }
-        // ]
     }
 };
 
@@ -122,17 +92,23 @@ export default function PlusMinus() {
                 //     value: item.content.profit, name: Number(item.content.profit), label: {position: 'top'}, itemStyle: { color: item.content.profit < 0 ? 'green' : 'red' }
                 // }));
                 data = target.historyForDeal.filter(item => item.type === 'sell').map(item => ({
-                    value: item.content.profit, 
-                    name: Number(item.content.profit.toFixed(3)), 
-                    label: { position: 'top' }, 
+                    value: item.content.profit,
+                    name: Number(item.content.profit.toFixed(3)),
+                    label: { position: 'top' },
                     itemStyle: { color: item.content.profit < 0 ? 'green' : 'red' },
-                    time: item.time
+                    time: item.time,
+                    symbol: item.content.symbol,
+                    inCosting: item.content.inCosting,
+                    outCosting: item.content.outCosting
                 }));
                 //如果最后一个type=buy，就需要加入，用来记录当前的利润变化
                 const lastHistoryForDeal = target.historyForDeal[target.historyForDeal.length - 1];
                 if (lastHistoryForDeal && lastHistoryForDeal.type === 'buy') {
                     data.push({
-                        value: lastHistoryForDeal.content.profit, name: Number(lastHistoryForDeal.content.profit.toFixed(3)),
+                        value: lastHistoryForDeal.content.profit,
+                        symbol: lastHistoryForDeal.content.symbol,
+                        inCosting: lastHistoryForDeal.content.inCosting,
+                        name: Number(lastHistoryForDeal.content.profit.toFixed(3)),
                         label: { position: 'top' },
                         itemStyle: { color: lastHistoryForDeal.content.profit < 0 ? 'green' : 'red' },
                         time: lastHistoryForDeal.time || lastHistoryForDeal.changeTime || 0

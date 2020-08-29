@@ -9,15 +9,28 @@
 
 const { client } = require('../lib/binancer');
 const EventHub = require('../tool/EventHub');
+const { Symbol } = require('../db');
 const getParam = (groupName, key) => {
     return restrain[groupName].find(item => item.key === key).param;
 }
-let symbolStorage = null;
+let symbolStorage = {};
 
 //接受子线程的数据：symbolStorage
 EventHub.getInstance().addEventListener('symbolStorage', data => {
     symbolStorage = data;
 });
+
+//数据库获取symbolStorage
+const getSymbolStorageFromDB = async () => {
+    (await Symbol.find({})).map(({ name, klineData5m, boll5m }) => {
+        symbolStorage[name] = { klineData5m, boll5m }
+    });
+    setTimeout(() => {
+        getSymbolStorageFromDB();
+    }, 30000);
+}
+
+process.env.CHILD_PROCESS === '0' && getSymbolStorageFromDB();//如果没有开子进程通信，就自己去数据库拿
 
 const restrain = {
     /**入场前提条件    true：满足入场前提条件-false：不满足前提条件 */
@@ -108,7 +121,7 @@ const restrain = {
                 // const allTicker = require('./TacticesCommand').getInstance().allTicker;
                 // let ticker = [];
                 if (tactics.ticker) {
-                    const _stopLossRate = (tactics.ticker.high - tactics.ticker.open) / tactics.ticker.open;
+                    const _stopLossRate = +((tactics.ticker.high - tactics.ticker.open) / tactics.ticker.open).toFixed(3);
                     if (_stopLossRate !== tactics.parameter.stopLossRate) {
                         tactics.parameter.stopLossRate = _stopLossRate;
                         tactics.addHistory('info', `止损点已经动态调整为：` + _stopLossRate, true, { color: '#dee660', subType: 'dp' });
@@ -126,17 +139,19 @@ const restrain = {
                 const { step } = getParam('dynamicParam', 'setRiseStopLossRate');//获取步进值
                 let riseRate = tactics.getProfit() / tactics.presentDeal.costing;
                 let lastriseStopLossRate = tactics.parameterBackup.riseStopLossRate;
-                if (riseRate >= 0.15) {
+                if (riseRate >= 0.25) {
                     //盈利大于10个点
-                    lastriseStopLossRate = lastriseStopLossRate * (0.1 + step * 0);
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 1);
+                } else if (riseRate >= 0.15 && riseRate < 0.25) {
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 2);
                 } else if (riseRate >= 0.1 && riseRate < 0.15) {
-                    lastriseStopLossRate = lastriseStopLossRate * (0.1 + step * 1);
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 3);
                 } else if (riseRate >= 0.08 && riseRate < 0.1) {
-                    lastriseStopLossRate = lastriseStopLossRate * (0.1 + step * 2);
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 4);
                 } else if (riseRate >= 0.06 && riseRate < 0.08) {
-                    lastriseStopLossRate = lastriseStopLossRate * (0.1 + step * 3);
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 5);
                 } else if (riseRate >= 0.04 && riseRate < 0.06) {
-                    lastriseStopLossRate = lastriseStopLossRate * (0.1 + step * 4);
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 6);
                 } else if (riseRate < 0.04) {
                     //小于0.04，意思没动
                     lastriseStopLossRate = lastriseStopLossRate;
@@ -166,10 +181,10 @@ const restrain = {
                     //最大亏损大于达到止损值的90%了
                     lossStopLossRate = lossRate;//回最大亏损的60就割肉
                 } else {
-                    if (tactics.parameter.lossStopLossRate !== tactics.parameterBackup.lossStopLossRate) {
-                        tactics.parameter.lossStopLossRate = tactics.parameterBackup.lossStopLossRate;
-                        tactics.addHistory('info', `拐点止损值恢复原参数`, true, { color: "#dee660", subType: 'dp' });
-                    }
+                    // if (tactics.parameter.lossStopLossRate !== tactics.parameterBackup.lossStopLossRate) {
+                    //     tactics.parameter.lossStopLossRate = tactics.parameterBackup.lossStopLossRate;
+                    //     tactics.addHistory('info', `拐点止损值恢复原参数`, true, { color: "#dee660", subType: 'dp' });
+                    // }
                 }
                 if (lossStopLossRate !== tactics.parameterBackup.lossStopLossRate && tactics.parameter.lossStopLossRate !== tactics.parameterBackup.lossStopLossRate) {
                     tactics.parameter.lossStopLossRate = lossStopLossRate;
@@ -269,9 +284,9 @@ const restrain = {
         {
             key: 'history24h',
             label: '24小时状态分析',
-            desc: '24小时ticker涨幅大于0且小于40%（越接近40%的一半即20%，评分更高），当前接近24小时最低价(离最高价差值在一定范围内浮动内，越接近评分更高)，且交易量大于500万',
+            desc: '24小时ticker涨幅大于0且小于40%（越接近40%的一半即20%，评分更高），当前接近24小时最低价(离最高价差值在一定范围内浮动内，越接近评分更高)，且交易量大于300万',
             param: {
-                maxVolumeQuote: 5000000,//最高交易量
+                maxVolumeQuote: 3000000,//最低交易量
                 //maxRise: 40,//最高涨幅限定
                 maxBalance: 0.1//最高涨幅限定值差异度范围
             },
@@ -285,8 +300,8 @@ const restrain = {
                     let score = 0;
                     const item = lastSymbolList[i];
                     if (!lastSymbolList.hasOwnProperty(i)) continue;
-                    if (+item.data.volumeQuote < maxVolumeQuote) continue;//交易量大于5000000
-                    //涨幅0~40%内
+                    if (+item.data.volumeQuote < maxVolumeQuote) continue;
+                    //涨幅为所有涨币的平均值
                     if (+item.data.priceChangePercent < 0 || +item.data.priceChangePercent > maxRise) {
                         continue;
                     } else {

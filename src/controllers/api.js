@@ -213,12 +213,13 @@ module.exports = {
     ctx.body = resultData;
     next();
   },
-  getBollLine: async (ctx, next) => {
+  getIndicatorLine: async (ctx, next) => {
     const { symbol } = ctx.query;
     const result = await Symbol.find({ name: symbol });
+    const { boll5m, KDJ5m } = result[0];
     ctx.body = {
       code: apiDateCode.success,
-      data: result[0].boll5m
+      data: { boll5m, KDJ5m }
     };
     next();
   }

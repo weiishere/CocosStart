@@ -22,6 +22,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.symbol = '';//当前交易对
         this.presentTrade = null;
         this.presentSpeedArr = [];
+        this.symbolInfo = null;
         this.KLineItem5m = {
             recent: null,//最近的完整K线
             present: null//当前正在运行的k线
@@ -82,14 +83,14 @@ module.exports = class SellIntoCorrections extends Tactics {
             //serviceCharge: "币安手续费(千一)",
             //serviceChargeDiscounts: "优惠费率(实付费用(1-0.25))",
 
-            lowestRiseRate: [true, "最低出场盈利率(相对成本)"],
+            lowestRiseRate: [true, "最低盈利(相对成本)"],
             riseStopLossRate: [true, "止盈拐点跌幅%(相对盈利)"],
             stopLossRate: [true, "止损(相对成本跌幅)"],
             //isLiveRiseStopLossRate: [true, "是否动态设置拐点跌幅"],
             checkBuyRate: [true, "买入检查频率"],
             riseStayCheckRateForBuy: [false, "买入确认频率"],
             riseBuyRange: [true, "买入确认涨幅"],
-            autoSymbol: [true, "是否自动切币(待机任务会自动启动)"],
+            autoSymbol: [false, "自动切币(自启动)"],
             //autoRun: [true, "有推荐币是否自动入场(需先启动)"],
             //ambushRange: "埋伏入场下跌率",
             checkSellRate: [true, "卖出检查频率"],
@@ -117,9 +118,10 @@ module.exports = class SellIntoCorrections extends Tactics {
         }
     }
     /**初始化，启动的时候调用 */
-    initialize(symbol) {
+    async initialize(symbol) {
         //if (this.runState) return false;//运行期间不允许更改
         this.symbol = symbol;
+        this.symbolInfo = await require('./TacticesCommand').getInstance().getExchangeInfo(this.symbol);
         //初始化时给点5分线数据
         client.candles({ symbol, interval: '5m', limit: 1 }).then(data => this.KLineItem5m.present = data[0]);
         scoketCandles();
@@ -176,19 +178,19 @@ module.exports = class SellIntoCorrections extends Tactics {
             chooseIndex = 0;
             const tacticsList = require('./TacticesCommand').getInstance().tacticsList;
             for (let i = 0; i < symbols.length; i++) {
-                if (tacticsList.some(item => item.symbol === symbols[i].symbol)) {
+                if (tacticsList.some(item => (item.symbol === symbols[i].symbol && item.id !== this.id))) {
                     chooseIndex++;
                 }
             }
         }
         require('./TacticesCommand').getInstance().pushBetterSymbol(this.uid, this.id, symbols);
-        return { symbols, chooseItem: symbols[chooseIndex] };
+        return { symbols, chooseItem: chooseIndex === -1 ? null : symbols[chooseIndex].symbol };
     }
     /**切币函数，没有新币返回false，没有切币条件或者切币成功返回true*/
     async checkChangeSymbol() {
         this.checkBuyTime++;
-        if ((this.presentDeal.historyProfit < 0 && this.checkBuyTime === this.parameter.faildBuyTimeForChange) ||
-            (this.presentDeal.historyProfit >= 0 && this.checkBuyTime >= 100)) {
+        if ((this.presentDeal.historyProfit <= 0 && this.checkBuyTime === this.parameter.faildBuyTimeForChange) ||
+            (this.presentDeal.historyProfit > 0 && this.checkBuyTime >= 100)) {
             //如果出亏损出场，而且检测了n次依然未能再次进场，或者 在上次盈利情况下，已经连续检测了100次了，则切币（开始寻找新币）
             //寻找新币
             const { chooseItem } = await this.findSymbol();
@@ -224,13 +226,6 @@ module.exports = class SellIntoCorrections extends Tactics {
             //开始运行
             let fn = async () => {
                 clearTimeout(this.mainTimer);
-                //动态高级
-                for (let i = 0; i < restrainGroup.dynamicParam.length; i++) {
-                    const restrain = restrainGroup.dynamicParam[i];
-                    if (this.advancedOption.dynamicParam.some(item => item === restrain.key)) {
-                        restrain.method(this);
-                    }
-                }
                 if (!this.buyState) {
                     if (this.fristNowBuy) {
                         //立即买入
@@ -246,6 +241,13 @@ module.exports = class SellIntoCorrections extends Tactics {
                     }
                 } else {
                     //出场判断
+                    //动态高级
+                    for (let i = 0; i < restrainGroup.dynamicParam.length; i++) {
+                        const restrain = restrainGroup.dynamicParam[i];
+                        if (this.advancedOption.dynamicParam.some(item => item === restrain.key)) {
+                            restrain.method(this);
+                        }
+                    }
                     const r = await this.sell();
                     this.buyState = !r;
                 }
@@ -262,7 +264,7 @@ module.exports = class SellIntoCorrections extends Tactics {
     }
     powerPause() {
         if (this.mainTimer) clearTimeout(this.mainTimer);
-        this.runState = !this.runState;
+        this.runState = false;
         this.addHistory('info', `实例${this.name}已经发送暂停指令(执行完最后的逻辑)...`);
     }
     async remove(deleteFn) {
@@ -399,7 +401,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             //如果盈利为正
             if (_profit > this.presentDeal.historyProfit) {
                 //利润大于上一次统计的利润，持续盈利中...
-                this.addHistory('info', `记录到更高盈利${_profit}`, true);
+                this.addHistory('info', `记录到更高盈利：${_profit}`, true);
                 this.presentDeal.historyProfit = _profit;//存储最高利润
                 return false;
             } else {
@@ -408,7 +410,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 const _riseStopLossRate = diff / this.presentDeal.historyProfit * 100;
                 if (_riseStopLossRate > this.parameter.riseStopLossRate) {
                     //亏损率大于一个值,判断当前盈利率，选择是否止盈
-                    if (_profit / this.presentDeal.costing < this.parameter.lowestRiseRate) {
+                    if (_profit < this.parameter.lowestRiseRate) {
                         //盈利率小于某一个值的话，就不予止盈，否则没太大意义（避免某一下的急跌造成割肉，却没赚到什么）
                         this.addHistory('info', `相比最大历史盈利，下降量${_riseStopLossRate.toFixed(6)}%，大于${this.parameter.riseStopLossRate}%，但低于最低出场盈利率${this.parameter.lowestRiseRate}，继续观察...`, true);
                         return false;
@@ -436,7 +438,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             }
             if (_profit < this.presentDeal.historyProfit) {
                 //亏损大于上一次统计的亏损，持续亏损中...
-                this.addHistory('info', `记录到更高亏损${_profit}`, true);
+                this.addHistory('info', `记录到更高亏损：${_profit}`, true);
                 this.presentDeal.historyProfit = _profit;//存储最高亏损
             }
             const _stopLossRate = Math.abs(Number(this.getProfit() / this.presentDeal.costing));
@@ -561,13 +563,14 @@ module.exports = class SellIntoCorrections extends Tactics {
                         payPrice: price,//买入价,暂时等于市价
                         //这里成本暂时等于usdt量加手续费，之后获取订单后会更新
                         costing: 0,//this.parameter.usdtAmount * (1 + (this.parameter.serviceCharge * (1 - this.parameter.serviceChargeDiscounts))),
+                        inCosting: 0,
                         amount: this.getDecimalsForCount(this.parameter.usdtAmount / price),//注意，这里是根据的市价，所以最终实际购买数量可能会有误差，这里只是给一个买入颗数
                         historyProfit: 0,//当前交易的历史盈利
                         tradesDoneQuantity: 0,//处理完成的币数量
                         tradesDoneAmount: 0//已经处理完的金额
                     });
                 try {
-                    this.addHistory('info', `将进行市价买入，交易数量::${this.presentDeal.amount}`);
+                    this.addHistory('info', `将进行市价买入，交易数量:${this.presentDeal.amount}`);
                     //挂单
                     const { status, type, transactTime, executedQty, orderId, origQty, fills, symbol } = await client.order({
                         symbol: this.symbol,
@@ -594,6 +597,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                         profit: this.getProfit(),
                         price: this.presentDeal.payPrice,
                         costing: this.presentDeal.costing,
+                        inCosting: this.presentDeal.costing
                     }, false, { color: 'red' });
                 } catch (e) {
                     console.error(e);
@@ -605,13 +609,16 @@ module.exports = class SellIntoCorrections extends Tactics {
                 //模拟卖出
                 //获得回收金额
                 this.profitSymbol.push({ symbol: this.symbol, profit: this.getProfit() });
+                const costingBuy = this.presentDeal.costing;
+                this.presentDeal.costing = this.presentDeal.amount * (1 - this.parameter.serviceCharge) * price;
                 this.addHistory('sell', {
                     symbol: this.symbol,
                     dealAmount: this.presentDeal.amount,
                     orderInfo: null,
                     price: price,
-                    profit: this.getProfit(),
-                    costing: this.presentDeal.amount * (1 - this.parameter.serviceCharge) * price
+                    profit: this.presentDeal.costing - costingBuy,
+                    inCosting: costingBuy,
+                    outCosting: this.presentDeal.costing
                 }, false, { color: 'green' });
             } else {
                 //真实卖出
@@ -657,6 +664,8 @@ module.exports = class SellIntoCorrections extends Tactics {
                         symbol: this.symbol,
                         dealAmount: this.presentDeal.sellOrderInfo.tradesDoneQuantity,
                         orderInfo: this.presentDeal.sellOrderInfo,
+                        inCosting: costingBuy,
+                        outCosting: this.presentDeal.costing,
                         profit: this.presentDeal.costing - costingBuy,//卖出回本减去买入的成本，为什么不用getProfit，因为getProfit是理论利润
                         price: this.presentDeal.payPrice
                     }, false, { color: 'green' });
@@ -671,19 +680,12 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.riseTimer && clearTimeout(this.riseTimer);
         return true;
     }
-    /**处理数量小数，如果大于1，取2位小数，如果小于1，就要看几个零了，取最后一个零后的2位数 */
+    /**根据步长取小数 */
     getDecimalsForCount(quantity) {
-        quantity = +quantity;
-        if (quantity > 1) {
-            return +quantity.toFixed(2);
-        } else {
-            const b = (quantity + '').split('.')[1];
-            let c = 0; let a = b.split(''); let l = a.length;
-            for (let i = 0; i < l; i++) {
-                if (a[i] === '0') c++; else break;
-            }
-            return +quantity.toFixed(c + 2);
-        }
+        const stepSize = +this.symbolInfo.filters.find(item => item.filterType === 'LOT_SIZE').stepSize;
+        let sizeStep = 0;
+        while (stepSize * Math.pow(10, sizeStep) < 1) { sizeStep++; }
+        return +quantity.toFixed(sizeStep);
     }
     resetParam(key) {
         if (key) {

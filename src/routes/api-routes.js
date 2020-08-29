@@ -23,7 +23,7 @@ module.exports = router
   .get('/api/getUser', controllers.user.getUser)
   .get('/api/getAdvancedRestran',controllers.api.getAdvancedRestran)
   .get('/api/refreshSymbol',controllers.api.refreshSymbol)
-  .get('/api/getBollLine',controllers.api.getBollLine)
+  .get('/api/getIndicatorLine',controllers.api.getIndicatorLine)
   .post('/api/switchSymbol', controllers.api.switchSymbol)
   .post('/api/initTactics', controllers.api.initTactics)
   .post('/api/tacticsOrder', controllers.api.tacticsOrder)

@@ -19,6 +19,7 @@ module.exports = class TacticesCommand {
         this.presentSymbleId = '';//当前选中的交易
         this.tacticsList = [];
         this.isRateDone = true;//是否已经完成了正常数据发送
+        this.getExchangeInfo();
         this.initTasks();
         this.getAllTicker();
         this.allTicker = null;
@@ -34,6 +35,63 @@ module.exports = class TacticesCommand {
     async syncDataGo() {
         await this.syncData();
         setTimeout(() => { this.syncDataGo() }, 5000);
+    }
+    /**
+     * 
+     * {
+        "timezone": "UTC",
+        "serverTime": 1508631584636,
+        "rateLimits": [
+            {
+            "rateLimitType": "REQUEST_WEIGHT",
+            "interval": "MINUTE",
+            "intervalNum": 1,
+            "limit": 1200
+            },
+            {
+            "rateLimitType": "ORDERS",
+            "interval": "SECOND",
+            "intervalNum": 1,
+            "limit": 10
+            },
+            {
+            "rateLimitType": "ORDERS",
+            "interval": "DAY",
+            "intervalNum": 1,
+            "limit": 100000
+            }
+        ],
+        "exchangeFilters": [],
+        "symbols": [{
+            "symbol": "ETHBTC",
+            "status": "TRADING",
+            "baseAsset": "ETH",
+            "baseAssetPrecision": 8,
+            "quoteAsset": "BTC",
+            "quotePrecision": 8,
+            "orderTypes": ["LIMIT", "MARKET"],
+            "icebergAllowed": false,
+            "filters": [{
+            "filterType": "PRICE_FILTER",
+            "minPrice": "0.00000100",
+            "maxPrice": "100000.00000000",
+            "tickSize": "0.00000100"
+            }, {
+            "filterType": "LOT_SIZE",
+            "minQty": "0.00100000",
+            "maxQty": "100000.00000000",
+            "stepSize": "0.00100000"
+            }, {
+            "filterType": "MIN_NOTIONAL",
+            "minNotional": "0.00100000"
+            }]
+        }]
+        }
+     * @param symbol 可选
+     */
+    async getExchangeInfo(symbol) {
+        if (!this.exchangeInfo) this.exchangeInfo = await client.exchangeInfo();
+        return symbol ? this.exchangeInfo.symbols.find(item => item.symbol === symbol) : this.exchangeInfo;
     }
     /**取数据库数据同步至tacticsList，并根据状态启动 */
     async initTasks() {
@@ -170,7 +228,7 @@ module.exports = class TacticesCommand {
             this.tacticsList.forEach(item => {
                 if (item.presentTrade) {
                     //1秒取一次样
-                    if (item.presentSpeedArr.length === 35) item.presentSpeedArr.shift();
+                    if (item.presentSpeedArr.length === 60) item.presentSpeedArr.shift();
                     item.presentSpeedArr.push(item.presentTrade.price);
                 }
             })

@@ -66,7 +66,7 @@ const option = (symbol, price) => {
             },
             formatter: function (param) {
                 return `${param[0].axisValue}<br/>开盘：${param[0].value[1]}<br/>收盘：${param[0].value[2]}<br/>
-                最高：${param[0].value[4]}<br/>最低：${param[0].value[3]}<br/>涨跌：${((param[0].value[2] - param[0].value[1]) / param[0].value[2]*100).toFixed(2)}`;
+                最高：${param[0].value[4]}<br/>最低：${param[0].value[3]}<br/>涨跌：${((param[0].value[2] - param[0].value[1]) / param[0].value[2] * 100).toFixed(2)}`;
             }
         },
         // legend: {
@@ -105,7 +105,7 @@ const option = (symbol, price) => {
                 end: 100
             },
             {
-                textStyle: {color: '#8392A5'},
+                textStyle: { color: '#8392A5' },
                 handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
                 handleSize: '80%',
                 dataBackground: {
@@ -231,8 +231,22 @@ export default function BSLine() {
             const target = payload.find(item => item.target);
             persentPrice = !target ? 0 : (target.buyState ? target.presentDeal.payPrice : 0);
             if (!target) return;
-            symbol = target.symbol;
-            if (target.historyForDeal.length !== markPointData.length) { }
+            if (symbol !== target.symbol) {
+                symbol = target.symbol;
+                initKlineData(myChart, symbol);
+            } else {
+                if (target.KLineItem1m.startTime) {
+                    const { startTime, isFinal, open, close, low, high } = target.KLineItem1m;
+                    const date = dateFormat(new Date(startTime), "HH:mm");
+                    if (rawData[rawData.length - 1][0] !== date) {
+                        rawData.push([date, close, close, close, close]);
+                    } else {
+                        rawData[rawData.length - 1] = [date, open, high, low, close];
+                    }
+                    setOptionForNoCover(myChart, target.symbol, close);
+                    //myChart.setOption(option(target.symbol, close));
+                }
+            }
             markPointData = target.historyForDeal.map((item, i) => ({
                 name: '标点' + i,
                 coord: [dateFormat(new Date(item.time), "HH:mm"), item.content.price],
@@ -241,17 +255,6 @@ export default function BSLine() {
                     color: item.type === 'buy' ? 'red' : 'green'//'rgb(41,60,85)'
                 }
             }));
-            if (target.KLineItem1m.startTime) {
-                const { startTime, isFinal, open, close, low, high } = target.KLineItem1m;
-                const date = dateFormat(new Date(startTime), "HH:mm");
-                if (rawData[rawData.length - 1][0] !== date) {
-                    rawData.push([date, close, close, close, close]);
-                } else {
-                    rawData[rawData.length - 1] = [date, open, high, low, close];
-                }
-                setOptionForNoCover(myChart, target.symbol, close);
-                //myChart.setOption(option(target.symbol, close));
-            }
         });
         // window.setInterval(() => {
         //     initKlineData(myChart, symbol);

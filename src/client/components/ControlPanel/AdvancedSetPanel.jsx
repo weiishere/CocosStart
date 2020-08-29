@@ -89,7 +89,7 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
             {
                 paramters.filter(item => !item.isNoAdv).map(item => <li>
                     <div>
-                        <div className='title_label'>{item.desc}</div>：&nbsp;
+                        <div className='title_label nowrap'><Tooltip placement="left" title={item.desc}>{item.desc}:</Tooltip></div>&nbsp;
                         <div className='adv_content'>
                             {typeof (item.value) === 'number' ? <Search
                                 type='number'
@@ -103,7 +103,7 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                                 onChange={e => {
                                     setValue({ key: item.key, value: +e.target.value })
                                 }}
-                            /> : <center><Switch checked={item.value} onChange={checked => {
+                            /> : <center><Switch disabled={disables[0]} checked={item.value} onChange={checked => {
                                 updateParameter(item.key, checked)
                             }} /></center>}
                         </div>
