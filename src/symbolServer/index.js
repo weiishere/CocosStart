@@ -12,7 +12,7 @@ const SymbolServer = require('./symbolServer');
 connectDB(async () => {
     const symbolServer = SymbolServer.getInstance();
     await symbolServer.initSymbolStorageFromDb();
-    await symbolServer.initializeKline();
+    //await symbolServer.initializeKline();
     await symbolServer.incrementKlineData();
     await symbolServer.syncDataToDB();
 },'symbolServer进程');

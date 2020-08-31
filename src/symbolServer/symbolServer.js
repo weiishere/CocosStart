@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-18 23:49:06
- * @LastEditTime: 2020-08-26 18:20:52
+ * @LastEditTime: 2020-08-31 15:54:38
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -92,7 +92,10 @@ const KDJLine = (klineData5m, KdjData, n) => {
     const preKData = klineData5mForN[klineData5mForN.length - 1];//最近的K线数据
     const Ln = +klineData5mForN.sort((a, b) => a[3] - b[3])[0][3];
     const Hn = +klineData5mForN.sort((a, b) => b[2] - a[2])[0][2];
-    const lastKDJData = KdjData.find(item => item.startTime === klineData5mForN[klineData5mForN.length - 2][0]) || { K: 50, D: 50 };//上一日的KDJ
+    let lastKDJData =
+        klineData5mForN[klineData5mForN.length - 2][0] ?
+            KdjData.find(item => item.startTime === klineData5mForN[klineData5mForN.length - 2][0]) : { K: 50, D: 50 };//上一日的KDJ
+    lastKDJData = (lastKDJData || { K: 50, D: 50 });
     const RSV = ((+preKData[4] - Ln) / (Hn - Ln)) * 100;
     const K = (2 / 3) * (lastKDJData.K || 50) + (1 / 3) * RSV;
     const D = (2 / 3) * (lastKDJData.D || 50) + (1 / 3) * K;
@@ -122,7 +125,7 @@ module.exports = class SymbolServer {
         console.log('Await request and initialize symbol Kline data...\n');
         const prices = await client.prices();
         const now = new Date();
-        const lastTime = now.setHours(now.getHours() - 3);
+        const lastTime = now.setHours(now.getHours() - 10);
         const bar = new ProgressBar('Initialize KLine data [:bar] 进度:current/:total :percent 剩余:etas', {
             complete: '=',
             incomplete: ' ',
