@@ -9,6 +9,7 @@
 const { Symbol } = require('../db');
 const { TacticesCommand } = require('../tacticsServer')
 const { apiDateCode, System } = require('../config');
+const dateFormat = require('format-datetime');
 
 module.exports = {
   initTactics: async (ctx, next) => {
@@ -216,7 +217,9 @@ module.exports = {
   getIndicatorLine: async (ctx, next) => {
     const { symbol } = ctx.query;
     const result = await Symbol.find({ name: symbol });
-    const { boll5m, KDJ5m } = result[0];
+
+    const { boll5m } = result[0];
+    const KDJ5m = getKDJ(result[0], 9);
     ctx.body = {
       code: apiDateCode.success,
       data: { boll5m, KDJ5m }
@@ -224,8 +227,40 @@ module.exports = {
     next();
   }
 };
-
-
+const getKDJ = ({ klineData5m, KDJ5m }, n) => {
+  let result = [];
+  klineData5m.forEach((item, i) => {
+    if (i > n) {
+      const klineData5mForN = [...klineData5m].splice(i, n);
+      const L9 = klineData5mForN.sort((a, b) => (a[3] - b[3]))[0][3];
+      const H9 = klineData5mForN.sort((a, b) => (b[2] - a[2]))[0][2];
+      const RSV = ((item[4] - L9) / (H9 - L9)) * 100;
+      let lastKDJ5m = KDJ5m.find(i => i.startTime === item[0])
+      lastKDJ5m = lastKDJ5m ? lastKDJ5m : { K: 50, D: 50 };
+      const K = (2 / 3) * lastKDJ5m.K + (1 / 3) * RSV;
+      const D = (2 / 3) * lastKDJ5m.D + (1 / 3) * K;
+      const J = 3 * K - 2 * D;
+      const startTime = item[0];
+      const formartStartTime = dateFormat(new Date(startTime), "yyyy/MM/dd HH:mm")
+      result.push({ startTime, formartStartTime, K, D, J })
+    }
+  })
+  return result;
+}
+/**
+    1499040000000,      // 开盘时间
+    "0.01634790",       // 开盘价
+    "0.80000000",       // 最高价
+    "0.01575800",       // 最低价
+    "0.01577100",       // 收盘价(当前K线未结束的即为最新价)
+    "148976.11427815",  // 成交量
+    1499644799999,      // 收盘时间
+    "2434.19055334",    // 成交额
+    308,                // 成交笔数
+    "1756.87402397",    // 主动买入成交量
+    "28.46694368",      // 主动买入成交额
+    "17928899.62484339" // 请忽略该参数
+ */
 
 // export const Get = (ctx, next) => {
 //   ctx.body = {

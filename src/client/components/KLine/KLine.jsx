@@ -35,6 +35,7 @@ const optionForKdj = () => ({
     tooltip: {
         trigger: 'axis'
     },
+    color:['#4472C5','#ED7C30','#80FF80'],
     legend: {
         data: ['K', 'D', 'J']
     },
@@ -52,26 +53,68 @@ const optionForKdj = () => ({
     },
     yAxis: {
         type: 'value',
+        interval:40,
         splitLine: { show: false }
+    },
+    dataZoom: [{
+        type: 'inside',
+        start: 0,
+        end: 100
+    },
+    {
+        show: true,
+        height: 10,
+        type: 'slider',
+        start: 0,
+        end: 100,
+        bottom: 2
+    }],
+    grid: {
+        bottom: 12,
+        left: 1,
+        top: 10,
+        containLabel: true
     },
     series: [
         {
             name: 'K',
             type: 'line',
-            lineStyle: { width: 1, },symbol: 'none',
-            data: KDJData.K.map(item => item.K)
+            lineStyle: { width: 1, }, symbol: 'none',
+            data: KDJData.K.map(item => item.K),
         },
         {
             name: 'D',
             type: 'line',
-            lineStyle: { width: 1, },symbol: 'none',
+            lineStyle: { width: 1, }, symbol: 'none',
             data: KDJData.D.map(item => item.D)
         },
         {
             name: 'J',
             type: 'line',
-            lineStyle: { width: 1, },symbol: 'none',
+            lineStyle: { width: 1, }, symbol: 'none',
             data: KDJData.J.map(item => item.J)
+        },
+        {
+            type: 'line',
+            markLine: {
+                symbol: "none",
+                label: {position: "end"},
+                data: [{
+                    silent: true,
+                    lineStyle: { 
+                        type: "dotted",
+                        color: "#666",
+                    },
+                    yAxis: [20]          // 警戒线的标注值，可以有多个yAxis,多条警示线   或者采用   {type : 'average', name: '平均值'}，type值有  max  min  average，分为最大，最小，平均值
+                },{
+                    silent: true,
+                    lineStyle: { 
+                        type: "dotted",
+                        color: "#666",
+                    },
+                    yAxis: [80]          // 警戒线的标注值，可以有多个yAxis,多条警示线   或者采用   {type : 'average', name: '平均值'}，type值有  max  min  average，分为最大，最小，平均值
+                }]
+            }
         }
     ]
 });
@@ -140,7 +183,8 @@ const option = (symbol) => {
 
         },
         grid: {
-            bottom: 60
+            bottom: 60,
+            left:50
         },
 
         dataZoom: [{

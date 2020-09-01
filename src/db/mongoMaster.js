@@ -7,8 +7,9 @@
  * @~~
  */
 const mongoose = require("mongoose");
+const {DB} = require('../config')
 
-const url = 'mongodb://127.0.0.1:27017/quantitative-db';  //这里是mongodb协议 MongoDB的端口号为27017
+const url = `mongodb://${DB.host}/${DB.database}`;  //这里是mongodb协议 MongoDB的端口号为27017
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
