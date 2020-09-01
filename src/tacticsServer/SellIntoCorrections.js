@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-08-24 15:50:37
+ * @LastEditTime: 2020-09-01 16:51:08
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -422,7 +422,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             } else {
                 //利润下降（出现拐点）判断亏损率
                 const diff = this.presentDeal.historyProfit - _profit;//相比上次降低的利润
-                const _riseStopLossRate = diff / this.presentDeal.historyProfit * 100;
+                const _riseStopLossRate = (diff / this.presentDeal.historyProfit) * 100;
                 if (_riseStopLossRate > this.parameter.riseStopLossRate) {
                     //亏损率大于一个值,判断当前盈利率，选择是否止盈
                     if (_profit < this.parameter.lowestRiseRate) {
@@ -431,7 +431,12 @@ module.exports = class SellIntoCorrections extends Tactics {
                         return false;
                     } else {
                         this.addHistory('info', `相比最大历史盈利，下降量${_riseStopLossRate.toFixed(6)}%，大于${this.parameter.riseStopLossRate}%，且高于最低出场盈利率${this.parameter.lowestRiseRate}，进行止盈操作！`);
-                        if (await this.deal('sell')) return true; else return false;
+                        //再次确认深度价是否也符合
+                        if (((this.presentDeal.historyProfit - this.getProfit(this.presentDeal.amount, true)) / this.presentDeal.historyProfit) * 100 > this.parameter.riseStopLossRate) {
+                            return (await this.deal('sell'));
+                        } else {
+                            this.addHistory('info', `取深度数据取得的成交均价不符合盈利要求，中止止盈，继续观察盈利情况...`, true, { subType: 'impt_1', color: '#0f0' });
+                        }
                     }
                 } else {
                     //亏损率还未大于一个值，持续观察
@@ -464,7 +469,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                     setTimeout(async () => {
                         //再次观察亏损
                         const _profit = this.getProfit();
-                        const _stopLossRate2 = Number(_profit / this.presentDeal.costing);
+                        const _stopLossRate2 = Math.abs(Number(_profit / this.presentDeal.costing));
                         if (_stopLossRate2 > 0) {
                             this.addHistory('info', `扭亏为盈，继续等待出场时机...`);
                             this.presentDeal.historyProfit = _profit;
@@ -474,7 +479,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                             // }
                             resolve(false);
                         } else {
-                            if (Math.abs(_stopLossRate2) >= this.parameter.stopLossRate) {
+                            if (_stopLossRate2 >= this.parameter.stopLossRate) {
                                 this.riseTimer && clearTimeout(this.riseTimer);
                                 //仍然大于止损值，割肉
                                 this.addHistory('info', `二次判断，继续亏损,亏损率：${_stopLossRate2.toFixed(6)}，仍然超过${this.parameter.stopLossRate}，进行止损操作`);
@@ -508,11 +513,10 @@ module.exports = class SellIntoCorrections extends Tactics {
         // return false;
     }
     /**理论利润，用于即时计算利润（通过深度图），即若按照当前价格卖掉，获得的回报减去成本价 */
-    getProfit(amount) {
-        //需要通过深度图获取理论交易均价，再做判断，不能再根据市价
+    getProfit(amount, istheoryPrice) {
         let _amount = amount || this.presentDeal.amount;
-        return Number(_amount * this.getTheoryPrice(_amount).avePrive * (1 - this.parameter.serviceCharge)
-            - this.presentDeal.costing);
+        if (istheoryPrice) return Number(_amount * this.getTheoryPrice(_amount).avePrive * (1 - this.parameter.serviceCharge) - this.presentDeal.costing);
+        return Number(_amount * this.presentPrice * (1 - this.parameter.serviceCharge) - this.presentDeal.costing);
     }
     /**通过深度图获取可能最终成交的理论交易模型和理论均价 */
     getTheoryPrice(amount) {

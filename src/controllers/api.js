@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-08-26 18:43:56
+ * @LastEditTime: 2020-09-01 15:49:10
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -218,8 +218,8 @@ module.exports = {
     const { symbol } = ctx.query;
     const result = await Symbol.find({ name: symbol });
 
-    const { boll5m } = result[0];
-    const KDJ5m = getKDJ(result[0], 9);
+    const { boll5m, KDJ5m } = result[0];
+    //const KDJ5m = getKDJ(result[0], 14);
     ctx.body = {
       code: apiDateCode.success,
       data: { boll5m, KDJ5m }
@@ -235,14 +235,28 @@ const getKDJ = ({ klineData5m, KDJ5m }, n) => {
       const L9 = klineData5mForN.sort((a, b) => (a[3] - b[3]))[0][3];
       const H9 = klineData5mForN.sort((a, b) => (b[2] - a[2]))[0][2];
       const RSV = ((item[4] - L9) / (H9 - L9)) * 100;
-      let lastKDJ5m = KDJ5m.find(i => i.startTime === item[0])
+      //算法1
+      let lastKDJ5m = result.find(kdj => kdj.startTime === klineData5m[i - 1][0]);//上一个
       lastKDJ5m = lastKDJ5m ? lastKDJ5m : { K: 50, D: 50 };
       const K = (2 / 3) * lastKDJ5m.K + (1 / 3) * RSV;
       const D = (2 / 3) * lastKDJ5m.D + (1 / 3) * K;
+
+
+      // //算法2
+      // let K, D;
+      // if (result.length <= 3) {
+      //   K = 50;
+      //   D = 50;
+      // } else {
+      //   const lastKDJData = [...result].splice(result.length - 3 - 1, 3);
+      //   //const isRsvNull = lastKDJData.some(item => !item.RSV);
+      //   K = lastKDJData.reduce((pre, cur) => pre + cur.RSV, 0) / 3;
+      //   D = lastKDJData.reduce((pre, cur) => pre + cur.K, 0) / 3;
+      // }
       const J = 3 * K - 2 * D;
       const startTime = item[0];
       const formartStartTime = dateFormat(new Date(startTime), "yyyy/MM/dd HH:mm")
-      result.push({ startTime, formartStartTime, K, D, J })
+      result.push({ startTime, formartStartTime, K, D, J, RSV })
     }
   })
   return result;

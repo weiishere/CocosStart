@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-18 23:49:06
- * @LastEditTime: 2020-08-31 15:54:38
+ * @LastEditTime: 2020-09-01 20:09:30
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -57,19 +57,35 @@ DN=MB－2×MD
 
 各大股票交易软件默认N是20，所以MB等于当日20日均线值
 */
-const bollLine = (klineData5m) => {
+const bollLine = (klineData, index, _startTime) => {
     const count = 20;
-    const klineData5mFor20 = [...klineData5m].splice(klineData5m.length - count - 1, count);//最后一根K线可能未完结，不纳入计算
-    const getMA = (rem) => {
-        const klineData5mSplice = rem === 20 ? klineData5mFor20 : [...klineData5m].splice(klineData5m.length - rem - 1, rem);
+    let result = [];
+    const getMA = (_klineData5mFor20, index, rem) => {
+        const klineData5mSplice = rem === 20 ? _klineData5mFor20 : [...klineData].splice(index - rem, rem);
         return klineData5mSplice.reduce((pre, cur) => pre + (+cur[4]), 0) / rem;
     }
-    const MA = getMA(count);
-    const MD = Math.sqrt(klineData5mFor20.reduce((pre, cur) => pre + Math.pow((cur[4] - MA), 2), 0) / count);
-    const MB = getMA(count - 1);
-    const UP = MB + 2 * MD;
-    const DN = MB - 2 * MD;
-    return { MA, UP, MB, DN };
+    const fn = (i) => {
+        const klineData5mFor20 = [...klineData].splice(i - count, count);//最后一根K线可能未完结，不纳入计算
+        const MA = getMA(klineData5mFor20, i, count);
+        const MD = Math.sqrt(klineData5mFor20.reduce((pre, cur) => pre + Math.pow((cur[4] - MA), 2), 0) / count);
+        const MB = getMA(klineData5mFor20, i, count - 1);
+        const UP = MB + 2 * MD;
+        const DN = MB - 2 * MD;
+        const startTime = _startTime || klineData[(index || i)][0];
+        const formartStartTime = dateFormat(new Date(startTime), "yyyy/MM/dd HH:mm");
+        return { startTime, formartStartTime, MA, UP, MB, DN };
+    }
+    if (!index) {
+        klineData.forEach((item, i) => {
+            if (i > count) {
+                const obj = fn(i);
+                result.push(obj);
+            }
+        });
+        return result;
+    } else {
+        return fn(index);
+    }
 }
 /**KDJ线 
  n日RSV=（Cn－Ln）/（Hn－Ln）×100
@@ -87,20 +103,42 @@ D值=2/3×第8日D值+1/3×第9日K值
 J值=3*第9日K值-2*第9日D值
 若无前一日K值与D值，则可以分别用50代替。
 */
-const KDJLine = (klineData5m, KdjData, n) => {
-    const klineData5mForN = [...klineData5m].splice(klineData5m.length - n - 1, n);//取得除最近一条线之前N条线
-    const preKData = klineData5mForN[klineData5mForN.length - 1];//最近的K线数据
-    const Ln = +klineData5mForN.sort((a, b) => a[3] - b[3])[0][3];
-    const Hn = +klineData5mForN.sort((a, b) => b[2] - a[2])[0][2];
-    let lastKDJData =
-        klineData5mForN[klineData5mForN.length - 2][0] ?
-            KdjData.find(item => item.startTime === klineData5mForN[klineData5mForN.length - 2][0]) : { K: 50, D: 50 };//上一日的KDJ
-    lastKDJData = (lastKDJData || { K: 50, D: 50 });
-    const RSV = ((+preKData[4] - Ln) / (Hn - Ln)) * 100;
-    const K = (2 / 3) * (lastKDJData.K || 50) + (1 / 3) * RSV;
-    const D = (2 / 3) * (lastKDJData.D || 50) + (1 / 3) * K;
-    const J = 3 * K - 2 * D;
-    return { K, D, J }
+/**获取KDJ线，不给最后一个参数，就是取得所欲KDJ数据，如果给就给出指定的数据 */
+const KDJLine = (klineData, n, single) => {
+    let result = [];
+    const fn = (item, i) => {
+        const klineDataForN = [...klineData].splice(i, n);
+        const L9 = klineDataForN.sort((a, b) => (a[3] - b[3]))[0][3];
+        const H9 = klineDataForN.sort((a, b) => (b[2] - a[2]))[0][2];
+        const RSV = ((item[4] - L9) / (H9 - L9)) * 100;
+        //算法1
+        let lastKDJ5m = single ? single.lastKDJObj : result.find(kdj => kdj.startTime === klineData[i - 1][0]);//上一个
+        lastKDJ5m = lastKDJ5m ? lastKDJ5m : { K: 50, D: 50 };
+        // const K = (2 / 3) * lastKDJ5m.K + (1 / 3) * RSV;
+        // const D = (2 / 3) * lastKDJ5m.D + (1 / 3) * K;
+        const K = (RSV + 2 * lastKDJ5m.K) / 3;
+        const D = (K + 2 * lastKDJ5m.D) / 3;
+        const J = 3 * K - 2 * D;
+        const startTime = item[0];
+        const formartStartTime = dateFormat(new Date(startTime), "yyyy/MM/dd HH:mm");
+        return { startTime, formartStartTime, K, D, J, RSV }
+    }
+    if (single) {
+        for (let k = 0, l = klineData.length; k < l; k++) {
+            if (klineData[k][0] === single.singleData[0]) {
+                return fn(single.singleData, k);
+            }
+        }
+    } else {
+        klineData.forEach((item, i) => {
+            if (i > n) {
+                const obj = fn(item, i);
+                result.push(obj);
+            }
+        });
+        return result;
+    }
+
 }
 module.exports = class SymbolServer {
     constructor() {
@@ -153,11 +191,10 @@ module.exports = class SymbolServer {
             if (symbolKey && prices.hasOwnProperty(symbolKey) && /USDT$/.test(symbolKey)) {
                 const { res } = await fn(symbolKey);
                 if (res && res.statusText === 'OK') {
-                    //console.log(symbolKey, res.data);
                     this.symbolStorage[symbolKey] = {
                         klineData5m: res.data,
-                        boll5m: this.symbolStorage[symbolKey] ? [...this.symbolStorage[symbolKey].boll5m] : [{}],
-                        KDJ5m: this.symbolStorage[symbolKey] ? [...this.symbolStorage[symbolKey].KDJ5m] : [{}],
+                        boll5m: bollLine(res.data),//this.symbolStorage[symbolKey] ? [...this.symbolStorage[symbolKey].boll5m] : [{}],
+                        KDJ5m: KDJLine(res.data, 9)//取得5分线JDK//this.symbolStorage[symbolKey] ? [...this.symbolStorage[symbolKey].KDJ5m] : [{}],
                     }
                     bar.tick();
                 } else {
@@ -165,6 +202,7 @@ module.exports = class SymbolServer {
                 }
             }
         }
+
         //console.log(this.symbolStorage);
         console.log('Initialize symbol DB done!');
 
@@ -189,15 +227,20 @@ module.exports = class SymbolServer {
                         klineData5m.push([startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume]);
                     } else {
                         klineData5m[klineData5m.length - 1] = [startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume];
+                        KDJ5m[KDJ5m.length - 1] = KDJLine(klineData5m, 9, {
+                            singleData: klineData5m[klineData5m.length - 1],
+                            lastKDJData: KDJ5m[KDJ5m.length - 2]
+                        });
+                        boll5m[boll5m.length - 1] = bollLine(klineData5m, klineData5m.length - 1, startTime);
                     }
                 })
             }
         }
         console.log('订阅最新k线数据流完成!');
     }
-    /**同步至数据库(5分钟一次) */
+    /**同步至数据库(2分钟一次) */
     async syncDataToDB() {
-        this.indicatorAndSendLoop();
+        //this.indicatorAndSendLoop();
         console.log('symbolStorage开始同步至数据库，service time：' + dateFormat(new Date(), "MM/dd HH:mm"));
         console.time('同步完成，耗时');
         for (let symbolKey in this.symbolStorage) {
@@ -213,25 +256,23 @@ module.exports = class SymbolServer {
         console.timeEnd('同步完成，耗时')
         setTimeout(async () => {
             await this.syncDataToDB();
-        }, 5 * 60 * 1000);
+        }, 2 * 60 * 1000);
     }
     /**指标计算和循环（BOLL和KDJ） */
     indicatorAndSendLoop() {
-        //10秒更新一次boll线并向主进程发送一个数据
-        for (let i in this.symbolStorage) {
-            if (this.symbolStorage.hasOwnProperty(i)) {
-                const { klineData5m, boll5m, KDJ5m } = this.symbolStorage[i];
-                if (!klineData5m.length) continue;
-                let startTime = klineData5m[klineData5m.length - 1][0];
-                if (startTime === boll5m[boll5m.length - 1].startTime) continue; //若最后一条线的时间还没有变，则不计算
-                const { UP, MB, DN } = bollLine(klineData5m);
-                const { K, D, J } = KDJLine(klineData5m, KDJ5m, 9);//9条线的KDJ
-                let formartStartTime = dateFormat(new Date(startTime), "yyyy/MM/dd HH:mm");
-                //console.log({ startTime, formartStartTime, UP, MB, DN });
-                boll5m[boll5m.length - 1] = { startTime, formartStartTime, UP, MB, DN };
-                KDJ5m[KDJ5m.length - 1] = { startTime, formartStartTime, K, D, J };
-            }
-        }
+        //10秒向主进程发送一个数据
+        // for (let i in this.symbolStorage) {
+        //     if (this.symbolStorage.hasOwnProperty(i)) {
+        //         const { klineData5m, boll5m, KDJ5m } = this.symbolStorage[i];
+        //         if (!klineData5m.length) continue;
+        //         let startTime = klineData5m[klineData5m.length - 1][0];
+        //         if (startTime === boll5m[boll5m.length - 1].startTime) continue; //若最后一条线的时间还没有变，则不计算
+        //         const { UP, MB, DN } = bollLine(klineData5m);
+        //         let formartStartTime = dateFormat(new Date(startTime), "yyyy/MM/dd HH:mm");
+        //         boll5m[boll5m.length - 1] = { startTime, formartStartTime, UP, MB, DN };
+        //         KDJ5m[KDJ5m.length - 1] = { startTime, formartStartTime, K, D, J };
+        //     }
+        // }
         process && process.send && process.send({ type: 'symbolStorage', data: this.symbolStorage });
         setTimeout(() => { this.indicatorAndSendLoop() }, 10000);
     }

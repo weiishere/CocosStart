@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 00:05:32
- * @LastEditTime: 2020-08-08 17:31:39
+ * @LastEditTime: 2020-09-01 16:02:25
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -29,7 +29,7 @@ export default function HistoryRecord() {
             }
             const { scrollTop, top } = scrollbars.current.getValues();
             //console.log(top)
-            if (scrollTop === 0 || top > 0.9) {
+            if (scrollTop === 0 || top > 0.99) {
                 window.setTimeout(() => {
                     
                     scrollbars.current.scrollToBottom();
