@@ -22,8 +22,8 @@ EventHub.getInstance().addEventListener('symbolStorage', data => {
 
 //数据库获取symbolStorage
 const getSymbolStorageFromDB = async () => {
-    (await Symbol.find({})).map(({ name, klineData5m, boll5m }) => {
-        symbolStorage[name] = { klineData5m, boll5m }
+    (await Symbol.find({})).map(({ name, klineData5m, boll5m, KDJ5m }) => {
+        symbolStorage[name] = { klineData5m, boll5m, KDJ5m }
     });
     setTimeout(() => {
         getSymbolStorageFromDB();
@@ -227,8 +227,8 @@ const restrain = {
     symbolElecter: [
         {
             key: 'bollStandard',
-            label: 'BOLL布林指标',
-            desc: '使用BOLL布林指标线来辅助选币',
+            label: 'BOLL指标',
+            desc: 'BOLL的DN线与阳线交汇且小于收盘价或穿过MB',
             param: {},
             method: async (lastSymbolList) => {
                 try {
@@ -236,21 +236,56 @@ const restrain = {
                         console.log('lastSymbolList还未收到数据(子线程未开？)');
                         return lastSymbolList;
                     }
-                    return lastSymbolList.filter(item => {
-                        const symbolObj = symbolStorage[item.symbol];
-                        const { UP, DN } = symbolObj.boll5m[symbolObj.boll5m.length - 1];
-                        if (!UP || !DN) {
-                            console.log('未取得boll线数据：' + item.symbol);
-                            return lastSymbolList;
-                        }
-                        const klineData = symbolObj.klineData5m[symbolObj.klineData5m.length - 2];//到处第二条线
+                    const fn = (symbolObj, klineIndex) => {
+                        const klineData = symbolObj.klineData5m[klineIndex];
                         const close = +klineData[4];//收盘价
                         const open = +klineData[1];//收盘价
                         const low = +klineData[3];//最低价
-                        return (open < close && (close >= UP || low <= DN));//必须是阳线且收盘价大于UP，最低价小于DN
+                        const { UP, MB, DN } = symbolObj.boll5m[symbolObj.boll5m.length - 1];
+                        if (!UP || !DN) {
+                            console.log('未取得boll线数据：' + item.symbol);
+                            return false;
+                        }
+                        if (open < close && ((close >= DN && low <= DN) || (MB < close && MB > open))) {//必须是阳线且收盘价大于UP，最低价小于DN,或者是穿过中线
+                            return true;
+                        };
+                        return false;
+                    }
+                    return lastSymbolList.filter(item => {
+                        const symbolObj = symbolStorage[item.symbol];
+                        return (fn(symbolObj, symbolObj.klineData5m.length - 1) || fn(symbolObj, symbolObj.klineData5m.length - 2));
                     });
                 } catch (e) {
                     console.log('bollStandard选币发生错误：' + e);
+                    return lastSymbolList;
+                }
+            }
+        },
+        {
+            key: 'KDJStandard',
+            label: 'KDJ指标',
+            desc: 'J值处于50以下且KDJ线之间的差额总值不超过10，且上一组的J值小于当前J值',
+            param: {},
+            method: async (lastSymbolList) => {
+                try {
+                    if (!symbolStorage) {
+                        console.log('lastSymbolList还未收到数据(子线程未开？)');
+                        return lastSymbolList;
+                    }
+                    const fn = (symbolObj, KDJindex) => {
+                        const KDJData = symbolObj.KDJ5m[KDJindex];
+                        const KDJDataLast = symbolObj.KDJ5m[KDJindex - 1];
+                        if (KDJData.J < 50 && Math.abs(KDJData.K - KDJData.D) + Math.abs(KDJData.K - KDJData.J) <= 10 && KDJDataLast.K < KDJData.K) {
+                            return true;
+                        }
+                        return false;
+                    }
+                    return lastSymbolList.filter(item => {
+                        const symbolObj = symbolStorage[item.symbol];
+                        return (fn(symbolObj, symbolObj.KDJ5m.length - 1) || fn(symbolObj, symbolObj.KDJ5m.length - 2));
+                    });
+                } catch (e) {
+                    console.log('KDJStandard选币发生错误：' + e);
                     return lastSymbolList;
                 }
             }

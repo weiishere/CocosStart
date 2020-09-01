@@ -217,8 +217,7 @@ module.exports = {
   getIndicatorLine: async (ctx, next) => {
     const { symbol } = ctx.query;
     const result = await Symbol.find({ name: symbol });
-
-    const { boll5m, KDJ5m } = result[0];
+    const { boll5m, KDJ5m } = result[0] || { boll5m: [], KDJ5m: [] };
     //const KDJ5m = getKDJ(result[0], 14);
     ctx.body = {
       code: apiDateCode.success,

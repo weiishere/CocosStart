@@ -106,18 +106,33 @@ J值=3*第9日K值-2*第9日D值
 /**获取KDJ线，不给最后一个参数，就是取得所欲KDJ数据，如果给就给出指定的数据 */
 const KDJLine = (klineData, n, single) => {
     let result = [];
+    const ma = (list, index, key, m) => {
+        let total = 0; let count = 0;
+        for (let i = 1; i <= m; i++) {
+            if (list[index - i] && list[index - i][key]) {
+                total += list[index - i][key];
+                count++;
+            }
+        }
+        return (count ? (total / count) : 50);
+    }
     const fn = (item, i) => {
-        const klineDataForN = [...klineData].splice(i, n);
+        const klineDataForN = [...klineData].splice(i - n, n);
         const L9 = klineDataForN.sort((a, b) => (a[3] - b[3]))[0][3];
         const H9 = klineDataForN.sort((a, b) => (b[2] - a[2]))[0][2];
         const RSV = ((item[4] - L9) / (H9 - L9)) * 100;
         //算法1
-        let lastKDJ5m = single ? single.lastKDJObj : result.find(kdj => kdj.startTime === klineData[i - 1][0]);//上一个
+        let lastKDJ5m = single ? single.lastKDJObj : result[result.length - 1];//result.find(kdj => kdj.startTime === klineData[i - 1][0]);//上一个
         lastKDJ5m = lastKDJ5m ? lastKDJ5m : { K: 50, D: 50 };
+        //-----------------------------------------
         // const K = (2 / 3) * lastKDJ5m.K + (1 / 3) * RSV;
         // const D = (2 / 3) * lastKDJ5m.D + (1 / 3) * K;
+        //-----------------------------------------
         const K = (RSV + 2 * lastKDJ5m.K) / 3;
         const D = (K + 2 * lastKDJ5m.D) / 3;
+        //-----------------------------------------
+        // const K = ma(single ? single.JDKlist : result, (single ? i : i - n-1), 'RSV', 3);
+        // const D = ma(single ? single.JDKlist : result, (single ? i : i - n-1), 'K', 3);
         const J = 3 * K - 2 * D;
         const startTime = item[0];
         const formartStartTime = dateFormat(new Date(startTime), "yyyy/MM/dd HH:mm");
@@ -194,7 +209,7 @@ module.exports = class SymbolServer {
                     this.symbolStorage[symbolKey] = {
                         klineData5m: res.data,
                         boll5m: bollLine(res.data),//this.symbolStorage[symbolKey] ? [...this.symbolStorage[symbolKey].boll5m] : [{}],
-                        KDJ5m: KDJLine(res.data, 9)//取得5分线JDK//this.symbolStorage[symbolKey] ? [...this.symbolStorage[symbolKey].KDJ5m] : [{}],
+                        KDJ5m: KDJLine(res.data, 24)//取得5分线JDK//this.symbolStorage[symbolKey] ? [...this.symbolStorage[symbolKey].KDJ5m] : [{}],
                     }
                     bar.tick();
                 } else {
@@ -222,16 +237,22 @@ module.exports = class SymbolServer {
                         if (boll5m.length === klineData5m.length) boll5m.shift();
                         if (KDJ5m.length === klineData5m.length) KDJ5m.shift();
                         klineData5m.shift();
-                        boll5m.push({});
-                        KDJ5m.push({});
                         klineData5m.push([startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume]);
+                        boll5m.push(bollLine(klineData5m, klineData5m.length, startTime));
+                        KDJ5m.push(KDJLine(klineData5m, 24, {
+                            singleData: klineData5m[klineData5m.length - 2],
+                            lastKDJData: KDJ5m[KDJ5m.length - 2],
+                            JDKlist: KDJ5m
+                        }));
+                        
                     } else {
                         klineData5m[klineData5m.length - 1] = [startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume];
-                        KDJ5m[KDJ5m.length - 1] = KDJLine(klineData5m, 9, {
-                            singleData: klineData5m[klineData5m.length - 1],
-                            lastKDJData: KDJ5m[KDJ5m.length - 2]
-                        });
-                        boll5m[boll5m.length - 1] = bollLine(klineData5m, klineData5m.length - 1, startTime);
+                        // KDJ5m[KDJ5m.length - 1] = KDJLine(klineData5m, 24, {
+                        //     singleData: klineData5m[klineData5m.length - 1],
+                        //     lastKDJData: KDJ5m[KDJ5m.length - 2],
+                        //     JDKlist: KDJ5m
+                        // });
+                        // boll5m[boll5m.length - 1] = bollLine(klineData5m, klineData5m.length - 1, startTime);
                     }
                 })
             }
