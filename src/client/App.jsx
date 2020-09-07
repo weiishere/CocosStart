@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 15:09:27
- * @LastEditTime: 2020-08-13 22:17:14
+ * @LastEditTime: 2020-09-02 12:41:15
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -51,10 +51,13 @@ export default function App() {
                 //广播kline数据
                 EventHub.getInstance().dispatchEvent('klineData', data);
             });
-            
+            scoket.on(WsRoute.HISTORY_LIST, data => {
+                //广播historyRecord数据
+                EventHub.getInstance().dispatchEvent('historyRecord', data);
+            });
         });
 
-        EventHub.getInstance().addEventListener('switchTactics', payload => {
+        EventHub.getInstance().addEventListener('switchTactics', 'app_switchTactics', payload => {
             setTacticeName(payload.name);
             setSymbol(payload.symbol);
             sokt.emit('regTid', getHash());

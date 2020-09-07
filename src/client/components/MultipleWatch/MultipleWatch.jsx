@@ -44,7 +44,7 @@ const option = () => {
                 return `交易对：${params[0].name}<br />今日涨幅：${params[0].value[1]}%<br />当前价：${+params[0].value[5]}<br />最高价：${+params[0].value[2]}<br />最低价：${+params[0].value[6]}`
             }
         },
-        grid: { containLabel: true },
+        grid: { containLabel: true,left:'5%' },
         xAxis: { name: '涨幅(指数)' },
         yAxis: {
             name: '交易对', type: 'category',

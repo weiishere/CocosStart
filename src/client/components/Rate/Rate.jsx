@@ -121,7 +121,7 @@ export default function Rate() {
     const [index] = React.useState(0);
     React.useEffect(() => {
         var myChart = echarts.init(document.getElementById("rate"), 'dark');
-        EventHub.getInstance().addEventListener('mapTacticsList', payload => {
+        EventHub.getInstance().addEventListener('mapTacticsList','rate_mapTacticsList', payload => {
             const target = payload.find(item => item.target === true);
             if (target && target.depth) {
                 //console.log(target.depth);

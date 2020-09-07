@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-18 23:49:06
- * @LastEditTime: 2020-09-01 20:09:30
+ * @LastEditTime: 2020-09-07 17:14:51
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -31,7 +31,10 @@ const ProgressBar = require('progress');
 const { ResolvePlugin } = require('webpack');
 const attributeCount = function (obj) {
     let count = 0;
-    for (let i in obj) { if (obj.hasOwnProperty(i) && /USDT$/.test(i)) count++; }
+    for (let i in obj) {
+        if (obj.hasOwnProperty(i) && /USDT$/.test(i) && i.indexOf('DOWNUSDT') === -1 && i.indexOf('UPUSDT') === -1)
+            count++;
+    }
     return count;
 }
 /** 获取布林线
@@ -203,7 +206,8 @@ module.exports = class SymbolServer {
             })
         }
         for (let symbolKey in prices) {
-            if (symbolKey && prices.hasOwnProperty(symbolKey) && /USDT$/.test(symbolKey)) {
+            if (symbolKey && prices.hasOwnProperty(symbolKey) && /USDT$/.test(symbolKey)
+                && symbolKey.indexOf('DOWNUSDT') === -1 && symbolKey.indexOf('UPUSDT') === -1) {
                 const { res } = await fn(symbolKey);
                 if (res && res.statusText === 'OK') {
                     this.symbolStorage[symbolKey] = {
@@ -244,7 +248,7 @@ module.exports = class SymbolServer {
                             lastKDJData: KDJ5m[KDJ5m.length - 2],
                             JDKlist: KDJ5m
                         }));
-                        
+
                     } else {
                         klineData5m[klineData5m.length - 1] = [startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume];
                         // KDJ5m[KDJ5m.length - 1] = KDJLine(klineData5m, 24, {

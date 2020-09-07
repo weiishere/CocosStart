@@ -85,41 +85,71 @@ export default function PlusMinus() {
     const [index] = React.useState(0);
     React.useEffect(() => {
         var myChart = echarts.init(document.getElementById("plus-minus"), 'dark');
-        EventHub.getInstance().addEventListener('mapTacticsList', payload => {
-            const target = payload.find(item => item.target);
-            if (target) {
-                // data = target.historyForDeal.filter(item => item.type === 'sell').map(item => ({
-                //     value: item.content.profit, name: Number(item.content.profit), label: {position: 'top'}, itemStyle: { color: item.content.profit < 0 ? 'green' : 'red' }
-                // }));
-                data = target.historyForDeal.filter(item => item.type === 'sell').map(item => ({
-                    value: item.content.profit,
-                    name: Number(item.content.profit.toFixed(3)),
+        // EventHub.getInstance().addEventListener('mapTacticsList', payload => {
+        //     const target = payload.find(item => item.target);
+        //     if (target) {
+        //         // data = target.historyForDeal.filter(item => item.type === 'sell').map(item => ({
+        //         //     value: item.content.profit, name: Number(item.content.profit), label: {position: 'top'}, itemStyle: { color: item.content.profit < 0 ? 'green' : 'red' }
+        //         // }));
+        //         data = target.historyForDeal.filter(item => item.type === 'sell').map(item => ({
+        //             value: item.content.profit,
+        //             name: Number(item.content.profit.toFixed(3)),
+        //             label: { position: 'top' },
+        //             itemStyle: { color: item.content.profit < 0 ? 'green' : 'red' },
+        //             time: item.time,
+        //             symbol: item.content.symbol,
+        //             inCosting: item.content.inCosting,
+        //             outCosting: item.content.outCosting
+        //         }));
+        //         //如果最后一个type=buy，就需要加入，用来记录当前的利润变化
+        //         const lastHistoryForDeal = target.historyForDeal[target.historyForDeal.length - 1];
+        //         if (lastHistoryForDeal && lastHistoryForDeal.type === 'buy') {
+        //             data.push({
+        //                 value: lastHistoryForDeal.content.profit,
+        //                 symbol: lastHistoryForDeal.content.symbol,
+        //                 inCosting: lastHistoryForDeal.content.inCosting,
+        //                 name: Number(lastHistoryForDeal.content.profit.toFixed(3)),
+        //                 label: { position: 'top' },
+        //                 itemStyle: { color: lastHistoryForDeal.content.profit < 0 ? 'green' : 'red' },
+        //                 time: lastHistoryForDeal.time || lastHistoryForDeal.changeTime || 0
+        //             });
+        //         }
+        //         const l = data.length;
+        //         for (let i = l; i < 15; i++) {
+        //             data.push({ value: 0, name: '', time: 0 });
+        //         }
+        //         myChart.setOption(option());
+        //     }
+        // });
+        EventHub.getInstance().addEventListener('historyRecord','pm_historyRecord', ({historyForDeal}) => {
+            data = historyForDeal.filter(item => item.type === 'sell').map(item => ({
+                value: item.content.profit,
+                name: Number(item.content.profit.toFixed(3)),
+                label: { position: 'top' },
+                itemStyle: { color: item.content.profit < 0 ? 'green' : 'red' },
+                time: item.time,
+                symbol: item.content.symbol,
+                inCosting: item.content.inCosting,
+                outCosting: item.content.outCosting
+            }));
+            //如果最后一个type=buy，就需要加入，用来记录当前的利润变化
+            const lastHistoryForDeal = historyForDeal[historyForDeal.length - 1];
+            if (lastHistoryForDeal && lastHistoryForDeal.type === 'buy') {
+                data.push({
+                    value: lastHistoryForDeal.content.profit,
+                    symbol: lastHistoryForDeal.content.symbol,
+                    inCosting: lastHistoryForDeal.content.inCosting,
+                    name: Number(lastHistoryForDeal.content.profit.toFixed(3)),
                     label: { position: 'top' },
-                    itemStyle: { color: item.content.profit < 0 ? 'green' : 'red' },
-                    time: item.time,
-                    symbol: item.content.symbol,
-                    inCosting: item.content.inCosting,
-                    outCosting: item.content.outCosting
-                }));
-                //如果最后一个type=buy，就需要加入，用来记录当前的利润变化
-                const lastHistoryForDeal = target.historyForDeal[target.historyForDeal.length - 1];
-                if (lastHistoryForDeal && lastHistoryForDeal.type === 'buy') {
-                    data.push({
-                        value: lastHistoryForDeal.content.profit,
-                        symbol: lastHistoryForDeal.content.symbol,
-                        inCosting: lastHistoryForDeal.content.inCosting,
-                        name: Number(lastHistoryForDeal.content.profit.toFixed(3)),
-                        label: { position: 'top' },
-                        itemStyle: { color: lastHistoryForDeal.content.profit < 0 ? 'green' : 'red' },
-                        time: lastHistoryForDeal.time || lastHistoryForDeal.changeTime || 0
-                    });
-                }
-                const l = data.length;
-                for (let i = l; i < 15; i++) {
-                    data.push({ value: 0, name: '', time: 0 });
-                }
-                myChart.setOption(option());
+                    itemStyle: { color: lastHistoryForDeal.content.profit < 0 ? 'green' : 'red' },
+                    time: lastHistoryForDeal.time || lastHistoryForDeal.changeTime || 0
+                });
             }
+            const l = data.length;
+            for (let i = l; i < 15; i++) {
+                data.push({ value: 0, name: '', time: 0 });
+            }
+            myChart.setOption(option());
         });
         myChart.setOption(option());
     }, []);

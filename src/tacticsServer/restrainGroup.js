@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-14 13:49:13
- * @LastEditTime: 2020-08-26 17:16:25
+ * @LastEditTime: 2020-09-07 18:34:15
  * @LastEditors: weishere.huang
  * @Description: premiseForBuy：不能进，premiseForSell：必须出
  * @~~
@@ -16,7 +16,7 @@ const getParam = (groupName, key) => {
 let symbolStorage = {};
 
 //接受子线程的数据：symbolStorage
-EventHub.getInstance().addEventListener('symbolStorage', data => {
+EventHub.getInstance().addEventListener('symbolStorage', 'ta_symbolStorage', data => {
     symbolStorage = data;
 });
 
@@ -54,29 +54,45 @@ const restrain = {
             }
         },
         {
-            key: 'last20mNoFastRise',
-            label: '前20分钟未出现急涨',
-            desc: '前20分钟未出现急涨(+5%)',
-            method: (tactics) => { return true; }
+            key: 'bollStandard',
+            label: 'BOLL指标',
+            desc: '如果最近一条5分线已经突破了UP，不予入场',
+            method: (tactics) => {
+
+                const symbolObj = symbolStorage[tactics.symbol];
+                if (!symbolObj) return false;
+                const { startTime, UP, MB, DN } = symbolObj.boll5m[symbolObj.boll5m.length - 1];//最后一条boll线
+                const klineData = symbolObj.klineData5m.find(item => item[0] === startTime);
+                if (+klineData[4] > UP || +klineData[1] > UP) {
+                    return false;
+                }
+                return true;
+            }
         },
-        {
-            key: 'last24mMaxRise',
-            label: '24小时涨幅未大于40%',
-            desc: '24小时涨幅已经大于40%未高风险币，不予进场',
-            method: (tactics) => { return true; }
-        },
-        {
-            key: 'last10mFastLoss',
-            label: '深沟抄底(>-10%)',
-            desc: '前10分钟出现急跌10%以上，进行抄底',
-            method: (tactics) => { return true; }
-        },
-        {
-            key: 'timeLimit',
-            label: '入场时间限制',
-            desc: '暂时限制17:30~19：30时间，不适宜入场',
-            method: (tactics) => { return true; }
-        }
+        // {
+        //     key: 'last20mNoFastRise',
+        //     label: '前20分钟未出现急涨',
+        //     desc: '前20分钟未出现急涨(+5%)',
+        //     method: (tactics) => { return true; }
+        // },
+        // {
+        //     key: 'last24mMaxRise',
+        //     label: '24小时涨幅未大于40%',
+        //     desc: '24小时涨幅已经大于40%未高风险币，不予进场',
+        //     method: (tactics) => { return true; }
+        // },
+        // {
+        //     key: 'last10mFastLoss',
+        //     label: '深沟抄底(>-10%)',
+        //     desc: '前10分钟出现急跌10%以上，进行抄底',
+        //     method: (tactics) => { return true; }
+        // },
+        // {
+        //     key: 'timeLimit',
+        //     label: '入场时间限制',
+        //     desc: '暂时限制17:30~19：30时间，不适宜入场',
+        //     method: (tactics) => { return true; }
+        // }
     ],
     /**强制出场条件    true：满足出场条件-false：不满足 */
     premiseForSell: [
@@ -121,7 +137,7 @@ const restrain = {
                 // const allTicker = require('./TacticesCommand').getInstance().allTicker;
                 // let ticker = [];
                 if (tactics.ticker) {
-                    const _stopLossRate = +((tactics.ticker.high - tactics.ticker.open) / tactics.ticker.open).toFixed(3);
+                    const _stopLossRate = +((tactics.ticker.high - tactics.ticker.open) / tactics.ticker.open).toFixed(2);
                     if (_stopLossRate !== tactics.parameter.stopLossRate) {
                         tactics.parameter.stopLossRate = _stopLossRate;
                         tactics.addHistory('info', `止损点已经动态调整为：` + _stopLossRate, true, { color: '#dee660', subType: 'dp' });
@@ -246,13 +262,14 @@ const restrain = {
                             console.log('未取得boll线数据：' + item.symbol);
                             return false;
                         }
-                        if (open < close && ((close >= DN && low <= DN) || (MB < close && MB > open))) {//必须是阳线且收盘价大于UP，最低价小于DN,或者是穿过中线
+                        if (open < close && ((close >= DN && Math.abs(low - DN) / low < 0.005) || (MB < close && MB > open))) {//必须是阳线且收盘价大于UP，最低价小于DN,或者是穿过中线
                             return true;
                         };
                         return false;
                     }
                     return lastSymbolList.filter(item => {
                         const symbolObj = symbolStorage[item.symbol];
+                        if (!symbolObj) return false;
                         return (fn(symbolObj, symbolObj.klineData5m.length - 1) || fn(symbolObj, symbolObj.klineData5m.length - 2));
                     });
                 } catch (e) {

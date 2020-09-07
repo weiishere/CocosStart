@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-26 01:19:47
- * @LastEditTime: 2020-07-29 02:03:45
+ * @LastEditTime: 2020-09-04 13:31:13
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -23,17 +23,17 @@ export default class EventHub {
      * @param {type} 
      * @return: 
      */
-    addEventListener(name, listener) {
+    addEventListener(name, key, listener) {
         //if (this.EventList.find(item => item.name === name)) return;
-        this.EventList.push({ name, listener });
+        this.EventList.push({ name, listener, key: key || 'noKey' });
     }
     /**
      * @description: 取消监听（订阅）
      * @param {type} 
      * @return: 
      */
-    removeEventListener(name) {
-        this.EventList = this.EventList.filter(event => event.name !== name)
+    removeEventListener(name, key) {
+        this.EventList = this.EventList.filter(event => !(event.name === name && event.key === key))
     }
     /**
      * @description: 发布事件消息

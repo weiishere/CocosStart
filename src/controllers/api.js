@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-09-01 15:49:10
+ * @LastEditTime: 2020-09-07 17:29:13
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -64,6 +64,10 @@ module.exports = {
     } else {
       const _tacticesCommand = TacticesCommand.getInstance();
       const tactics = _tacticesCommand.mapTotacticsList(uid, id, true);
+      tactics && _tacticesCommand.pushHistory(uid, id, {
+        history: tactics.history,
+        historyForDeal: tactics.historyForDeal
+      });
       resultData = {
         code: apiDateCode.success,
         data: tactics ? tactics.getInfo() : {}
@@ -98,7 +102,7 @@ module.exports = {
             break;
           case 'runAndBuy':
             //运行并马上入场
-            tactices.imitateRun = false;
+            tactices.imitateRun = true;
             tactices.powerSwitch(true);
             break;
           case 'imitateRun':
