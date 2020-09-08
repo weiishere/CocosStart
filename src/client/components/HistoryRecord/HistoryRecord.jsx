@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 00:05:32
- * @LastEditTime: 2020-09-07 17:40:08
+ * @LastEditTime: 2020-09-08 15:04:06
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -32,7 +32,7 @@ export default function HistoryRecord() {
                     if (target.buyState) {
                         setStateStr(`出场检测中，交易信息≈${(+(+target.presentDeal.payPrice).toFixed(5))}U/${+(+target.presentDeal.amount.toFixed(5))}枚`);
                     } else {
-                        setStateStr('入场检测中...');
+                        setStateStr(`第${target.checkBuyTime}次入场检测...`);
                     }
                 } else {
                     setStateStr('未运行');
@@ -104,7 +104,7 @@ export default function HistoryRecord() {
                                 switch (item.type) {
                                     case 'buy':
                                         return <div style={{ color: item.color || '#999' }}>买入{item.content.symbol.replace('USDT', '')}币{item.content.dealAmount}枚，
-                                均价:{Number(item.content.price)} U，成本{item.content.costing} U</div>
+                                均价:{Number(item.content.price)} U，当前成本{item.content.costing} U</div>
                                     case 'sell':
                                         return <div style={{ color: item.color || '#999' }}>卖出{item.content.symbol.replace('USDT', '')}币{item.content.dealAmount}枚，
                                 均价:{Number(item.content.price)}，回本{item.content.costing} U，盈亏:{item.content.profit} U</div>

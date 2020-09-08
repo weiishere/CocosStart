@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-28 02:58:03
- * @LastEditTime: 2020-09-07 22:06:18
+ * @LastEditTime: 2020-09-08 17:01:56
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -11,7 +11,7 @@ const SellIntoCorrections = require('./SellIntoCorrections');
 const { WsConfig, WsRoute } = require('../config')
 const { client } = require('../lib/binancer');
 const { userRooms } = require('../controllers/user')
-const { Task } = require('../db')
+const { Task } = require('../db');
 //const { scoketCandles } = require('./binanceScoketBind');
 
 module.exports = class TacticesCommand {
@@ -101,6 +101,8 @@ module.exports = class TacticesCommand {
         tasks.forEach(({ uid, name, taskJson }) => {
             const mod = JSON.parse(taskJson);
             let tactics = new SellIntoCorrections(uid, name, mod.parameter);
+            tactics.loadUpBuyHelper = Object.assign(tactics.loadUpBuyHelper, JSON.parse(mod.loadUpBuyHelper));
+            delete mod.loadUpBuyHelper;
             tactics = Object.assign(tactics, mod);
             this.tacticsList.push(tactics);
             tactics.initialize(tactics.symbol);

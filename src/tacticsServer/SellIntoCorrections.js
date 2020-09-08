@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-09-07 19:07:03
+ * @LastEditTime: 2020-09-08 18:09:34
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -93,7 +93,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             checkBuyRate: [true, "买入检查频率"],
             riseStayCheckRateForBuy: [false, "买入确认频率"],
             riseBuyRange: [true, "买入确认涨幅"],
-            autoSymbol: [false, "自动切币(自启动)"],
+            autoSymbol: [true, "自动切币(自启动)"],
             //autoRun: [true, "有推荐币是否自动入场(需先启动)"],
             //ambushRange: "埋伏入场下跌率",
             checkSellRate: [true, "卖出检查频率"],
@@ -121,7 +121,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             // tradesDoneAmount: 0//已经完成的金额，随着pushTrade弃用而弃用！！
         }
         //加仓对象
-        this.LoadUpBuyHelper = new LoadUpBuyHelper(this);
+        this.loadUpBuyHelper = new LoadUpBuyHelper(this);
     }
     /**初始化，启动的时候调用 */
     async initialize(symbol) {
@@ -374,7 +374,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             if (this.advancedOption.premiseForBuy.some(item => item === restrain.key)) {
                 if (!restrain.method(this)) {
                     if (this.advancedOption.premiseJoin.premiseForBuy === 'and') {
-                        this.addHistory('info', `入场约束“${restrain.desc}”不符合，重新等待入场...`, true, { color: '#5bb3ab' });
+                        this.addHistory('info', `入场约束“${restrain.label}”不符合，重新等待入场...`, true, { color: '#5bb3ab' });
                         return false;
                     }
                 } else {
@@ -434,7 +434,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 if (restrain.method(this)) {
                     if (this.advancedOption.premiseJoin.premiseForSell === 'or') {
                         //只要有一个满足就出场
-                        this.addHistory('info', `符合出场约束“${restrain.desc}”，即将进行出场操作...`, true, { color: '#5bb3ab' });
+                        this.addHistory('info', `符合出场约束“${restrain.label}”，即将进行出场操作...`, true, { color: '#5bb3ab' });
                         return (await this.deal('sell'));
                     }
                 } else {
@@ -555,7 +555,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 //持续观察
                 this.addHistory('info', `当前处于亏损状态，亏损率：${_stopLossRate.toFixed(6)}，但未达止损点，继续等待出场时机...`, true);
                 //加仓
-                this.parameter.isAllowLoadUpBuy && this.LoadUpBuyHelper.run();
+                this.parameter.isAllowLoadUpBuy && this.loadUpBuyHelper.run();
                 return false;
             }
         }
@@ -625,7 +625,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                     });
                 this.addHistory('buy', {
                     symbol: this.symbol,
-                    dealAmount: amount / price,
+                    dealAmount: dealAmount / price,
                     orderInfo: null,
                     profit: this.getProfit(),
                     price: price,
@@ -695,9 +695,11 @@ module.exports = class SellIntoCorrections extends Tactics {
                     orderInfo: null,
                     price: price,
                     profit: this.presentDeal.costing - costingBuy,
+                    costing: this.presentDeal.costing,
                     inCosting: costingBuy,
                     outCosting: this.presentDeal.costing
                 }, false, { color: 'green' });
+                this.presentDeal.mount = 0;
             } else {
                 //真实卖出
                 //this.dealTimer && clearInterval(this.dealTimer);
@@ -736,7 +738,7 @@ module.exports = class SellIntoCorrections extends Tactics {
 
                     this.presentDeal.payPrice = this.presentDeal.sellOrderInfo.tradesDoneAmount / this.presentDeal.sellOrderInfo.tradesDoneQuantity;//实际交易均价
                     const costingBuy = this.presentDeal.costing;//因为要重设costing，这里先缓存一下
-                    //this.presentDeal.amount = this.presentDeal.tradesDoneQuantity = this.presentDeal.tradesDoneAmount;//实际交易数量
+                    this.presentDeal.amount = 0;//实际交易数量
                     this.presentDeal.costing = this.presentDeal.sellOrderInfo.tradesDoneAmount * (1 - this.parameter.serviceCharge);//回本，这里是实际到账，手续费通过BNB另外扣了，所以还是要加手续费
                     this.addHistory('sell', {
                         symbol: this.symbol,
@@ -753,7 +755,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                     console.error(e);
                 }
             }
-            this.LoadUpBuyHelper.nextRound();
+            this.loadUpBuyHelper.nextRound();
             //if (this.nextSymbol) this.symbol = this.nextSymbol;//出场成功之后切换币
         }
         this.resetParam();//重置参数
@@ -797,7 +799,8 @@ module.exports = class SellIntoCorrections extends Tactics {
             'parameterDesc',
             'presentDeal',
             // 'history',
-            // 'historyForDeal',
+            'historyForDeal',
+            'checkBuyTime',
             'runState',
             'buyState',
             'imitateRun',
@@ -821,11 +824,13 @@ module.exports = class SellIntoCorrections extends Tactics {
             'presentDeal',
             'history',
             'historyForDeal',
+            'checkBuyTime',
             'runState',
             'buyState',
             'imitateRun',
             'profitSymbol',
             'advancedOption'].forEach(item => result[item] = this[item]);
+        result['loadUpBuyHelper'] = JSON.stringify(this.loadUpBuyHelper.getInfo());
         return result;
     }
     getSimplyInfo() {
@@ -835,7 +840,10 @@ module.exports = class SellIntoCorrections extends Tactics {
             'name',
             'symbol',
             'runState',
+            'parameter',
             'imitateRun',
+            'historyForDeal',
+            'presentDeal',
             'buyState'].forEach(item => result[item] = this[item]);
         return result;
     }

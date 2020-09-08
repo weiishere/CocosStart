@@ -2,7 +2,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 17:34:40
- * @LastEditTime: 2020-08-19 21:51:34
+ * @LastEditTime: 2020-09-08 14:40:10
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -60,7 +60,11 @@ module.exports = (scoket, io) => {
                     r.tids.push({ tid, scoketId: scoket.id });
                 }
             }
-            _tacticesCommand.mapTotacticsList(r.uid, tid, true);
+            const tactics = _tacticesCommand.mapTotacticsList(r.uid, tid, true);
+            tactics && _tacticesCommand.pushHistory(r.uid, tid, {
+                history: tactics.history,
+                historyForDeal: tactics.historyForDeal
+            });
         }
         tacticsId = tid;
     });

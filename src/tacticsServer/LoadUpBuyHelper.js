@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-02 18:19:58
- * @LastEditTime: 2020-09-07 19:09:15
+ * @LastEditTime: 2020-09-08 16:48:52
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -58,7 +58,7 @@ module.exports = class LoadUpBuyHelper {
             const step = this.step[i];
             if (thisLoadUp.length < this.step.length && step.rate <= rate && maxRateLoadUp.rate !== step.rate) {
                 const buyAmount = step.times * this.tactices.parameter.usdtAmount;
-                this.tactices.addHistory('info', `跌幅到止损线的${step.rate}，触及step补仓，补仓${buyAmount}U`, true, { color: '#D2746B' });
+                this.tactices.addHistory('info', `跌幅到止损线的${step.rate}%，触及step补仓，补仓${buyAmount}U`, true, { color: '#D2746B' });
                 this.loadUpBuy(buyAmount);
                 const obj = this.pushLoadUpList({
                     times: step.times,
@@ -94,5 +94,12 @@ module.exports = class LoadUpBuyHelper {
 
             }
         }
+    }
+    getInfo() {
+        let result = {};
+        [
+            'mod', 'safe', 'TimeAmount', 'step', 'roundId', 'loadUpList'
+        ].forEach(item => result[item] = this[item]);
+        return result;
     }
 };

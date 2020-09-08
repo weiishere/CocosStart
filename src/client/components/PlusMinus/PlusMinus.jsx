@@ -46,7 +46,8 @@ const option = () => {
         },
         grid: {
             top: 80,
-            bottom: 30
+            bottom: 30,
+            right:20
         },
         yAxis: {
             type: 'value',
@@ -122,6 +123,7 @@ export default function PlusMinus() {
         //     }
         // });
         EventHub.getInstance().addEventListener('historyRecord','pm_historyRecord', ({historyForDeal}) => {
+            console.log(historyForDeal)
             data = historyForDeal.filter(item => item.type === 'sell').map(item => ({
                 value: item.content.profit,
                 name: Number(item.content.profit.toFixed(3)),

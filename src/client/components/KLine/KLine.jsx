@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 22:33:14
- * @LastEditTime: 2020-09-04 13:54:21
+ * @LastEditTime: 2020-09-08 12:02:59
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -108,7 +108,7 @@ const optionForKdj = () => ({
                         color: "#666",
                     },
                     yAxis: [50]          // 警戒线的标注值，可以有多个yAxis,多条警示线   或者采用   {type : 'average', name: '平均值'}，type值有  max  min  average，分为最大，最小，平均值
-                }, 
+                },
                 {
                     silent: true,
                     lineStyle: {
@@ -331,7 +331,7 @@ export default function KLine() {
     React.useEffect(() => {
         var myChart = echarts.init(document.getElementById("k-line"), 'dark');
         myChart.setOption(option(localStorage.getItem("klineSymbol") || ''));
-
+        let timer;
         const change = (symbol) => {
             theSymbol = symbol;
             localStorage.setItem("klineSymbol", symbol);
@@ -349,8 +349,13 @@ export default function KLine() {
         });
         EventHub.getInstance().addEventListener('mapTacticsList', 'kl_mapTacticsList', payload => {
             const target = payload.find(item => item.target);
-            if (target && target.symbol !== theSymbol) {
+            if (target && target.symbol !== theSymbol && !timer) {
                 //change(target.symbol);
+                timer = window.setTimeout(() => {
+                    timer && window.clearTimeout(timer);
+                    timer = undefined;
+                    change(target.symbol);
+                }, 7000);
             }
             if (target && target.KLineItem1m.startTime && target.symbol === theSymbol) {
                 symbolTicker = target.ticker;

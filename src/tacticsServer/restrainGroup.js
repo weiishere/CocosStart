@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-14 13:49:13
- * @LastEditTime: 2020-09-07 18:34:15
+ * @LastEditTime: 2020-09-08 16:23:52
  * @LastEditors: weishere.huang
  * @Description: premiseForBuy：不能进，premiseForSell：必须出
  * @~~
@@ -54,11 +54,10 @@ const restrain = {
             }
         },
         {
-            key: 'bollStandard',
-            label: 'BOLL指标',
-            desc: '如果最近一条5分线已经突破了UP，不予入场',
+            key: 'bollStandardUP',
+            label: 'BOLL指标UP指标',
+            desc: '如果最近一条5分线(无论是阴阳线)已经横穿了UP，不予入场',
             method: (tactics) => {
-
                 const symbolObj = symbolStorage[tactics.symbol];
                 if (!symbolObj) return false;
                 const { startTime, UP, MB, DN } = symbolObj.boll5m[symbolObj.boll5m.length - 1];//最后一条boll线
@@ -69,10 +68,28 @@ const restrain = {
                 return true;
             }
         },
+        {
+            key: 'bollStandardDN',
+            label: 'BOLL指标DN指标',
+            desc: '如果最近一条5分阳线触及底线DN，赶紧入场',
+            method: (tactics) => {
+                const symbolObj = symbolStorage[tactics.symbol];
+                if (!symbolObj) return false;
+                const { startTime, UP, MB, DN } = symbolObj.boll5m[symbolObj.boll5m.length - 1];//最后一条boll线
+                const klineData = symbolObj.klineData5m.find(item => item[0] === startTime);
+                const close = +klineData[4];//收盘价
+                const open = +klineData[1];//收盘价
+                const low = +klineData[3];//最低价
+                if (open < close && ((close >= DN && Math.abs(low - DN) / low < 0.005) || (MB < close && MB > open))) {//必须是阳线且收盘价大于UP，最低价小于DN,或者是穿过中线
+                    return true;
+                };
+                return false;
+            }
+        },
         // {
-        //     key: 'last20mNoFastRise',
-        //     label: '前20分钟未出现急涨',
-        //     desc: '前20分钟未出现急涨(+5%)',
+        //     key: 'last10mNoFastRise',
+        //     label: '前10分钟未出现急涨',
+        //     desc: '前10分钟未出现急涨(+2%)',
         //     method: (tactics) => { return true; }
         // },
         // {
@@ -312,15 +329,25 @@ const restrain = {
             label: '黑名单',
             desc: '筛选掉黑名单交易对',
             param: {
-                blackList: ['BUSDUSDT', 'TUSDUSDT', 'USDCUSDT', 'PAXUSDT', 'AUDUSDT', 'EURUSDT', 'GBPUSDT', 'BTCUSDT', 'LTCUSDT', 'ETHUSDT', 'BCHUSDT', 'EOSUSDT']
+                blackList: {
+                    bigSymbol: ['BUSDUSDT', 'TUSDUSDT', 'USDCUSDT', 'PAXUSDT', 'AUDUSDT', 'EURUSDT', 'GBPUSDT', 'BTCUSDT', 'LTCUSDT', 'ETHUSDT', 'BCHUSDT', 'EOSUSDT'],
+                    futureSymbol: ['LINKDOWNUSDT', 'BTCDOWNUSDT', 'ADADOWNUSDT', 'ADAUPUSDT', 'BNBUPUSDT', 'XTZDOWNUSDT', 'LINKUPUSDT', 'XTZUPUSDT', 'BNBDOWNUSDT', 'ETHDOWNUSDT', 'ETHUPUSDT']
+                },
+                forbid: [
+                    'bigSymbol', 'futureSymbol'
+                ]
             },
             method: async (lastSymbolList, tactics) => {
-                const { blackList } = getParam('symbolElecter', 'blacklist');
+                const { blackList, forbid } = getParam('symbolElecter', 'blacklist');
                 //const allSymbols = require('./TacticesCommand').getInstance().allTicker;
+                let list = [];
+                forbid.forEach(element => {
+                    list = list.concat(blackList[element]);
+                });
                 let index = 1000;//推荐级别千位
                 let resultList = [];
                 for (let i in lastSymbolList) {
-                    if (lastSymbolList.hasOwnProperty(i) && !blackList.some(item => item === lastSymbolList[i].symbol)) {
+                    if (lastSymbolList.hasOwnProperty(i) && !list.some(item => item === lastSymbolList[i].symbol)) {
                         const { priceChangePercent, high, low, volume, volumeQuote, totalTrades, curDayClose } = lastSymbolList[i].data;
                         resultList.push({
                             symbol: lastSymbolList[i].symbol, score: --index + lastSymbolList[i].score,

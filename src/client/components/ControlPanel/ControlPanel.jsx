@@ -97,7 +97,7 @@ export default function ControlPanel({ uid }) {
             }
         });
     }
-    const updateParameter = (key, value) => {
+    const updateParameter = (key, value, callback) => {
         requester({
             url: api.updateParameter,
             type: 'post',
@@ -117,6 +117,7 @@ export default function ControlPanel({ uid }) {
             } else {
                 message.error({ content: res.data.msg, key, duration: 2 });
             }
+            callback && callback();
         });
     }
     //切币
@@ -154,7 +155,6 @@ export default function ControlPanel({ uid }) {
             setTacticeName(payload.name);
         });
         EventHub.getInstance().addEventListener('mapTacticsList', 'cp_mapTacticsList', payload => {
-            console.log(payload)
             setOpations(payload.map(item => ({
                 id: item.id,
                 name: item.name,
@@ -174,7 +174,7 @@ export default function ControlPanel({ uid }) {
             }
         });
         //运行币切换
-        EventHub.getInstance().addEventListener('switchTactics','cp_switchTactics', payload => {
+        EventHub.getInstance().addEventListener('switchTactics', 'cp_switchTactics', payload => {
             setChooseTacticeId(payload.id);
             setTargetTactice(payload)
             if (payload.runState) {

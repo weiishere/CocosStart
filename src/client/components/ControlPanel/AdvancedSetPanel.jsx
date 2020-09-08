@@ -11,6 +11,7 @@ import './style.less'
 const { TabPane } = Tabs;
 
 export default function AdvancedSetPanel({ modalVisible, tactice, paramter, updateParameter, disables }) {
+    console.log(paramter.find(item => item.key === 'isAllowLoadUpBuy'))
     const [paramters, setParamters] = React.useState(paramter);
     const [advancedRestran, setAdvancedRestran] = React.useState(null);
     const [advancedOption, setAdvancedOption] = React.useState(tactice.advancedOption);
@@ -104,7 +105,9 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                                     setValue({ key: item.key, value: +e.target.value })
                                 }}
                             /> : <center><Switch disabled={disables[0]} checked={item.value} onChange={checked => {
-                                updateParameter(item.key, checked)
+                                updateParameter(item.key, checked, () => {
+                                    setValue({ key: item.key, value: checked })
+                                })
                             }} /></center>}
                         </div>
                     </div>
