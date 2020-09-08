@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-09-08 18:09:34
+ * @LastEditTime: 2020-09-08 19:01:07
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -203,6 +203,8 @@ module.exports = class SellIntoCorrections extends Tactics {
             for (let i = 0; i < symbols.length; i++) {
                 if (tacticsList.some(item => (item.symbol === symbols[i].symbol && item.id !== this.id))) {
                     chooseIndex++;
+                } else {
+                    continue;
                 }
             }
         }
