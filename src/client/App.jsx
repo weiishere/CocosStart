@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 15:09:27
- * @LastEditTime: 2020-08-13 22:17:14
+ * @LastEditTime: 2020-09-08 13:24:23
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -18,6 +18,7 @@ import Rate from '@components/Rate'
 import BSLine from '@components/BSLine'
 import Income from '@components/Income'
 import IncomeUnit from '@components/IncomeUnit'
+import Statistics from '@components/Statistics'
 import ControlPanel from '@components/ControlPanel'
 import Login from './Login'
 import { connectScoket } from '@client/webscoketInstance'
@@ -51,10 +52,13 @@ export default function App() {
                 //广播kline数据
                 EventHub.getInstance().dispatchEvent('klineData', data);
             });
-            
+            scoket.on(WsRoute.HISTORY_LIST, data => {
+                //广播historyRecord数据
+                EventHub.getInstance().dispatchEvent('historyRecord', data);
+            });
         });
 
-        EventHub.getInstance().addEventListener('switchTactics', payload => {
+        EventHub.getInstance().addEventListener('switchTactics', 'app_switchTactics', payload => {
             setTacticeName(payload.name);
             setSymbol(payload.symbol);
             sokt.emit('regTid', getHash());
@@ -114,11 +118,12 @@ export default function App() {
                         <BSLine />
                     </Col>
                     <Col span={8}>
-                        <Row style={{ height: '50%' }}>
+                        <Row style={{ height: '40%' }}>
                             <Col span={24}><Income /></Col>
                         </Row>
-                        <Row style={{ height: '50%' }}>
-                            <Col span={18}>
+                        <Row style={{ height: '60%', position: 'relative' }}>
+                            <Statistics/>
+                            {/* <Col span={18}>
                                 <IncomeUnit />
                             </Col>
                             <Col span={6}>
@@ -133,7 +138,7 @@ export default function App() {
                                     <p>总收益：￥244322</p>
                                     <p>收益/投入/日：0.033%</p>
                                 </div>
-                            </Col>
+                            </Col> */}
                         </Row>
                     </Col>
                 </Row>

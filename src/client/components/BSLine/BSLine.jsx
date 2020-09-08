@@ -145,6 +145,9 @@ const option = (symbol, price) => {
                             }
                         }
                     },
+                    itemStyle: {
+                        opacity: 0.5
+                    },
                     data: markPointData
                     // [
                     //     {
@@ -216,7 +219,7 @@ export default function BSLine() {
         let lastIsFinal = false;
         const myChart = echarts.init(document.getElementById("bs-line"), "dark");
         myChart.setOption(option('', 0));
-        EventHub.getInstance().addEventListener('switchTactics', payload => {
+        EventHub.getInstance().addEventListener('switchTactics', 'bs_switchTactics', payload => {
             markPointData = [];
             initKlineData(myChart, payload.symbol);
         });
@@ -227,7 +230,7 @@ export default function BSLine() {
         //     }
         // });
 
-        EventHub.getInstance().addEventListener('mapTacticsList', payload => {
+        EventHub.getInstance().addEventListener('mapTacticsList', 'bs_mapTacticsList', payload => {
             const target = payload.find(item => item.target);
             persentPrice = !target ? 0 : (target.buyState ? target.presentDeal.payPrice : 0);
             if (!target) return;
@@ -247,7 +250,17 @@ export default function BSLine() {
                     //myChart.setOption(option(target.symbol, close));
                 }
             }
-            markPointData = target.historyForDeal.map((item, i) => ({
+            // markPointData = target.historyForDeal.map((item, i) => ({
+            //     name: '标点' + i,
+            //     coord: [dateFormat(new Date(item.time), "HH:mm"), item.content.price],
+            //     value: item.content.price,
+            //     itemStyle: {
+            //         color: item.type === 'buy' ? 'red' : 'green'//'rgb(41,60,85)'
+            //     }
+            // }));
+        });
+        EventHub.getInstance().addEventListener('historyRecord', 'bs_historyRecord', ({ historyForDeal }) => {
+            markPointData = historyForDeal.map((item, i) => ({
                 name: '标点' + i,
                 coord: [dateFormat(new Date(item.time), "HH:mm"), item.content.price],
                 value: item.content.price,

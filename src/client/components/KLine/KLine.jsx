@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 22:33:14
- * @LastEditTime: 2020-08-26 19:10:00
+ * @LastEditTime: 2020-09-08 12:02:59
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -35,16 +35,9 @@ const optionForKdj = () => ({
     tooltip: {
         trigger: 'axis'
     },
-    color:['#4472C5','#ED7C30','#80FF80'],
+    color: ['#4472C5', '#ED7C30', '#80FF80'],
     legend: {
         data: ['K', 'D', 'J']
-    },
-    grid: {
-        top: '20%',
-        left: 20,
-        right: 60,
-        bottom: 0,
-        containLabel: true
     },
     xAxis: {
         type: 'category',
@@ -53,25 +46,26 @@ const optionForKdj = () => ({
     },
     yAxis: {
         type: 'value',
-        interval:40,
+        interval: 38,
         splitLine: { show: false }
     },
     dataZoom: [{
         type: 'inside',
-        start: 0,
+        start: 38,
         end: 100
     },
     {
         show: true,
         height: 10,
         type: 'slider',
-        start: 0,
+        start: 38,
         end: 100,
         bottom: 2
     }],
     grid: {
         bottom: 12,
         left: 1,
+        right: 75,
         top: 10,
         containLabel: true
     },
@@ -98,17 +92,26 @@ const optionForKdj = () => ({
             type: 'line',
             markLine: {
                 symbol: "none",
-                label: {position: "end"},
+                label: { position: "end" },
                 data: [{
                     silent: true,
-                    lineStyle: { 
+                    lineStyle: {
                         type: "dotted",
                         color: "#666",
                     },
                     yAxis: [20]          // 警戒线的标注值，可以有多个yAxis,多条警示线   或者采用   {type : 'average', name: '平均值'}，type值有  max  min  average，分为最大，最小，平均值
-                },{
+                },
+                {
                     silent: true,
-                    lineStyle: { 
+                    lineStyle: {
+                        type: "dotted",
+                        color: "#666",
+                    },
+                    yAxis: [50]          // 警戒线的标注值，可以有多个yAxis,多条警示线   或者采用   {type : 'average', name: '平均值'}，type值有  max  min  average，分为最大，最小，平均值
+                },
+                {
+                    silent: true,
+                    lineStyle: {
                         type: "dotted",
                         color: "#666",
                     },
@@ -184,7 +187,7 @@ const option = (symbol) => {
         },
         grid: {
             bottom: 60,
-            left:50
+            left: 50
         },
 
         dataZoom: [{
@@ -328,7 +331,7 @@ export default function KLine() {
     React.useEffect(() => {
         var myChart = echarts.init(document.getElementById("k-line"), 'dark');
         myChart.setOption(option(localStorage.getItem("klineSymbol") || ''));
-
+        let timer;
         const change = (symbol) => {
             theSymbol = symbol;
             localStorage.setItem("klineSymbol", symbol);
@@ -338,16 +341,21 @@ export default function KLine() {
                 message.success({ content: `K线成功切换为${symbol}`, key, duration: 2 });
             });
         }
-        EventHub.getInstance().addEventListener('chooseSymbol', payload => {
+        EventHub.getInstance().addEventListener('chooseSymbol', 'kl_chooseSymbol', payload => {
             change(payload.symbol);
         });
-        EventHub.getInstance().addEventListener('switchTactics', payload => {
+        EventHub.getInstance().addEventListener('switchTactics', 'kl_switchTactics', payload => {
             change(payload.symbol);
         });
-        EventHub.getInstance().addEventListener('mapTacticsList', payload => {
+        EventHub.getInstance().addEventListener('mapTacticsList', 'kl_mapTacticsList', payload => {
             const target = payload.find(item => item.target);
-            if (target && target.symbol !== theSymbol) {
+            if (target && target.symbol !== theSymbol && !timer) {
                 //change(target.symbol);
+                timer = window.setTimeout(() => {
+                    timer && window.clearTimeout(timer);
+                    timer = undefined;
+                    change(target.symbol);
+                }, 7000);
             }
             if (target && target.KLineItem1m.startTime && target.symbol === theSymbol) {
                 symbolTicker = target.ticker;

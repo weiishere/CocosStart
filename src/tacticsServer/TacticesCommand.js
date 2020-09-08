@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-28 02:58:03
- * @LastEditTime: 2020-08-24 14:19:23
+ * @LastEditTime: 2020-09-08 17:01:56
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -11,20 +11,22 @@ const SellIntoCorrections = require('./SellIntoCorrections');
 const { WsConfig, WsRoute } = require('../config')
 const { client } = require('../lib/binancer');
 const { userRooms } = require('../controllers/user')
-const { Task } = require('../db')
+const { Task } = require('../db');
+//const { scoketCandles } = require('./binanceScoketBind');
 
 module.exports = class TacticesCommand {
     constructor() {
         this.scoketIO;
+        this.isDone = false;
         this.presentSymbleId = '';//当前选中的交易
         this.tacticsList = [];
         this.isRateDone = true;//是否已经完成了正常数据发送
         this.getExchangeInfo();
-        this.initTasks();
         this.getAllTicker();
         this.allTicker = null;
         this.syncDataGo();
         this.startWaveSpeedData();
+
     }
     static getInstance() {
         if (!this.tacticesCommand) {
@@ -99,6 +101,8 @@ module.exports = class TacticesCommand {
         tasks.forEach(({ uid, name, taskJson }) => {
             const mod = JSON.parse(taskJson);
             let tactics = new SellIntoCorrections(uid, name, mod.parameter);
+            tactics.loadUpBuyHelper = Object.assign(tactics.loadUpBuyHelper, JSON.parse(mod.loadUpBuyHelper));
+            delete mod.loadUpBuyHelper;
             tactics = Object.assign(tactics, mod);
             this.tacticsList.push(tactics);
             tactics.initialize(tactics.symbol);
@@ -111,12 +115,14 @@ module.exports = class TacticesCommand {
     /** 同步数据至数据库 */
     async syncData() {
         return new Promise(resolve => {
-            this.tacticsList.forEach(async tesk => {
+            this.tacticsList.forEach(async task => {
+                //导入数据库之前清理一次历史记录
+                this.historyClear(task);
                 const result = await Task.findOneAndUpdate({
-                    tid: tesk.id,
-                    uid: tesk.uid,
-                    name: tesk.name,
-                    taskJson: JSON.stringify(tesk.getInfo())
+                    tid: task.id,
+                    uid: task.uid,
+                    name: task.name,
+                    taskJson: JSON.stringify(task.getDBInfo())
                 }, function (err) { console.error(err) });
             });
             resolve(true);
@@ -185,21 +191,6 @@ module.exports = class TacticesCommand {
                 //this.scoketIO.to(r.uid).emit(WsRoute.TACTICS_LIST, result);
             })
         }
-
-        //console.log(result);
-        // const user = userList.find(user => user.id === uid);
-        // if (user) {
-        //     const scokets = user.scokets.filter(item => item.tid === tid);
-        //     scokets.forEach(item => {
-        //         const scoket = getScoket(item.scoketId);
-        //         if (scoket) {
-        //             scoket.emit(WsRoute.TACTICS_LIST, result);
-        //         } else {
-        //             console.log('未找到scoket:'+item.scoketId)
-        //         }
-        //     })
-        // }
-        //this.scoket.emit(WsRoute.TACTICS_LIST, result);
         return this.tacticsList.find(item => item.id === tid);
     };
     pushBetterSymbol(uid, id, symbolList) {
@@ -219,7 +210,31 @@ module.exports = class TacticesCommand {
             if (obj) {
                 this.scoketIO.to(obj.scoketId).emit(WsRoute.HISTORY_LIST, historyObj);
             }
-            
+
+        }
+    }
+    /**清理历史记录 */
+    historyClear(tactices) {
+        const fn = (expression) => {
+            let clearCount = 0;
+            for (let i = 0; i <= 100; i++) {
+                if (expression(tactices.history[i].type)) {
+                    clearCount++;
+                    tactices.history[i] = undefined;
+                }
+            }
+            clearCount && (tactices.history = tactices.history.filter(item => item));
+            return clearCount;
+        }
+        //数据超过500条做一个清理，清理前100条里面的info信息，其次清理非买卖信息，最后清理买卖
+        if (tactices.history.length > 400) {
+            let c = fn((value) => value === 'info');
+            if (c === 0) {
+                c = fn((value) => (value !== 'buy' && value !== 'sell'));
+                if (c === 0) {
+                    c = fn((value) => (value === 'buy' || value === 'sell'));
+                }
+            }
         }
     }
     async getAllTicker() {
@@ -228,9 +243,12 @@ module.exports = class TacticesCommand {
         // setTimeout(() => {
         //     this.getAllTicker();
         // }, 60 * 60 * 1000);
-        client.ws.allTickers(tickers => {
+        await client.ws.allTickers(tickers => {
             this.allTicker = tickers.filter(item => /USDT$/.test(item.symbol)).sort((a, b) => b.priceChangePercent - a.priceChangePercent);
-        })
+            !this.isDone && this.initTasks();
+            this.isDone = true;
+        });
+
     }
     /**定时器处理波动速度数据 */
     startWaveSpeedData() {

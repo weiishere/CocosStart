@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 02:37:01
- * @LastEditTime: 2020-07-24 02:42:05
+ * @LastEditTime: 2020-09-08 14:53:31
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -55,6 +55,11 @@ const option = {
         min: 0,
         max: 400
     }],
+    grid: {
+        left: '10%',
+        right: '5%',
+        bottom: '15%'
+    },
     title: [{
         text: '收益趋势图'
     }],
