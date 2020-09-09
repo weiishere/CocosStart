@@ -29,6 +29,18 @@ const getSymbolStorageFromDB = async () => {
         getSymbolStorageFromDB();
     }, 30000);
 }
+/**获取平均波动 */
+const getAverageWave = (symbol) => {
+    const symbolObj = symbolStorage[symbol];
+    if (!symbolObj) return 0;
+    const { klineData5m } = symbolObj;
+    let total = 0;
+    //klineData.reduce((per, cur) => { }, klineData[0]);
+    klineData5m.forEach(item => {
+        total += Math.abs((item[1] - item[4]) / item[1]);
+    });
+    return total / klineData5m.length;
+}
 
 process.env.CHILD_PROCESS === '0' && getSymbolStorageFromDB();//如果没有开子进程通信，就自己去数据库拿
 
@@ -48,14 +60,15 @@ const restrain = {
                 const { chooseItem, isNowBuy } = await tactics.findSymbol();
                 if (chooseItem) {
                     //只要亏损不大于0.2个点，就切币
-                    if (Number(tactics.getProfit() / tactics.presentDeal.costing) < maxLoss) {
-                        tactics.addHistory('info', `【注意】在切币驱动模式下检测到新币且满足切币条件，即将进行切币操作...`, true, { color: "#85A3FF" });
+                    if ((tactics.buyState && Number(tactics.getProfit() / tactics.presentDeal.costing) < maxLoss) || !tactics.buyState) {
+                        tactics.addHistory('info', `【注意】在切币驱动模式下检测到新币且满足切币条件，即将切币至（${chooseItem}）...`, true, { color: "#85A3FF" });
                         if (tactics.buyState) {
                             await tactics.deal('sell');
                         }
-                        await tactice.initialize(symbol);//切币
-                        if (isNowBuy) await tactics.deal('buy');
-                        require('./TacticesCommand').getInstance().mapTotacticsList(tactice.uid, tactice.id, true);
+                        await tactics.initialize(chooseItem);//切币
+                        //await tactics.powerSwitch();
+                        //if (isNowBuy) await tactics.deal('buy');
+                        require('./TacticesCommand').getInstance().mapTotacticsList(tactics.uid, tactics.id, true);
                         return false;
                     }
                     tactics.addHistory('info', `在切币驱动模式下检测到新币且满足切币条件，但不满足出场条件(亏损大于${maxLoss})，继续观察...`, true, { color: "#85A3FF" });
@@ -88,7 +101,7 @@ const restrain = {
             key: 'bollStandardUP',
             label: 'BOLL指标UP指标',
             desc: '如果最近一条5分线(无论是阴阳线)已经横穿了UP，不予入场',
-            method: (tactics) => {
+            method: async (tactics) => {
                 const symbolObj = symbolStorage[tactics.symbol];
                 if (!symbolObj) return false;
                 const { startTime, UP, MB, DN } = symbolObj.boll5m[symbolObj.boll5m.length - 1];//最后一条boll线
@@ -103,7 +116,7 @@ const restrain = {
             key: 'bollStandardDN',
             label: 'BOLL指标DN指标',
             desc: '如果最近一条5分阳线触及底线DN，赶紧入场',
-            method: (tactics) => {
+            method: async (tactics) => {
                 const symbolObj = symbolStorage[tactics.symbol];
                 if (!symbolObj) return false;
                 const { startTime, UP, MB, DN } = symbolObj.boll5m[symbolObj.boll5m.length - 1];//最后一条boll线
@@ -119,10 +132,20 @@ const restrain = {
         },
         {
             key: 'last10mNoFastRise',
-            label: '前10分钟未出现急涨',
-            desc: '前10分钟未出现急涨(急涨幅度根据平均值取)',
-            param: { time: 10 },
-            method: (tactics) => {
+            label: '前10分钟内未出现急涨(结合BOLL-UP)',
+            desc: '前10分钟内未出现急涨(急涨幅度根据平均值取)，但若未冲破UP线，将不约束',
+            param: { time: 4 },
+            method: async (tactics) => {
+                const { time } = getParam('premiseForBuy', 'last10mNoFastRise');
+                const averageWave = getAverageWave(tactics.symbol);
+                //const { klineData5m } = symbolStorage[symbol];
+                const riseRate = (tactics.presentPrice - tactics.KLineItem5m.recent.open) / tactics.KLineItem5m.recent.open;
+                if (riseRate > averageWave * time) {
+                    const isUp = await restrain[premiseForBuy].find(item => item.key === 'bollStandardUP').method(tactics);
+                    //若未冲破UP线，将不约束，继续冲
+                    if (isUp) return true;
+                    return false;
+                }
                 return true;
             }
         },
@@ -152,7 +175,7 @@ const restrain = {
             label: '波动出现高速下跌',
             desc: '无论盈亏，10秒内的取样值(相对上一秒价格)涨跌幅都没高于0.001个点,每次采样的变化速率都是跌，且10秒累计下跌量相对10秒前价格跌幅超过1个点，要预防插针请关闭',
             param: { scond: 10, maxRiseRate: 0.001, riseRate: 0.01 },
-            method: (tactics) => {
+            method: async (tactics) => {
                 const { scond, maxRiseRate, riseRate } = getParam('premiseForSell', 'fastRise');
                 const speed = tactics.getWaveSpeedList(scond);
                 for (let i = 0, l = speed.length; i < l; i++) {
@@ -166,7 +189,7 @@ const restrain = {
             label: '亏损情况下，中高速的持续性下跌',
             desc: '亏损情况下，30秒的取样都是下跌，且30秒相对当前价格累计额下跌量超过-1%，要预防插针请关闭',
             param: { scond: 30, riseRate: 0.01 },
-            method: (tactics) => {
+            method: async (tactics) => {
                 if (tactics.presentDeal.historyProfit > 0) return false;
                 const { scond, riseRate } = getParam('premiseForSell', 'awaysRise');
                 const speed = tactics.getWaveSpeedList(scond);
@@ -184,7 +207,7 @@ const restrain = {
             label: '根据24小时ticker动态调整止损值',
             desc: '24小时ticker动态调整止损值：(当天最高价-当天开盘价) / 当天开盘价',
             param: {},
-            method: (tactics) => {
+            method: async (tactics) => {
                 // const allTicker = require('./TacticesCommand').getInstance().allTicker;
                 // let ticker = [];
                 if (tactics.ticker) {
@@ -201,7 +224,7 @@ const restrain = {
             label: '根据涨幅调整止盈拐点跌幅',
             desc: '涨幅过大时调整拐点止盈点，及时出货，保障利润，盈利大于10个点，则拐点调为原止盈点的10%，出场更敏感',
             param: { step: 0.15 },
-            method: (tactics) => {
+            method: async (tactics) => {
                 if (!tactics.buyState) return;
                 const { step } = getParam('dynamicParam', 'setRiseStopLossRate');//获取步进值
                 let riseRate = tactics.getProfit() / tactics.presentDeal.costing;
@@ -238,7 +261,7 @@ const restrain = {
                 maxRate: 0.9,//历史最大跌幅
                 lossRate: 60 //拐点止损涨幅
             },
-            method: (tactics) => {
+            method: async (tactics) => {
                 if (!tactics.buyState) return;
                 if (tactics.presentDeal.historyProfit > 0) return;
                 const { maxRate, lossRate } = getParam('dynamicParam', 'setLossStopRiseRate');
@@ -267,7 +290,7 @@ const restrain = {
                 maxLoss: 0.06,
                 addExpand: 1.05
             },
-            method: (tactics) => {
+            method: async (tactics) => {
                 const { maxLoss } = getParam('dynamicParam', 'setStopLossRateByHastyLoss');
                 let stopLossRate = tactics.parameterBackup.stopLossRate;
                 //上一个5分线的开盘价跟当前价格比对
@@ -369,7 +392,7 @@ const restrain = {
             param: {
                 blackList: {
                     bigSymbol: ['BUSDUSDT', 'TUSDUSDT', 'USDCUSDT', 'PAXUSDT', 'AUDUSDT', 'EURUSDT', 'GBPUSDT', 'BTCUSDT', 'LTCUSDT', 'ETHUSDT', 'BCHUSDT', 'EOSUSDT'],
-                    futureSymbol: ['LINKDOWNUSDT', 'BTCDOWNUSDT', 'ADADOWNUSDT', 'ADAUPUSDT', 'BNBUPUSDT', 'XTZDOWNUSDT', 'LINKUPUSDT', 'XTZUPUSDT', 'BNBDOWNUSDT', 'ETHDOWNUSDT', 'ETHUPUSDT']
+                    futureSymbol: ['LINKDOWNUSDT', 'LINKUPUSDT', 'BTCDOWNUSDT', 'BTCUPUSDT', 'ADADOWNUSDT', 'ADAUPUSDT', 'BNBUPUSDT', 'BNBDOWNUSDT', 'XTZDOWNUSDT', 'XTZUPUSDT', 'ETHDOWNUSDT', 'ETHUPUSDT']
                 },
                 forbid: [
                     'bigSymbol', 'futureSymbol'
@@ -453,7 +476,7 @@ const restrain = {
             method: async (lastSymbolList, tactics) => {
                 const { m5count } = getParam('symbolElecter', 'LossToRiseInflexion');
                 let resultList = [];
-                const fn = (open, close, perCount) => {
+                const fn = (open, close, curCount) => {
                     let list = [];
                     for (let i in lastSymbolList) {
                         let score = 0;
@@ -461,11 +484,14 @@ const restrain = {
                         const { klineData5m } = symbolStorage[item.symbol];
                         if (!klineData5m) continue;
                         //检测之前N条线
-                        const lowOpen = [...klineData5m].splice(klineData5m.length - m5count - perCount, m5count).sort((a, b) => a[1] - b[1]).shift()[1];
-                        const lowClose = [...klineData5m].splice(klineData5m.length - m5count - perCount, m5count).sort((a, b) => a[4] - b[4]).shift()[4];
+                        const lowOpen = [...klineData5m].splice(klineData5m.length - m5count - curCount, m5count).sort((a, b) => a[1] - b[1]).shift()[1];
+                        const lowClose = [...klineData5m].splice(klineData5m.length - m5count - curCount, m5count).sort((a, b) => a[4] - b[4]).shift()[4];
                         //阳线，且收盘价低于之前的最低开盘和收盘价
                         if (open <= close && close <= lowClose && close <= lowOpen) {
-                            list.push(item.symbol);
+                            list.push(item);
+                            // console.log(lowOpen, lowOpen);
+                            // console.log(lowClose, lowClose);
+                            // console.log([...klineData5m].splice(klineData5m.length - m5count - curCount, m5count));
                         }
                     }
                     return list;
@@ -473,7 +499,8 @@ const restrain = {
                 const { present, recent } = tactics.KLineItem5m;
                 present && (resultList = resultList.concat(fn(present.open, present.close, 1)));
                 recent && (resultList = resultList.concat(fn(recent.open, recent.close, 1)));
-                return lastSymbolList;
+                resultList = Array.from(new Set(resultList));
+                return resultList;
             }
         },
         // {

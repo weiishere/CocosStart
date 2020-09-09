@@ -42,7 +42,7 @@ module.exports = {
             error(err)
         }
     },
-    find: async function (query) {
+    find: async function (query, error) {
         try {
             return await symbolModel.find(query).exec();
         } catch (err) {

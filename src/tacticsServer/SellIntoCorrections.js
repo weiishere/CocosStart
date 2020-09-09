@@ -144,6 +144,10 @@ module.exports = class SellIntoCorrections extends Tactics {
     addHistory(type, content, isDouble, option) {
         if (isDouble && this.history.length !== 0 && this.history[this.history.length - 1].type === type && this.history[this.history.length - 1].content === content) {
             this.history[this.history.length - 1].time = Date.parse(new Date());
+            require('./TacticesCommand').getInstance().pushHistory(this.uid, this.id, {
+                history: this.history,
+                historyForDeal: this.historyForDeal
+            });
             return;
         }
         const theOption = Object.assign({
@@ -299,13 +303,13 @@ module.exports = class SellIntoCorrections extends Tactics {
                 for (let i = 0; i < restrainGroup.premiseForBase.length; i++) {
                     const restrain = restrainGroup.premiseForBase[i];
                     if (this.advancedOption.premiseForBase.some(item => item === restrain.key)) {
-                        if (restrain.method(this)) {
-                            if (this.advancedOption.premiseJoin.premiseForBase === 'or') {
+                        if (await restrain.method(this)) {
+                            if (restrainGroup.premiseForBase.length === 1 || this.advancedOption.premiseJoin.premiseForBase === 'or') {
                                 allowResult = true;//只要有一个满足就走
                                 break;
                             }
                         } else {
-                            if (this.advancedOption.premiseJoin.premiseForBase === 'and') {
+                            if (restrainGroup.premiseForBase.length === 1 || this.advancedOption.premiseJoin.premiseForBase === 'and') {
                                 allowResult = false;//只要有一个不满足，就终止
                                 break;
                             }
@@ -327,12 +331,11 @@ module.exports = class SellIntoCorrections extends Tactics {
                             this.buyState = await this.buy();
                         }
                     } else {
-                        //出场判断
-                        //动态高级
+                        //动态参数高级
                         for (let i = 0; i < restrainGroup.dynamicParam.length; i++) {
                             const restrain = restrainGroup.dynamicParam[i];
                             if (this.advancedOption.dynamicParam.some(item => item === restrain.key)) {
-                                restrain.method(this);
+                                await restrain.method(this);
                             }
                         }
                         const r = await this.sell();
@@ -379,7 +382,13 @@ module.exports = class SellIntoCorrections extends Tactics {
     async buy() {
         //次数未满之前肯定返回true，没有切币判断，都返回true
         //如果上个交易亏损且检测次数满了，且没有币就会返回false，且不动，如果待机没开就停止了，如果待机开了，就等待有币了就会返回true，重新启动
-        const chooseResult = await this.checkChangeSymbol();//切币检测
+        let chooseResult;
+        if (this.advancedOption.premiseForBase.indexOf('symbolDriveMod') === -1) {
+            //在选币驱动模式下，就不用再做选币等待了，直接走
+            chooseResult = await this.checkChangeSymbol();//切币检测
+        } else {
+            chooseResult = true;
+        }
         if (chooseResult === false) {
             //10次没有币推荐，或者不允许切币，且要求停机
             await this.stop();
@@ -399,13 +408,13 @@ module.exports = class SellIntoCorrections extends Tactics {
         for (let i = 0; i < restrainGroup.premiseForBuy.length; i++) {
             const restrain = restrainGroup.premiseForBuy[i];
             if (this.advancedOption.premiseForBuy.some(item => item === restrain.key)) {
-                if (!restrain.method(this)) {
-                    if (this.advancedOption.premiseJoin.premiseForBuy === 'and') {
+                if (!await restrain.method(this)) {
+                    if (restrainGroup.premiseForBuy.length === 1 || this.advancedOption.premiseJoin.premiseForBuy === 'and') {
                         this.addHistory('info', `入场约束“${restrain.label}”不符合，重新等待入场...`, true, { color: '#5bb3ab' });
                         return false;
                     }
                 } else {
-                    if (this.advancedOption.premiseJoin.premiseForBuy === 'or') {
+                    if (restrainGroup.premiseForBuy.length === 1 || this.advancedOption.premiseJoin.premiseForBuy === 'or') {
                         allowResult = true;
                         break;
                     }
@@ -422,11 +431,12 @@ module.exports = class SellIntoCorrections extends Tactics {
         //如果当前是上涨且判断涨幅满足
         if (this.KLineItem5m.present && this.KLineItem5m.present.close - this.KLineItem5m.present.open > 0) {
             //if (this.KLineItem5m.present.close - (this.KLineItem5m.recent ? this.KLineItem5m.recent.open : this.KLineItem5m.present.open) > 0) {
-            if (Math.abs(this.KLineItem5m.present.close - this.KLineItem5m.present.open) / this.KLineItem5m.present.open > this.parameter.riseBuyRange) {
+            const _riseBuyRange = Math.abs(this.KLineItem5m.present.close - this.KLineItem5m.present.open) / this.KLineItem5m.present.open;
+            if (_riseBuyRange > this.parameter.riseBuyRange) {
                 //记录当前价格
                 const tempPrice = await this.getPresentPrice();//await Helper.getInstance(this).getPresentPrice();
                 //console.log(Number(tempPrice) === this.presentPrice ? '价格一致' : '不一致'); console.log(tempPrice + "--" + this.presentPrice);
-                this.addHistory('info', `5分线上涨幅度超过${this.parameter.riseBuyRange}，获取当前价格${Number(tempPrice)}，等待${this.parameter.riseStayCheckRateForBuy / 1000}s后价格...`);
+                this.addHistory('info', `最近5分线上涨幅度${_riseBuyRange}，超过${this.parameter.riseBuyRange}，获取当前价格${Number(tempPrice)}，等待${this.parameter.riseStayCheckRateForBuy / 1000}s后价格...`);
                 return await new Promise((resolve) => {
                     setTimeout(async () => {
                         const price = await this.getPresentPrice();//await Helper.getInstance(this).getPresentPrice();
@@ -444,11 +454,11 @@ module.exports = class SellIntoCorrections extends Tactics {
                     }, this.parameter.riseStayCheckRateForBuy);
                 })
             } else {
-                this.addHistory('info', `5分线上涨，却未保持上涨趋势，重新等待入场时机...`, true);
+                this.addHistory('info', `最近5分线上涨，上涨幅度${_riseBuyRange}，低于买入确认涨幅${this.parameter.riseBuyRange}，重新等待入场时机...`, true);
                 return false;
             }
         } else {
-            this.addHistory('info', `5分线下跌，重新等待入场时机...`, true);
+            this.addHistory('info', `最近5分线下跌，重新等待入场时机...`, true);
             return false;
         }
     }
@@ -458,14 +468,14 @@ module.exports = class SellIntoCorrections extends Tactics {
         for (let i = 0; i < restrainGroup.premiseForSell.length; i++) {
             const restrain = restrainGroup.premiseForSell[i];
             if (this.advancedOption.premiseForSell.some(item => item === restrain.key)) {
-                if (restrain.method(this)) {
-                    if (this.advancedOption.premiseJoin.premiseForSell === 'or') {
+                if (await restrain.method(this)) {
+                    if (restrainGroup.premiseForSell.length === 1 || this.advancedOption.premiseJoin.premiseForSell === 'or') {
                         //只要有一个满足就出场
                         this.addHistory('info', `符合出场约束“${restrain.label}”，即将进行出场操作...`, true, { color: '#5bb3ab' });
                         return (await this.deal('sell'));
                     }
                 } else {
-                    if (this.advancedOption.premiseJoin.premiseForSell === 'and') {
+                    if (restrainGroup.premiseForSell.length === 1 || this.advancedOption.premiseJoin.premiseForSell === 'and') {
                         allowResult = false;//只要有一个不满足出场条件，就不出场
                         break;
                     }

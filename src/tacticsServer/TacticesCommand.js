@@ -107,7 +107,7 @@ module.exports = class TacticesCommand {
             this.tacticsList.push(tactics);
             tactics.initialize(tactics.symbol);
             if (tactics.runState) {
-                tactics.runState = false;//powerSwitch函数在启动轮询前会反向设置runState
+                //tactics.runState = false;//powerSwitch函数在启动轮询前会反向设置runState
                 tactics.powerSwitch();
             }
         })
