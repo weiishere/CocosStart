@@ -213,7 +213,7 @@ module.exports = class SymbolServer {
                     this.symbolStorage[symbolKey] = {
                         klineData5m: res.data,
                         boll5m: bollLine(res.data),//this.symbolStorage[symbolKey] ? [...this.symbolStorage[symbolKey].boll5m] : [{}],
-                        KDJ5m: KDJLine(res.data, 24)//取得5分线JDK//this.symbolStorage[symbolKey] ? [...this.symbolStorage[symbolKey].KDJ5m] : [{}],
+                        KDJ5m: KDJLine(res.data, 9)//取得5分线JDK//this.symbolStorage[symbolKey] ? [...this.symbolStorage[symbolKey].KDJ5m] : [{}],
                     }
                     bar.tick();
                 } else {
@@ -243,7 +243,7 @@ module.exports = class SymbolServer {
                         klineData5m.shift();
                         klineData5m.push([startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume]);
                         boll5m.push(bollLine(klineData5m, klineData5m.length, startTime));
-                        KDJ5m.push(KDJLine(klineData5m, 24, {
+                        KDJ5m.push(KDJLine(klineData5m, 9, {
                             singleData: klineData5m[klineData5m.length - 2],
                             lastKDJData: KDJ5m[KDJ5m.length - 2],
                             JDKlist: KDJ5m

@@ -17,11 +17,9 @@ module.exports = class LoadUpBuyHelper {
         this.TimeAmount = 10;//补仓的最高倍数：如果补仓倍数超过原始资金的倍数，会终止
         this.step = [
             { rate: 10, times: 1 },
-            { rate: 30, times: 1 },
-            { rate: 40, times: 1 },
-            { rate: 50, times: 3 },
-            { rate: 60, times: 2 },
-            { rate: 70, times: 2 },
+            { rate: 20, times: 1 },
+            { rate: 25, times: 1 },
+            { rate: 30, times: 1 }
         ];
         this.roundId = Date.parse(new Date());//当前的买卖回合ID
         this.loadUpList = [

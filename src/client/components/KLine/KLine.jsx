@@ -336,9 +336,9 @@ export default function KLine() {
             theSymbol = symbol;
             localStorage.setItem("klineSymbol", symbol);
             const key = 'loading';
-            message.loading({ content: 'K线数据请求中..', key, duration: 0 });
+            message.loading({ content: 'K线数据请求中..', key, duration: 0, style: { marginTop: '-3.2rem' } });
             initKlineData(myChart, localStorage.getItem("klineSymbol"), () => {
-                message.success({ content: `K线成功切换为${symbol}`, key, duration: 2 });
+                message.success({ content: `K线成功切换为${symbol}`, key, duration: 2, style: { marginTop: '-3.2rem' } });
             });
         }
         EventHub.getInstance().addEventListener('chooseSymbol', 'kl_chooseSymbol', payload => {

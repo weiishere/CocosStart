@@ -13,7 +13,7 @@ import EventHub from '@client/EventHub'
 
 const columns = [
     {
-        title: 'Name',
+        title: '名称',
         dataIndex: 'name',
     },
     {
@@ -28,12 +28,12 @@ const columns = [
         title: '实时盈亏',
         dataIndex: 'nowRiseRate',
     },
+    // {
+    //     title: '场内U',
+    //     dataIndex: 'buyUsdtAmount',
+    // },
     {
-        title: '场内U',
-        dataIndex: 'buyUsdtAmount',
-    },
-    {
-        title: '出场数',
+        title: '盈利/出场数',
         dataIndex: 'count',
     },
     {
@@ -76,8 +76,8 @@ export default function Statistics() {
                     symbol: item.symbol,
                     status: `${item.runState ? '运行中/' + (item.buyState ? '场内' : '场外') : '未运行'}${item.imitateRun ? '-模拟' : ''}`,
                     nowRiseRate: item.buyState && lastHistoryForDeal.type === 'buy' ? Number((lastHistoryForDeal.content.profit).toFixed(5)) : '-',
-                    buyUsdtAmount: Number(item.presentDeal.amount.toFixed(2)),
-                    count: item.historyForDeal.filter(item => item.type === 'sell').length,
+                    //buyUsdtAmount: Number(item.presentDeal.amount.toFixed(2)),
+                    count: item.historyForDeal.filter(item => item.type === 'sell' && item.content.profit > 0).length + '/' + item.historyForDeal.filter(item => item.type === 'sell').length,
                     riseRate: Number(((rise / item.parameter.usdtAmount) * 100).toFixed(4)) + '%',
                 }
             });
@@ -85,14 +85,27 @@ export default function Statistics() {
             if (ckeckedKey !== -1 && selectedRowKeys.indexOf(ckeckedKey) === -1) {
                 let _selectedRowKeys = [];
                 _selectedRowKeys.push(ckeckedKey);
+                _selectedRowKeys = Array.from(new Set(_selectedRowKeys))
                 setSelectedRowKeys(_selectedRowKeys);
+                EventHub.getInstance().dispatchEvent('rowSelection', _selectedRowKeys);
             }
         });
-    }, []);
+        EventHub.getInstance().addEventListener('switchTactics', 'st_switchTactics', payload => {
+            
+        });
+        return () => {
+            EventHub.getInstance().removeEventListener('mapTacticsList', 'st_mapTacticsList');
+            EventHub.getInstance().removeEventListener('switchTactics', 'st_switchTactics');
+        }
+    }, [selectedRowKeys]);
+
     const onSelectChange = selectedRowKeys => {
         console.log('selectedRowKeys changed: ', selectedRowKeys);
         setSelectedRowKeys(selectedRowKeys);
+        console.log(selectedRowKeys)
+        EventHub.getInstance().dispatchEvent('rowSelection', selectedRowKeys);
     };
+    
     const rowSelection = {
         selectedRowKeys,
         onChange: onSelectChange,

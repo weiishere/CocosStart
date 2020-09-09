@@ -316,6 +316,10 @@ const restrain = {
                     }
                     return lastSymbolList.filter(item => {
                         const symbolObj = symbolStorage[item.symbol];
+                        if (!symbolObj) {
+                            console.log(item.symbol)
+                            return false;
+                        }
                         return (fn(symbolObj, symbolObj.KDJ5m.length - 1) || fn(symbolObj, symbolObj.KDJ5m.length - 2));
                     });
                 } catch (e) {

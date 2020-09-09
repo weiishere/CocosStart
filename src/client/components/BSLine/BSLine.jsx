@@ -73,8 +73,7 @@ const option = (symbol, price) => {
         //     data: ['日K', 'MA5', 'MA10', 'MA20', 'MA30']
         // },
         grid: {
-            left: '10%',
-            right: '10%',
+            right: '3%',
             bottom: '15%'
         },
         xAxis: {

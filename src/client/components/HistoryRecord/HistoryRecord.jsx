@@ -121,7 +121,7 @@ export default function HistoryRecord() {
             </ul>
         </Scrollbars>
         <div className='operation_wrap'>
-            {history.length}条 <label><Switch checked={isGoBottom} size="small"
+            {history.length}条 <label><Switch checked={isGoBottom} size="small" style={{ verticalAlign: 'sub' }}
                 onChange={changeSwitch} />自动置底</label>
             <Radio.Group style={{ float: 'right' }} onChange={changeType} value={msgListType}>
                 <Radio size='small' value={1}>所有消息</Radio>

@@ -46,6 +46,7 @@ export default function App() {
             sokt = scoket;
             scoket.on(WsRoute.TACTICS_LIST, data => {
                 //广播mapTacticsList
+                console.log(data);
                 EventHub.getInstance().dispatchEvent('mapTacticsList', data);
             });
             scoket.on(WsRoute.KLINE_DATA, data => {
