@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-09-08 13:47:30
+ * @LastEditTime: 2020-09-09 18:26:01
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -43,13 +43,21 @@ module.exports = {
     } else {
       const _tacticesCommand = TacticesCommand.getInstance();
       const tactice = _tacticesCommand.tacticsList.find(item => item.id === tid);
-      tactice.initialize(symbol);
-      _tacticesCommand.mapTotacticsList(tactice.uid, tactice.id, true);
-      resultData = {
-        code: apiDateCode.success,
-        data: tactice ? tactice.getInfo() : {}
+      if (tacticesCommand.tacticsList.some(item => (item.symbol === symbol && item.id !== tid))) {
+        resultData = {
+          msg: '已经存在此交易对的实例，不可重复添加~',
+          code: apiDateCode.logicError
+        }
+      } else {
+        tactice.initialize(symbol);
+        _tacticesCommand.mapTotacticsList(tactice.uid, tactice.id, true);
+        resultData = {
+          code: apiDateCode.success,
+          data: tactice ? tactice.getInfo() : {}
+        }
       }
     }
+
     ctx.body = resultData;
     next();
   },
@@ -116,7 +124,7 @@ module.exports = {
             break;
           case 'stop':
             //停止
-            tactices.powerSwitch();
+            tactices.stop();
             //tactices.powerSwitch();
             break;
           case 'remove':
@@ -161,6 +169,7 @@ module.exports = {
   getAdvancedRestran: async (ctx, next) => {
     const restrainGroup = require('../tacticsServer/restrainGroup');
     const data = {
+      premiseForBase: restrainGroup.premiseForBase.map(item => ({ key: item.key, label: item.label, desc: item.desc })),
       premiseForBuy: restrainGroup.premiseForBuy.map(item => ({ key: item.key, label: item.label, desc: item.desc })),
       premiseForSell: restrainGroup.premiseForSell.map(item => ({ key: item.key, label: item.label, desc: item.desc })),
       dynamicParam: restrainGroup.dynamicParam.map(item => ({ key: item.key, label: item.label, desc: item.desc })),

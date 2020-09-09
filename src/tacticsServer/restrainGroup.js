@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-14 13:49:13
- * @LastEditTime: 2020-09-08 16:23:52
+ * @LastEditTime: 2020-09-09 18:21:11
  * @LastEditors: weishere.huang
  * @Description: premiseForBuy：不能进，premiseForSell：必须出
  * @~~
@@ -33,6 +33,37 @@ const getSymbolStorageFromDB = async () => {
 process.env.CHILD_PROCESS === '0' && getSymbolStorageFromDB();//如果没有开子进程通信，就自己去数据库拿
 
 const restrain = {
+    premiseForBase: [
+        {
+            key: 'symbolDriveMod',
+            label: '切币驱动模式',
+            desc: '选币驱动模式，会保持选币一直运行，如果有新币产生，即尽快出场(盈利或亏损在0.5个点内)并切币进入，打开此开关需保证有及其严格的选币方案',
+            param: {
+                maxLoss: -0.02,
+                isNowBuy: true
+            },
+            method: async (tactics) => {
+                const { maxLoss } = getParam('premiseForBase', 'symbolDriveMod');
+                //进行币种检测
+                const { chooseItem, isNowBuy } = await tactics.findSymbol();
+                if (chooseItem) {
+                    //只要亏损不大于0.2个点，就切币
+                    if (Number(tactics.getProfit() / tactics.presentDeal.costing) < maxLoss) {
+                        tactics.addHistory('info', `【注意】在切币驱动模式下检测到新币且满足切币条件，即将进行切币操作...`, true, { color: "#85A3FF" });
+                        if (tactics.buyState) {
+                            await tactics.deal('sell');
+                        }
+                        await tactice.initialize(symbol);//切币
+                        if (isNowBuy) await tactics.deal('buy');
+                        require('./TacticesCommand').getInstance().mapTotacticsList(tactice.uid, tactice.id, true);
+                        return false;
+                    }
+                    tactics.addHistory('info', `在切币驱动模式下检测到新币且满足切币条件，但不满足出场条件(亏损大于${maxLoss})，继续观察...`, true, { color: "#85A3FF" });
+                }
+                return true;
+            }
+        },
+    ],
     /**入场前提条件    true：满足入场前提条件-false：不满足前提条件 */
     premiseForBuy: [
         {
@@ -86,12 +117,15 @@ const restrain = {
                 return false;
             }
         },
-        // {
-        //     key: 'last10mNoFastRise',
-        //     label: '前10分钟未出现急涨',
-        //     desc: '前10分钟未出现急涨(+2%)',
-        //     method: (tactics) => { return true; }
-        // },
+        {
+            key: 'last10mNoFastRise',
+            label: '前10分钟未出现急涨',
+            desc: '前10分钟未出现急涨(急涨幅度根据平均值取)',
+            param: { time: 10 },
+            method: (tactics) => {
+                return true;
+            }
+        },
         // {
         //     key: 'last24mMaxRise',
         //     label: '24小时涨幅未大于40%',
@@ -414,25 +448,46 @@ const restrain = {
         {
             key: 'LossToRiseInflexion',
             label: '深沟检测',
-            desc: '下跌拐点型，30分钟下跌5%以上，然后回调1%',
-            param: {},
+            desc: '下跌拐点型，检测n条5分线，检测当前是否在最低点',
+            param: { m5count: 20 },
             method: async (lastSymbolList, tactics) => {
-
+                const { m5count } = getParam('symbolElecter', 'LossToRiseInflexion');
+                let resultList = [];
+                const fn = (open, close, perCount) => {
+                    let list = [];
+                    for (let i in lastSymbolList) {
+                        let score = 0;
+                        const item = lastSymbolList[i];
+                        const { klineData5m } = symbolStorage[item.symbol];
+                        if (!klineData5m) continue;
+                        //检测之前N条线
+                        const lowOpen = [...klineData5m].splice(klineData5m.length - m5count - perCount, m5count).sort((a, b) => a[1] - b[1]).shift()[1];
+                        const lowClose = [...klineData5m].splice(klineData5m.length - m5count - perCount, m5count).sort((a, b) => a[4] - b[4]).shift()[4];
+                        //阳线，且收盘价低于之前的最低开盘和收盘价
+                        if (open <= close && close <= lowClose && close <= lowOpen) {
+                            list.push(item.symbol);
+                        }
+                    }
+                    return list;
+                }
+                const { present, recent } = tactics.KLineItem5m;
+                present && (resultList = resultList.concat(fn(present.open, present.close, 1)));
+                recent && (resultList = resultList.concat(fn(recent.open, recent.close, 1)));
                 return lastSymbolList;
             }
         },
-        {
-            key: 'fastRise',
-            label: '短时间急拉币(5分钟1个点)',
-            desc: '短时间在急拉的币，在5分钟就达到日涨幅的10%',
-            param: {
-                rise: 0.1
-            },
-            method: async (lastSymbolList, tactics) => {
+        // {
+        //     key: 'fastRise',
+        //     label: '短时间急拉币(5分钟1个点)',
+        //     desc: '短时间在急拉的币，在5分钟就达到日涨幅的10%',
+        //     param: {
+        //         rise: 0.1
+        //     },
+        //     method: async (lastSymbolList, tactics) => {
 
-                return lastSymbolList;
-            }
-        }
+        //         return lastSymbolList;
+        //     }
+        // }
     ]
 }
 

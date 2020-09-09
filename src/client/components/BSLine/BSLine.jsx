@@ -145,7 +145,7 @@ const option = (symbol, price) => {
                         }
                     },
                     itemStyle: {
-                        opacity: 0.5
+                        opacity: 0.7
                     },
                     data: markPointData
                     // [

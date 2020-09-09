@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-09-01 19:08:13
+ * @LastEditTime: 2020-09-09 15:15:19
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -37,7 +37,8 @@ const WsRoute = {
 const apiDateCode = {
   success: 'A000',
   nullError: 'A001',
-  serverError: 'A002'
+  serverError: 'A002',
+  logicError: 'A003'
 }
 
 const DB = {

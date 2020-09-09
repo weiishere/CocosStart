@@ -11,7 +11,7 @@ import './style.less'
 const { TabPane } = Tabs;
 
 export default function AdvancedSetPanel({ modalVisible, tactice, paramter, updateParameter, disables }) {
-    console.log(paramter.find(item => item.key === 'isAllowLoadUpBuy'))
+    //console.log(paramter.find(item => item.key === 'isAllowLoadUpBuy'))
     const [paramters, setParamters] = React.useState(paramter);
     const [advancedRestran, setAdvancedRestran] = React.useState(null);
     const [advancedOption, setAdvancedOption] = React.useState(tactice.advancedOption);
@@ -117,7 +117,18 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
         <h4>高级约束配置</h4>
         {advancedRestran && <li>
             <Tabs defaultActiveKey="1" type="card">
-                <TabPane tab={<div>入场约束&nbsp;<Tooltip title="入场优先级先于基础出场逻辑（符合条件还需进行基础判断）"><QuestionCircleOutlined /></Tooltip></div>} key="1">
+                <TabPane tab={<div>基本约束&nbsp;<Tooltip title="在进行基本判断前执行，不管是入场还是出场"><QuestionCircleOutlined /></Tooltip></div>} key="1">
+                    约束关系：<Radio.Group name="radiogroup" defaultValue={advancedOption.premiseJoin.premiseForBase}
+                        onChange={(e) => onChange('premiseJoin', 'premiseForBase', e.target.value)}>
+                        <Radio value='and'>且</Radio>
+                        <Radio value='or'>或</Radio>
+                    </Radio.Group>
+                    {advancedRestran.premiseForBase.map(item => <div className='adv_content'><label>
+                        <Switch checked={advancedOption.premiseForBase.some(key => key === item.key)}
+                            onChange={(checked) => onChange('premiseForBase', item.key, checked)} />
+                        &nbsp; {item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
+                </TabPane>
+                <TabPane tab={<div>入场约束&nbsp;<Tooltip title="入场优先级先于基础出场逻辑（符合条件还需进行基础判断）"><QuestionCircleOutlined /></Tooltip></div>} key="2">
                     约束关系：<Radio.Group name="radiogroup" defaultValue={advancedOption.premiseJoin.premiseForBuy}
                         onChange={(e) => onChange('premiseJoin', 'premiseForBuy', e.target.value)}>
                         <Radio value='and'>且</Radio>
@@ -128,7 +139,7 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                             onChange={(checked) => onChange('premiseForBuy', item.key, checked)} />
                         &nbsp; {item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
                 </TabPane>
-                <TabPane tab={<div>出场约束&nbsp;<Tooltip title="出场优先级高于基础出场逻辑（符合条件立即卖出）"><QuestionCircleOutlined /></Tooltip></div>} key="2">
+                <TabPane tab={<div>出场约束&nbsp;<Tooltip title="出场优先级高于基础出场逻辑（符合条件立即卖出）"><QuestionCircleOutlined /></Tooltip></div>} key="3">
                     约束关系：<Radio.Group name="radiogroup" defaultValue={advancedOption.premiseJoin.premiseForSell}
                         onChange={(e) => onChange('premiseJoin', 'premiseForSell', e.target.value)}>
                         <Radio value='and'>且</Radio>
@@ -139,13 +150,13 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                             onChange={(checked) => onChange('premiseForSell', item.key, checked)} />
                         &nbsp;{item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
                 </TabPane>
-                <TabPane tab="动态参数" key="3">
+                <TabPane tab="动态参数" key="4">
                     {advancedRestran.dynamicParam.map(item => <div className='adv_content'><label>
                         <Switch checked={advancedOption.dynamicParam.some(key => key === item.key)}
                             onChange={(checked) => onChange('dynamicParam', item.key, checked)} />
                         &nbsp;{item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
                 </TabPane>
-                <TabPane tab="选币方案" key="4">
+                <TabPane tab="选币方案" key="5">
                     {advancedRestran.symbolElecter.map(item => <div className='adv_content'><label>
                         <Switch checked={advancedOption.symbolElecter.some(key => key === item.key)}
                             onChange={(checked) => onChange('symbolElecter', item.key, checked)} />

@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 02:37:01
- * @LastEditTime: 2020-09-08 18:04:20
+ * @LastEditTime: 2020-09-09 16:50:14
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -25,7 +25,7 @@ const columns = [
         dataIndex: 'status',
     },
     {
-        title: '实时盈亏',
+        title: '实时盈亏率',
         dataIndex: 'nowRiseRate',
     },
     // {
@@ -75,7 +75,7 @@ export default function Statistics() {
                     name: item.name,
                     symbol: item.symbol,
                     status: `${item.runState ? '运行中/' + (item.buyState ? '场内' : '场外') : '未运行'}${item.imitateRun ? '-模拟' : ''}`,
-                    nowRiseRate: item.buyState && lastHistoryForDeal.type === 'buy' ? Number((lastHistoryForDeal.content.profit).toFixed(5)) : '-',
+                    nowRiseRate: item.buyState && lastHistoryForDeal.type === 'buy' ? Number((lastHistoryForDeal.content.profit / item.presentDeal.costing).toFixed(5)) : '-',
                     //buyUsdtAmount: Number(item.presentDeal.amount.toFixed(2)),
                     count: item.historyForDeal.filter(item => item.type === 'sell' && item.content.profit > 0).length + '/' + item.historyForDeal.filter(item => item.type === 'sell').length,
                     riseRate: Number(((rise / item.parameter.usdtAmount) * 100).toFixed(4)) + '%',
@@ -91,7 +91,7 @@ export default function Statistics() {
             }
         });
         EventHub.getInstance().addEventListener('switchTactics', 'st_switchTactics', payload => {
-            
+
         });
         return () => {
             EventHub.getInstance().removeEventListener('mapTacticsList', 'st_mapTacticsList');
@@ -105,7 +105,7 @@ export default function Statistics() {
         console.log(selectedRowKeys)
         EventHub.getInstance().dispatchEvent('rowSelection', selectedRowKeys);
     };
-    
+
     const rowSelection = {
         selectedRowKeys,
         onChange: onSelectChange,

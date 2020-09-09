@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-09-08 19:01:07
+ * @LastEditTime: 2020-09-09 16:44:03
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -70,13 +70,15 @@ module.exports = class SellIntoCorrections extends Tactics {
             faildBuyTimeForChange: 15,//进场失败次数，用于切币
             isAllowLoadUpBuy: true,//是否允许加仓
             pauseFaildChangeSymbol: true,//若需切币且推荐币为空，是否暂停
+            //symbolDriveMod: false,//选币驱动模式
         }, parameter || {});
 
         //基于基本逻辑下的高级约束(入场约束，出场约束，动态参数，选币方案)
         this.advancedOption = {
+            premiseForBase: [],
             premiseForBuy: ['last5kRise', 'bollStandard'],
             premiseForSell: ['fastRise'],
-            premiseJoin: { premiseForBuy: 'or', premiseForSell: 'and' },
+            premiseJoin: { premiseForBase: 'and', premiseForBuy: 'or', premiseForSell: 'and' },
             dynamicParam: ['setRiseStopLossRate'],
             symbolElecter: ['blacklist', 'history24h']
         }
@@ -104,6 +106,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             maxStayTime: [false, "场内持续时间(分钟)"],
             isAllowLoadUpBuy: [false, "是否允许加仓"],
             faildBuyTimeForChange: [false, "未盈利情况下需切币的进场失败次数(<100)，若“自动切币”功能打开，超过100次会强制切币"],
+            //symbolDriveMod: [false, "选币驱动模式，会保持选币一直运行，如果有新币产生，即尽快出场(盈利或亏损在0.5个点内)并切币进入，打开此开关需保证有及其严格的选币方案"],
             pauseFaildChangeSymbol: [false, "是否待机等待。(关闭此项，进场失败次数达到n次，或者切币10次为空则会停机)"]
         };
         this.presentPrice = 0;//当前价格
@@ -201,11 +204,11 @@ module.exports = class SellIntoCorrections extends Tactics {
         if (symbols.length !== 0) {
             const tacticsList = require('./TacticesCommand').getInstance().tacticsList;
             for (let i = 0; i < symbols.length; i++) {
-                if (tacticsList.some(item => (item.symbol !== symbols[i].symbol && item.id !== this.id))) {
+                if (tacticsList.some(item => (item.symbol === symbols[i].symbol && item.id !== this.id))) {
+                    continue;
+                } else {
                     chooseSymbol = symbols[i].symbol;
                     break;
-                } else {
-                    continue;
                 }
             }
         }
@@ -218,7 +221,6 @@ module.exports = class SellIntoCorrections extends Tactics {
             if (this.parameter.autoSymbol) {
                 //寻找新币
                 const { chooseItem } = await this.findSymbol();
-                this.checkSymbolTime--;
                 if (chooseItem) {
                     this.addHistory('info', `获取到新推荐币种(${chooseItem})，实例即将自动启动...`, true, {
                         color: '#b1eac5',
@@ -233,13 +235,14 @@ module.exports = class SellIntoCorrections extends Tactics {
                     //无币
                     if (this.checkSymbolTime === 0) {
                         if (!this.parameter.pauseFaildChangeSymbol) {
-                            this.addHistory('info', `未检测到新币（10次），实例即将停止...`, true);
+                            this.addHistory('info', `未搜寻到新币（10次），实例即将停止...`, true);
                             return false;
                         } else {
-                            this.addHistory('info', `未搜寻到新币，开始待机切币检测...`, true);
+                            this.addHistory('info', `未搜寻到新币，开始待机无限制切币搜寻...`, true);
                         }
                     } else {
-                        //this.addHistory('info', `未搜寻到新币，进行第${10 - this.checkSymbolTime}次检测...`, true);
+                        this.checkSymbolTime--;
+                        this.addHistory('info', `未搜寻到新币，进行第${10 - this.checkSymbolTime}次切币搜寻...`, true);
                     }
                 }
                 return true;
@@ -283,7 +286,7 @@ module.exports = class SellIntoCorrections extends Tactics {
     /**nowBuy=true表示跳过入场判断，立即入场 */
     async powerSwitch(nowBuy) {
         this.fristNowBuy = nowBuy;
-        this.runState = !this.runState;
+        this.runState = true;
         this.checkSymbolTime = 10;
         this.checkBuyTime = 0;
         this.addHistory('order', `实例将${(this.runState ? "开始运行" : "停止")}${this.imitateRun ? "模拟程序" : ""}`);
@@ -291,30 +294,50 @@ module.exports = class SellIntoCorrections extends Tactics {
             //开始运行
             let fn = async () => {
                 clearTimeout(this.mainTimer);
-                if (!this.buyState) {
-                    if (this.fristNowBuy) {
-                        //立即买入
-                        this.buyState = true;
-                        if (await this.deal('buy')) {
+                //高级
+                let allowResult = restrainGroup.premiseForBase.length === 0 ? true : false;//如果没有约束则直接放过
+                for (let i = 0; i < restrainGroup.premiseForBase.length; i++) {
+                    const restrain = restrainGroup.premiseForBase[i];
+                    if (this.advancedOption.premiseForBase.some(item => item === restrain.key)) {
+                        if (restrain.method(this)) {
+                            if (this.advancedOption.premiseJoin.premiseForBase === 'or') {
+                                allowResult = true;//只要有一个满足就走
+                                break;
+                            }
                         } else {
-                            this.buyState = false;
+                            if (this.advancedOption.premiseJoin.premiseForBase === 'and') {
+                                allowResult = false;//只要有一个不满足，就终止
+                                break;
+                            }
                         }
-                        this.fristNowBuy = false;//第二次买入逻辑，就不能立即买入了
+                    }
+                }
+                if (allowResult) {
+                    if (!this.buyState) {
+                        if (this.fristNowBuy) {
+                            //立即买入
+                            this.buyState = true;
+                            if (await this.deal('buy')) {
+                            } else {
+                                this.buyState = false;
+                            }
+                            this.fristNowBuy = false;//第二次买入逻辑，就不能立即买入了
+                        } else {
+                            //入场判断
+                            this.buyState = await this.buy();
+                        }
                     } else {
-                        //入场判断
-                        this.buyState = await this.buy();
-                    }
-                } else {
-                    //出场判断
-                    //动态高级
-                    for (let i = 0; i < restrainGroup.dynamicParam.length; i++) {
-                        const restrain = restrainGroup.dynamicParam[i];
-                        if (this.advancedOption.dynamicParam.some(item => item === restrain.key)) {
-                            restrain.method(this);
+                        //出场判断
+                        //动态高级
+                        for (let i = 0; i < restrainGroup.dynamicParam.length; i++) {
+                            const restrain = restrainGroup.dynamicParam[i];
+                            if (this.advancedOption.dynamicParam.some(item => item === restrain.key)) {
+                                restrain.method(this);
+                            }
                         }
+                        const r = await this.sell();
+                        this.buyState = !r;
                     }
-                    const r = await this.sell();
-                    this.buyState = !r;
                 }
                 this.mainTimer = setTimeout(async () => {
                     this.runState && await fn();
@@ -327,9 +350,10 @@ module.exports = class SellIntoCorrections extends Tactics {
         }
 
     }
+    /**暂停 */
     powerPause() {
         if (this.mainTimer) clearTimeout(this.mainTimer);
-        this.runState = false;
+        //this.runState = false;
         this.addHistory('info', `实例${this.name}已经发送暂停指令(执行完最后的逻辑)...`, false);
         if (this.buyState) {
             this.addHistory('info', `【注意】实例处于买入状态，暂停期间将不进行出场判定...`, false);
@@ -610,7 +634,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.presentPrice = allPrice[this.symbol];
         return allPrice[this.symbol];
     }
-    /**第二个参数用于补仓 */
+    /**第二个参数用于补仓(buy时使用) */
     async deal(order, amount) {
         const price = this.presentPrice = await this.getPresentPrice(true);
         //console.log(Number(price) === this.presentPrice ? '价格一致' : '不一致'); console.log(price + "--" + this.presentPrice);

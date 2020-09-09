@@ -5,6 +5,7 @@
     line-height: 1.5rem;
     height: 100%;
     border-right: solid 1px #666;
+    position: relative;
     &>div:nth-child(1){
         //width: 8rem;
         text-align: center;
@@ -33,10 +34,25 @@
     .paramPanel{
         overflow: auto;
         overflow-x: hidden;
+        center{
+            position: absolute;
+            background: #2e384e;
+            width: 100%;
+            left: 0;
+            bottom: 0;
+            &:hover{
+                background: #212838;
+            }
+            button{
+                width: 100%;
+                color:#ccc
+            }
+        }
     }
 }
 .popover_botton{
     text-align: center;
+    
     button{
         margin: 0 0.4rem;
     };
