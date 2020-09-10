@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 00:05:32
- * @LastEditTime: 2020-09-08 15:04:06
+ * @LastEditTime: 2020-09-10 17:01:11
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -10,7 +10,11 @@ import React from 'react';
 import dateFormat from 'format-datetime'
 import EventHub from '@client/EventHub'
 import { Scrollbars } from 'react-custom-scrollbars'
-import { Switch, Radio } from 'antd';
+import { ClearOutlined, QuestionOutlined } from '@ant-design/icons'
+import { Popconfirm, Switch, Radio, Button, message } from 'antd';
+import { requester } from '@src/tool/Requester'
+import { apiDateCode } from '@src/config'
+import api from '@client/api'
 import './style.less'
 
 export default function HistoryRecord() {
@@ -21,11 +25,13 @@ export default function HistoryRecord() {
     const [isGoBottom, setIsGoBottom] = React.useState(true);
     const [msgListType, setMsgListType] = React.useState(1);
     const scrollbars = React.useRef(null);
+    const [chooseTid, setChooseTid] = React.useState('');
     let updateCount = 0;
 
     React.useEffect(() => {
         EventHub.getInstance().addEventListener('mapTacticsList', 'hr_mapTacticsList', payload => {
             const target = payload.find(item => item.target);
+            if (chooseTid !== target.id) setChooseTid(target.id);
             if (target) {
                 setRunState(target.imitateRun);
                 if (target.runState) {
@@ -84,6 +90,22 @@ export default function HistoryRecord() {
         setHistory(getRecordList(historyBackup, e.target.value));
         window.setTimeout(() => { scrollbars.current.scrollToBottom(); }, 50);
     }
+    const clearNormalInfo = (isAll) => {
+        requester({
+            url: api.clearNormalInfo,
+            type: 'post',
+            params: {
+                tid: chooseTid,
+                isAll
+            },
+            option: {
+                baseUrl: 'API_server_url',
+                faileBack: error => { message.error({ content: error, key, duration: 2 }); }
+            }
+        }).then(({ res }) => {
+            if (res.data.code === apiDateCode.success) { message.info('清除信息完成~') }
+        });
+    }
     return (<><div className='run_state_wrap'>运行状态{runState ? '(模拟)' : ''}：{stateStr}</div>
         <Scrollbars
             autoHide
@@ -122,7 +144,11 @@ export default function HistoryRecord() {
         </Scrollbars>
         <div className='operation_wrap'>
             {history.length}条 <label><Switch checked={isGoBottom} size="small" style={{ verticalAlign: 'sub' }}
-                onChange={changeSwitch} />自动置底</label>
+                onChange={changeSwitch} />自动置底</label>&nbsp;
+            <Popconfirm placement="top" title='请选择清除范围？' onConfirm={() => clearNormalInfo(false)} onCancel={() => clearNormalInfo(true)}
+                okText="清除一般信息" cancelText="全部清除" icon={<QuestionOutlined />}>
+                <Button style={{ color: '#fff' }} size='small' shape="link" icon={<ClearOutlined />} />
+            </Popconfirm>
             <Radio.Group style={{ float: 'right' }} onChange={changeType} value={msgListType}>
                 <Radio size='small' value={1}>所有消息</Radio>
                 <Radio value={2}>关键消息</Radio>

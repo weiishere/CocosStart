@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-14 13:49:13
- * @LastEditTime: 2020-09-09 18:21:11
+ * @LastEditTime: 2020-09-10 17:08:47
  * @LastEditors: weishere.huang
  * @Description: premiseForBuy：不能进，premiseForSell：必须出
  * @~~
@@ -58,12 +58,13 @@ const restrain = {
                 const { maxLoss } = getParam('premiseForBase', 'symbolDriveMod');
                 //进行币种检测
                 const { chooseItem, isNowBuy } = await tactics.findSymbol();
-                if (chooseItem) {
+                if (chooseItem && chooseItem !== tactics.symbol) {
                     //只要亏损不大于0.2个点，就切币
-                    if ((tactics.buyState && Number(tactics.getProfit() / tactics.presentDeal.costing) < maxLoss) || !tactics.buyState) {
+                    if ((tactics.buyState && Number(tactics.getProfit() / tactics.presentDeal.costing) > maxLoss) || !tactics.buyState) {
                         tactics.addHistory('info', `【注意】在切币驱动模式下检测到新币且满足切币条件，即将切币至（${chooseItem}）...`, true, { color: "#85A3FF" });
                         if (tactics.buyState) {
                             await tactics.deal('sell');
+                            tactics.buyState = false;
                         }
                         await tactics.initialize(chooseItem);//切币
                         //await tactics.powerSwitch();
@@ -72,6 +73,8 @@ const restrain = {
                         return false;
                     }
                     tactics.addHistory('info', `在切币驱动模式下检测到新币且满足切币条件，但不满足出场条件(亏损大于${maxLoss})，继续观察...`, true, { color: "#85A3FF" });
+                } else {
+                    //tactics.addHistory('info', `暂无推荐币，继续${tactics.buyState ? '出场' : '入场'}检测...`, true);
                 }
                 return true;
             }
@@ -99,7 +102,7 @@ const restrain = {
         },
         {
             key: 'bollStandardUP',
-            label: 'BOLL指标UP指标',
+            label: 'BOLL-UP指标',
             desc: '如果最近一条5分线(无论是阴阳线)已经横穿了UP，不予入场',
             method: async (tactics) => {
                 const symbolObj = symbolStorage[tactics.symbol];
@@ -114,7 +117,7 @@ const restrain = {
         },
         {
             key: 'bollStandardDN',
-            label: 'BOLL指标DN指标',
+            label: 'BOLL-DN指标',
             desc: '如果最近一条5分阳线触及底线DN，赶紧入场',
             method: async (tactics) => {
                 const symbolObj = symbolStorage[tactics.symbol];
@@ -139,6 +142,7 @@ const restrain = {
                 const { time } = getParam('premiseForBuy', 'last10mNoFastRise');
                 const averageWave = getAverageWave(tactics.symbol);
                 //const { klineData5m } = symbolStorage[symbol];
+                if (!tactics.KLineItem5m.recent) return false;
                 const riseRate = (tactics.presentPrice - tactics.KLineItem5m.recent.open) / tactics.KLineItem5m.recent.open;
                 if (riseRate > averageWave * time) {
                     const isUp = await restrain[premiseForBuy].find(item => item.key === 'bollStandardUP').method(tactics);

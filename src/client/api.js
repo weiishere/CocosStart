@@ -18,5 +18,6 @@ export default {
     getUser: '/api/getUser',
     getAdvancedRestran: '/api/getAdvancedRestran',
     refreshSymbol:'/api/refreshSymbol',
-    getIndicatorLine:'/api/getIndicatorLine'
+    getIndicatorLine:'/api/getIndicatorLine',
+    clearNormalInfo:'/api/clearNormalInfo'
 }

@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-09-09 16:44:03
+ * @LastEditTime: 2020-09-10 10:35:47
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -53,7 +53,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             serviceChargeDiscounts: 0.15,//优惠费率(返费，暂不考虑))
             checkBuyRate: 5000,//入场时间检查速率
             riseStayCheckRateForBuy: 8000,//未入场及上涨情况下，判断间隔等待时间
-            riseBuyRange: 0.01,//上涨情况下，入场的上涨幅度
+            riseBuyRange: 0.001,//上涨情况下，入场的上涨幅度
             autoSymbol: true,//自动切币
             //autoRun: false,
             ambushRange: 0.001,//需进行埋伏操作的下跌率
@@ -299,17 +299,17 @@ module.exports = class SellIntoCorrections extends Tactics {
             let fn = async () => {
                 clearTimeout(this.mainTimer);
                 //高级
-                let allowResult = restrainGroup.premiseForBase.length === 0 ? true : false;//如果没有约束则直接放过
+                let allowResult = this.advancedOption.premiseForBase.length === 0 ? true : false;//如果没有约束则直接放过
                 for (let i = 0; i < restrainGroup.premiseForBase.length; i++) {
                     const restrain = restrainGroup.premiseForBase[i];
                     if (this.advancedOption.premiseForBase.some(item => item === restrain.key)) {
                         if (await restrain.method(this)) {
-                            if (restrainGroup.premiseForBase.length === 1 || this.advancedOption.premiseJoin.premiseForBase === 'or') {
+                            if (this.advancedOption.premiseForBase.length === 1 || this.advancedOption.premiseJoin.premiseForBase === 'or') {
                                 allowResult = true;//只要有一个满足就走
                                 break;
                             }
                         } else {
-                            if (restrainGroup.premiseForBase.length === 1 || this.advancedOption.premiseJoin.premiseForBase === 'and') {
+                            if (this.advancedOption.premiseForBase.length === 1 || this.advancedOption.premiseJoin.premiseForBase === 'and') {
                                 allowResult = false;//只要有一个不满足，就终止
                                 break;
                             }
@@ -404,18 +404,19 @@ module.exports = class SellIntoCorrections extends Tactics {
         //     return false;
         // }
         //高级
-        let allowResult = restrainGroup.premiseForBuy.length === 0 ? true : false;//如果没有约束则直接放过
+        let allowResult = this.advancedOption.premiseForBuy.length === 0 ? true : false;//如果没有约束则直接放过
         for (let i = 0; i < restrainGroup.premiseForBuy.length; i++) {
             const restrain = restrainGroup.premiseForBuy[i];
             if (this.advancedOption.premiseForBuy.some(item => item === restrain.key)) {
                 if (!await restrain.method(this)) {
-                    if (restrainGroup.premiseForBuy.length === 1 || this.advancedOption.premiseJoin.premiseForBuy === 'and') {
+                    if (this.advancedOption.premiseForBuy.length === 1 || this.advancedOption.premiseJoin.premiseForBuy === 'and') {
+                        //只要有一个不符合，就不通过
                         this.addHistory('info', `入场约束“${restrain.label}”不符合，重新等待入场...`, true, { color: '#5bb3ab' });
                         return false;
                     }
                 } else {
-                    if (restrainGroup.premiseForBuy.length === 1 || this.advancedOption.premiseJoin.premiseForBuy === 'or') {
-                        allowResult = true;
+                    if (this.advancedOption.premiseForBuy.length === 1 || this.advancedOption.premiseJoin.premiseForBuy === 'or') {
+                        allowResult = true;//只要有一个符合，就通过
                         break;
                     }
                 }
@@ -464,18 +465,18 @@ module.exports = class SellIntoCorrections extends Tactics {
     }
     async sell() {
         //高级
-        let allowResult = restrainGroup.premiseForSell.length === 0 ? false : true;//如果没有约束则直接放过
+        let allowResult = this.advancedOption.premiseForSell.length === 0 ? false : true;//如果没有约束则直接放过
         for (let i = 0; i < restrainGroup.premiseForSell.length; i++) {
             const restrain = restrainGroup.premiseForSell[i];
             if (this.advancedOption.premiseForSell.some(item => item === restrain.key)) {
                 if (await restrain.method(this)) {
-                    if (restrainGroup.premiseForSell.length === 1 || this.advancedOption.premiseJoin.premiseForSell === 'or') {
+                    if (this.advancedOption.premiseForSell.length === 1 || this.advancedOption.premiseJoin.premiseForSell === 'or') {
                         //只要有一个满足就出场
                         this.addHistory('info', `符合出场约束“${restrain.label}”，即将进行出场操作...`, true, { color: '#5bb3ab' });
                         return (await this.deal('sell'));
                     }
                 } else {
-                    if (restrainGroup.premiseForSell.length === 1 || this.advancedOption.premiseJoin.premiseForSell === 'and') {
+                    if (this.advancedOption.premiseForSell.length === 1 || this.advancedOption.premiseJoin.premiseForSell === 'and') {
                         allowResult = false;//只要有一个不满足出场条件，就不出场
                         break;
                     }

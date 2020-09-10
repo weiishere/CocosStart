@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-09-09 18:26:01
+ * @LastEditTime: 2020-09-10 17:04:28
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -236,6 +236,35 @@ module.exports = {
       code: apiDateCode.success,
       data: { boll5m, KDJ5m }
     };
+    next();
+  },
+  clearNormalInfo: async (ctx, next) => {
+    const { tid, isAll } = ctx.request.body;
+    let resultData = {};
+    if (!tid) {
+      resultData = {
+        msg: 'updateParameter:参数tid不能为空',
+        code: apiDateCode.nullError
+      }
+    }
+    const _tacticesCommand = TacticesCommand.getInstance();
+    const tactices = _tacticesCommand.tacticsList.find(item => item.id == tid);
+    if (isAll) {
+      tactices.history = [];
+      tactices.historyForDeal = [];
+    } else {
+      tactices.history = tactices.history.filter(item => item.type !== 'info');
+    }
+    //_tacticesCommand.mapTotacticsList(tactices.uid, tid, true);
+    _tacticesCommand.pushHistory(tactices.uid, tactices.id, {
+      history: tactices.history,
+      historyForDeal: tactices.historyForDeal
+    });
+    resultData = {
+      code: apiDateCode.success,
+      data: 'success'
+    }
+    ctx.body = resultData;
     next();
   }
 };
