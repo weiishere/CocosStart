@@ -310,7 +310,7 @@ export default function ControlPanel({ uid }) {
         {<Modal
             title={`高级配置-${targetTactice && targetTactice.name}`}
             visible={modalVisible}
-            width={600}
+            width={800}
             footer={[
                 <Button key="OK" type="primary" onClick={() => { setModalVisible(false) }}>关闭</Button>,
             ]}

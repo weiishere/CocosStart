@@ -90,13 +90,13 @@ export default function HistoryRecord() {
         setHistory(getRecordList(historyBackup, e.target.value));
         window.setTimeout(() => { scrollbars.current.scrollToBottom(); }, 50);
     }
-    const clearNormalInfo = (isAll) => {
+    const clearNormalInfo = (order) => {
         requester({
             url: api.clearNormalInfo,
             type: 'post',
             params: {
                 tid: chooseTid,
-                isAll
+                order
             },
             option: {
                 baseUrl: 'API_server_url',
@@ -145,15 +145,20 @@ export default function HistoryRecord() {
         <div className='operation_wrap'>
             {history.length}条 <label><Switch checked={isGoBottom} size="small" style={{ verticalAlign: 'sub' }}
                 onChange={changeSwitch} />自动置底</label>&nbsp;
-            <Popconfirm placement="top" title='请选择清除范围？' onConfirm={() => clearNormalInfo(false)} onCancel={() => clearNormalInfo(true)}
-                okText="清除一般信息" cancelText="全部清除" icon={<QuestionOutlined />}>
-                <Button style={{ color: '#fff' }} size='small' shape="link" icon={<ClearOutlined />} />
+            <Popconfirm placement="top" title={`确认删除${['一般', '关键', '交易'][msgListType - 1]}记录？`} onConfirm={() => clearNormalInfo(msgListType)}
+                okText="删除" cancelText="取消" icon={<QuestionOutlined />}>
+                <Button style={{ color: '#fff', float: 'right' }} size='small' shape="link" icon={<ClearOutlined />} />
             </Popconfirm>
+            {/* <Popconfirm placement="top" title='请选择清除记录范围？' onConfirm={() => clearNormalInfo(false)} onCancel={() => clearNormalInfo(true)}
+                okText="流水" cancelText="全部" icon={<QuestionOutlined />}>
+                <Button style={{ color: '#fff' }} size='small' shape="link" icon={<ClearOutlined />} />
+            </Popconfirm> */}
             <Radio.Group style={{ float: 'right' }} onChange={changeType} value={msgListType}>
-                <Radio size='small' value={1}>所有消息</Radio>
-                <Radio value={2}>关键消息</Radio>
-                <Radio value={3}>交易信息</Radio>
+                <Radio size='small' value={1}>所有</Radio>
+                <Radio value={2}>关键</Radio>
+                <Radio value={3}>交易</Radio>
             </Radio.Group>
+
         </div>
     </>)
 }

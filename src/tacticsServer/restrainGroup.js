@@ -70,13 +70,13 @@ const restrain = {
                         //await tactics.powerSwitch();
                         //if (isNowBuy) await tactics.deal('buy');
                         require('./TacticesCommand').getInstance().mapTotacticsList(tactics.uid, tactics.id, true);
-                        return false;
+                        return true;
                     }
                     tactics.addHistory('info', `在切币驱动模式下检测到新币且满足切币条件，但不满足出场条件(亏损大于${maxLoss})，继续观察...`, true, { color: "#85A3FF" });
                 } else {
                     //tactics.addHistory('info', `暂无推荐币，继续${tactics.buyState ? '出场' : '入场'}检测...`, true);
                 }
-                return true;
+                return false;
             }
         },
     ],
@@ -127,7 +127,7 @@ const restrain = {
                 const close = +klineData[4];//收盘价
                 const open = +klineData[1];//收盘价
                 const low = +klineData[3];//最低价
-                if (open < close && ((close >= DN && Math.abs(low - DN) / low < 0.005) || (MB < close && MB > open))) {//必须是阳线且收盘价大于UP，最低价小于DN,或者是穿过中线
+                if (open < close && ((close >= DN && Math.abs(low - DN) / low < getAverageWave(tactics.symbol) / 10) || (MB < close && MB > open))) {//必须是阳线且收盘价大于DN，最低价与DN值的差值范围为平均波动的1/10,或者是穿过中线
                     return true;
                 };
                 return false;
@@ -227,26 +227,30 @@ const restrain = {
             key: 'setRiseStopLossRate',
             label: '根据涨幅调整止盈拐点跌幅',
             desc: '涨幅过大时调整拐点止盈点，及时出货，保障利润，盈利大于10个点，则拐点调为原止盈点的10%，出场更敏感',
-            param: { step: 0.15 },
+            param: { step: 0.1 },
             method: async (tactics) => {
                 if (!tactics.buyState) return;
                 const { step } = getParam('dynamicParam', 'setRiseStopLossRate');//获取步进值
                 let riseRate = tactics.getProfit() / tactics.presentDeal.costing;
                 let lastriseStopLossRate = tactics.parameterBackup.riseStopLossRate;
-                if (riseRate >= 0.25) {
-                    //盈利大于10个点
+                if (riseRate >= 0.08) {
+                    //盈利大于8个点
                     lastriseStopLossRate = lastriseStopLossRate * (step * 1);
-                } else if (riseRate >= 0.15 && riseRate < 0.25) {
+                } else if (riseRate >= 0.07 && riseRate < 0.08) {
                     lastriseStopLossRate = lastriseStopLossRate * (step * 2);
-                } else if (riseRate >= 0.1 && riseRate < 0.15) {
+                } else if (riseRate >= 0.06 && riseRate < 0.07) {
                     lastriseStopLossRate = lastriseStopLossRate * (step * 3);
-                } else if (riseRate >= 0.08 && riseRate < 0.1) {
+                } else if (riseRate >= 0.05 && riseRate < 0.06) {
                     lastriseStopLossRate = lastriseStopLossRate * (step * 4);
-                } else if (riseRate >= 0.06 && riseRate < 0.08) {
+                } else if (riseRate >= 0.04 && riseRate < 0.05) {
                     lastriseStopLossRate = lastriseStopLossRate * (step * 5);
-                } else if (riseRate >= 0.04 && riseRate < 0.06) {
+                } else if (riseRate >= 0.03 && riseRate < 0.04) {
                     lastriseStopLossRate = lastriseStopLossRate * (step * 6);
-                } else if (riseRate < 0.04) {
+                } else if (riseRate >= 0.02 && riseRate < 0.03) {
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 7);
+                } else if (riseRate >= 0.01 && riseRate < 0.02) {
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 8);
+                } else if (riseRate < 0.01) {
                     //小于0.04，意思没动
                     lastriseStopLossRate = lastriseStopLossRate;
                 }
@@ -485,6 +489,7 @@ const restrain = {
                     for (let i in lastSymbolList) {
                         let score = 0;
                         const item = lastSymbolList[i];
+                        if (!symbolStorage[item.symbol]) continue;
                         const { klineData5m } = symbolStorage[item.symbol];
                         if (!klineData5m) continue;
                         //检测之前N条线

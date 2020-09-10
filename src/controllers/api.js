@@ -239,7 +239,7 @@ module.exports = {
     next();
   },
   clearNormalInfo: async (ctx, next) => {
-    const { tid, isAll } = ctx.request.body;
+    let { tid, order } = ctx.request.body;
     let resultData = {};
     if (!tid) {
       resultData = {
@@ -249,11 +249,14 @@ module.exports = {
     }
     const _tacticesCommand = TacticesCommand.getInstance();
     const tactices = _tacticesCommand.tacticsList.find(item => item.id == tid);
-    if (isAll) {
-      tactices.history = [];
+    order = order + '';
+    if (order === '1') {
+      tactices.history = tactices.history.filter(item => !(item.type === 'info' && item.color === '#999'));
+    } else if (order === '2') {
+      tactices.history = tactices.history.filter(item => !((item.type !== 'info' && item.type !== 'buy' && item.type !== 'sell') || item.color !== '#999'));
+    } else if (order === '3') {
+      tactices.history = tactices.history.filter(item => !(item.type === 'buy' || item.type === 'sell'));
       tactices.historyForDeal = [];
-    } else {
-      tactices.history = tactices.history.filter(item => item.type !== 'info');
     }
     //_tacticesCommand.mapTotacticsList(tactices.uid, tid, true);
     _tacticesCommand.pushHistory(tactices.uid, tactices.id, {

@@ -46,7 +46,7 @@ module.exports = {
         try {
             return await symbolModel.find(query).exec();
         } catch (err) {
-            error(err)
+            error && error(err)
         }
     },
     findAll: async function (error) {
@@ -61,7 +61,7 @@ module.exports = {
             const res = await symbolModel.remove({ symbol });
             return res.deletedCount;
         } catch (err) {
-            error(err)
+            error && error(err)
         }
 
     },
