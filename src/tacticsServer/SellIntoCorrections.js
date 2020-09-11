@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-09-11 14:32:15
+ * @LastEditTime: 2020-09-11 18:24:47
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -39,7 +39,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             // { symbol: 'ADAUSDT', profit: 2, buyCount: 3 },
             // { symbol: 'FNUSDT', profit: -3.2, buyCount: 1 }
         ];
-        this.roundId;//交易回合
+        this.roundId = Date.parse(new Date());//交易回合
         this.history = []
         this.depth = null;//深度
         this.ticker = null;
@@ -654,7 +654,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         if (order === 'buy') {
             this.checkSymbolTime = 10;
             const dealAmount = this.buyState ? amount : this.parameter.usdtAmount;
-            this.buyState && (this.roundId = Date.parse(new Date()));//如果不是加仓，则新生成一个roundId
+
             if (this.imitateRun) {
                 //const hadBuyAmount = this.buyState ? (amount / price + this.presentDeal.amount) : this.parameter.usdtAmount / price, ;
                 this.presentDeal = Object.assign(this.presentDeal,
@@ -797,7 +797,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                     console.error(e);
                 }
             }
-            this.loadUpBuyHelper.nextRound();
+            this.roundId = Date.parse(new Date());//下一回合
             //if (this.nextSymbol) this.symbol = this.nextSymbol;//出场成功之后切换币
         }
         this.resetParam();//重置参数
@@ -840,6 +840,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             'parameter',
             'parameterDesc',
             'presentDeal',
+            'roundId',
             // 'history',
             'historyForDeal',
             'checkBuyTime',
@@ -865,6 +866,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             'symbol',
             'parameter',
             'presentDeal',
+            'roundId',
             'history',
             'historyForDeal',
             'checkBuyTime',

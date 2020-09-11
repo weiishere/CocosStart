@@ -93,9 +93,6 @@ module.exports = class LoadUpBuyHelper {
     safeCheck() {
 
     }
-    nextRound() {
-        this.roundId = Date.parse(new Date());
-    }
     run(roundId) {
         this.roundId = roundId;
         //const tactices = require('./TacticesCommand').getInstance().tacticsList.find(item => item.id === tid);
