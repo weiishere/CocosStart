@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-09-10 10:35:47
+ * @LastEditTime: 2020-09-11 14:32:15
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -39,7 +39,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             // { symbol: 'ADAUSDT', profit: 2, buyCount: 3 },
             // { symbol: 'FNUSDT', profit: -3.2, buyCount: 1 }
         ];
-
+        this.roundId;//交易回合
         this.history = []
         this.depth = null;//深度
         this.ticker = null;
@@ -596,7 +596,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 //持续观察
                 this.addHistory('info', `当前处于亏损状态，亏损率：${_stopLossRate.toFixed(6)}，但未达止损点，继续等待出场时机...`, true);
                 //加仓
-                this.parameter.isAllowLoadUpBuy && this.loadUpBuyHelper.run();
+                this.parameter.isAllowLoadUpBuy && this.loadUpBuyHelper.run(this.roundId);
                 return false;
             }
         }
@@ -648,13 +648,13 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.presentPrice = allPrice[this.symbol];
         return allPrice[this.symbol];
     }
-    /**第二个参数用于补仓(buy时使用) */
+    /**第二个参数amount用于补仓(buy时使用),其他时候不要用 */
     async deal(order, amount) {
         const price = this.presentPrice = await this.getPresentPrice(true);
-        //console.log(Number(price) === this.presentPrice ? '价格一致' : '不一致'); console.log(price + "--" + this.presentPrice);
         if (order === 'buy') {
             this.checkSymbolTime = 10;
             const dealAmount = this.buyState ? amount : this.parameter.usdtAmount;
+            this.buyState && (this.roundId = Date.parse(new Date()));//如果不是加仓，则新生成一个roundId
             if (this.imitateRun) {
                 //const hadBuyAmount = this.buyState ? (amount / price + this.presentDeal.amount) : this.parameter.usdtAmount / price, ;
                 this.presentDeal = Object.assign(this.presentDeal,
@@ -853,6 +853,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             'advancedOption',
             'depth',
             'ticker'].forEach(item => result[item] = this[item]);
+        result['loadUpBuyHelper'] = this.loadUpBuyHelper.getInfo();
         return result;
     }
     getDBInfo() {
