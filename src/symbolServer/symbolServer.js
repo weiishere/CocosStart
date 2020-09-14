@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-18 23:49:06
- * @LastEditTime: 2020-09-07 17:14:51
+ * @LastEditTime: 2020-09-14 12:15:58
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -107,7 +107,7 @@ J值=3*第9日K值-2*第9日D值
 若无前一日K值与D值，则可以分别用50代替。
 */
 /**获取KDJ线，不给最后一个参数，就是取得所欲KDJ数据，如果给就给出指定的数据 */
-const KDJLine = (klineData, n, single) => {
+const KDJLine = (klineData, n, KDJ5m) => {
     let result = [];
     const ma = (list, index, key, m) => {
         let total = 0; let count = 0;
@@ -125,7 +125,7 @@ const KDJLine = (klineData, n, single) => {
         const H9 = klineDataForN.sort((a, b) => (b[2] - a[2]))[0][2];
         const RSV = ((item[4] - L9) / (H9 - L9)) * 100;
         //算法1
-        let lastKDJ5m = single ? single.lastKDJObj : result[result.length - 1];//result.find(kdj => kdj.startTime === klineData[i - 1][0]);//上一个
+        let lastKDJ5m = result[result.length - 1];//result.find(kdj => kdj.startTime === klineData[i - 1][0]);//上一个
         lastKDJ5m = lastKDJ5m ? lastKDJ5m : { K: 50, D: 50 };
         //-----------------------------------------
         // const K = (2 / 3) * lastKDJ5m.K + (1 / 3) * RSV;
@@ -141,12 +141,18 @@ const KDJLine = (klineData, n, single) => {
         const formartStartTime = dateFormat(new Date(startTime), "yyyy/MM/dd HH:mm");
         return { startTime, formartStartTime, K, D, J, RSV }
     }
-    if (single) {
-        for (let k = 0, l = klineData.length; k < l; k++) {
-            if (klineData[k][0] === single.singleData[0]) {
-                return fn(single.singleData, k);
-            }
-        }
+    if (KDJ5m) {
+        result = KDJ5m;
+        const kdj = fn(klineData[klineData.length - 1], klineData.length - 1);
+        //console.log(kdj);
+        return kdj;
+        // for (let k = 0, l = klineData.length; k < l; k++) {
+        //     if (klineData[k][0] === single) {
+        //         const kdj = fn(klineData[k], k);
+        //         console.log(kdj);
+        //         return kdj;
+        //     }
+        // }
     } else {
         klineData.forEach((item, i) => {
             if (i > n) {
@@ -243,11 +249,12 @@ module.exports = class SymbolServer {
                         klineData5m.shift();
                         klineData5m.push([startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume]);
                         boll5m.push(bollLine(klineData5m, klineData5m.length, startTime));
-                        KDJ5m.push(KDJLine(klineData5m, 9, {
-                            singleData: klineData5m[klineData5m.length - 2],
-                            lastKDJData: KDJ5m[KDJ5m.length - 2],
-                            JDKlist: KDJ5m
-                        }));
+                        KDJ5m.push(KDJLine(klineData5m, 9, KDJ5m))
+                        // KDJ5m.push(KDJLine(klineData5m, 9, {
+                        //     singleData: klineData5m[klineData5m.length - 2],
+                        //     lastKDJData: KDJ5m[KDJ5m.length - 2],
+                        //     JDKlist: KDJ5m
+                        // }));
 
                     } else {
                         klineData5m[klineData5m.length - 1] = [startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume];

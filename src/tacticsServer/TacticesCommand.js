@@ -12,6 +12,7 @@ const { WsConfig, WsRoute } = require('../config')
 const { client } = require('../lib/binancer');
 const { userRooms } = require('../controllers/user')
 const { Task } = require('../db');
+const { reExecute } = require('../tool/Common');
 //const { scoketCandles } = require('./binanceScoketBind');
 
 module.exports = class TacticesCommand {
@@ -92,8 +93,17 @@ module.exports = class TacticesCommand {
      * @param symbol 可选
      */
     async getExchangeInfo(symbol) {
-        if (!this.exchangeInfo) this.exchangeInfo = await client.exchangeInfo();
-        return symbol ? this.exchangeInfo.symbols.find(item => item.symbol === symbol) : this.exchangeInfo;
+        try {
+            if (!this.exchangeInfo) this.exchangeInfo = await client.exchangeInfo();
+            return symbol ? this.exchangeInfo.symbols.find(item => item.symbol === symbol) : this.exchangeInfo;
+        } catch (e) {
+            console.log(e);
+            return await reExecute(async (symbol) => {
+                if (!this.exchangeInfo) this.exchangeInfo = await client.exchangeInfo();
+                return symbol ? this.exchangeInfo.symbols.find(item => item.symbol === symbol) : this.exchangeInfo;
+            }, 500);
+        }
+
     }
     /**取数据库数据同步至tacticsList，并根据状态启动 */
     async initTasks() {

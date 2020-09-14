@@ -53,6 +53,7 @@ const option = (symbol, price) => {
             left: 0,
             subtext: `当前价格：${Number(price)}U${persentPrice ? '/入场价：' + Number(persentPrice) + 'U' : ''}`
         },
+        backgroundColor:'#21202D',
         tooltip: {
             trigger: 'axis',
             axisPointer: {

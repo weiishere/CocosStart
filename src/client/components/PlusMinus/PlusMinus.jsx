@@ -124,16 +124,20 @@ export default function PlusMinus() {
         // });
         EventHub.getInstance().addEventListener('historyRecord','pm_historyRecord', ({historyForDeal}) => {
             //console.log(historyForDeal)
-            data = historyForDeal.filter(item => item.type === 'sell').map(item => ({
-                value: item.content.profit,
-                name: Number(item.content.profit.toFixed(3)),
-                label: { position: 'top' },
-                itemStyle: { color: item.content.profit < 0 ? 'green' : 'red' },
-                time: item.time,
-                symbol: item.content.symbol,
-                inCosting: item.content.inCosting,
-                outCosting: item.content.outCosting
-            }));
+            
+            data = historyForDeal.filter(item => item.type === 'sell').map(item => {
+                if(!item.content.profit) console.log(item);
+                return {
+                    value: item.content.profit,
+                    name: Number(item.content.profit.toFixed(3)),
+                    label: { position: 'top' },
+                    itemStyle: { color: item.content.profit < 0 ? 'green' : 'red' },
+                    time: item.time,
+                    symbol: item.content.symbol,
+                    inCosting: item.content.inCosting,
+                    outCosting: item.content.outCosting
+                }
+            });
             //如果最后一个type=buy，就需要加入，用来记录当前的利润变化
             const lastHistoryForDeal = historyForDeal[historyForDeal.length - 1];
             if (lastHistoryForDeal && lastHistoryForDeal.type === 'buy') {

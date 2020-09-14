@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 02:37:01
- * @LastEditTime: 2020-09-08 14:53:31
+ * @LastEditTime: 2020-09-14 14:36:59
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -80,7 +80,10 @@ export default function Income() {
             payload.forEach((tactics, i) => {
                 showKeys.some(item => item === i) && dataList.push({
                     name: payload[i].name,
-                    data: tactics.historyForDeal.filter(item => item.type === 'sell').map(item => ([dateFormat(new Date(item.time), "MM/dd HH:mm:ss"), Number(item.content.profit.toFixed(4)), item.time]))
+                    data: tactics.historyForDeal.filter(item => item.type === 'sell').map(item => {
+                        if(!item.content.profit) return item;
+                        return [dateFormat(new Date(item.time), "MM/dd HH:mm:ss"), Number(item.content.profit.toFixed(4)), item.time]
+                    })
                 });
             });
             myChart.setOption(option());

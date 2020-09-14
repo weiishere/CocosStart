@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 02:37:01
- * @LastEditTime: 2020-09-09 16:50:14
+ * @LastEditTime: 2020-09-14 15:12:17
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -72,9 +72,9 @@ export default function Statistics() {
                     .reduce((pre, cur) => pre + cur.value, 0) + (item.buyState ? lastHistoryForDeal.content.profit : 0);
                 return {
                     key: i,
-                    name: item.name,
+                    name: item.name + (item.imitateRun ? '(模拟)' : ''),
                     symbol: item.symbol,
-                    status: `${item.runState ? '运行中/' + (item.buyState ? '场内' : '场外') : '未运行'}${item.imitateRun ? '-模拟' : ''}`,
+                    status: `${item.runState ? '运行中/' + (item.buyState ? '场内' : '场外') : '未运行'}`,
                     nowRiseRate: item.buyState && lastHistoryForDeal.type === 'buy' ? Number((lastHistoryForDeal.content.profit / item.presentDeal.costing).toFixed(5)) : '-',
                     //buyUsdtAmount: Number(item.presentDeal.amount.toFixed(2)),
                     count: item.historyForDeal.filter(item => item.type === 'sell' && item.content.profit > 0).length + '/' + item.historyForDeal.filter(item => item.type === 'sell').length,

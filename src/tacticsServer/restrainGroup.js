@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-14 13:49:13
- * @LastEditTime: 2020-09-10 17:08:47
+ * @LastEditTime: 2020-09-14 17:47:02
  * @LastEditors: weishere.huang
  * @Description: premiseForBuy：不能进，premiseForSell：必须出
  * @~~
@@ -51,17 +51,26 @@ const restrain = {
             label: '切币驱动模式',
             desc: '选币驱动模式，会保持选币一直运行，如果有新币产生，即尽快出场(盈利或亏损在0.5个点内)并切币进入，打开此开关需保证有及其严格的选币方案',
             param: {
-                maxLoss: -0.02,
-                isNowBuy: true
+                maxLoss: [-0.005, 0.002],//盈亏在这次范围就强制切币
+                isNowBuy: true,
+                checkCount: 0
             },
             method: async (tactics) => {
-                const { maxLoss } = getParam('premiseForBase', 'symbolDriveMod');
+                if (tactics.checkBuyTime !== 0 && tactics.checkBuyTime < tactics.parameter.faildBuyTimeForChange) {
+                    //如果还在入场检测中，先不计算
+                    return true;
+                }
+                let { maxLoss } = getParam('premiseForBase', 'symbolDriveMod');
                 //进行币种检测
                 const { chooseItem, isNowBuy } = await tactics.findSymbol();
                 if (chooseItem && chooseItem !== tactics.symbol) {
                     //只要亏损不大于0.2个点，就切币
-                    if ((tactics.buyState && Number(tactics.getProfit() / tactics.presentDeal.costing) > maxLoss) || !tactics.buyState) {
+                    if ((tactics.buyState &&
+                        Number(tactics.getProfit() / tactics.presentDeal.costing) > maxLoss[0] &&
+                        Number(tactics.getProfit() / tactics.presentDeal.costing) < maxLoss[1]) || 
+                        !tactics.buyState) {
                         tactics.addHistory('info', `【注意】在切币驱动模式下检测到新币且满足切币条件，即将切币至（${chooseItem}）...`, true, { color: "#85A3FF" });
+                        tactics.checkBuyTime = 0;
                         if (tactics.buyState) {
                             await tactics.deal('sell');
                             tactics.buyState = false;
@@ -103,7 +112,7 @@ const restrain = {
         {
             key: 'bollStandardUP',
             label: 'BOLL-UP指标',
-            desc: '如果最近一条5分线(无论是阴阳线)已经横穿了UP，不予入场',
+            desc: '如果最近一条5分线(无论是阴阳线)已经横穿了UP，或者已经在UP线之上了，不予入场',
             method: async (tactics) => {
                 const symbolObj = symbolStorage[tactics.symbol];
                 if (!symbolObj) return false;
@@ -145,7 +154,7 @@ const restrain = {
                 if (!tactics.KLineItem5m.recent) return false;
                 const riseRate = (tactics.presentPrice - tactics.KLineItem5m.recent.open) / tactics.KLineItem5m.recent.open;
                 if (riseRate > averageWave * time) {
-                    const isUp = await restrain[premiseForBuy].find(item => item.key === 'bollStandardUP').method(tactics);
+                    const isUp = await restrain.premiseForBuy.find(item => item.key === 'bollStandardUP').method(tactics);
                     //若未冲破UP线，将不约束，继续冲
                     if (isUp) return true;
                     return false;

@@ -1,9 +1,17 @@
-import {
+/*
+ * @Author: weishere.huang
+ * @Date: 2020-07-22 15:53:13
+ * @LastEditTime: 2020-09-14 18:14:30
+ * @LastEditors: weishere.huang
+ * @Description: 
+ * @~~
+ */
+const {
   SystemConfig
-} from '../config'
+} = require('../config')
 
 // 截取字符串，多余的部分用...代替
-export const setString = (str, len) => {
+const setString = (str, len) => {
   let StrLen = 0
   let s = ''
   for (let i = 0; i < str.length; i++) {
@@ -21,7 +29,7 @@ export const setString = (str, len) => {
 }
 
 // 格式化设置
-export const OptionFormat = (GetOptions) => {
+const OptionFormat = (GetOptions) => {
   let options = '{'
   for (let n = 0; n < GetOptions.length; n++) {
     options = options + '\'' + GetOptions[n].option_name + '\':\'' + GetOptions[n].option_value + '\''
@@ -33,7 +41,7 @@ export const OptionFormat = (GetOptions) => {
 }
 
 // 替换SQL字符串中的前缀
-export const SqlFormat = (str) => {
+const SqlFormat = (str) => {
   if (SystemConfig.mysql_prefix !== 'api_') {
     str = str.replace(/api_/g, SystemConfig.mysql_prefix)
   }
@@ -41,7 +49,7 @@ export const SqlFormat = (str) => {
 }
 
 // 数组去重
-export const HovercUnique = (arr) => {
+const HovercUnique = (arr) => {
   const n = {}
   const r = []
   for (var i = 0; i < arr.length; i++) {
@@ -54,10 +62,28 @@ export const HovercUnique = (arr) => {
 }
 
 // 获取json长度
-export const getJsonLength = (jsonData) => {
+const getJsonLength = (jsonData) => {
   var arr = []
   for (var item in jsonData) {
     arr.push(jsonData[item])
   }
   return arr.length
+}
+const reExecute = async (method, interval) => {
+  const fn = async () => {
+    const result = await method();
+    if (result) {
+      return new Promise((resovle) => {
+        setTimeout(async () => {
+          await fn();
+        }, interval);
+      })
+    } else {
+      return result;
+    }
+  }
+  await fn();
+}
+module.exports = {
+  setString, OptionFormat, SqlFormat, HovercUnique, getJsonLength, reExecute
 }

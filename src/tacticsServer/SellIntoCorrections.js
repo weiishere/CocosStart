@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-09-11 18:24:47
+ * @LastEditTime: 2020-09-14 18:23:09
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -263,6 +263,10 @@ module.exports = class SellIntoCorrections extends Tactics {
                 }
             }
         }
+        if (this.advancedOption.premiseForBase.indexOf('symbolDriveMod') !== -1) {
+            this.checkBuyTime++;//用于切币驱动，免于刚刚入场就开始
+            return true;
+        }
         //亏损大于1个点就必须切币，要么走人
         if (this.presentDeal.historyProfit >= -0.01) {
             //检测
@@ -319,7 +323,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                         }
                     }
                 }
-                if (allowResult) {
+                if (allowResult || this.buyState) {
                     if (!this.buyState) {
                         if (this.fristNowBuy) {
                             //立即买入
@@ -359,11 +363,11 @@ module.exports = class SellIntoCorrections extends Tactics {
     /**暂停 */
     powerPause() {
         if (this.mainTimer) clearTimeout(this.mainTimer);
-        //this.runState = false;
         this.addHistory('order', `实例${this.name}已经发送暂停指令(执行完最后的逻辑)...`, false, { isMap: true, color: '#04ce55' });
         if (this.buyState) {
             this.addHistory('info', `【注意】实例处于买入状态，暂停期间将不进行出场判定...`, false);
         }
+        this.runState = false;
     }
     async remove(deleteFn) {
         if (this.runState) await this.stop();
@@ -385,13 +389,13 @@ module.exports = class SellIntoCorrections extends Tactics {
     async buy() {
         //次数未满之前肯定返回true，没有切币判断，都返回true
         //如果上个交易亏损且检测次数满了，且没有币就会返回false，且不动，如果待机没开就停止了，如果待机开了，就等待有币了就会返回true，重新启动
-        let chooseResult;
-        if (this.advancedOption.premiseForBase.indexOf('symbolDriveMod') === -1) {
-            chooseResult = await this.checkChangeSymbol();//切币检测
-        } else {
-            //在选币驱动模式下，就不用再做选币等待了，直接走
-            chooseResult = true;
-        }
+        let chooseResult = await this.checkChangeSymbol();//切币检测
+        // if (this.advancedOption.premiseForBase.indexOf('symbolDriveMod') === -1) {
+        //     chooseResult = await this.checkChangeSymbol();//切币检测
+        // } else {
+        //     //在选币驱动模式下，就不用再做选币等待了，直接走
+        //     chooseResult = true;
+        // }
         if (chooseResult === false) {
             //10次没有币推荐，或者不允许切币，且要求停机
             await this.stop();
@@ -644,13 +648,20 @@ module.exports = class SellIntoCorrections extends Tactics {
     /**获取瞬时市场价格(应该只用于检测入场的时候使用这个，在卖出的时候都应该通过深度图获取理论交易价来判断) */
     async getPresentPrice(newPrice) {
         if (this.presentPrice && !newPrice) return this.presentPrice;
-        const allPrice = await client.prices();
-        this.presentPrice = allPrice[this.symbol];
-        return allPrice[this.symbol];
+        try {
+            const allPrice = await client.prices();
+            this.presentPrice = allPrice[this.symbol];
+            return allPrice[this.symbol];
+        } catch (e) {
+            console.log('获取最新价格失败:' + e)
+            return this.presentPrice;
+        }
     }
     /**第二个参数amount用于补仓(buy时使用),其他时候不要用 */
     async deal(order, amount) {
         const price = this.presentPrice = await this.getPresentPrice(true);
+        this.checkSymbolTime = 10;
+        this.checkBuyTime = 0;
         if (order === 'buy') {
             this.checkSymbolTime = 10;
             const dealAmount = this.buyState ? amount : this.parameter.usdtAmount;
@@ -723,8 +734,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 }
             }
         } else if (order === 'sell') {
-            this.checkSymbolTime = 10;
-            this.checkBuyTime = 0;
+
             if (this.imitateRun) {
                 //模拟卖出
                 //获得回收金额
