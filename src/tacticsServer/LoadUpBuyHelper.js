@@ -52,29 +52,8 @@ module.exports = class LoadUpBuyHelper {
         //获取最高补仓记录
         const thisLoadUp = this.loadUpList.filter(item => (item.mod === 'step' && item.roundId === this.roundId));//获取本轮交易的补仓记录
         const maxRateLoadUp = thisLoadUp.length === 0 ? { rate: 0 } : [...thisLoadUp].sort((a, b) => b.rate - a.rate).shift();//获取最大亏损时的补仓记录
-        //#region 
-        /*
-        //获取已经加仓的数量，从最高开始检测，一旦符合条件，即加仓且中止判断，忽略之后的条件
-        
-        for (let i = this.step.length - 1; i >= 0; i--) {
-            const step = this.step[i];
-            if (thisLoadUp.length < this.step.length && step.rate <= rate && maxRateLoadUp.rate !== step.rate) {
-                const buyAmount = step.times * this.tactices.parameter.usdtAmount;
-                this.tactices.addHistory('info', `【补仓】跌幅到止损线的${step.rate}%，触及step模式补仓，补仓${step.times}倍！`, true, { color: '#D2746B' });
-                this.loadUpBuy(buyAmount);
-                const obj = this.pushLoadUpList({
-                    times: step.times,
-                    amount: buyAmount,
-                    mod: 'step',
-                    rate: step.rate
-                });
-                return obj;
-            }
-        }*/
-        //#endregion
         let result;
         this.stepGrids.reduce((pre, cur) => {
-
             //loadUpList里面没有rate记录，并且大于最大亏损补仓记录，才能补仓
             if (pre.rate < rate && rate < cur.rate && !this.loadUpList.some(item => item.rate === pre.rate && item.roundId === this.roundId) && maxRateLoadUp.rate < rate) {
                 const buyAmount = pre.times * this.tactices.parameter.usdtAmount;

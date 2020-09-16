@@ -66,7 +66,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             //lossStopLossRate: 0,//下跌情况（亏损）上涨止损点
             //isLiveRiseStopLossRate: true,
             stopLossRate: 0.1,//下跌情况（亏损）下跌止损点
-            maxStayTime: 120,//亏损但未达到止损值的情况下，最久呆的时间(分钟)
+            maxStayTime: 24 * 60,//亏损但未达到止损值的情况下，最久呆的时间(分钟)
             faildBuyTimeForChange: 15,//进场失败次数，用于切币
             isAllowLoadUpBuy: true,//是否允许加仓
             pauseFaildChangeSymbol: true,//若需切币且推荐币为空，是否暂停
@@ -543,9 +543,8 @@ module.exports = class SellIntoCorrections extends Tactics {
             if (!this.riseTimer) {
                 this.riseTimer = setTimeout(async () => {
                     this.addHistory('info', `亏损状态时间超时，进行止损操作`);
-                    if (await this.deal('sell')) {
-                        return true;
-                    }
+                    await this.deal('sell')
+                    tactics.buyState = false;
                 }, this.parameter.maxStayTime * 60000);
             }
             if (_profit < this.presentDeal.historyProfit) {

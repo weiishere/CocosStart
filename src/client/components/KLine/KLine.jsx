@@ -32,7 +32,7 @@ const optionForKdj = () => ({
     title: {
         text: ''
     },
-    backgroundColor:'#21202D',
+    backgroundColor: '#21202D',
     tooltip: {
         trigger: 'axis'
     },
@@ -205,7 +205,7 @@ const option = (symbol) => {
         }, {
             textStyle: { color: '#8392A5' },
             handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
-            handleSize: '80%',height: 25,
+            handleSize: '80%', height: 25,
             dataBackground: {
                 areaStyle: {
                     color: '#8392A5'
@@ -217,7 +217,7 @@ const option = (symbol) => {
             },
             handleStyle: {
                 color: '#fff',
-                shadowBlur: 3,height: 25,
+                shadowBlur: 3, height: 25,
                 shadowColor: 'rgba(0, 0, 0, 0.6)',
                 shadowOffsetX: 2,
                 shadowOffsetY: 2
@@ -263,6 +263,7 @@ const option = (symbol) => {
         ]
     };
 }
+const hoursInterval = 12;
 
 const setOptionForNoCover = (myChart, symbol) => {
     let _option = myChart.getOption();
@@ -281,7 +282,7 @@ const setOptionForNoCover = (myChart, symbol) => {
 const initKlineData = (myChart, symbol, callback) => {
     if (!symbol) return;
     let now = new Date();
-    let lastHour = now.setHours(now.getHours() - 12);
+    let lastHour = now.setHours(now.getHours() - hoursInterval);
     requester({
         url: api.klines,
         params: {
@@ -357,7 +358,7 @@ export default function KLine() {
                     timer && window.clearTimeout(timer);
                     timer = undefined;
                     change(target.symbol);
-                }, 7000);
+                }, 10000);
             }
             if (target && target.KLineItem1m.startTime && target.symbol === theSymbol) {
                 symbolTicker = target.ticker;
@@ -365,6 +366,9 @@ export default function KLine() {
                 const date = dateFormat(new Date(startTime), "HH:mm");
                 if (rawData[rawData.length - 1][0] !== date) {
                     rawData.push([date, close, close, close, close, startTime]);
+                    if (rawData.length === hoursInterval * 60 / 5) {
+                        rawData.shift();
+                    }
                 } else {
                     rawData[rawData.length - 1] = [date, open, high, low, close, startTime];
                 }

@@ -31,8 +31,8 @@ export default function HistoryRecord() {
     React.useEffect(() => {
         EventHub.getInstance().addEventListener('mapTacticsList', 'hr_mapTacticsList', payload => {
             const target = payload.find(item => item.target);
-            if (chooseTid !== target.id) setChooseTid(target.id);
             if (target) {
+                if (chooseTid !== target.id) setChooseTid(target.id);
                 setRunState(target.imitateRun);
                 if (target.runState) {
                     if (target.buyState) {

@@ -51,7 +51,7 @@ const restrain = {
             label: '切币驱动模式',
             desc: '选币驱动模式，会保持选币一直运行，如果有新币产生，即尽快出场(盈利或亏损在0.5个点内)并切币进入，打开此开关需保证有及其严格的选币方案',
             param: {
-                maxLoss: [-0.005, 0.002],//盈亏在这次范围就强制切币
+                maxLoss: [0.005, 0.01],//盈亏在这次范围就强制切币
                 isNowBuy: true,
                 checkCount: 0
             },
@@ -67,7 +67,7 @@ const restrain = {
                     //只要亏损不大于0.2个点，就切币
                     if ((tactics.buyState &&
                         Number(tactics.getProfit() / tactics.presentDeal.costing) > maxLoss[0] &&
-                        Number(tactics.getProfit() / tactics.presentDeal.costing) < maxLoss[1]) || 
+                        Number(tactics.getProfit() / tactics.presentDeal.costing) < maxLoss[1]) ||
                         !tactics.buyState) {
                         tactics.addHistory('info', `【注意】在切币驱动模式下检测到新币且满足切币条件，即将切币至（${chooseItem}）...`, true, { color: "#85A3FF" });
                         tactics.checkBuyTime = 0;
@@ -343,7 +343,7 @@ const restrain = {
                         console.log('lastSymbolList还未收到数据(子线程未开？)');
                         return lastSymbolList;
                     }
-                    const fn = (symbolObj, klineIndex) => {
+                    const fn = (symbol, symbolObj, klineIndex) => {
                         const klineData = symbolObj.klineData5m[klineIndex];
                         const close = +klineData[4];//收盘价
                         const open = +klineData[1];//收盘价
@@ -353,7 +353,8 @@ const restrain = {
                             console.log('未取得boll线数据：' + item.symbol);
                             return false;
                         }
-                        if (open < close && ((close >= DN && Math.abs(low - DN) / low < 0.005) || (MB < close && MB > open))) {//必须是阳线且收盘价大于UP，最低价小于DN,或者是穿过中线
+                        if (open < close && ((close >= DN && Math.abs(low - DN) / low < getAverageWave(symbol) / 10) || (MB < close && MB > open))) {
+                            //必须是阳线且收盘价大于DN，最低价与DN的距离范围为平均波动线的1/10,或者是穿过中线
                             return true;
                         };
                         return false;
@@ -361,7 +362,7 @@ const restrain = {
                     return lastSymbolList.filter(item => {
                         const symbolObj = symbolStorage[item.symbol];
                         if (!symbolObj) return false;
-                        return (fn(symbolObj, symbolObj.klineData5m.length - 1) || fn(symbolObj, symbolObj.klineData5m.length - 2));
+                        return (fn(item.symbol, symbolObj, symbolObj.klineData5m.length - 1) || fn(item.symbol, symbolObj, symbolObj.klineData5m.length - 2));
                     });
                 } catch (e) {
                     console.log('bollStandard选币发生错误：' + e);
@@ -372,7 +373,7 @@ const restrain = {
         {
             key: 'KDJStandard',
             label: 'KDJ指标',
-            desc: 'J值处于50以下且KDJ线之间的差额总值不超过10，且上一组的J值小于当前J值',
+            desc: 'J值处于35以下且KDJ线之间的差额总值不超过10，且上一组的J值小于当前J值',
             param: {},
             method: async (lastSymbolList) => {
                 try {
@@ -383,7 +384,8 @@ const restrain = {
                     const fn = (symbolObj, KDJindex) => {
                         const KDJData = symbolObj.KDJ5m[KDJindex];
                         const KDJDataLast = symbolObj.KDJ5m[KDJindex - 1];
-                        if (KDJData.J < 50 && Math.abs(KDJData.K - KDJData.D) + Math.abs(KDJData.K - KDJData.J) <= 10 && KDJDataLast.K < KDJData.K) {
+                        if (KDJData.J <= 45 && Math.abs(KDJData.K - KDJData.D) + Math.abs(KDJData.K - KDJData.J) <= 10 && KDJDataLast.K < KDJData.K && KDJData.K > KDJData.D && KDJDataLast.K > KDJDataLast.D) {
+                            //当前K线小于45、三线之间差额小于10，且K线呈上扬趋势，且K大于D线、且上一条K先小于D先，说明两个点之间出现了金叉
                             return true;
                         }
                         return false;

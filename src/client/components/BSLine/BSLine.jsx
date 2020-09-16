@@ -22,6 +22,7 @@ var downBorderColor = '#008F28';
     ['2013/1/29', 2347.22, 2358.98, 2337.35, 2363.8]
 ]);*/
 
+let volumeData = [[], [], []]
 let rawData = JSON.parse(localStorage.getItem("klineDataForBs")) || []
 let markPointData = [];
 let persentPrice = 0;
@@ -53,7 +54,7 @@ const option = (symbol, price) => {
             left: 0,
             subtext: `当前价格：${Number(price)}U${persentPrice ? '/入场价：' + Number(persentPrice) + 'U' : ''}`
         },
-        backgroundColor:'#21202D',
+        backgroundColor: '#21202D',
         tooltip: {
             trigger: 'axis',
             axisPointer: {
@@ -165,11 +166,78 @@ const option = (symbol, price) => {
         ]
     };
 }
+const optionVolume = () => {
+    return {
+        title: {
+            text: '买入/卖出趋势'
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                label: {
+                    backgroundColor: '#6a7985'
+                }
+            }
+        },
+        legend: {
+            data: ['买入', '卖出']
+        },
+        grid: {
+            left: '4%',
+            right: '3%',
+            bottom: '13%',
+            top: '18%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: volumeData[2]
+        },
+        yAxis:
+        {
+            type: 'value',
+            splitLine: { show: false }
+        },
+        dataZoom: [{
+            type: 'inside',
+            start: 75,
+            end: 100
+        },
+        {
+            show: true,
+            height: 15,
+            type: 'slider',
+            start: 75,
+            end: 100,
+            bottom: 2
+        }],
+        series: [
+            {
+                name: '买入量',
+                type: 'line',
+                //stack: '总量',
+                areaStyle: {},
+                data: volumeData[0],
+                lineStyle: { width: 1 }
+            },
+            {
+                name: '卖出量',
+                type: 'line',
+                //stack: '总量',
+                areaStyle: {},
+                data: volumeData[1],
+                lineStyle: { width: 1 }
+            }
+        ]
+    };
+}
+const hoursInterval = 3;
 
-
-const initKlineData = (myChart, symbol) => {
+const initKlineData = (myChart, myVolumeChart, symbol) => {
     let now = new Date();
-    let lastHour = now.setHours(now.getHours() - 3);
+    let lastHour = now.setHours(now.getHours() - hoursInterval);
     requester({
         url: api.klines,
         params: {
@@ -186,19 +254,25 @@ const initKlineData = (myChart, symbol) => {
         }
     }).then(result => {
         let arr = [];
+        volumeData = [[], [], []]
         for (let i = 0; i < result.res.data.length; i++) {
             arr.push(result.res.data[i].slice(0));
-            arr[i][0] = dateFormat(new Date(+result.res.data[i][0]), "HH:mm")
+            arr[i][0] = dateFormat(new Date(+result.res.data[i][0]), "HH:mm");
+            volumeData[0].push(+result.res.data[i][9]);
+            volumeData[1].push(result.res.data[i][5] - result.res.data[i][9]);
+            volumeData[2].push(arr[i][0]);
         }
         rawData = arr;
-        setOptionForNoCover(myChart, symbol, result.res.data[result.res.data.length - 1][4])
+        setOptionForNoCover(myChart, myVolumeChart, symbol, result.res.data[result.res.data.length - 1][4]);
+        //console.log(volumeData)
     })
 }
 
-const setOptionForNoCover = (myChart, symbol, price) => {
+const setOptionForNoCover = (myChart, myVolumeChart, symbol, price) => {
     let _option = myChart.getOption();
     let oldOption = option(symbol, price);
-
+    let _option2 = myVolumeChart.getOption();
+    let oldOption2 = optionVolume();
     myChart.setOption(Object.assign({}, _option, {
         title: oldOption.title,
         xAxis: oldOption.xAxis,
@@ -206,6 +280,12 @@ const setOptionForNoCover = (myChart, symbol, price) => {
         series: oldOption.series,
         markPoint: oldOption.markPoint
     }));
+    oldOption2.dataZoom[0].start = oldOption2.dataZoom[1].start = _option.dataZoom[0].start;
+    //myVolumeChart.setOption(_option2);
+    myVolumeChart.setOption(oldOption2)
+    // myVolumeChart.setOption(Object.assign(_option2, {
+    //     series: oldOption2.series
+    // }));
     localStorage.setItem("klineDataForBs", JSON.stringify(rawData));
     localStorage.setItem("SymbleForBs", symbol);
 }
@@ -219,9 +299,12 @@ export default function BSLine() {
         let lastIsFinal = false;
         const myChart = echarts.init(document.getElementById("bs-line"), "dark");
         myChart.setOption(option('', 0));
+        const myVolumeChart = echarts.init(document.getElementById("volume-line"), "dark");
+        myVolumeChart.setOption(optionVolume());
+
         EventHub.getInstance().addEventListener('switchTactics', 'bs_switchTactics', payload => {
             markPointData = [];
-            initKlineData(myChart, payload.symbol);
+            initKlineData(myChart, myVolumeChart, payload.symbol);
         });
         // EventHub.getInstance().addEventListener('klineData', payload => {
         //     if (payload.symbol === symbol) {
@@ -235,18 +318,29 @@ export default function BSLine() {
             persentPrice = !target ? 0 : (target.buyState ? target.presentDeal.payPrice : 0);
             if (!target) return;
             if (symbol !== target.symbol) {
+                symbol && initKlineData(myChart, myVolumeChart, target.symbol);
                 symbol = target.symbol;
-                initKlineData(myChart, symbol);
             } else {
                 if (target.KLineItem1m.startTime) {
-                    const { startTime, isFinal, open, close, low, high } = target.KLineItem1m;
+                    const { startTime, isFinal, open, close, low, high, buyVolume, quoteVolume, quoteBuyVolume, volume } = target.KLineItem1m;
                     const date = dateFormat(new Date(startTime), "HH:mm");
                     if (rawData[rawData.length - 1][0] !== date) {
-                        rawData.push([date, close, close, close, close]);
+                        rawData.push([date, close, close, close, close, 0, 0, 0]);
+                        volumeData[0].push(buyVolume);
+                        volumeData[1].push(volume - buyVolume)
+                        volumeData[2].push(date);
+                        if (rawData.length === hoursInterval * 60) {
+                            rawData.shift();
+                            volumeData[0].shift();
+                            volumeData[1].shift();
+                            volumeData[2].shift();
+                        }
                     } else {
                         rawData[rawData.length - 1] = [date, open, high, low, close];
+                        volumeData[0][volumeData[0].length - 1] = buyVolume;
+                        volumeData[1][volumeData[1].length - 1] = volume - buyVolume;
                     }
-                    setOptionForNoCover(myChart, target.symbol, close);
+                    setOptionForNoCover(myChart, myVolumeChart, target.symbol, close);
                     //myChart.setOption(option(target.symbol, close));
                 }
             }
@@ -273,5 +367,5 @@ export default function BSLine() {
         //     initKlineData(myChart, symbol);
         // }, 60000);//1分钟矫正一次
     }, []);
-    return <div id='bs-line'></div>
+    return <><div id='bs-line'></div><div id='volume-line'></div></>
 }
