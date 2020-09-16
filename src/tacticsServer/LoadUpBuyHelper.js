@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-02 18:19:58
- * @LastEditTime: 2020-09-14 17:36:20
+ * @LastEditTime: 2020-09-16 17:57:01
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -17,9 +17,9 @@ module.exports = class LoadUpBuyHelper {
         this.TimeAmount = 10;//补仓的最高倍数：如果补仓倍数超过原始资金的倍数，会终止
         this.stepGrids = [
             { rate: 10, times: 1 },
+            { rate: 15, times: 1 },
             { rate: 20, times: 1 },
-            { rate: 25, times: 1 },
-            { rate: 30, times: 1 }
+            { rate: 25, times: 1 }
         ];
         this.roundId;//当前的买卖回合ID
         this.loadUpList = [

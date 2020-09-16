@@ -178,13 +178,14 @@ const optionVolume = () => {
                 label: {
                     backgroundColor: '#6a7985'
                 }
-            }
+            },
+            alwaysShowContent:true
         },
         legend: {
             data: ['买入', '卖出']
         },
         grid: {
-            left: '4%',
+            left: '5%',
             right: '3%',
             bottom: '13%',
             top: '18%',

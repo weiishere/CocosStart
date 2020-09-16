@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-09-14 18:23:09
+ * @LastEditTime: 2020-09-16 16:50:43
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -40,6 +40,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             // { symbol: 'FNUSDT', profit: -3.2, buyCount: 1 }
         ];
         this.roundId = Date.parse(new Date());//交易回合
+        this.roundRunTime = 0;
         this.history = []
         this.depth = null;//深度
         this.ticker = null;
@@ -304,6 +305,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             //开始运行
             let fn = async () => {
                 clearTimeout(this.mainTimer);
+                checkRate = this.buyState ? this.parameter.checkSellRate : this.parameter.checkBuyRate;
                 //高级
                 let allowResult = this.advancedOption.premiseForBase.length === 0 ? true : false;//如果没有约束则直接放过
                 for (let i = 0; i < restrainGroup.premiseForBase.length; i++) {
@@ -351,7 +353,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 }
                 this.mainTimer = setTimeout(async () => {
                     this.runState && await fn();
-                }, this.buyState ? this.parameter.checkSellRate : this.parameter.checkBuyRate);
+                }, checkRate);
             }
             await fn();
         } else {
@@ -531,8 +533,9 @@ module.exports = class SellIntoCorrections extends Tactics {
                         }
                     }
                 } else {
+                    if (_riseStopLossRate === 0) return false;
                     //亏损率还未大于一个值，持续观察
-                    this.addHistory('info', `盈利下降量${_riseStopLossRate.toFixed(6)}%，继续观察盈利情况...`, true);
+                    this.addHistory('info', `盈利下降量${Number(_riseStopLossRate.toFixed(6))}%，继续观察盈利情况...`, true);
                     return false;
                 }
             }
@@ -807,6 +810,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 }
             }
             this.roundId = Date.parse(new Date());//下一回合
+            this.roundRunTime = 0;
             //if (this.nextSymbol) this.symbol = this.nextSymbol;//出场成功之后切换币
         }
         this.resetParam();//重置参数

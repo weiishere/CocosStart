@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-14 13:49:13
- * @LastEditTime: 2020-09-14 17:47:02
+ * @LastEditTime: 2020-09-16 16:25:32
  * @LastEditors: weishere.huang
  * @Description: premiseForBuy：不能进，premiseForSell：必须出
  * @~~
@@ -51,7 +51,7 @@ const restrain = {
             label: '切币驱动模式',
             desc: '选币驱动模式，会保持选币一直运行，如果有新币产生，即尽快出场(盈利或亏损在0.5个点内)并切币进入，打开此开关需保证有及其严格的选币方案',
             param: {
-                maxLoss: [0.005, 0.01],//盈亏在这次范围就强制切币
+                maxLoss: [0.005, 0.01],//盈亏在此范围就可以切币
                 isNowBuy: true,
                 checkCount: 0
             },
@@ -353,7 +353,7 @@ const restrain = {
                             console.log('未取得boll线数据：' + item.symbol);
                             return false;
                         }
-                        if (open < close && ((close >= DN && Math.abs(low - DN) / low < getAverageWave(symbol) / 10) || (MB < close && MB > open))) {
+                        if (open < close && ((close >= DN && Math.abs(low - DN) < getAverageWave(symbol) / 10) || (MB < close && MB > open))) {
                             //必须是阳线且收盘价大于DN，最低价与DN的距离范围为平均波动线的1/10,或者是穿过中线
                             return true;
                         };

@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-28 02:58:03
- * @LastEditTime: 2020-09-08 17:01:56
+ * @LastEditTime: 2020-09-16 11:16:20
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -216,9 +216,11 @@ module.exports = class TacticesCommand {
     pushHistory(uid, id, historyObj) {
         const r = userRooms.find(r => r.uid === uid);
         if (r) {
-            const obj = r.tids.find(item => item.tid === id);
-            if (obj) {
-                this.scoketIO.to(obj.scoketId).emit(WsRoute.HISTORY_LIST, historyObj);
+            const objs = r.tids.filter(item => item.tid === id);
+            if (objs.length) {
+                objs.forEach(item => {
+                    this.scoketIO.to(item.scoketId).emit(WsRoute.HISTORY_LIST, historyObj);
+                })
             }
 
         }
