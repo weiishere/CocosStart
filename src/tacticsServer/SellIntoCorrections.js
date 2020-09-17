@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-09-16 16:50:43
+ * @LastEditTime: 2020-09-17 18:58:25
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -63,8 +63,8 @@ module.exports = class SellIntoCorrections extends Tactics {
             checkSellRate: 5000,
             riseStayCheckRateForSell: 15000,//止损等待时间
             stopRiseRate: 0.2,//强制止盈涨幅
-            lowestRiseRate: 0.005,//最低盈利，少了这个值不止盈
-            riseStopLossRate: 30,//上涨情况（盈利）下跌止盈点（拐点止盈）
+            lowestRiseRate: 0.008,//最低盈利，少了这个值不止盈
+            riseStopLossRate: 50,//上涨情况（盈利）下跌止盈点（拐点止盈）
             //lossStopLossRate: 0,//下跌情况（亏损）上涨止损点
             //isLiveRiseStopLossRate: true,
             stopLossRate: 0.1,//下跌情况（亏损）下跌止损点
@@ -116,6 +116,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.presentDeal = {
             costing: 0,//成本,
             payPrice: 0,//买入价格
+            averagePrice: 0,//均价
             amount: 0,//购买后持有的相应代币数量
             historyProfit: 0,//当前交易的历史盈利
             buyOrderInfo: null,
@@ -521,9 +522,11 @@ module.exports = class SellIntoCorrections extends Tactics {
                 //利润下降（出现拐点）判断亏损率
                 const diff = this.presentDeal.historyProfit - _profit;//相比上次降低的利润
                 const _riseStopLossRate = (diff / this.presentDeal.historyProfit) * 100;
+                
                 if (_riseStopLossRate > this.parameter.riseStopLossRate) {
+                    this.addHistory('info', `盈利下降，且大于止盈拐点，剩余盈利率：` + _profit / this.presentDeal.costing, true);
                     //亏损率大于一个值,判断当前盈利率，选择是否止盈
-                    if (_profit < this.parameter.lowestRiseRate) {
+                    if (_profit / this.presentDeal.costing < this.parameter.lowestRiseRate) {
                         //盈利率小于某一个值的话，就不予止盈，否则没太大意义（避免某一下的急跌造成割肉，却没赚到什么）
                         this.addHistory('info', `相比最大历史盈利，下降量${_riseStopLossRate.toFixed(6)}%，大于${this.parameter.riseStopLossRate}%，但低于最低出场盈利率${this.parameter.lowestRiseRate}，继续观察...`, true);
                         return false;
@@ -539,7 +542,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 } else {
                     if (_riseStopLossRate === 0) return false;
                     //亏损率还未大于一个值，持续观察
-                    this.addHistory('info', `盈利下降量${Number(_riseStopLossRate.toFixed(6))}%，继续观察盈利情况...`, true);
+                    this.addHistory('info', `盈利下降量${Number(_riseStopLossRate.toFixed(6))}%，未达止盈拐点，继续观察盈利情况...`, true);
                     return false;
                 }
             }
@@ -606,7 +609,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 //持续观察
                 this.addHistory('info', `当前处于亏损状态，亏损率：${_stopLossRate.toFixed(6)}，但未达止损点，继续等待出场时机...`, true);
                 //加仓
-                this.parameter.isAllowLoadUpBuy && this.loadUpBuyHelper.run(this.roundId);
+                this.parameter.isAllowLoadUpBuy && await this.loadUpBuyHelper.run(this.roundId);
                 return false;
             }
         }
@@ -634,18 +637,22 @@ module.exports = class SellIntoCorrections extends Tactics {
                 //const hadBuyAmount = this.buyState ? (amount / price + this.presentDeal.amount) : this.parameter.usdtAmount / price, ;
                 this.presentDeal = Object.assign(this.presentDeal,
                     {
+
                         payPrice: price,//买入价
                         costing: this.buyState ? this.presentDeal.costing + (amount * (1 + this.parameter.serviceCharge))
                             : this.parameter.usdtAmount * (1 + this.parameter.serviceCharge),//模拟的时候这里成本等于usdt量
                         amount: this.buyState ? (amount / price + this.presentDeal.amount) : this.parameter.usdtAmount / price,//因为是模拟，这里是理论值
                         historyProfit: this.buyState ? this.presentDeal.historyProfit : 0,//当前交易的历史盈利
                     });
+                //this.presentDeal.averagePrice = (this.loadUpBuyHelper.reduce((pre, cur) => pre + cur.price, 0) + price) / this.presentDeal.amount;//均价：所有价格除以购买数量
+                this.presentDeal.averagePrice = this.presentDeal.costing / this.presentDeal.amount;//均价：所有价格除以购买数量
                 this.addHistory('buy', {
                     symbol: this.symbol,
                     dealAmount: dealAmount / price,
                     orderInfo: null,
                     profit: this.getProfit(),
-                    price: price,
+                    averagePrice: this.presentDeal.averagePrice,
+                    price,
                     costing: this.presentDeal.costing
                 }, false, { color: 'red' });
             } else {
@@ -684,11 +691,13 @@ module.exports = class SellIntoCorrections extends Tactics {
                     this.presentDeal.payPrice = this.presentDeal.buyOrderInfo.tradesDoneAmount / this.presentDeal.buyOrderInfo.tradesDoneQuantity;
                     this.presentDeal.amount += this.presentDeal.buyOrderInfo.tradesDoneQuantity;//购买的数量
                     this.presentDeal.costing += this.presentDeal.buyOrderInfo.tradesDoneAmount * (1 + this.parameter.serviceCharge);//实际成本，需加收手续费
+                    this.presentDeal.averagePrice = this.presentDeal.costing / this.presentDeal.amount;//均价：所有价格除以购买数量
                     this.addHistory('buy', {
                         symbol: this.symbol,
                         dealAmount: this.presentDeal.buyOrderInfo.tradesDoneQuantity,
                         orderInfo: this.presentDeal.buyOrderInfo,
                         profit: this.getProfit(),
+                        averagePrice: this.presentDeal.averagePrice,
                         price: this.presentDeal.payPrice,
                         costing: this.presentDeal.costing,
                         inCosting: this.presentDeal.costing

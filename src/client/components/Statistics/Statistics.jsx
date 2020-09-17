@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 02:37:01
- * @LastEditTime: 2020-09-14 15:12:17
+ * @LastEditTime: 2020-09-17 14:27:22
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -21,7 +21,7 @@ const columns = [
         dataIndex: 'symbol',
     },
     {
-        title: '运行/买入状态',
+        title: '状态',
         dataIndex: 'status',
     },
     {

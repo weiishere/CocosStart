@@ -117,7 +117,7 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
         <h4>高级模型配置</h4>
         {advancedRestran && <li>
             <Tabs defaultActiveKey="1" type="card">
-                <TabPane tab={<div>基本约束&nbsp;<Tooltip title="在进行基本判断（入场和出场）前执行"><QuestionCircleOutlined /></Tooltip></div>} key="1">
+                {/* <TabPane tab={<div>基本约束&nbsp;<Tooltip title="在进行基本判断（入场和出场）前执行"><QuestionCircleOutlined /></Tooltip></div>} key="1">
                     约束关系：<Radio.Group name="radiogroup" defaultValue={advancedOption.premiseJoin.premiseForBase}
                         onChange={(e) => onChange('premiseJoin', 'premiseForBase', e.target.value)}>
                         <Radio value='and'>且</Radio>
@@ -127,7 +127,7 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                         <Switch checked={advancedOption.premiseForBase.some(key => key === item.key)}
                             onChange={(checked) => onChange('premiseForBase', item.key, checked)} />
                         &nbsp; {item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
-                </TabPane>
+                </TabPane> */}
                 <TabPane tab={<div>入场约束&nbsp;<Tooltip title="入场约束先于基础入场逻辑执行（即符合约束条件还需进行入场基础判断）"><QuestionCircleOutlined /></Tooltip></div>} key="2">
                     约束关系：<Radio.Group name="radiogroup" defaultValue={advancedOption.premiseJoin.premiseForBuy}
                         onChange={(e) => onChange('premiseJoin', 'premiseForBuy', e.target.value)}>
@@ -163,7 +163,38 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                         &nbsp;{item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
                 </TabPane>
                 <TabPane tab={<div>补仓方案&nbsp;<Tooltip title="补仓开关需要打开，这里配置补仓的必备条件"><QuestionCircleOutlined /></Tooltip></div>} key="6">
-                    补仓方案
+                    <label><Switch checked={true} onChange={() => { }} />&nbsp;补仓附加条件(BOLL/KDJ)</label>
+                    <div style={{ marginTop: '1rem' }}>
+                        补仓模式：<Radio.Group name="radiogroup" defaultValue={advancedOption.premiseJoin.premiseForSell}
+                            onChange={(e) => onChange('premiseJoin', 'premiseForSell', e.target.value)}>
+                            <Radio value='and'>逐级补仓(step)&nbsp;<Tooltip title="根据跌幅进行动态逐级补仓"><QuestionCircleOutlined /></Tooltip></Radio>
+                            <Radio value='or'>目标补仓(target)&nbsp;<Tooltip title="设定一个预估涨幅，实现此涨幅即可扭亏，此模式对资金量要求较高"><QuestionCircleOutlined /></Tooltip></Radio>
+                        </Radio.Group>
+                        扭亏目标涨幅：<Search
+                            type='number'
+                            size='small'
+                            value={0}
+                            style={{ width: '10rem' }}
+                            enterButton="确认修改"
+                            maxLength={10}
+                            disabled={false}
+                            onSearch={value => { }}
+                            onChange={e => { }}
+                        />
+                    </div>
+                    <div style={{ marginTop: '1rem' }}>
+                        最高补仓倍数：<Search
+                            type='number'
+                            value={10}
+                            size='small'
+                            style={{ width: '15rem' }}
+                            enterButton="确认修改"
+                            maxLength={3}
+                            disabled={false}
+                            onSearch={value => { }}
+                            onChange={e => { }}
+                        />
+                    </div>
                 </TabPane>
             </Tabs>
         </li>}

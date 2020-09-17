@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-14 13:49:13
- * @LastEditTime: 2020-09-16 16:25:32
+ * @LastEditTime: 2020-09-17 19:05:06
  * @LastEditors: weishere.huang
  * @Description: premiseForBuy：不能进，premiseForSell：必须出
  * @~~
@@ -112,13 +112,13 @@ const restrain = {
         {
             key: 'bollStandardUP',
             label: 'BOLL-UP指标',
-            desc: '如果最近一条5分线(无论是阴阳线)已经横穿了UP，或者已经在UP线之上了，不予入场',
+            desc: '如果最近一条5分线(无论是阴阳线)已经横穿了UP，或者已经在UP线之上了，不予入场，但有个前提条件：上下线距离不远(平均波动的3倍)',
             method: async (tactics) => {
                 const symbolObj = symbolStorage[tactics.symbol];
                 if (!symbolObj) return false;
                 const { startTime, UP, MB, DN } = symbolObj.boll5m[symbolObj.boll5m.length - 1];//最后一条boll线
                 const klineData = symbolObj.klineData5m.find(item => item[0] === startTime);
-                if (+klineData[4] > UP || +klineData[1] > UP) {
+                if ((+klineData[4] > UP || +klineData[1] > UP) && (UP - DN) / UP < getAverageWave(tactics.symbol) * 3) {
                     return false;
                 }
                 return true;
@@ -136,7 +136,7 @@ const restrain = {
                 const close = +klineData[4];//收盘价
                 const open = +klineData[1];//收盘价
                 const low = +klineData[3];//最低价
-                if (open < close && ((close >= DN && Math.abs(low - DN) / low < getAverageWave(tactics.symbol) / 10) || (MB < close && MB > open))) {//必须是阳线且收盘价大于DN，最低价与DN值的差值范围为平均波动的1/10,或者是穿过中线
+                if (open < close && ((close >= DN && ((low > DN && Math.abs(low - DN) / low < getAverageWave(tactics.symbol) / 10) || low < DN)) || (MB < close && MB > open))) {//必须是阳线且收盘价大于DN，最低价与DN值的差值范围为平均波动的1/10,或者是穿过中线
                     return true;
                 };
                 return false;
@@ -144,8 +144,8 @@ const restrain = {
         },
         {
             key: 'last10mNoFastRise',
-            label: '前10分钟内未出现急涨(结合BOLL-UP)',
-            desc: '前10分钟内未出现急涨(急涨幅度根据平均值取)，但若未冲破UP线，将不约束',
+            label: '前10分钟内未出现急涨',
+            desc: '前10分钟内未出现急涨(急涨幅度为平均波动的4倍)',
             param: { time: 4 },
             method: async (tactics) => {
                 const { time } = getParam('premiseForBuy', 'last10mNoFastRise');
@@ -154,9 +154,9 @@ const restrain = {
                 if (!tactics.KLineItem5m.recent) return false;
                 const riseRate = (tactics.presentPrice - tactics.KLineItem5m.recent.open) / tactics.KLineItem5m.recent.open;
                 if (riseRate > averageWave * time) {
-                    const isUp = await restrain.premiseForBuy.find(item => item.key === 'bollStandardUP').method(tactics);
-                    //若未冲破UP线，将不约束，继续冲
-                    if (isUp) return true;
+                    // const isUp = await restrain.premiseForBuy.find(item => item.key === 'bollStandardUP').method(tactics);
+                    // //若未冲破UP线，将不约束，继续冲
+                    // if (isUp) return true;
                     return false;
                 }
                 return true;
@@ -244,21 +244,21 @@ const restrain = {
                 let lastriseStopLossRate = tactics.parameterBackup.riseStopLossRate;
                 if (riseRate >= 0.08) {
                     //盈利大于8个点
-                    lastriseStopLossRate = lastriseStopLossRate * (step * 1);
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 0.5);
                 } else if (riseRate >= 0.07 && riseRate < 0.08) {
-                    lastriseStopLossRate = lastriseStopLossRate * (step * 2);
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 1);
                 } else if (riseRate >= 0.06 && riseRate < 0.07) {
-                    lastriseStopLossRate = lastriseStopLossRate * (step * 3);
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 1.5);
                 } else if (riseRate >= 0.05 && riseRate < 0.06) {
-                    lastriseStopLossRate = lastriseStopLossRate * (step * 4);
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 2);
                 } else if (riseRate >= 0.04 && riseRate < 0.05) {
-                    lastriseStopLossRate = lastriseStopLossRate * (step * 5);
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 2.5);
                 } else if (riseRate >= 0.03 && riseRate < 0.04) {
-                    lastriseStopLossRate = lastriseStopLossRate * (step * 6);
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 3);
                 } else if (riseRate >= 0.02 && riseRate < 0.03) {
-                    lastriseStopLossRate = lastriseStopLossRate * (step * 7);
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 3.5);
                 } else if (riseRate >= 0.01 && riseRate < 0.02) {
-                    lastriseStopLossRate = lastriseStopLossRate * (step * 8);
+                    lastriseStopLossRate = lastriseStopLossRate * (step * 4.5);
                 } else if (riseRate < 0.01) {
                     //小于0.04，意思没动
                     lastriseStopLossRate = lastriseStopLossRate;
@@ -353,7 +353,10 @@ const restrain = {
                             console.log('未取得boll线数据：' + item.symbol);
                             return false;
                         }
-                        if (open < close && ((close >= DN && Math.abs(low - DN) < getAverageWave(symbol) / 10) || (MB < close && MB > open))) {
+                        if (open < close && //必须阳线
+                            ((close >= DN && //收盘价必须大于DN
+                                (DN < low && ((low - DN) / low < getAverageWave(symbol) / 10)) || low < DN) //最低线须与DN发生接触，如果未发生接触，距离应该是平均波动的1/10
+                                || (MB < close && MB > open))) {//或者是横穿过中线
                             //必须是阳线且收盘价大于DN，最低价与DN的距离范围为平均波动线的1/10,或者是穿过中线
                             return true;
                         };

@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 22:33:14
- * @LastEditTime: 2020-09-14 15:38:26
+ * @LastEditTime: 2020-09-17 14:40:44
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -52,21 +52,21 @@ const optionForKdj = () => ({
     },
     dataZoom: [{
         type: 'inside',
-        start: 38,
+        start: 35,
         end: 100
     },
     {
         show: true,
         height: 15,
         type: 'slider',
-        start: 38,
+        start: 35,
         end: 100,
         bottom: 2
     }],
     grid: {
         bottom: 17,
         left: 1,
-        right: 75,
+        right:'4%',
         top: 10,
         containLabel: true
     },
@@ -188,7 +188,8 @@ const option = (symbol) => {
         },
         grid: {
             bottom: 60,
-            left: 50
+            left: 50,
+            right:'3%'
         },
 
         dataZoom: [{

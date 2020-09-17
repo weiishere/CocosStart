@@ -26,6 +26,7 @@ let volumeData = [[], [], []]
 let rawData = JSON.parse(localStorage.getItem("klineDataForBs")) || []
 let markPointData = [];
 let persentPrice = 0;
+let averagePrice = 0;
 
 // function splitData(rawData) {
 //     var categoryData = [];
@@ -52,7 +53,7 @@ const option = (symbol, price) => {
         title: {
             text: `BS线(${symbol || localStorage.getItem("SymbleForBs")})`,
             left: 0,
-            subtext: `当前价格：${Number(price)}U${persentPrice ? '/入场价：' + Number(persentPrice) + 'U' : ''}`
+            subtext: `当前价格：${Number(price)}U${persentPrice ? '/入场价：' + Number(persentPrice) + 'U' : ''}${averagePrice ? '/成本均价：' + Number(averagePrice) + 'U' : ''}`
         },
         backgroundColor: '#21202D',
         tooltip: {
@@ -76,7 +77,7 @@ const option = (symbol, price) => {
         // },
         grid: {
             right: '3%',
-            bottom: '15%'
+            bottom: '17%'
         },
         xAxis: {
             type: 'category',
@@ -97,10 +98,12 @@ const option = (symbol, price) => {
             {
                 type: 'inside',
                 start: 75,
-                end: 100
+                end: 100,
+                height: 25,
             },
             {
                 show: true,
+                height: 25,
                 type: 'slider',
                 start: 75,
                 end: 100
@@ -108,7 +111,7 @@ const option = (symbol, price) => {
             {
                 textStyle: { color: '#8392A5' },
                 handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
-                handleSize: '80%',
+                handleSize: '80%', height: 25,
                 dataBackground: {
                     areaStyle: {
                         color: '#8392A5'
@@ -120,6 +123,7 @@ const option = (symbol, price) => {
                 },
                 handleStyle: {
                     color: '#fff',
+                    height: 25,
                     shadowBlur: 3,
                     shadowColor: 'rgba(0, 0, 0, 0.6)',
                     shadowOffsetX: 2,
@@ -179,7 +183,7 @@ const optionVolume = () => {
                     backgroundColor: '#6a7985'
                 }
             },
-            alwaysShowContent:true
+            hideDelay: 10000
         },
         legend: {
             data: ['买入', '卖出']
@@ -188,7 +192,7 @@ const optionVolume = () => {
             left: '5%',
             right: '3%',
             bottom: '13%',
-            top: '18%',
+            top: '20%',
             containLabel: true
         },
         xAxis: {
@@ -317,6 +321,7 @@ export default function BSLine() {
         EventHub.getInstance().addEventListener('mapTacticsList', 'bs_mapTacticsList', payload => {
             const target = payload.find(item => item.target);
             persentPrice = !target ? 0 : (target.buyState ? target.presentDeal.payPrice : 0);
+            averagePrice = !target ? 0 : (target.buyState ? target.presentDeal.averagePrice : 0);
             if (!target) return;
             if (symbol !== target.symbol) {
                 symbol && initKlineData(myChart, myVolumeChart, target.symbol);
