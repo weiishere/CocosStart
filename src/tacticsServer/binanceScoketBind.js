@@ -50,39 +50,39 @@ const targetTacticsList = (tacticsList, symbol) => tacticsList.filter(item => it
 let doneFn = [];
 
 const scoketCandles = () => {
-    const TacticesCommand = require('./TacticesCommand');
-    const symbols = Array.from(new Set(TacticesCommand.getInstance().tacticsList.map(item => item.symbol)));//获取不重复的所有symbol数据
+    const TacticesLauncher = require('./TacticesLauncher');
+    const symbols = Array.from(new Set(TacticesLauncher.getInstance().tacticsList.map(item => item.symbol)));//获取不重复的所有symbol数据
     doneFn.forEach(fn => fn());//先关闭之前的推送
     doneFn = [];//清空
     const candles5m = client.ws.candles(symbols, '5m', payload => {
-        TacticesCommand.getInstance().tacticsList.filter(item => item.symbol === payload.symbol).forEach(item => {
+        TacticesLauncher.getInstance().tacticsList.filter(item => item.symbol === payload.symbol).forEach(item => {
             item.KLineItem5m.present = payload;
             if (payload.isFinal) {
                 item.KLineItem5m.recent = payload;
-                TacticesCommand.getInstance().mapTotacticsList(item.uid, item.id);
+                TacticesLauncher.getInstance().mapTotacticsList(item.uid, item.id);
             }
         });
     });
     doneFn.push(candles5m);
     const candles1m = client.ws.candles(symbols, '1m', payload => {
         //this.scoket.emit(WsRoute.KLINE_DATA, payload);
-        TacticesCommand.getInstance().tacticsList.filter(item => item.symbol === payload.symbol).forEach(item => {
+        TacticesLauncher.getInstance().tacticsList.filter(item => item.symbol === payload.symbol).forEach(item => {
             item.KLineItem1m = payload;
             if (payload.isFinal) {
-                TacticesCommand.getInstance().mapTotacticsList(item.uid, item.id);
+                TacticesLauncher.getInstance().mapTotacticsList(item.uid, item.id);
             }
         });
     })
     doneFn.push(candles1m);
     symbols.forEach(symbol => {
         const partialDepth = client.ws.partialDepth({ symbol, level: 10 }, depth => {
-            TacticesCommand.getInstance().tacticsList.filter(item => item.symbol === depth.symbol).forEach(item => item.depth = depth);
+            TacticesLauncher.getInstance().tacticsList.filter(item => item.symbol === depth.symbol).forEach(item => item.depth = depth);
         })
         doneFn.push(partialDepth);
     })
 
     const trades = client.ws.trades(symbols, trade => {
-        TacticesCommand.getInstance().tacticsList.filter(item => item.symbol === trade.symbol).forEach(item => {
+        TacticesLauncher.getInstance().tacticsList.filter(item => item.symbol === trade.symbol).forEach(item => {
             //item.pushTrade(trade);
             item.presentPrice = Number(trade.price);
             item.presentTrade = trade;
@@ -90,7 +90,7 @@ const scoketCandles = () => {
     });
     doneFn.push(trades);
     const ticker = client.ws.ticker(symbols, ticker => {
-        TacticesCommand.getInstance().tacticsList.filter(item => item.symbol === ticker.symbol).forEach(item => { item.ticker = ticker; });
+        TacticesLauncher.getInstance().tacticsList.filter(item => item.symbol === ticker.symbol).forEach(item => { item.ticker = ticker; });
     })
     doneFn.push(ticker);
 }

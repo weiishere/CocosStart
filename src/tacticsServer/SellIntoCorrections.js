@@ -12,6 +12,7 @@ const restrainGroup = require('./restrainGroup');
 const { client } = require('../lib/binancer');
 const { scoketCandles } = require('./binanceScoketBind');
 const LoadUpBuyHelper = require('./LoadUpBuyHelper')
+const TacticesHelper = require('./TacticesHelper')
 
 module.exports = class SellIntoCorrections extends Tactics {
     constructor(uid, name, parameter) {
@@ -126,15 +127,18 @@ module.exports = class SellIntoCorrections extends Tactics {
         }
         //加仓对象
         this.loadUpBuyHelper = new LoadUpBuyHelper(this);
+        this.tacticesHelper = new TacticesHelper(this);
     }
     /**初始化，启动的时候调用 */
     async initialize(symbol) {
         //if (this.runState) return false;//运行期间不允许更改
         this.symbol = symbol;
-        this.symbolInfo = await require('./TacticesCommand').getInstance().getExchangeInfo(this.symbol);
-        //初始化时给点5分线数据
-        client.candles({ symbol, interval: '5m', limit: 1 }).then(data => this.KLineItem5m.present = data[0]);
-        await this.getPresentPrice(true);//获取最新价格
+        this.symbolInfo = await require('./TacticesLauncher').getInstance().getExchangeInfo(this.symbol);
+        //初始化时给点5/1分线数据
+        //client.candles({ symbol, interval: '5m', limit: 1 }).then(data => this.KLineItem5m.present = data[0]);
+        this.KLineItem5m.present = (await client.candles({ symbol, interval: '5m', limit: 1 }))[0];
+        this.KLineItem1m = (await client.candles({ symbol, interval: '1m', limit: 1 }))[0];
+        await this.tacticesHelper.getPresentPrice(true);//获取最新价格
         scoketCandles();
     }
     /**添加历史记录:isDouble：如果重复两条记录，是否允许重复添加
@@ -146,7 +150,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         if (isDouble && this.history.length !== 0 && this.history[this.history.length - 1].type === type && this.history[this.history.length - 1].content === content) {
             this.historyDoubleCount++;
             this.history[this.history.length - 1].time = Date.parse(new Date());
-            require('./TacticesCommand').getInstance().pushHistory(this.uid, this.id, {
+            require('./TacticesLauncher').getInstance().pushHistory(this.uid, this.id, {
                 history: this.history,
                 historyForDeal: this.historyForDeal
             });
@@ -176,17 +180,17 @@ module.exports = class SellIntoCorrections extends Tactics {
             }
         }
         if (theOption.isMap) {
-            require('./TacticesCommand').getInstance().mapTotacticsList(this.uid, this.id, (type === 'profitChange' ? false : true));
+            require('./TacticesLauncher').getInstance().mapTotacticsList(this.uid, this.id, (type === 'profitChange' ? false : true));
         }
-        require('./TacticesCommand').getInstance().pushHistory(this.uid, this.id, {
+        require('./TacticesLauncher').getInstance().pushHistory(this.uid, this.id, {
             history: this.history,
             historyForDeal: this.historyForDeal
         });
-        //if (this.presentSymbleId === this.id) _tacticesCommand.mapTotacticsList(this.uid, _tacticesCommand.presentSymbleId, true);
+        //if (this.presentSymbleId === this.id) _tacticesLauncher.mapTotacticsList(this.uid, _tacticesLauncher.presentSymbleId, true);
     }
     /**寻找新币，返回待选列表，和当前用户下的实例中，此实例用到的交易对（可能排名前面的正在使用中） */
     async findSymbol() {
-        let symbolList = require('./TacticesCommand').getInstance().allTicker.map(({ symbol, priceChangePercent, high, low, volume, volumeQuote, totalTrades, curDayClose }) => ({
+        let symbolList = require('./TacticesLauncher').getInstance().allTicker.map(({ symbol, priceChangePercent, high, low, volume, volumeQuote, totalTrades, curDayClose }) => ({
             symbol: symbol, score: 0,
             data: {
                 priceChangePercent, high, low, volume, volumeQuote, totalTrades, curDayClose
@@ -206,20 +210,20 @@ module.exports = class SellIntoCorrections extends Tactics {
         }
         symbols = Array.from(new Set(symbols));//去重!!!这里要考虑一下symbol排序优先级
         //const symbols = a.concat(b.filter(v => !a.includes(v)));
-        let chooseSymbol = '';
+        let chooseItem = '';
         if (symbols.length !== 0) {
-            const tacticsList = require('./TacticesCommand').getInstance().tacticsList;
+            const tacticsList = require('./TacticesLauncher').getInstance().tacticsList;
             for (let i = 0; i < symbols.length; i++) {
                 if (tacticsList.some(item => (item.symbol === symbols[i].symbol && item.id !== this.id))) {
                     continue;
                 } else {
-                    chooseSymbol = symbols[i].symbol;
+                    chooseItem = symbols[i].symbol;
                     break;
                 }
             }
         }
-        require('./TacticesCommand').getInstance().pushBetterSymbol(this.uid, this.id, symbols);
-        return { symbols, chooseItem: chooseSymbol };
+        require('./TacticesLauncher').getInstance().pushBetterSymbol(this.uid, this.id, symbols);
+        return { symbols, chooseItem };
     }
     /**切币函数，返回false则停止，返回true继续*/
     async checkChangeSymbol() {
@@ -305,7 +309,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             //开始运行
             let fn = async () => {
                 clearTimeout(this.mainTimer);
-                checkRate = this.buyState ? this.parameter.checkSellRate : this.parameter.checkBuyRate;
+                const checkRate = this.buyState ? this.parameter.checkSellRate : this.parameter.checkBuyRate;
                 //高级
                 let allowResult = this.advancedOption.premiseForBase.length === 0 ? true : false;//如果没有约束则直接放过
                 for (let i = 0; i < restrainGroup.premiseForBase.length; i++) {
@@ -444,12 +448,12 @@ module.exports = class SellIntoCorrections extends Tactics {
             const _riseBuyRange = Math.abs(this.KLineItem5m.present.close - this.KLineItem5m.present.open) / this.KLineItem5m.present.open;
             if (_riseBuyRange > this.parameter.riseBuyRange) {
                 //记录当前价格
-                const tempPrice = await this.getPresentPrice();//await Helper.getInstance(this).getPresentPrice();
+                const tempPrice = await this.tacticesHelper.getPresentPrice();
                 //console.log(Number(tempPrice) === this.presentPrice ? '价格一致' : '不一致'); console.log(tempPrice + "--" + this.presentPrice);
                 this.addHistory('info', `最近5分线上涨幅度${_riseBuyRange}，超过${this.parameter.riseBuyRange}，获取当前价格${Number(tempPrice)}，等待${this.parameter.riseStayCheckRateForBuy / 1000}s后价格...`);
                 return await new Promise((resolve) => {
                     setTimeout(async () => {
-                        const price = await this.getPresentPrice();//await Helper.getInstance(this).getPresentPrice();
+                        const price = await this.tacticesHelper.getPresentPrice();
                         //console.log(Number(price) === this.presentPrice ? '价格一致' : '不一致'); console.log(price + "--" + this.presentPrice);
                         if (price - tempPrice < 0) {
                             this.addHistory('info', `${this.parameter.riseStayCheckRateForBuy / 1000}s后差价为${Number(price - tempPrice)},出现下跌，重新等待入场时机...`);
@@ -614,54 +618,12 @@ module.exports = class SellIntoCorrections extends Tactics {
     /**理论利润，用于即时计算利润（通过深度图），即若按照当前价格卖掉，获得的回报减去成本价 */
     getProfit(amount, istheoryPrice) {
         let _amount = amount || this.presentDeal.amount;
-        if (istheoryPrice) return Number(_amount * this.getTheoryPrice(_amount).avePrive * (1 - this.parameter.serviceCharge) - this.presentDeal.costing);
+        if (istheoryPrice) return Number(_amount * this.tacticesHelper.getTheoryPrice(_amount).avePrive * (1 - this.parameter.serviceCharge) - this.presentDeal.costing);
         return Number(_amount * this.presentPrice * (1 - this.parameter.serviceCharge) - this.presentDeal.costing);
-    }
-    /**通过深度图获取可能最终成交的理论交易模型和理论均价 */
-    getTheoryPrice(amount) {
-        let _amount = 0;
-        let total = 0, avePrive = 0;
-        let tradesList = [];
-        //if (!this.imitateRun) {
-        for (let i = 0; i < this.depth.bids.length; i++) {
-            const item = this.depth.bids[i];
-            if (_amount < amount) {
-                const singleTradesAmount = item.quantity > amount - _amount ? amount - _amount : item.quantity;
-                tradesList.push({
-                    price: item.price,
-                    amount: singleTradesAmount
-                });
-                total += item.price * singleTradesAmount;
-                _amount += singleTradesAmount;
-            } else {
-                break;
-            }
-        }
-        avePrive = total / amount;
-        // } else {
-        //     tradesList.push({ price: this.presentPrice, amount: amount });
-        //     avePrive = this.presentPrice;
-        // }
-        return {
-            tradesList,
-            avePrive
-        };
-    }
-    /**获取瞬时市场价格(应该只用于检测入场的时候使用这个，在卖出的时候都应该通过深度图获取理论交易价来判断) */
-    async getPresentPrice(newPrice) {
-        if (this.presentPrice && !newPrice) return this.presentPrice;
-        try {
-            const allPrice = await client.prices();
-            this.presentPrice = allPrice[this.symbol];
-            return allPrice[this.symbol];
-        } catch (e) {
-            console.log('获取最新价格失败:' + e)
-            return this.presentPrice;
-        }
     }
     /**第二个参数amount用于补仓(buy时使用),其他时候不要用 */
     async deal(order, amount) {
-        const price = this.presentPrice = await this.getPresentPrice(true);
+        const price = this.presentPrice = await this.tacticesHelper.getPresentPrice(true);
         this.checkSymbolTime = 10;
         this.checkBuyTime = 0;
         if (order === 'buy') {
@@ -708,7 +670,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                         symbol: this.symbol,
                         type: 'MARKET',
                         side: 'BUY',
-                        quantity: this.getDecimalsForCount(dealAmount / price)
+                        quantity: this.tacticesHelper.getDecimalsForCount(dealAmount / price)
                     });
                     this.presentDeal.buyOrderInfo = { type, transactTime, executedQty, orderId, origQty, fills, symbol, commission: 0, tradesDoneQuantity: 0, tradesDoneAmount: 0 };
                     this.presentDeal.orderId = this.presentDeal.buyOrderInfo.orderId;
@@ -813,37 +775,10 @@ module.exports = class SellIntoCorrections extends Tactics {
             this.roundRunTime = 0;
             //if (this.nextSymbol) this.symbol = this.nextSymbol;//出场成功之后切换币
         }
-        this.resetParam();//重置参数
+        this.tacticesHelper.resetParam();//重置参数
         this.riseTimer && clearTimeout(this.riseTimer);
         return true;
     }
-    /**根据步长取小数 */
-    getDecimalsForCount(quantity) {
-        const stepSize = +this.symbolInfo.filters.find(item => item.filterType === 'LOT_SIZE').stepSize;
-        let sizeStep = 0;
-        while (stepSize * Math.pow(10, sizeStep) < 1) { sizeStep++; }
-        return +quantity.toFixed(sizeStep);
-    }
-    /**重置基本参数 */
-    resetParam(key) {
-        if (key) {
-            this.parameter[key] = this.parameterBackup[key];
-        } else {
-            this.parameter = Object.assign({}, this.parameterBackup);
-        }
-    }
-    /**获取波动速度列表，level是取最近的变更值深度，越深越准，值必须大于等于1，小于等于20 */
-    getWaveSpeedList(level) {
-        if (this.presentSpeedArr.length <= 1) return [];
-        const arr = [...this.presentSpeedArr].splice(this.presentSpeedArr.length - level + 2);
-        let speedArr = [];
-        for (let i = 0, l = arr.length; i < l; i++) {
-            if (i !== 0) {
-                speedArr.push((arr[i] - arr[i - 1]));
-            }
-        }
-        return speedArr;
-    };
     getInfo() {
         let result = {};
         ['id',
@@ -905,5 +840,4 @@ module.exports = class SellIntoCorrections extends Tactics {
             'buyState'].forEach(item => result[item] = this[item]);
         return result;
     }
-
 }

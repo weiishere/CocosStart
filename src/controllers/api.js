@@ -7,7 +7,7 @@
  * @~~
  */
 const { Symbol } = require('../db');
-const { TacticesCommand } = require('../tacticsServer')
+const { TacticesLauncher } = require('../tacticsServer')
 const { apiDateCode, System } = require('../config');
 const dateFormat = require('format-datetime');
 
@@ -21,7 +21,7 @@ module.exports = {
         code: apiDateCode.nullError
       }
     } else {
-      const result = TacticesCommand.getInstance().initTactics(uid, symbol, name || '', {});
+      const result = TacticesLauncher.getInstance().initTactics(uid, symbol, name || '', {});
       if (result) {
         resultData = {
           code: apiDateCode.success,
@@ -41,16 +41,16 @@ module.exports = {
         code: apiDateCode.nullError
       }
     } else {
-      const _tacticesCommand = TacticesCommand.getInstance();
-      const tactice = _tacticesCommand.tacticsList.find(item => item.id === tid);
-      if (tacticesCommand.tacticsList.some(item => (item.symbol === symbol && item.id !== tid))) {
+      const _tacticesLauncher = TacticesLauncher.getInstance();
+      const tactice = _tacticesLauncher.tacticsList.find(item => item.id === tid);
+      if (_tacticesLauncher.tacticsList.some(item => (item.symbol === symbol && item.id !== tid))) {
         resultData = {
           msg: '已经存在此交易对的实例，不可重复添加~',
           code: apiDateCode.logicError
         }
       } else {
         tactice.initialize(symbol);
-        _tacticesCommand.mapTotacticsList(tactice.uid, tactice.id, true);
+        _tacticesLauncher.mapTotacticsList(tactice.uid, tactice.id, true);
         resultData = {
           code: apiDateCode.success,
           data: tactice ? tactice.getInfo() : {}
@@ -70,9 +70,9 @@ module.exports = {
         code: apiDateCode.nullError
       }
     } else {
-      const _tacticesCommand = TacticesCommand.getInstance();
-      const tactics = _tacticesCommand.mapTotacticsList(uid, id, true);
-      tactics && _tacticesCommand.pushHistory(uid, id, {
+      const _tacticesLauncher = TacticesLauncher.getInstance();
+      const tactics = _tacticesLauncher.mapTotacticsList(uid, id, true);
+      tactics && _tacticesLauncher.pushHistory(uid, id, {
         history: tactics.history,
         historyForDeal: tactics.historyForDeal
       });
@@ -93,8 +93,8 @@ module.exports = {
         code: apiDateCode.nullError
       }
     } else {
-      const _tacticesCommand = TacticesCommand.getInstance();
-      const tactices = _tacticesCommand.tacticsList.find(item => item.id == tid);
+      const _tacticesLauncher = TacticesLauncher.getInstance();
+      const tactices = _tacticesLauncher.tacticsList.find(item => item.id == tid);
       if (!tactices) {
         resultData = {
           msg: 'tacticsOrder:未找到对于的实例',
@@ -129,10 +129,10 @@ module.exports = {
             break;
           case 'remove':
             //删除实例
-            _tacticesCommand.removeTactics(tid);
+            _tacticesLauncher.removeTactics(tid);
             break;
         }
-        _tacticesCommand.mapTotacticsList(tactices.uid, tactices.id, true);
+        _tacticesLauncher.mapTotacticsList(tactices.uid, tactices.id, true);
         resultData = {
           code: apiDateCode.success,
           data: tactices ? tactices.getInfo() : {}
@@ -145,8 +145,8 @@ module.exports = {
   },
   updateParameter: async (ctx, next) => {
     const { id, key, value } = ctx.request.body;
-    const _tacticesCommand = TacticesCommand.getInstance();
-    const tactices = _tacticesCommand.tacticsList.find(item => item.id == id);
+    const _tacticesLauncher = TacticesLauncher.getInstance();
+    const tactices = _tacticesLauncher.tacticsList.find(item => item.id == id);
     let resultData = {};
     if (tactices) {
       tactices.parameterBackup[key] = tactices.parameter[key] = value;
@@ -154,7 +154,7 @@ module.exports = {
         code: apiDateCode.success,
         data: tactices.getInfo()
       }
-      _tacticesCommand.mapTotacticsList(tactices.uid, id, true);
+      _tacticesLauncher.mapTotacticsList(tactices.uid, id, true);
     } else {
       resultData = {
         msg: 'updateParameter:未找到对应的实例',
@@ -183,8 +183,8 @@ module.exports = {
   },
   updateAdvancedRestran: async (ctx, next) => {
     const { id, item, keys } = ctx.request.body;
-    const _tacticesCommand = TacticesCommand.getInstance();
-    const tactices = _tacticesCommand.tacticsList.find(item => item.id == id);
+    const _tacticesLauncher = TacticesLauncher.getInstance();
+    const tactices = _tacticesLauncher.tacticsList.find(item => item.id == id);
     let resultData = {};
     if (tactices) {
       if (item === 'premiseJoin') {
@@ -209,7 +209,7 @@ module.exports = {
   //刷新推荐币
   refreshSymbol: async (ctx, next) => {
     const { tid } = ctx.query;
-    const tactices = TacticesCommand.getInstance().tacticsList.find(item => item.id == tid);
+    const tactices = TacticesLauncher.getInstance().tacticsList.find(item => item.id == tid);
     let resultData = {};
     if (tactices) {
       const { symbols } = await tactices.findSymbol();
@@ -247,8 +247,8 @@ module.exports = {
         code: apiDateCode.nullError
       }
     }
-    const _tacticesCommand = TacticesCommand.getInstance();
-    const tactices = _tacticesCommand.tacticsList.find(item => item.id == tid);
+    const _tacticesLauncher = TacticesLauncher.getInstance();
+    const tactices = _tacticesLauncher.tacticsList.find(item => item.id == tid);
     order = order + '';
     if (order === '1') {
       tactices.history = tactices.history.filter(item => !(item.type === 'info' && item.color === '#999'));
@@ -258,8 +258,8 @@ module.exports = {
       tactices.history = tactices.history.filter(item => !(item.type === 'buy' || item.type === 'sell'));
       tactices.historyForDeal = [];
     }
-    //_tacticesCommand.mapTotacticsList(tactices.uid, tid, true);
-    _tacticesCommand.pushHistory(tactices.uid, tactices.id, {
+    //_tacticesLauncher.mapTotacticsList(tactices.uid, tid, true);
+    _tacticesLauncher.pushHistory(tactices.uid, tactices.id, {
       history: tactices.history,
       historyForDeal: tactices.historyForDeal
     });

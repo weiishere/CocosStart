@@ -8,10 +8,10 @@
  */
 
 
-const TacticesCommand = require('./TacticesCommand');
+const TacticesLauncher = require('./TacticesLauncher');
 const SellIntoCorrections = require('./SellIntoCorrections');
 
 module.exports = {
-    TacticesCommand,
+    TacticesLauncher,
     SellIntoCorrections
 }

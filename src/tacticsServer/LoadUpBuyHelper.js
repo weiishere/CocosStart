@@ -74,7 +74,7 @@ module.exports = class LoadUpBuyHelper {
     }
     run(roundId) {
         this.roundId = roundId;
-        //const tactices = require('./TacticesCommand').getInstance().tacticsList.find(item => item.id === tid);
+        //const tactices = require('./TacticesLauncher').getInstance().tacticsList.find(item => item.id === tid);
         if (this.mod === 'step') {
             const result = this.stepCheck();
             if (result) {

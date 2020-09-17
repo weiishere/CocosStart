@@ -6,7 +6,7 @@
  * @Description: 
  * @~~
  */
-const { TacticesCommand } = require('../tacticsServer')
+const { TacticesLauncher } = require('../tacticsServer')
 const { apiDateCode, System } = require('../config');
 
 const userList = [

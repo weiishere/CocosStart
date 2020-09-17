@@ -11,8 +11,8 @@ const ScoketRoutes = require('./routes/scoket-router');
 // const JSONTransport = require('nodemailer/lib/json-transport');
 // const router = new KoaRouter();
 const { userRooms } = require('./controllers/user');
-const { TacticesCommand } = require('./tacticsServer');
-const _tacticesCommand = TacticesCommand.getInstance();
+const { TacticesLauncher } = require('./tacticsServer');
+const _tacticesLauncher = TacticesLauncher.getInstance();
 let timer;
 
 module.exports = function serverScoket(app) {
@@ -21,14 +21,14 @@ module.exports = function serverScoket(app) {
     io.on('connection', socket => {
         ScoketRoutes(socket);
     })
-    _tacticesCommand.setScoket(io);
+    _tacticesLauncher.setScoket(io);
     timer = setInterval(() => {
-        if (_tacticesCommand.isRateDone) {
-            userRooms.forEach(room => _tacticesCommand.mapTotacticsList(room.uid, true)
+        if (_tacticesLauncher.isRateDone) {
+            userRooms.forEach(room => _tacticesLauncher.mapTotacticsList(room.uid, true)
             );
         } else {
             //如果手动调取过mapTotacticsList方法
-            _tacticesCommand.isRateDone = true;
+            _tacticesLauncher.isRateDone = true;
         }
     }, 5000);
     return server;

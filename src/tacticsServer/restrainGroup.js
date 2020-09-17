@@ -78,7 +78,7 @@ const restrain = {
                         await tactics.initialize(chooseItem);//切币
                         //await tactics.powerSwitch();
                         //if (isNowBuy) await tactics.deal('buy');
-                        require('./TacticesCommand').getInstance().mapTotacticsList(tactics.uid, tactics.id, true);
+                        require('./TacticesLauncher').getInstance().mapTotacticsList(tactics.uid, tactics.id, true);
                         return true;
                     }
                     tactics.addHistory('info', `在切币驱动模式下检测到新币且满足切币条件，但不满足出场条件(亏损大于${maxLoss})，继续观察...`, true, { color: "#85A3FF" });
@@ -190,7 +190,7 @@ const restrain = {
             param: { scond: 10, maxRiseRate: 0.001, riseRate: 0.01 },
             method: async (tactics) => {
                 const { scond, maxRiseRate, riseRate } = getParam('premiseForSell', 'fastRise');
-                const speed = tactics.getWaveSpeedList(scond);
+                const speed = tactics.tacticesHelper.getWaveSpeedList(scond);
                 for (let i = 0, l = speed.length; i < l; i++) {
                     if (speed[i] / tactics.presentSpeedArr[tactics.presentSpeedArr - i - 1] > maxRiseRate) return false;
                 }
@@ -205,7 +205,7 @@ const restrain = {
             method: async (tactics) => {
                 if (tactics.presentDeal.historyProfit > 0) return false;
                 const { scond, riseRate } = getParam('premiseForSell', 'awaysRise');
-                const speed = tactics.getWaveSpeedList(scond);
+                const speed = tactics.tacticesHelper.getWaveSpeedList(scond);
                 for (let i = 0, l = speed.length; i < l; i++) {
                     if (speed[i] > 0) return false;
                 }
@@ -221,7 +221,7 @@ const restrain = {
             desc: '24小时ticker动态调整止损值：(当天最高价-当天开盘价) / 当天开盘价',
             param: {},
             method: async (tactics) => {
-                // const allTicker = require('./TacticesCommand').getInstance().allTicker;
+                // const allTicker = require('./TacticesLauncher').getInstance().allTicker;
                 // let ticker = [];
                 if (tactics.ticker) {
                     const _stopLossRate = +((tactics.ticker.high - tactics.ticker.open) / tactics.ticker.open).toFixed(2);
@@ -419,7 +419,7 @@ const restrain = {
             },
             method: async (lastSymbolList, tactics) => {
                 const { blackList, forbid } = getParam('symbolElecter', 'blacklist');
-                //const allSymbols = require('./TacticesCommand').getInstance().allTicker;
+                //const allSymbols = require('./TacticesLauncher').getInstance().allTicker;
                 let list = [];
                 forbid.forEach(element => {
                     list = list.concat(blackList[element]);
@@ -451,7 +451,7 @@ const restrain = {
             },
             method: async (lastSymbolList, tactics) => {
                 const { maxVolumeQuote, maxBalance } = getParam('symbolElecter', 'history24h');
-                const riseSymbols = require('./TacticesCommand').getInstance().allTicker.filter(item => +item.priceChangePercent > 0);
+                const riseSymbols = require('./TacticesLauncher').getInstance().allTicker.filter(item => +item.priceChangePercent > 0);
                 const maxRise = riseSymbols.reduce((pre, cur) => pre + (+cur.priceChangePercent), 0) / riseSymbols.length;//最高涨幅，取为上涨币种的平均上涨值
                 let resultList = [];
                 let index = 100000;//推荐级别十万位

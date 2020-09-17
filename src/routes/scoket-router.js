@@ -12,12 +12,12 @@
 const { connectStomp, disConnectStomp } = require('../tool/StompInstance')
 const { WsConfig, WsRoute } = require('../config')
 const { price_change_url } = WsConfig;
-const { TacticesCommand } = require('../tacticsServer')
+const { TacticesLauncher } = require('../tacticsServer')
 const { userRooms } = require('../controllers/user')
 let timer;
 
 module.exports = (scoket, io) => {
-    const _tacticesCommand = TacticesCommand.getInstance();
+    const _tacticesLauncher = TacticesLauncher.getInstance();
     let userId;
     let tacticsId;
     scoket.on('triggerWs', data => {
@@ -37,11 +37,11 @@ module.exports = (scoket, io) => {
         const r = userRooms.find(item => item.uid === uid);
         if (r) {
             //tid中不能存在重复的scoketId，且tid必须有效（存在于tacticsList）
-            if (!r.tids.some(item => item.scoketId === scoket.id) && (!tid || _tacticesCommand.tacticsList.some(item => item.id === tid))) {
+            if (!r.tids.some(item => item.scoketId === scoket.id) && (!tid || _tacticesLauncher.tacticsList.some(item => item.id === tid))) {
                 r.tids.push({ tid, scoketId: scoket.id });
             }
         } else {
-            if (_tacticesCommand.tacticsList.some(item => item.id === tid)) {
+            if (_tacticesLauncher.tacticsList.some(item => item.id === tid)) {
                 userRooms.push({ uid, tids: [{ tid, scoketId: scoket.id }] });
             } else {
                 userRooms.push({ uid, tids: [] });
@@ -56,12 +56,12 @@ module.exports = (scoket, io) => {
             if (tidObj) {
                 tidObj.tid = tid;
             } else {
-                if (!r.tids.some(item => item.scoketId === scoket.id) && _tacticesCommand.tacticsList.some(item => item.id === tid)) {
+                if (!r.tids.some(item => item.scoketId === scoket.id) && _tacticesLauncher.tacticsList.some(item => item.id === tid)) {
                     r.tids.push({ tid, scoketId: scoket.id });
                 }
             }
-            const tactics = _tacticesCommand.mapTotacticsList(r.uid, tid, true);
-            tactics && _tacticesCommand.pushHistory(r.uid, tid, {
+            const tactics = _tacticesLauncher.mapTotacticsList(r.uid, tid, true);
+            tactics && _tacticesLauncher.pushHistory(r.uid, tid, {
                 history: tactics.history,
                 historyForDeal: tactics.historyForDeal
             });

@@ -15,7 +15,7 @@ const { Task } = require('../db');
 const { reExecute } = require('../tool/Common');
 //const { scoketCandles } = require('./binanceScoketBind');
 
-module.exports = class TacticesCommand {
+module.exports = class TacticesLauncher {
     constructor() {
         this.scoketIO;
         this.isDone = false;
@@ -30,10 +30,10 @@ module.exports = class TacticesCommand {
 
     }
     static getInstance() {
-        if (!this.tacticesCommand) {
-            this.tacticesCommand = new TacticesCommand();
+        if (!this.tacticesLauncher) {
+            this.tacticesLauncher = new TacticesLauncher();
         }
-        return this.tacticesCommand;
+        return this.tacticesLauncher;
     }
     async syncDataGo() {
         await this.syncData();
