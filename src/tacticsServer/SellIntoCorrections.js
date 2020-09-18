@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-09-17 18:58:25
+ * @LastEditTime: 2020-09-18 17:51:48
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -45,6 +45,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.history = []
         this.depth = null;//深度
         this.ticker = null;
+        this.avSpeed = 0;//平均速度
         //关于交易的一些历史记录（用于BS线）
         this.historyForDeal = [];
         this.checkBuyTime = 0;
@@ -298,6 +299,8 @@ module.exports = class SellIntoCorrections extends Tactics {
     /** 接收每次推过来的交易信息，如果有符合当前正在交易的数据，就要截获数据  */
     pushTrade(trade) {
         this.presentTrade = trade;
+        const speed = this.loadUpBuyHelper.getWaveSpeedList(21);
+        this.avSpeed = speed.reduce((pre, cur) => Math.abs(pre) + Math.abs(cur), 0) / speed.length;
     }
     /**nowBuy=true表示跳过入场判断，立即入场 */
     async powerSwitch(nowBuy) {
@@ -305,6 +308,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.runState = true;
         this.checkSymbolTime = 10;
         this.checkBuyTime = 0;
+        this.tacticesHelper.resetParam();//重置参数
         this.addHistory('order', `实例将${(this.runState ? "开始运行" : "停止")}${this.imitateRun ? "模拟程序" : ""}`, true, { isMap: true, color: '#04ce55' });
         if (this.runState) {
             //开始运行
@@ -522,7 +526,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 //利润下降（出现拐点）判断亏损率
                 const diff = this.presentDeal.historyProfit - _profit;//相比上次降低的利润
                 const _riseStopLossRate = (diff / this.presentDeal.historyProfit) * 100;
-                
+
                 if (_riseStopLossRate > this.parameter.riseStopLossRate) {
                     this.addHistory('info', `盈利下降，且大于止盈拐点，剩余盈利率：` + _profit / this.presentDeal.costing, true);
                     //亏损率大于一个值,判断当前盈利率，选择是否止盈
@@ -690,7 +694,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                     });
                     this.presentDeal.payPrice = this.presentDeal.buyOrderInfo.tradesDoneAmount / this.presentDeal.buyOrderInfo.tradesDoneQuantity;
                     this.presentDeal.amount += this.presentDeal.buyOrderInfo.tradesDoneQuantity;//购买的数量
-                    this.presentDeal.costing += this.presentDeal.buyOrderInfo.tradesDoneAmount * (1 + this.parameter.serviceCharge);//实际成本，需加收手续费
+                    this.presentDeal.costing += (this.presentDeal.buyOrderInfo.tradesDoneAmount * this.presentDeal.payPrice) * (1 + this.parameter.serviceCharge);//实际成本，需加收手续费
                     this.presentDeal.averagePrice = this.presentDeal.costing / this.presentDeal.amount;//均价：所有价格除以购买数量
                     this.addHistory('buy', {
                         symbol: this.symbol,
@@ -780,6 +784,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                     console.error(e);
                 }
             }
+            this.loadUpBuyHelper.loadUpList = this.loadUpBuyHelper.loadUpList.filter(item => item.roundId === this.roundId);
             this.roundId = Date.parse(new Date());//下一回合
             this.roundRunTime = 0;
             //if (this.nextSymbol) this.symbol = this.nextSymbol;//出场成功之后切换币
@@ -798,7 +803,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             'parameterDesc',
             'presentDeal',
             'roundId',
-            // 'history',
+            'avSpeed',
             'historyForDeal',
             'checkBuyTime',
             'runState',
@@ -831,6 +836,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             'buyState',
             'imitateRun',
             'profitSymbol',
+            'parameterBackup',
             'advancedOption'].forEach(item => result[item] = this[item]);
         result['loadUpBuyHelper'] = JSON.stringify(this.loadUpBuyHelper.getInfo());
         return result;

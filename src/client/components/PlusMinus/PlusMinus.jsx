@@ -45,9 +45,9 @@ const option = () => {
             }
         },
         grid: {
-            top: 80,
+            top: '27%',
             bottom: 30,
-            right:20
+            right:20,
         },
         yAxis: {
             type: 'value',

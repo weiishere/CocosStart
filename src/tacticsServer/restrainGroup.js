@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-14 13:49:13
- * @LastEditTime: 2020-09-17 19:05:06
+ * @LastEditTime: 2020-09-18 16:57:25
  * @LastEditors: weishere.huang
  * @Description: premiseForBuy：不能进，premiseForSell：必须出
  * @~~
@@ -186,15 +186,26 @@ const restrain = {
         {
             key: 'fastRise',
             label: '波动出现高速下跌',
-            desc: '无论盈亏，10秒内的取样值(相对上一秒价格)涨跌幅都没高于0.001个点,每次采样的变化速率都是跌，且10秒累计下跌量相对10秒前价格跌幅超过1个点，要预防插针请关闭',
-            param: { scond: 10, maxRiseRate: 0.001, riseRate: 0.01 },
+            desc: '无论盈亏，20秒内的取样值(相对上一秒价格)80%以上都是跌，且10秒累计下跌量相对10秒前价格跌幅超过平均波动的5倍，要预防插针请关闭',
+            param: { scond: 20, maxRiseRate: 1, riseRate: 0.01 },
             method: async (tactics) => {
                 const { scond, maxRiseRate, riseRate } = getParam('premiseForSell', 'fastRise');
-                const speed = tactics.tacticesHelper.getWaveSpeedList(scond);
+                const speed = tactics.tacticesHelper.getWaveSpeedList(scond + 1);
+                const avgWave = getAverageWave(tactics.symbol);
+                let justCount = 0;
                 for (let i = 0, l = speed.length; i < l; i++) {
-                    if (speed[i] / tactics.presentSpeedArr[tactics.presentSpeedArr - i - 1] > maxRiseRate) return false;
+                    //if (speed[i] / tactics.presentSpeedArr[tactics.presentSpeedArr.length - i - 1] > maxRiseRate) return false;
+                    if (speed[i] > 0) {
+                        justCount++;
+                        if (justCount === 4) return false;
+                    }
                 }
-                return speed.reduce((pre, cur) => pre + cur, 0) / tactics.presentSpeedArr[tactics.presentSpeedArr.length - scond] < -riseRate ? true : false;
+                const result = speed.reduce((pre, cur) => pre + cur, 0) < -avgWave * 5 ? true : false;
+                // if (result) {
+                //     console.log('speed', speed);
+                //     console.log('presentSpeedArr', tactics.presentSpeedArr);
+                // }
+                return result;
             }
         },
         {
@@ -265,7 +276,7 @@ const restrain = {
                 }
                 if (lastriseStopLossRate !== tactics.parameter.riseStopLossRate) {
                     tactics.parameter.riseStopLossRate = lastriseStopLossRate;
-                    tactics.addHistory('info', `止盈点已经动态调整为：${tactics.parameter.riseStopLossRate}%`, true, { color: "#dee660", subType: 'dp' });
+                    tactics.addHistory('info', `盈利为${riseRate}，止盈点已经动态调整为：${tactics.parameter.riseStopLossRate}%`, true, { color: "#dee660", subType: 'dp' });
                 }
 
             }
@@ -396,7 +407,7 @@ const restrain = {
                     return lastSymbolList.filter(item => {
                         const symbolObj = symbolStorage[item.symbol];
                         if (!symbolObj) {
-                            console.log(item.symbol)
+                            //console.log(item.symbol)
                             return false;
                         }
                         return (fn(symbolObj, symbolObj.KDJ5m.length - 1) || fn(symbolObj, symbolObj.KDJ5m.length - 2));

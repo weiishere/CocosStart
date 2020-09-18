@@ -67,13 +67,19 @@ module.exports = class TacticsHelper {
     /**获取波动速度列表，level是取最近的变更值深度，越深越准，值必须大于等于1，小于等于20 */
     getWaveSpeedList(level) {
         if (this.tactices.presentSpeedArr.length <= 1) return [];
-        const arr = [...this.tactices.presentSpeedArr].splice(this.tactices.presentSpeedArr.length - level + 2);
+        const arr = [...this.tactices.presentSpeedArr].splice(this.tactices.presentSpeedArr.length - level);
+
         let speedArr = [];
-        for (let i = 0, l = arr.length; i < l; i++) {
-            if (i !== 0) {
-                speedArr.push((arr[i] - arr[i - 1]));
-            }
-        }
+        arr.reduce((pre, cur) => {
+            //console.log(pre,cur);
+            speedArr.push(cur - pre);
+            return cur;
+        })
+        // for (let i = 0, l = arr.length; i < l; i++) {
+        //     if (i !== 0) {
+        //         speedArr.push((arr[i] - arr[i - 1]));
+        //     }
+        // }
         return speedArr;
     };
 }

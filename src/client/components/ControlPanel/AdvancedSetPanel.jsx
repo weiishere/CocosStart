@@ -15,6 +15,7 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
     const [paramters, setParamters] = React.useState(paramter);
     const [advancedRestran, setAdvancedRestran] = React.useState(null);
     const [advancedOption, setAdvancedOption] = React.useState(tactice.advancedOption);
+    const [loadUpBuyHelper, setLoadUpBuyHelper] = React.useState(tactice.loadUpBuyHelper);
     const setValue = ({ key, value }) => {
         const _paramters = clone(paramters)
         if (typeof (value) === 'number') value += 0;
@@ -76,6 +77,19 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
             setAdvancedOption({ ...advancedOption });
         })
     }
+    const onChangeLoadUpBuy = (key, value) => {
+        let _loadUpBuyHelper = Object.assign({}, loadUpBuyHelper);
+        _loadUpBuyHelper[key] = value;
+        setLoadUpBuyHelper(_loadUpBuyHelper);
+    }
+    const modChange = (e) => {
+        let _loadUpBuyHelper = Object.assign({}, loadUpBuyHelper);
+        _loadUpBuyHelper.mod = e.target.value;
+        setLoadUpBuyHelper(_loadUpBuyHelper);
+    }
+    const comitLoadUpBuy = () => {
+
+    }
     React.useEffect(() => {
         modalVisible && getAdvancedRestranList(() => {
             modalVisible && setParamters(paramter);
@@ -96,7 +110,6 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                                 type='number'
                                 value={item.value}
                                 style={{ width: '15rem' }}
-                                placeholder="请输入修改后的值"
                                 enterButton="确认修改"
                                 maxLength={10}
                                 disabled={disables[0]}
@@ -163,36 +176,39 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                         &nbsp;{item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
                 </TabPane>
                 <TabPane tab={<div>补仓方案&nbsp;<Tooltip title="补仓开关需要打开，这里配置补仓的必备条件"><QuestionCircleOutlined /></Tooltip></div>} key="6">
-                    <label><Switch checked={true} onChange={() => { }} />&nbsp;补仓附加条件(BOLL/KDJ)</label>
+                    <div>
+                        <label><Switch checked={loadUpBuyHelper.restrainEnable} onChange={checked => onChangeLoadUpBuy('restrainEnable', checked)} />&nbsp;补仓附加条件(BOLL/KDJ)</label>&nbsp;&nbsp;
+                        <label><Switch checked={loadUpBuyHelper.isStopRise} onChange={checked => onChangeLoadUpBuy('isStopRise', checked)} />&nbsp;扭亏即止盈</label>
+                    </div>
                     <div style={{ marginTop: '1rem' }}>
-                        补仓模式：<Radio.Group name="radiogroup" defaultValue={advancedOption.premiseJoin.premiseForSell}
-                            onChange={(e) => onChange('premiseJoin', 'premiseForSell', e.target.value)}>
-                            <Radio value='and'>逐级补仓(step)&nbsp;<Tooltip title="根据跌幅进行动态逐级补仓"><QuestionCircleOutlined /></Tooltip></Radio>
-                            <Radio value='or'>目标补仓(target)&nbsp;<Tooltip title="设定一个预估涨幅，实现此涨幅即可扭亏，此模式对资金量要求较高"><QuestionCircleOutlined /></Tooltip></Radio>
+                        补仓模式：<Radio.Group name="radiogroup" defaultValue={loadUpBuyHelper.mod}
+                            onChange={modChange}>
+                            <Radio value='step'>逐级补仓(step)&nbsp;<Tooltip title="根据跌幅进行动态逐级补仓"><QuestionCircleOutlined /></Tooltip></Radio>
+                            <Radio value='target'>目标补仓(target)&nbsp;<Tooltip title="设定一个扭亏目标涨幅，假设实现此涨幅即可扭亏，此模式对资金量要求较高"><QuestionCircleOutlined /></Tooltip></Radio>
                         </Radio.Group>
                         扭亏目标涨幅：<Search
                             type='number'
                             size='small'
-                            value={0}
+                            value={loadUpBuyHelper.target}
                             style={{ width: '10rem' }}
                             enterButton="确认修改"
                             maxLength={10}
-                            disabled={false}
+                            disabled={loadUpBuyHelper.mod === 'step'}
                             onSearch={value => { }}
-                            onChange={e => { }}
+                            onChange={e => onChangeLoadUpBuy('target', +e.target.value)}
                         />
                     </div>
                     <div style={{ marginTop: '1rem' }}>
                         最高补仓倍数：<Search
                             type='number'
-                            value={10}
+                            value={loadUpBuyHelper.maxTimeAmount}
                             size='small'
                             style={{ width: '15rem' }}
                             enterButton="确认修改"
                             maxLength={3}
                             disabled={false}
                             onSearch={value => { }}
-                            onChange={e => { }}
+                            onChange={e => onChangeLoadUpBuy('maxTimeAmount', +e.target.value)}
                         />
                     </div>
                 </TabPane>

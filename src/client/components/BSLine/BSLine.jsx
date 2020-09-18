@@ -183,7 +183,7 @@ const optionVolume = () => {
                     backgroundColor: '#6a7985'
                 }
             },
-            hideDelay: 10000
+            //hideDelay: 10000
         },
         legend: {
             data: ['买入', '卖出']

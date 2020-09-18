@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 15:09:27
- * @LastEditTime: 2020-09-08 13:24:23
+ * @LastEditTime: 2020-09-18 11:16:20
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -90,10 +90,10 @@ export default function App() {
         {user == null ? <Login /> :
             <>
                 <Row style={{ height: '40%' }}>
-                    <Col span={8} style={{ height: '100%' }}>
+                    <Col span={7} style={{ height: '100%' }}>
                         <MultipleWatch uid={user.id} />
                     </Col>
-                    <Col span={8} style={{ height: '100%' }}>
+                    <Col span={10} style={{ height: '100%',border:'solid 1px #ccc' }}>
                         <span className='head-title'>控制面板-({tacticeName}-{symbol})</span>
                         <section className='customerWrap'>
                             <div><ControlPanel uid={user.id} /></div>
@@ -102,7 +102,7 @@ export default function App() {
                             </div>
                         </section>
                     </Col>
-                    <Col span={8} style={{ height: '100%' }}>
+                    <Col span={7} style={{ height: '100%' }}>
                         <KLine />
                     </Col>
                 </Row>

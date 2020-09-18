@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 00:05:32
- * @LastEditTime: 2020-09-10 17:01:11
+ * @LastEditTime: 2020-09-18 11:15:47
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -110,7 +110,7 @@ export default function HistoryRecord() {
         <Scrollbars
             autoHide
             renderThumbVertical={renderThumb}
-            style={{ height: 'calc(100% - 2.5rem)' }}
+            style={{ height: 'calc(100% - 2.6rem)' }}
             ref={scrollbars}
             onUpdate={(value) => {
                 //console.log(value);
