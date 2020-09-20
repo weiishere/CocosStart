@@ -16,12 +16,8 @@ module.exports = class LoadUpBuyHelper {
         this.restrainEnable = false;//约束开启开关
         this.isStopRise = false;//是否盈利即离场
         this.maxTimeAmount = 10;//补仓的最高倍数：如果补仓倍数超过原始资金的倍数，会终止
-        this.stepGrids = [
-            { index: 1, rate: 10, times: 1 },
-            { index: 2, rate: 15, times: 1 },
-            { index: 3, rate: 20, times: 1 },
-            { index: 4, rate: 25, times: 1 }
-        ];
+        this.dynamicGrids = true;
+        this.setStepGrids();
         this.roundId;//当前的买卖回合ID
         this.loadUpList = [
             // {
@@ -35,6 +31,16 @@ module.exports = class LoadUpBuyHelper {
             // }
         ]
         //补仓历史记录
+    }
+    setStepGrids() {
+        const stepDivisor = 1000;
+        const _step = this.tactices.averageWave.toFixed(3) * stepDivisor;//0.01*1000
+        this.stepGrids = [
+            { index: 1, rate: 10, times: 1 },
+            { index: 2, rate: 15, times: 1 },
+            { index: 3, rate: 20, times: 1 },
+            { index: 4, rate: 25, times: 1 }
+        ];
     }
     pushLoadUpList({ index, times, amount, mod, rate }) {
         const obj = {

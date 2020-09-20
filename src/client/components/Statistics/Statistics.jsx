@@ -28,16 +28,16 @@ const columns = [
         title: '实时盈亏率',
         dataIndex: 'nowRiseRate',
     },
-    // {
-    //     title: '场内U',
-    //     dataIndex: 'buyUsdtAmount',
-    // },
+    {
+        title: '补仓',
+        dataIndex: 'loadUp',
+    },
     {
         title: '盈利/出场数',
         dataIndex: 'count',
     },
     {
-        title: '总盈利率',
+        title: '总盈亏',
         dataIndex: 'riseRate',
     },
 
@@ -70,15 +70,18 @@ export default function Statistics() {
                 const rise = item.historyForDeal.filter(item => item.type === 'sell')
                     .map(item => ({ value: item.content.profit }))
                     .reduce((pre, cur) => pre + cur.value, 0) + (item.buyState ? lastHistoryForDeal.content.profit : 0);
+                const times = item.loadUpBuyHelper.loadUpList.filter(i => i.roundId === item.roundId).reduce((pre, cur) => pre + cur.times, 0);
                 return {
                     key: i,
                     name: item.name + (item.imitateRun ? '(模拟)' : ''),
                     symbol: item.symbol,
                     status: `${item.runState ? '运行中/' + (item.buyState ? '场内' : '场外') : '未运行'}`,
                     nowRiseRate: item.buyState && lastHistoryForDeal.type === 'buy' ? Number((lastHistoryForDeal.content.profit / item.presentDeal.costing).toFixed(5)) : '-',
+                    loadUp: times,
                     //buyUsdtAmount: Number(item.presentDeal.amount.toFixed(2)),
                     count: item.historyForDeal.filter(item => item.type === 'sell' && item.content.profit > 0).length + '/' + item.historyForDeal.filter(item => item.type === 'sell').length,
-                    riseRate: Number(((rise / item.parameter.usdtAmount) * 100).toFixed(4)) + '%',
+                    //riseRate: Number(((rise / (item.parameter.usdtAmount)) * 100).toFixed(4)) + '%',
+                    riseRate: item.historyForDeal.filter(item => item.type === 'sell').reduce((pre, cur) => pre + cur.content.profit, 0).toFixed(5)
                 }
             });
             setData(list);

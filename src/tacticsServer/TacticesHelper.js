@@ -7,6 +7,7 @@
  * @~~
  */
 const { client } = require('../lib/binancer');
+const { symbolStorage } = require('./restrainGroup');
 
 module.exports = class TacticsHelper {
     constructor(tactices) {
@@ -67,12 +68,12 @@ module.exports = class TacticsHelper {
     /**获取波动速度列表，level是取最近的变更值深度，越深越准，值必须大于等于1，小于等于20 */
     getWaveSpeedList(level) {
         if (this.tactices.presentSpeedArr.length <= 1) return [];
-        const arr = [...this.tactices.presentSpeedArr].splice(this.tactices.presentSpeedArr.length - level);
-
+        const deep = this.tactices.presentSpeedArr.length - level <= 0 ? 0 : this.tactices.presentSpeedArr.length - level
+        const arr = [...this.tactices.presentSpeedArr].splice(deep);
         let speedArr = [];
         arr.reduce((pre, cur) => {
             //console.log(pre,cur);
-            speedArr.push(cur - pre);
+            speedArr.push((cur - pre) / cur);
             return cur;
         })
         // for (let i = 0, l = arr.length; i < l; i++) {
@@ -81,5 +82,19 @@ module.exports = class TacticsHelper {
         //     }
         // }
         return speedArr;
-    };
+    }
+    /**获取5分线平均波动率,symbol可以为空 */
+    getAverageWave(symbol) {
+        const symbolObj = symbolStorage[symbol || this.tactices.symbol];
+        if (!symbolObj) return 0;
+        const { klineData5m } = symbolObj;
+        let total = 0;
+        //klineData.reduce((per, cur) => { }, klineData[0]);
+        klineData5m.forEach(item => {
+            total += Math.abs((item[1] - item[4]) / item[1]);
+            //total += Math.abs(item[1] - item[4]);
+        });
+        return total / klineData5m.length;
+    }
+
 }

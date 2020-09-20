@@ -71,7 +71,8 @@ module.exports = {
       }
     } else {
       const _tacticesLauncher = TacticesLauncher.getInstance();
-      const tactics = _tacticesLauncher.mapTotacticsList(uid, id, true);
+      //const tactics = _tacticesLauncher.mapTotacticsList(uid, id, true);//这里就不map了，regTid去做
+      const tactics = _tacticesLauncher.tacticsList.find(item => item.id == id);
       tactics && _tacticesLauncher.pushHistory(uid, id, {
         history: tactics.history,
         historyForDeal: tactics.historyForDeal

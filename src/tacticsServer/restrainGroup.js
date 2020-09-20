@@ -22,14 +22,18 @@ EventHub.getInstance().addEventListener('symbolStorage', 'ta_symbolStorage', dat
 
 //数据库获取symbolStorage
 const getSymbolStorageFromDB = async () => {
-    (await Symbol.find({})).map(({ name, klineData5m, boll5m, KDJ5m }) => {
-        symbolStorage[name] = { klineData5m, boll5m, KDJ5m }
-    });
+    try {
+        (await Symbol.find({})).map(({ name, klineData5m, boll5m, KDJ5m }) => {
+            symbolStorage[name] = { klineData5m, boll5m, KDJ5m }
+        });
+    } catch (e) {
+        console.log("数据库获取symbolStorage错误：", e);
+    }
     setTimeout(() => {
         getSymbolStorageFromDB();
     }, 30000);
 }
-/**获取平均波动 */
+/**获取平均波动率,主要用于选币的时候使用，选币的时候不一定会传入ractices */
 const getAverageWave = (symbol) => {
     const symbolObj = symbolStorage[symbol];
     if (!symbolObj) return 0;
@@ -37,12 +41,13 @@ const getAverageWave = (symbol) => {
     let total = 0;
     //klineData.reduce((per, cur) => { }, klineData[0]);
     klineData5m.forEach(item => {
-        total += Math.abs((item[1] - item[4]) / item[1]);
+        //total += Math.abs((item[1] - item[4]) / item[1]);
+        total += Math.abs(item[1] - item[4]);
     });
     return total / klineData5m.length;
 }
 
-process.env.CHILD_PROCESS === '0' && getSymbolStorageFromDB();//如果没有开子进程通信，就自己去数据库拿
+//process.env.CHILD_PROCESS === '0' && getSymbolStorageFromDB();//如果没有开子进程通信，就自己去数据库拿
 
 const restrain = {
     premiseForBase: [
@@ -118,7 +123,7 @@ const restrain = {
                 if (!symbolObj) return false;
                 const { startTime, UP, MB, DN } = symbolObj.boll5m[symbolObj.boll5m.length - 1];//最后一条boll线
                 const klineData = symbolObj.klineData5m.find(item => item[0] === startTime);
-                if ((+klineData[4] > UP || +klineData[1] > UP) && (UP - DN) / UP < getAverageWave(tactics.symbol) * 3) {
+                if ((+klineData[4] > UP || +klineData[1] > UP) && (UP - DN) < tactics.averageWave * 3) {
                     return false;
                 }
                 return true;
@@ -136,7 +141,7 @@ const restrain = {
                 const close = +klineData[4];//收盘价
                 const open = +klineData[1];//收盘价
                 const low = +klineData[3];//最低价
-                if (open < close && ((close >= DN && ((low > DN && Math.abs(low - DN) / low < getAverageWave(tactics.symbol) / 10) || low < DN)) || (MB < close && MB > open))) {//必须是阳线且收盘价大于DN，最低价与DN值的差值范围为平均波动的1/10,或者是穿过中线
+                if (open < close && ((close >= DN && ((low > DN && Math.abs(low - DN) < tactics.averageWave / 10) || low < DN)) || (MB < close && MB > open))) {//必须是阳线且收盘价大于DN，最低价与DN值的差值范围为平均波动的1/10,或者是穿过中线
                     return true;
                 };
                 return false;
@@ -149,11 +154,10 @@ const restrain = {
             param: { time: 4 },
             method: async (tactics) => {
                 const { time } = getParam('premiseForBuy', 'last10mNoFastRise');
-                const averageWave = getAverageWave(tactics.symbol);
+                //const averageWave = tactics.tacticesHelper.getAverageWave(tactics.symbol);
                 //const { klineData5m } = symbolStorage[symbol];
                 if (!tactics.KLineItem5m.recent) return false;
-                const riseRate = (tactics.presentPrice - tactics.KLineItem5m.recent.open) / tactics.KLineItem5m.recent.open;
-                if (riseRate > averageWave * time) {
+                if (tactics.presentPrice - tactics.KLineItem5m.recent.open > tactics.averageWave * time) {
                     // const isUp = await restrain.premiseForBuy.find(item => item.key === 'bollStandardUP').method(tactics);
                     // //若未冲破UP线，将不约束，继续冲
                     // if (isUp) return true;
@@ -184,23 +188,24 @@ const restrain = {
     /**强制出场条件    true：满足出场条件-false：不满足 */
     premiseForSell: [
         {
-            key: 'fastRise',
+            key: 'fastLose',
             label: '波动出现高速下跌',
-            desc: '无论盈亏，20秒内的取样值(相对上一秒价格)80%以上都是跌，且10秒累计下跌量相对10秒前价格跌幅超过平均波动的5倍，要预防插针请关闭',
-            param: { scond: 20, maxRiseRate: 1, riseRate: 0.01 },
+            desc: '无论盈亏，15次取样值（2秒一次取样）基本都是跌，且30秒累计下跌量是平均波动的5倍，要预防插针请关闭',
+            param: { scond: 15, maxRiseRate: 1, riseRate: 0.01 },
             method: async (tactics) => {
                 const { scond, maxRiseRate, riseRate } = getParam('premiseForSell', 'fastRise');
                 const speed = tactics.tacticesHelper.getWaveSpeedList(scond + 1);
-                const avgWave = getAverageWave(tactics.symbol);
+                if (speed.length < scond) return false;
+                //const avgWave = tactics.tacticesHelper.getAverageWave(tactics.symbol);
                 let justCount = 0;
                 for (let i = 0, l = speed.length; i < l; i++) {
                     //if (speed[i] / tactics.presentSpeedArr[tactics.presentSpeedArr.length - i - 1] > maxRiseRate) return false;
                     if (speed[i] > 0) {
                         justCount++;
-                        if (justCount === 4) return false;
+                        if (justCount === 2) return false;
                     }
                 }
-                const result = speed.reduce((pre, cur) => pre + cur, 0) < -avgWave * 5 ? true : false;
+                const result = speed.reduce((pre, cur) => pre + cur, 0) < -tactics.averageWave * 5 ? true : false;
                 // if (result) {
                 //     console.log('speed', speed);
                 //     console.log('presentSpeedArr', tactics.presentSpeedArr);
@@ -208,21 +213,30 @@ const restrain = {
                 return result;
             }
         },
+        // {
+        //     key: 'awaysLose',
+        //     label: '亏损情况下，中高速的持续性下跌',
+        //     desc: '亏损情况下，30秒的取样都是下跌，且30秒相对当前价格累计额下跌量超过-1%，要预防插针请关闭',
+        //     param: { scond: 30, riseRate: 0.01 },
+        //     method: async (tactics) => {
+        //         if (tactics.presentDeal.historyProfit > 0) return false;
+        //         const { scond, riseRate } = getParam('premiseForSell', 'awaysRise');
+        //         const speed = tactics.tacticesHelper.getWaveSpeedList(scond);
+        //         for (let i = 0, l = speed.length; i < l; i++) {
+        //             if (speed[i] > 0) return false;
+        //         }
+        //         return speed.reduce((pre, cur) => pre + cur, 0) < -riseRate ? true : false;
+        //     }
+        // },
         {
-            key: 'awaysRise',
-            label: '亏损情况下，中高速的持续性下跌',
-            desc: '亏损情况下，30秒的取样都是下跌，且30秒相对当前价格累计额下跌量超过-1%，要预防插针请关闭',
-            param: { scond: 30, riseRate: 0.01 },
+            key: 'fastRise',
+            label: '波动出现高速上涨且已盈利',
+            desc: '出现高速上涨，而且符合BOLL和KDJ特征，要及时出场',
+            param: {},
             method: async (tactics) => {
-                if (tactics.presentDeal.historyProfit > 0) return false;
-                const { scond, riseRate } = getParam('premiseForSell', 'awaysRise');
-                const speed = tactics.tacticesHelper.getWaveSpeedList(scond);
-                for (let i = 0, l = speed.length; i < l; i++) {
-                    if (speed[i] > 0) return false;
-                }
-                return speed.reduce((pre, cur) => pre + cur, 0) / tactics.presentPrice < -riseRate ? true : false;
+                return false;
             }
-        }
+        },
     ],
     /**动态调整参数   入场之后每次循环都会执行 */
     dynamicParam: [
@@ -246,12 +260,12 @@ const restrain = {
         {
             key: 'setRiseStopLossRate',
             label: '根据涨幅调整止盈拐点跌幅',
-            desc: '涨幅过大时调整拐点止盈点，及时出货，保障利润，盈利大于10个点，则拐点调为原止盈点的10%，出场更敏感',
+            desc: '当涨幅过大或补仓扭亏时，调整拐点止盈点，及时出货，保障利润，调整此值使出场更敏感',
             param: { step: 0.1 },
             method: async (tactics) => {
-                if (!tactics.buyState) return;
-                const { step } = getParam('dynamicParam', 'setRiseStopLossRate');//获取步进值
                 let riseRate = tactics.getProfit() / tactics.presentDeal.costing;
+                if (!tactics.buyState || riseRate < 0) return;
+                const { step } = getParam('dynamicParam', 'setRiseStopLossRate');//获取步进值
                 let lastriseStopLossRate = tactics.parameterBackup.riseStopLossRate;
                 if (riseRate >= 0.08) {
                     //盈利大于8个点
@@ -270,13 +284,19 @@ const restrain = {
                     lastriseStopLossRate = lastriseStopLossRate * (step * 3.5);
                 } else if (riseRate >= 0.01 && riseRate < 0.02) {
                     lastriseStopLossRate = lastriseStopLossRate * (step * 4.5);
-                } else if (riseRate < 0.01) {
+                } else if (0 < riseRate && riseRate < 0.01) {
                     //小于0.04，意思没动
                     lastriseStopLossRate = lastriseStopLossRate;
                 }
+                //根据补仓的倍数，需要再做调整，思路就是有盈利了，尽快出场(因为盈利率可能不大，但是盈利金额高啊)
+                const times = tactics.loadUpBuyHelper.loadUpList.filter(item => item.roundId === tactics.roundId).reduce((pre, cur) => pre + cur.times, 0);
+                const _t = Number((2 / (2 + times)).toFixed(4));
+                lastriseStopLossRate = lastriseStopLossRate * _t;
+
+
                 if (lastriseStopLossRate !== tactics.parameter.riseStopLossRate) {
                     tactics.parameter.riseStopLossRate = lastriseStopLossRate;
-                    tactics.addHistory('info', `盈利为${riseRate}，止盈点已经动态调整为：${tactics.parameter.riseStopLossRate}%`, true, { color: "#dee660", subType: 'dp' });
+                    tactics.addHistory('info', `盈利为${riseRate}，止盈点已经动态调整为：${tactics.parameter.riseStopLossRate}%${times !== 0 ? '(×' + _t + '倍)' : ''}`, true, { color: "#dee660", subType: 'dp' });
                 }
 
             }
@@ -348,7 +368,7 @@ const restrain = {
             label: 'BOLL指标',
             desc: 'BOLL的DN线与阳线交汇且小于收盘价或穿过MB',
             param: {},
-            method: async (lastSymbolList) => {
+            method: async (lastSymbolList, tactics) => {
                 try {
                     if (!symbolStorage) {
                         console.log('lastSymbolList还未收到数据(子线程未开？)');
@@ -366,7 +386,7 @@ const restrain = {
                         }
                         if (open < close && //必须阳线
                             ((close >= DN && //收盘价必须大于DN
-                                (DN < low && ((low - DN) / low < getAverageWave(symbol) / 10)) || low < DN) //最低线须与DN发生接触，如果未发生接触，距离应该是平均波动的1/10
+                                (DN < low && ((low - DN) < tactics.averageWave / 10)) || low < DN) //最低线须与DN发生接触，如果未发生接触，距离应该是平均波动的1/10
                                 || (MB < close && MB > open))) {//或者是横穿过中线
                             //必须是阳线且收盘价大于DN，最低价与DN的距离范围为平均波动线的1/10,或者是穿过中线
                             return true;
@@ -537,21 +557,21 @@ const restrain = {
                 return resultList;
             }
         },
-        // {
-        //     key: 'fastRise',
-        //     label: '短时间急拉币(5分钟1个点)',
-        //     desc: '短时间在急拉的币，在5分钟就达到日涨幅的10%',
-        //     param: {
-        //         rise: 0.1
-        //     },
-        //     method: async (lastSymbolList, tactics) => {
+        {
+            key: 'highWave',
+            label: '波动较大的交易对',
+            desc: '波动较大的交易对，更适合短线操作',
+            param: {
+                wave: 0.5
+            },
+            method: async (lastSymbolList, tactics) => {
 
-        //         return lastSymbolList;
-        //     }
-        // }
+                return lastSymbolList;
+            }
+        }
     ]
 }
 
-module.exports = { ...restrain };
+module.exports = { ...restrain, getSymbolStorageFromDB, symbolStorage };
 
 

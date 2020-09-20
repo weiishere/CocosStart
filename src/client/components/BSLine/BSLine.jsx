@@ -27,7 +27,7 @@ let rawData = JSON.parse(localStorage.getItem("klineDataForBs")) || []
 let markPointData = [];
 let persentPrice = 0;
 let averagePrice = 0;
-
+let averageWave = 0;
 // function splitData(rawData) {
 //     var categoryData = [];
 //     var values = []
@@ -53,7 +53,7 @@ const option = (symbol, price) => {
         title: {
             text: `BS线(${symbol || localStorage.getItem("SymbleForBs")})`,
             left: 0,
-            subtext: `当前价格：${Number(price)}U${persentPrice ? '/入场价：' + Number(persentPrice) + 'U' : ''}${averagePrice ? '/成本均价：' + Number(averagePrice) + 'U' : ''}`
+            subtext: `当前价格：${Number(price)}U${persentPrice ? '/入场价：' + Number(persentPrice) + 'U' : ''}${averagePrice ? '/成本均价：' + Number(averagePrice) + 'U' : ''}/波动率：${Number(averageWave)}%`
         },
         backgroundColor: '#21202D',
         tooltip: {
@@ -322,6 +322,7 @@ export default function BSLine() {
             const target = payload.find(item => item.target);
             persentPrice = !target ? 0 : (target.buyState ? target.presentDeal.payPrice : 0);
             averagePrice = !target ? 0 : (target.buyState ? target.presentDeal.averagePrice : 0);
+            averageWave = !target ? 0 : (target.averageWave * 100).toFixed(4);
             if (!target) return;
             if (symbol !== target.symbol) {
                 symbol && initKlineData(myChart, myVolumeChart, target.symbol);

@@ -45,7 +45,8 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.history = []
         this.depth = null;//深度
         this.ticker = null;
-        this.avSpeed = 0;//平均速度
+        //this.avSpeed = [];//平均速度
+        this.averageWave = 0;//平均波动
         //关于交易的一些历史记录（用于BS线）
         this.historyForDeal = [];
         this.checkBuyTime = 0;
@@ -138,9 +139,16 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.symbolInfo = await require('./TacticesLauncher').getInstance().getExchangeInfo(this.symbol);
         //初始化时给点5/1分线数据
         //client.candles({ symbol, interval: '5m', limit: 1 }).then(data => this.KLineItem5m.present = data[0]);
-        this.KLineItem5m.present = (await client.candles({ symbol, interval: '5m', limit: 1 }))[0];
-        this.KLineItem1m = (await client.candles({ symbol, interval: '1m', limit: 1 }))[0];
-        await this.tacticesHelper.getPresentPrice(true);//获取最新价格
+        try {
+            this.KLineItem5m.present = (await client.candles({ symbol, interval: '5m', limit: 1 }))[0];
+            this.KLineItem1m = (await client.candles({ symbol, interval: '1m', limit: 1 }))[0];
+            // const speed = this.tacticesHelper.getWaveSpeedList(21);
+            // this.avSpeed.push(speed.reduce((pre, cur) => Math.abs(pre) + Math.abs(cur), 0) / (speed.length || 1));
+            this.averageWave = this.tacticesHelper.getAverageWave();
+            await this.tacticesHelper.getPresentPrice(true);//获取最新价格
+        } catch (e) {
+            console.log(e);
+        }
         scoketCandles();
     }
     /**添加历史记录:isDouble：如果重复两条记录，是否允许重复添加
@@ -240,6 +248,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                         isMap: true,
                         data: { symbol: chooseItem }
                     });
+                    this.loadUpBuyHelper.setStepGrids();
                     this.initialize(chooseItem);
                     this.checkSymbolTime = 10;
                     this.checkBuyTime = 0;
@@ -299,8 +308,7 @@ module.exports = class SellIntoCorrections extends Tactics {
     /** 接收每次推过来的交易信息，如果有符合当前正在交易的数据，就要截获数据  */
     pushTrade(trade) {
         this.presentTrade = trade;
-        const speed = this.loadUpBuyHelper.getWaveSpeedList(21);
-        this.avSpeed = speed.reduce((pre, cur) => Math.abs(pre) + Math.abs(cur), 0) / speed.length;
+
     }
     /**nowBuy=true表示跳过入场判断，立即入场 */
     async powerSwitch(nowBuy) {
@@ -785,6 +793,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 }
             }
             this.loadUpBuyHelper.loadUpList = this.loadUpBuyHelper.loadUpList.filter(item => item.roundId === this.roundId);
+            
             this.roundId = Date.parse(new Date());//下一回合
             this.roundRunTime = 0;
             //if (this.nextSymbol) this.symbol = this.nextSymbol;//出场成功之后切换币
@@ -803,7 +812,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             'parameterDesc',
             'presentDeal',
             'roundId',
-            'avSpeed',
+            'averageWave',
             'historyForDeal',
             'checkBuyTime',
             'runState',
@@ -815,6 +824,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             'presentTrade',
             'advancedOption',
             'depth',
+            'presentPrice',
             'ticker'].forEach(item => result[item] = this[item]);
         result['loadUpBuyHelper'] = this.loadUpBuyHelper.getInfo();
         return result;
@@ -852,7 +862,9 @@ module.exports = class SellIntoCorrections extends Tactics {
             'imitateRun',
             'historyForDeal',
             'presentDeal',
+            'roundId',
             'buyState'].forEach(item => result[item] = this[item]);
+        result['loadUpBuyHelper'] = this.loadUpBuyHelper.getInfo();
         return result;
     }
 }

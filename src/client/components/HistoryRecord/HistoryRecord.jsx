@@ -10,8 +10,8 @@ import React from 'react';
 import dateFormat from 'format-datetime'
 import EventHub from '@client/EventHub'
 import { Scrollbars } from 'react-custom-scrollbars'
-import { ClearOutlined, QuestionOutlined } from '@ant-design/icons'
-import { Popconfirm, Switch, Radio, Button, message } from 'antd';
+import { ClearOutlined, QuestionOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { Popconfirm, Switch, Radio, Button, message, Popover, Modal } from 'antd';
 import { requester } from '@src/tool/Requester'
 import { apiDateCode } from '@src/config'
 import api from '@client/api'
@@ -22,8 +22,10 @@ export default function HistoryRecord() {
     const [historyBackup, setHistoryBackup] = React.useState([]);
     const [stateStr, setStateStr] = React.useState("");
     const [runState, setRunState] = React.useState(false);
+    const [presentDealModal, setPresentDealModal] = React.useState(false);
     const [isGoBottom, setIsGoBottom] = React.useState(true);
     const [msgListType, setMsgListType] = React.useState(1);
+    const [tactics, setTactics] = React.useState(null);
     const scrollbars = React.useRef(null);
     const [chooseTid, setChooseTid] = React.useState('');
     let updateCount = 0;
@@ -31,11 +33,14 @@ export default function HistoryRecord() {
     React.useEffect(() => {
         EventHub.getInstance().addEventListener('mapTacticsList', 'hr_mapTacticsList', payload => {
             const target = payload.find(item => item.target);
+            //setPresentDeal(null);
+            setTactics(target);
             if (target) {
                 if (chooseTid !== target.id) setChooseTid(target.id);
                 setRunState(target.imitateRun);
                 if (target.runState) {
                     if (target.buyState) {
+
                         setStateStr(`出场检测中，交易信息≈${(+(+target.presentDeal.payPrice).toFixed(5))}U/${+(+target.presentDeal.amount.toFixed(5))}枚`);
                     } else {
                         setStateStr(`第${target.checkBuyTime}次入场检测...`);
@@ -145,10 +150,23 @@ export default function HistoryRecord() {
         <div className='operation_wrap'>
             {history.length}条 <label><Switch checked={isGoBottom} size="small" style={{ verticalAlign: 'sub' }}
                 onChange={changeSwitch} />自动置底</label>&nbsp;
+            {/* {presentDeal && <Popover content={<div className='presentDealWrap'>
+                <div><label>成本</label>：{presentDeal.costing}</div>
+                <div><label>入场均价</label>：{presentDeal.averagePrice}</div>
+                <div><label>最后入场价格</label>：{presentDeal.payPrice}</div>
+                <div><label>入场币数量</label>：{presentDeal.amount}</div>
+                <div><label>最高盈亏</label>：{presentDeal.historyProfit}</div>
+            </div>} title="当前交易信息">
+                <InfoCircleOutlined style={{ color: '#fff', float: 'right', lineHeight: '1.7rem', margin: '0 0.5rem' }} />
+            </Popover>} */}
+
+            {tactics && tactics.buyState && <InfoCircleOutlined style={{ color: '#fff', float: 'right', lineHeight: '1.7rem', margin: '0 0.5rem' }} onClick={() => { setPresentDealModal(true) }} />}
             <Popconfirm placement="top" title={`确认删除${['一般', '关键', '交易'][msgListType - 1]}记录？`} onConfirm={() => clearNormalInfo(msgListType)}
                 okText="删除" cancelText="取消" icon={<QuestionOutlined />}>
                 <Button style={{ color: '#fff', float: 'right' }} size='small' shape="link" icon={<ClearOutlined />} />
             </Popconfirm>
+
+
             {/* <Popconfirm placement="top" title='请选择清除记录范围？' onConfirm={() => clearNormalInfo(false)} onCancel={() => clearNormalInfo(true)}
                 okText="流水" cancelText="全部" icon={<QuestionOutlined />}>
                 <Button style={{ color: '#fff' }} size='small' shape="link" icon={<ClearOutlined />} />
@@ -158,7 +176,27 @@ export default function HistoryRecord() {
                 <Radio value={2}>关键</Radio>
                 <Radio value={3}>交易</Radio>
             </Radio.Group>
-
+            <Modal
+                title="当前交易信息"
+                visible={presentDealModal}
+                onCancel={() => { setPresentDealModal(false) }}
+                footer={
+                    <Button onClick={() => { setPresentDealModal(false) }}>关闭</Button>
+                }
+            >
+                {tactics && tactics.buyState && <div className='presentDealWrap'>
+                    <div><label>成本</label>：{tactics.presentDeal.costing}</div>
+                    <div><label>入场均价</label>：{tactics.presentDeal.averagePrice}</div>
+                    <div><label>当前市场价</label>：{tactics.presentPrice}</div>
+                    <div><label>10小时平均波动率</label>：{tactics.averageWave * 100}%</div>
+                    <div><label>最后入场价格</label>：{tactics.presentDeal.payPrice}</div>
+                    <div><label>入场币数量</label>：{tactics.presentDeal.amount}</div>
+                    <div><label>最高盈亏</label>：{tactics.presentDeal.historyProfit}</div>
+                    <div><label>补仓倍数/次数</label>：
+                    {tactics.loadUpBuyHelper.loadUpList.filter(i => i.roundId === tactics.roundId).reduce((pre, cur) => pre + cur.times, 0)}/
+                    {tactics.loadUpBuyHelper.loadUpList.filter(i => i.roundId === tactics.roundId).length}</div>
+                </div>}
+            </Modal>
         </div>
     </>)
 }

@@ -60,6 +60,7 @@ const scoketCandles = () => {
             if (payload.isFinal) {
                 item.KLineItem5m.recent = payload;
                 TacticesLauncher.getInstance().mapTotacticsList(item.uid, item.id);
+                item.averageWave = item.tacticesHelper.getAverageWave();
             }
         });
     });
@@ -70,6 +71,10 @@ const scoketCandles = () => {
             item.KLineItem1m = payload;
             if (payload.isFinal) {
                 TacticesLauncher.getInstance().mapTotacticsList(item.uid, item.id);
+                // if (item.avSpeed.length == 51) item.avSpeed.shift();
+                // const speed = item.tacticesHelper.getWaveSpeedList(21);
+                // item.avSpeed.push(speed.reduce((pre, cur) => Math.abs(pre) + Math.abs(cur), 0) / speed.length);
+                
             }
         });
     })

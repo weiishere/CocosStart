@@ -66,7 +66,7 @@ const optionForKdj = () => ({
     grid: {
         bottom: 17,
         left: 1,
-        right:'4%',
+        right: '4%',
         top: 10,
         containLabel: true
     },
@@ -189,7 +189,7 @@ const option = (symbol) => {
         grid: {
             bottom: 60,
             left: 50,
-            right:'3%'
+            right: '3%'
         },
 
         dataZoom: [{
@@ -337,12 +337,13 @@ export default function KLine() {
         myChart.setOption(option(localStorage.getItem("klineSymbol") || ''));
         let timer;
         const change = (symbol) => {
-            theSymbol = symbol;
+            
             localStorage.setItem("klineSymbol", symbol);
             const key = 'loading';
             message.loading({ content: 'K线数据请求中..', key, duration: 0, style: { marginTop: '-3.2rem' } });
             initKlineData(myChart, localStorage.getItem("klineSymbol"), () => {
                 message.success({ content: `K线成功切换为${symbol}`, key, duration: 2, style: { marginTop: '-3.2rem' } });
+                theSymbol = symbol;
             });
         }
         EventHub.getInstance().addEventListener('chooseSymbol', 'kl_chooseSymbol', payload => {

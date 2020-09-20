@@ -64,7 +64,7 @@ const option = () => {
             axisLabel: { show: false },
             axisTick: { show: false },
             splitLine: { show: false },
-            data: showData.map(item => item.time ? dateFormat(new Date(item.time), "HH:mm") : '')//['ten', 'nine', 'eight', 'seven', 'six', 'five', 'four', 'three', 'two', 'one','four', 'three', 'two', 'one']
+            data: showData.map(item => item.time ? dateFormat(new Date(item.time), "MM-dd HH:mm") : '')//['ten', 'nine', 'eight', 'seven', 'six', 'five', 'four', 'three', 'two', 'one','four', 'three', 'two', 'one']
         },
         series: [
             {

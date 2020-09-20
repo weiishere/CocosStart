@@ -13,6 +13,7 @@ const { client } = require('../lib/binancer');
 const { userRooms } = require('../controllers/user')
 const { Task } = require('../db');
 const { reExecute } = require('../tool/Common');
+const { getSymbolStorageFromDB } = require('./restrainGroup');
 //const { scoketCandles } = require('./binanceScoketBind');
 
 module.exports = class TacticesLauncher {
@@ -107,6 +108,7 @@ module.exports = class TacticesLauncher {
     }
     /**取数据库数据同步至tacticsList，并根据状态启动 */
     async initTasks() {
+        process.env.CHILD_PROCESS === '0' && await getSymbolStorageFromDB();//先初始化SymbolStorage
         const tasks = await Task.find({});
         tasks.forEach(({ uid, name, taskJson }) => {
             const mod = JSON.parse(taskJson);
@@ -175,7 +177,7 @@ module.exports = class TacticesLauncher {
      * nowSend=true,表示马上发出，并暂停下一次自动推送
      * nowSend=false,表示不马上发出，等待下一次自动推送
      * nowSend为空，表示马上发出，而且下次正常推送 */
-    mapTotacticsList(uid, tid, nowSend) {
+    mapTotacticsList(uid, _tid, nowSend) {
         const r = userRooms.find(r => r.uid === uid);
         if (r) {
             r.tids.forEach(({ tid, scoketId }) => {
@@ -201,7 +203,7 @@ module.exports = class TacticesLauncher {
                 //this.scoketIO.to(r.uid).emit(WsRoute.TACTICS_LIST, result);
             })
         }
-        return this.tacticsList.find(item => item.id === tid);
+        return this.tacticsList.find(item => item.id === _tid);
     };
     pushBetterSymbol(uid, id, symbolList) {
         const r = userRooms.find(r => r.uid === uid);
@@ -266,12 +268,12 @@ module.exports = class TacticesLauncher {
     startWaveSpeedData() {
         setInterval(() => {
             this.tacticsList.forEach(item => {
-                if (item.presentTrade) {
-                    //1秒取一次样
-                    if (item.presentSpeedArr.length === 60) item.presentSpeedArr.shift();
-                    item.presentSpeedArr.push(item.presentTrade.price);
+                if (item.presentPrice) {
+                    //2秒取一次样
+                    if (item.presentSpeedArr.length === 50) item.presentSpeedArr.shift();
+                    item.presentSpeedArr.push(item.presentPrice);
                 }
             })
-        }, 1000);
+        }, 2000);
     }
 }
