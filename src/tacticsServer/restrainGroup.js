@@ -238,6 +238,16 @@ const restrain = {
                 return false;
             }
         },
+        {
+            key: 'outTimeSell',
+            label: '场内时间超时尽快出场',
+            desc: '超过一定时间都未成功出场，只要盈亏大于某值就强制出场',
+            param: { time: 3 * 60, minProfit: 0 },
+            method: async (tactics) => {
+                const { time, minProfit } = getParam('premiseForSell', 'outTimeSell');
+                return false;
+            }
+        }
     ],
     /**动态调整参数   入场之后每次循环都会执行 */
     dynamicParam: [
@@ -446,8 +456,8 @@ const restrain = {
             param: {
                 blackList: {
                     bigSymbol: ['BUSDUSDT', 'TUSDUSDT', 'USDCUSDT', 'PAXUSDT', 'AUDUSDT', 'EURUSDT', 'GBPUSDT', 'BTCUSDT', 'LTCUSDT', 'ETHUSDT', 'BCHUSDT', 'EOSUSDT'],
-                    futureSymbol: ['LINKDOWNUSDT', 'LINKUPUSDT', 'BTCDOWNUSDT', 'BTCUPUSDT', 'ADADOWNUSDT', 'ADAUPUSDT', 'BNBUPUSDT', 'BNBDOWNUSDT', 
-                    'XTZDOWNUSDT', 'XTZUPUSDT', 'ETHDOWNUSDT', 'ETHUPUSDT', 'DOTDOWNUSDT', 'DOTUPUSDT']
+                    futureSymbol: ['LINKDOWNUSDT', 'LINKUPUSDT', 'BTCDOWNUSDT', 'BTCUPUSDT', 'ADADOWNUSDT', 'ADAUPUSDT', 'BNBUPUSDT', 'BNBDOWNUSDT',
+                        'XTZDOWNUSDT', 'XTZUPUSDT', 'ETHDOWNUSDT', 'ETHUPUSDT', 'DOTDOWNUSDT', 'DOTUPUSDT']
                 },
                 forbid: [
                     'bigSymbol', 'futureSymbol'
