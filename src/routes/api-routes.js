@@ -30,3 +30,4 @@ module.exports = router
   .post('/api/updateParameter', controllers.api.updateParameter)
   .post('/api/updateAdvancedRestran', controllers.api.updateAdvancedRestran)
   .post('/api/clearNormalInfo', controllers.api.clearNormalInfo)
+  .post('/api/updateLoadUpBuy', controllers.api.updateLoadUpBuy)

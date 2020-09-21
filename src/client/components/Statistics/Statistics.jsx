@@ -29,7 +29,7 @@ const columns = [
         dataIndex: 'nowRiseRate',
     },
     {
-        title: '补仓',
+        title: '补仓(倍)',
         dataIndex: 'loadUp',
     },
     {

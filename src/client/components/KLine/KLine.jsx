@@ -354,6 +354,7 @@ export default function KLine() {
         });
         EventHub.getInstance().addEventListener('mapTacticsList', 'kl_mapTacticsList', payload => {
             const target = payload.find(item => item.target);
+            //console.log(target.symbol)
             if (target && target.symbol !== theSymbol && !timer) {
                 //change(target.symbol);
                 timer = window.setTimeout(() => {

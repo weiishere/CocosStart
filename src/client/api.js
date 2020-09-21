@@ -17,7 +17,9 @@ export default {
     updateAdvancedRestran: '/api/updateAdvancedRestran',
     getUser: '/api/getUser',
     getAdvancedRestran: '/api/getAdvancedRestran',
-    refreshSymbol:'/api/refreshSymbol',
-    getIndicatorLine:'/api/getIndicatorLine',
-    clearNormalInfo:'/api/clearNormalInfo'
+    refreshSymbol: '/api/refreshSymbol',
+    getIndicatorLine: '/api/getIndicatorLine',
+    clearNormalInfo: '/api/clearNormalInfo',
+    clearNormalInfo: '/api/clearNormalInfo',
+    updateLoadUpBuy: '/api/updateLoadUpBuy'
 }

@@ -45,7 +45,7 @@ module.exports = class LoadUpBuyHelper {
         ];
         if (this.dynamicGrids) {
             //[1,2,3,4,5].map(i=>parseInt((i * (1+i)*0.7 + 6)))
-            const stepDivisor = i => parseInt(i * (level + i) * (1.3 - i / 10) + 5);
+            const stepDivisor = i => parseInt(i * (level + 1 + i) * 0.5 + 8);
             arr.forEach((item, i) => item.rate = stepDivisor(i + 1));
         } else {
             arr.forEach((item, i) => item.rate = 10 + i * 5);
@@ -146,7 +146,7 @@ module.exports = class LoadUpBuyHelper {
     getInfo() {
         let result = {};
         [
-            'mod', 'target', 'maxTimeAmount', 'restrainEnable', 'intervalTime', 'stepGrids', 'roundId', 'loadUpList'
+            'mod', 'target', 'maxTimeAmount', 'restrainEnable', 'dynamicGrids', 'isStopRise', 'intervalTime', 'stepGrids', 'roundId', 'loadUpList'
         ].forEach(item => result[item] = this[item]);
         return result;
     }

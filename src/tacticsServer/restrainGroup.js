@@ -23,7 +23,12 @@ EventHub.getInstance().addEventListener('symbolStorage', 'ta_symbolStorage', dat
 //数据库获取symbolStorage
 const getSymbolStorageFromDB = async () => {
     try {
-        (await Symbol.find({})).map(({ name, klineData5m, boll5m, KDJ5m, wave }) => {
+        const symbols = await Symbol.find({});
+        if (!symbols) {
+            console.log("数据库未正常获取symbolStorage");
+            return;
+        }
+        symbols.map(({ name, klineData5m, boll5m, KDJ5m, wave }) => {
             symbolStorage[name] = { klineData5m, boll5m, KDJ5m, wave }
         });
     } catch (e) {
@@ -286,7 +291,7 @@ const restrain = {
                 }
                 //根据补仓的倍数，需要再做调整，思路就是有盈利了，尽快出场(因为盈利率可能不大，但是盈利金额高啊)
                 const times = tactics.loadUpBuyHelper.loadUpList.filter(item => item.roundId === tactics.roundId).reduce((pre, cur) => pre + cur.times, 0);
-                const _t = Number((2 / (2 + times)).toFixed(4));
+                const _t = Number((3 / (3 + times)).toFixed(4));
                 lastriseStopLossRate = Number((lastriseStopLossRate * _t).toFixed(4));
 
 
@@ -441,7 +446,8 @@ const restrain = {
             param: {
                 blackList: {
                     bigSymbol: ['BUSDUSDT', 'TUSDUSDT', 'USDCUSDT', 'PAXUSDT', 'AUDUSDT', 'EURUSDT', 'GBPUSDT', 'BTCUSDT', 'LTCUSDT', 'ETHUSDT', 'BCHUSDT', 'EOSUSDT'],
-                    futureSymbol: ['LINKDOWNUSDT', 'LINKUPUSDT', 'BTCDOWNUSDT', 'BTCUPUSDT', 'ADADOWNUSDT', 'ADAUPUSDT', 'BNBUPUSDT', 'BNBDOWNUSDT', 'XTZDOWNUSDT', 'XTZUPUSDT', 'ETHDOWNUSDT', 'ETHUPUSDT']
+                    futureSymbol: ['LINKDOWNUSDT', 'LINKUPUSDT', 'BTCDOWNUSDT', 'BTCUPUSDT', 'ADADOWNUSDT', 'ADAUPUSDT', 'BNBUPUSDT', 'BNBDOWNUSDT', 
+                    'XTZDOWNUSDT', 'XTZUPUSDT', 'ETHDOWNUSDT', 'ETHUPUSDT', 'DOTDOWNUSDT', 'DOTUPUSDT']
                 },
                 forbid: [
                     'bigSymbol', 'futureSymbol'

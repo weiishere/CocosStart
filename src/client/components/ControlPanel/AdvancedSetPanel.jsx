@@ -77,16 +77,31 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
             setAdvancedOption({ ...advancedOption });
         })
     }
-    const onChangeLoadUpBuy = (key, value) => {
+    const onChangeLoadUpBuy = (key, value, isRequest, callBack) => {
         let _loadUpBuyHelper = Object.assign({}, loadUpBuyHelper);
         _loadUpBuyHelper[key] = value;
-        setLoadUpBuyHelper(_loadUpBuyHelper);
+        if (!isRequest) {
+            setLoadUpBuyHelper(_loadUpBuyHelper);
+        } else {
+            requester({
+                url: api.updateLoadUpBuy, type: 'post',
+                params: { tid: tactice.id, loadUpBuy: _loadUpBuyHelper },
+                option: {
+                    baseUrl: 'API_server_url',
+                    faileBack: error => message.error({ content: error, key, duration: 2 })
+                }
+            }).then(({ res }) => {
+                setLoadUpBuyHelper(_loadUpBuyHelper);
+                message.destroy();
+                callBack && callBack();
+            });
+        }
     }
-    const modChange = (e) => {
-        let _loadUpBuyHelper = Object.assign({}, loadUpBuyHelper);
-        _loadUpBuyHelper.mod = e.target.value;
-        setLoadUpBuyHelper(_loadUpBuyHelper);
-    }
+    // const modChange = (e) => {
+    //     let _loadUpBuyHelper = Object.assign({}, loadUpBuyHelper);
+    //     _loadUpBuyHelper.mod = e.target.value;
+    //     setLoadUpBuyHelper(_loadUpBuyHelper);
+    // }
     const comitLoadUpBuy = () => {
 
     }
@@ -112,16 +127,18 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                                 style={{ width: '15rem' }}
                                 enterButton="确认修改"
                                 maxLength={10}
-                                disabled={disables[0]}
+                                //disabled={disables[0]}
                                 onSearch={value => updateParameter(item.key, +value)}
                                 onChange={e => {
                                     setValue({ key: item.key, value: +e.target.value })
                                 }}
-                            /> : <center><Switch disabled={disables[0]} checked={item.value} onChange={checked => {
-                                updateParameter(item.key, checked, () => {
-                                    setValue({ key: item.key, value: checked })
-                                })
-                            }} /></center>}
+                            /> : <center><Switch
+                                //disabled={disables[0]}
+                                checked={item.value} onChange={checked => {
+                                    updateParameter(item.key, checked, () => {
+                                        setValue({ key: item.key, value: checked })
+                                    })
+                                }} /></center>}
                         </div>
                     </div>
                 </li>)
@@ -177,12 +194,13 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                 </TabPane>
                 <TabPane tab={<div>补仓方案&nbsp;<Tooltip title="补仓开关需要打开，这里配置补仓的必备条件"><QuestionCircleOutlined /></Tooltip></div>} key="6">
                     <div>
-                        <label><Switch checked={loadUpBuyHelper.restrainEnable} onChange={checked => onChangeLoadUpBuy('restrainEnable', checked)} />&nbsp;补仓附加条件(BOLL/KDJ)</label>&nbsp;&nbsp;
-                        <label><Switch checked={loadUpBuyHelper.isStopRise} onChange={checked => onChangeLoadUpBuy('isStopRise', checked)} />&nbsp;扭亏即止盈</label>
+                        <label><Switch checked={loadUpBuyHelper.dynamicGrids} onChange={checked => onChangeLoadUpBuy('dynamicGrids', checked, true)} />&nbsp;动态网格</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label><Switch checked={loadUpBuyHelper.restrainEnable} onChange={checked => onChangeLoadUpBuy('restrainEnable', checked, true)} />&nbsp;补仓约束(按入场条件)</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label><Switch checked={loadUpBuyHelper.isStopRise} onChange={checked => onChangeLoadUpBuy('isStopRise', checked, true)} />&nbsp;扭亏即尽快止盈</label>
                     </div>
                     <div style={{ marginTop: '1rem' }}>
                         补仓模式：<Radio.Group name="radiogroup" defaultValue={loadUpBuyHelper.mod}
-                            onChange={modChange}>
+                            onChange={e => onChangeLoadUpBuy('mod', e.target.value, true)}>
                             <Radio value='step'>逐级补仓(step)&nbsp;<Tooltip title="根据跌幅进行动态逐级补仓"><QuestionCircleOutlined /></Tooltip></Radio>
                             <Radio value='target'>目标补仓(target)&nbsp;<Tooltip title="设定一个扭亏目标涨幅，假设实现此涨幅即可扭亏，此模式对资金量要求较高"><QuestionCircleOutlined /></Tooltip></Radio>
                         </Radio.Group>
@@ -194,21 +212,21 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                             enterButton="确认修改"
                             maxLength={10}
                             disabled={loadUpBuyHelper.mod === 'step'}
-                            onSearch={value => { }}
-                            onChange={e => onChangeLoadUpBuy('target', +e.target.value)}
+                            onSearch={e => { onChangeLoadUpBuy('target', loadUpBuyHelper.target, true) }}
+                            onChange={e => onChangeLoadUpBuy('target', +e.target.value, false)}
                         />
                     </div>
                     <div style={{ marginTop: '1rem' }}>
-                        最高补仓倍数：<Search
+                        补仓最短间隔时间：<Search
                             type='number'
-                            value={loadUpBuyHelper.maxTimeAmount}
+                            value={loadUpBuyHelper.intervalTime}
                             size='small'
                             style={{ width: '15rem' }}
                             enterButton="确认修改"
                             maxLength={3}
                             disabled={false}
-                            onSearch={value => { }}
-                            onChange={e => onChangeLoadUpBuy('maxTimeAmount', +e.target.value)}
+                            onSearch={e => { onChangeLoadUpBuy('intervalTime', loadUpBuyHelper.intervalTime, true) }}
+                            onChange={e => onChangeLoadUpBuy('intervalTime', +e.target.value, false)}
                         />
                     </div>
                 </TabPane>

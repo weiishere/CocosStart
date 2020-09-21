@@ -28,17 +28,11 @@ module.exports = class SellIntoCorrections extends Tactics {
             recent: null,//最近的完整K线
             present: null//当前正在运行的k线
         }
-        //this.USDTPrice = 0;
         this.KLineItem1m = {}
-        // this.KLineItem5mForRecent = null;
-        // this.KLineItem5mForPresent = null;
         this.nextSymbol = [];
         //盈利/亏损的交易对
         this.profitSymbol = [
-            // { symbol: 'ETHUSDT', profit: 15.2, buyCount: 2 },
-            // { symbol: 'BTCUSDT', profit: 1, buyCount: 2 },
-            // { symbol: 'ADAUSDT', profit: 2, buyCount: 3 },
-            // { symbol: 'FNUSDT', profit: -3.2, buyCount: 1 }
+            // { symbol: 'ETHUSDT', profit: 15.2, buyCount: 2 }
         ];
         this.roundId = Date.parse(new Date());//交易回合
         this.roundRunTime = 0;
@@ -109,9 +103,9 @@ module.exports = class SellIntoCorrections extends Tactics {
             stopRiseRate: [false, "强制止盈(相对成本涨幅),为0则关闭"],
             usdtAmount: [false, "每次入场USDT数量"],
             maxStayTime: [false, "场内持续时间(分钟)"],
-            isAllowLoadUpBuy: [false, "是否允许加仓"],
             faildBuyTimeForChange: [false, "未盈利情况下需切币的进场失败次数(<100)，若“自动切币”功能打开，超过100次会强制切币"],
             //symbolDriveMod: [false, "选币驱动模式，会保持选币一直运行，如果有新币产生，即尽快出场(盈利或亏损在0.5个点内)并切币进入，打开此开关需保证有及其严格的选币方案"],
+            isAllowLoadUpBuy: [false, "是否允许加仓"],
             pauseFaildChangeSymbol: [false, "切币但无币是否停机。(打开此项，进场失败次数达到n次且切币10次为空则会停机)"],
             keepBuyFaildChangeSymbol: [false, "在待机无限寻币的同时，在寻币同时是否还做入场检测（若”切币但无币是否停机“配置打开，此项无效）"],
         };
@@ -142,13 +136,13 @@ module.exports = class SellIntoCorrections extends Tactics {
         //初始化时给点5/1分线数据
         //client.candles({ symbol, interval: '5m', limit: 1 }).then(data => this.KLineItem5m.present = data[0]);
         try {
+            await this.tacticesHelper.getPresentPrice(true);//获取最新价格
             this.KLineItem5m.present = (await client.candles({ symbol, interval: '5m', limit: 1 }))[0];
             this.KLineItem1m = (await client.candles({ symbol, interval: '1m', limit: 1 }))[0];
             // const speed = this.tacticesHelper.getWaveSpeedList(21);
             // this.avSpeed.push(speed.reduce((pre, cur) => Math.abs(pre) + Math.abs(cur), 0) / (speed.length || 1));
             this.averageWave = this.tacticesHelper.getAverageWave();
             this.loadUpBuyHelper.setStepGrids();
-            await this.tacticesHelper.getPresentPrice(true);//获取最新价格
         } catch (e) {
             console.log(e);
         }
@@ -534,7 +528,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             //如果盈利为正
             if (_profit > this.presentDeal.historyProfit) {
                 //利润大于上一次统计的利润，持续盈利中...
-                this.addHistory('info', `记录到更高盈利：${_profit}U，盈利率：${_profit / this.presentDeal.costing}`, true, { color: '#0C75C0' });
+                this.addHistory('info', `记录到更高盈利：${_profit}U，盈利率：${_profit / this.presentDeal.costing}`, true, { color: '#ddbfbe' });
                 this.presentDeal.historyProfit = _profit;//存储最高利润
                 return false;
             } else {
@@ -579,7 +573,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             }
             if (_profit < this.presentDeal.historyProfit) {
                 //亏损大于上一次统计的亏损，持续亏损中...
-                this.addHistory('info', `记录到更高亏损：${_profit}U，亏损率：${_stopLossRate}`, true, { color: '#0C75C0' });
+                this.addHistory('info', `记录到更高亏损：${_profit}U，亏损率：${_stopLossRate}`, true, { color: '#4abf69' });
                 this.presentDeal.historyProfit = _profit;//存储最高亏损
             }
 
@@ -840,6 +834,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             'imitateRun',
             'profitSymbol',
             'parameterBackup',
+            'presentPrice',//缓存到数据库，免得服务重启，这里是0，s导致瞬间出场
             'advancedOption'].forEach(item => result[item] = this[item]);
         result['loadUpBuyHelper'] = JSON.stringify(this.loadUpBuyHelper.getInfo());
         return result;

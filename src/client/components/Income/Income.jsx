@@ -24,6 +24,7 @@ const option = () => {
     dateList = Array.from(new Set(dateList));
     return {
         // Make gradient line here
+        backgroundColor: '#000000',
         visualMap: [{
             show: false,
             type: 'continuous',

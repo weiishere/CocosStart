@@ -277,27 +277,15 @@ export default function ControlPanel({ uid }) {
                             enterButton="确认修改"
                             maxLength={10}
                             onSearch={value => updateParameter(item.key, +value)}
-                            disabled={disables[0]}
+                            //disabled={disables[0]}
                             onChange={e => {
                                 setModal(Object.assign({}, modal, { value: +e.target.value }))
                             }}
-                        /> : <center><Switch disabled={disables[0]} checked={item.value} onChange={checked => {
-                            updateParameter(item.key, checked)
-                        }} /></center>}
-                        {/* <Search
-                            type='number'
-                            value={modal.value}
-                            style={{ width: '15rem' }}
-                            placeholder="请输入修改后的值"
-                            enterButton="确认修改"
-                            maxLength={10}
-                            onSearch={value => updateParameter(item.key, value)}
-                            disabled={disables[0]}
-                            onChange={e => {
-                                setModal(Object.assign({}, modal, { value: e.target.value }))
-                            }}
-                        /> */}
-                        {/* <a style={{ verticalAlign: 'bottom' }} onClick={() => setModal(Object.assign({}, modal, { key: '' }))}>cancel</a> */}
+                        /> : <center><Switch
+                            //disabled={disables[0]}
+                            checked={item.value} onChange={checked => {
+                                updateParameter(item.key, checked)
+                            }} /></center>}
                     </div>}
                     title={item.title}
                     trigger="click"
