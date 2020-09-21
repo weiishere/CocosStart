@@ -1,13 +1,13 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-17 16:39:51
- * @LastEditTime: 2020-08-18 17:46:27
+ * @LastEditTime: 2020-09-21 13:14:49
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
  */
 const mongoose = require("mongoose");
-const {DB} = require('../config')
+const { DB } = require('../config')
 
 const url = `mongodb://${DB.host}/${DB.database}`;  //这里是mongodb协议 MongoDB的端口号为27017
 const options = {
@@ -19,20 +19,13 @@ const options = {
 module.exports = {
   mongoose,
   connectDB: (fn, text) => {
-    // mongoose.connect(url)  //connect参数2是个对象 为可选参数 当出现useNewUrlParser警告时 再来设置
-    //     .then(() => {
-    //         console.log("数据库链接成功");
-    //     })
-    //     .catch(err => {
-    //         console.log("数据库链接失败", err.message);
-    //     });
     mongoose.connect(url, options).then(() => {
-      console.log(text + "数据库连接成功...");
+      console.log(text + "数据库(" + DB.host + ")连接成功...");
       fn();
     },
-      err => { console.log(text + "数据库连接失败:", err); }
+      err => { console.log(text + "数据库" + DB.host + "连接失败:", err); }
     ).catch(err => {
-      console.log(text + "数据库连接失败:", err.message);
+      console.log(text + "数据库" + DB.host + "连接失败:", err.message);
     });
   }
 };

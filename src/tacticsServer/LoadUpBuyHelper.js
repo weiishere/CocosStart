@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-02 18:19:58
- * @LastEditTime: 2020-09-18 17:20:10
+ * @LastEditTime: 2020-09-21 20:31:37
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -17,8 +17,10 @@ module.exports = class LoadUpBuyHelper {
         this.isStopRise = false;//是否盈利即离场
         this.maxTimeAmount = 10;//补仓的最高倍数：如果补仓倍数超过原始资金的倍数，会终止
         this.dynamicGrids = true;
-        this.setStepGrids();
+        //this.setStepGrids();
         this.roundId;//当前的买卖回合ID
+        this.lastLoadUpTime = 0;
+        this.intervalTime = 5;//补仓间隔（分钟）
         this.loadUpList = [
             // {
             //     roundId: 0,
@@ -33,14 +35,23 @@ module.exports = class LoadUpBuyHelper {
         //补仓历史记录
     }
     setStepGrids() {
-        const stepDivisor = 1000;
-        const _step = this.tactices.averageWave.toFixed(3) * stepDivisor;//0.01*1000
-        this.stepGrids = [
-            { index: 1, rate: 10, times: 1 },
-            { index: 2, rate: 15, times: 1 },
-            { index: 3, rate: 20, times: 1 },
-            { index: 4, rate: 25, times: 1 }
+        const level = parseInt(this.tactices.averageWave * 1000);
+        let arr = [
+            { index: 1, rate: 0, times: 1 },
+            { index: 2, rate: 0, times: 1 },
+            { index: 3, rate: 0, times: 2 },//第三次补仓，劳资给你多来点儿
+            { index: 4, rate: 0, times: 1 },
+            { index: 5, rate: 0, times: 1 }
         ];
+        if (this.dynamicGrids) {
+            //[1,2,3,4,5].map(i=>parseInt((i * (1+i)*0.7 + 6)))
+            const stepDivisor = i => parseInt(i * (level + i) * (1.3 - i / 10) + 5);
+            arr.forEach((item, i) => item.rate = stepDivisor(i + 1));
+        } else {
+            arr.forEach((item, i) => item.rate = 10 + i * 5);
+        }
+        this.stepGrids = arr;
+        this.tactices.addHistory('info', `Level因子为${level}，补仓网格已调整为[${arr.map(i => i.rate).join('->')}]`, true, { color: "#759AA0" });
     }
     pushLoadUpList({ index, times, amount, mod, rate }) {
         const obj = {
@@ -57,9 +68,9 @@ module.exports = class LoadUpBuyHelper {
         if (this.tactices.presentDeal.historyProfit > 0) return false;//这句代码暂时也没太大意义，传过来的数据肯定是负值，不过还是约束下
         let result;
         //获取最高亏损与止损值的比例
-        const rate = Math.abs((this.tactices.presentDeal.historyProfit / this.tactices.presentDeal.costing) / this.tactices.parameter.stopLossRate) * 100;
+        //const rate = Math.abs((this.tactices.presentDeal.historyProfit / this.tactices.presentDeal.costing) / this.tactices.parameter.stopLossRate) * 100;
         //console.log(this.tactices.presentDeal.historyProfit, this.tactices.presentDeal.costing, rate);
-        //const rate = Math.abs((this.tactices.getProfit() / this.tactices.presentDeal.costing) / this.tactices.parameter.stopLossRate) * 100;
+        const rate = Math.abs((this.tactices.getProfit() / this.tactices.presentDeal.costing) / this.tactices.parameter.stopLossRate) * 100;
         //获取最高补仓记录
         const thisLoadUp = this.loadUpList.filter(item => (item.mod === 'step' && item.roundId === this.roundId));//获取本轮交易的补仓记录
         const maxLoadUpIndex = thisLoadUp.length === 0 ? 0 : [...thisLoadUp].sort((a, b) => b.index - a.index).shift().index;//获取最大亏损时的补仓记录(根据序号)
@@ -75,14 +86,21 @@ module.exports = class LoadUpBuyHelper {
             }
         }
         if (nextLoadUp && nextLoadUp.rate < rate) {
-            const buyAmount = nextLoadUp.times * this.tactices.parameter.usdtAmount;
-            result = this.pushLoadUpList({
-                index: nextLoadUp.index,
-                times: nextLoadUp.times,
-                amount: buyAmount,
-                mod: 'step',
-                rate: nextLoadUp.rate
-            });
+            //5分钟之内不能重复补仓
+            const nowDate = Date.parse(new Date());
+            if (nowDate - this.lastLoadUpTime < 60000 * this.intervalTime) {
+                this.tactices.addHistory('info', `离上次补仓时间不及${this.intervalTime}分钟，暂不补仓...`, true, { color: "#759AA0" });
+            } else {
+                this.lastLoadUpTime = nowDate;
+                const buyAmount = nextLoadUp.times * this.tactices.parameter.usdtAmount;
+                result = this.pushLoadUpList({
+                    index: nextLoadUp.index,
+                    times: nextLoadUp.times,
+                    amount: buyAmount,
+                    mod: 'step',
+                    rate: nextLoadUp.rate
+                });
+            }
         }
         //#region 
         /*
@@ -128,7 +146,7 @@ module.exports = class LoadUpBuyHelper {
     getInfo() {
         let result = {};
         [
-            'mod', 'target', 'maxTimeAmount', 'restrainEnable', 'stepGrids', 'roundId', 'loadUpList'
+            'mod', 'target', 'maxTimeAmount', 'restrainEnable', 'intervalTime', 'stepGrids', 'roundId', 'loadUpList'
         ].forEach(item => result[item] = this[item]);
         return result;
     }

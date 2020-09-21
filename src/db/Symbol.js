@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-17 17:53:50
- * @LastEditTime: 2020-08-19 16:30:38
+ * @LastEditTime: 2020-09-21 13:51:21
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -9,6 +9,7 @@
 
 const { mongoose } = require('./mongoMaster');
 const dateFormat = require('format-datetime');
+
 
 const symbolModel = mongoose.model('Symbol', new mongoose.Schema({
     name: String,
@@ -18,7 +19,8 @@ const symbolModel = mongoose.model('Symbol', new mongoose.Schema({
     klineData1h: { type: Array, default: [] },
     klineData1d: { type: Array, default: [] },
     boll5m: { type: Array, default: [] },
-    KDJ5m: { type: Array, default: [] }
+    KDJ5m: { type: Array, default: [] },
+    wave: { type: Number, default: 0 }
 }));
 
 

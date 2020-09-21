@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-09-16 16:33:23
+ * @LastEditTime: 2020-09-21 14:00:19
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -42,8 +42,8 @@ const apiDateCode = {
 }
 
 const DB = {
-  host: '118.114.242.126', // 服务器地址
-  //host: '127.0.0.1',
+  //host: '118.114.242.126', // 服务器地址
+  host: '127.0.0.1',
   port: 27017, // 数据库端口号
   username: 'admin', // 数据库用户名
   password: 'admin888', // 数据库密码

@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-18 23:49:06
- * @LastEditTime: 2020-09-14 12:15:58
+ * @LastEditTime: 2020-09-21 14:32:20
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -176,10 +176,19 @@ module.exports = class SymbolServer {
         }
         return this.SymbolServer;
     }
+    /**获取5分线平均波动率 */
+    getAverageWave(klineData5m) {
+        if (!klineData5m) return 0;
+        let total = 0;
+        klineData5m.forEach(item => {
+            total += Math.abs((item[1] - item[4]) / item[1]);
+        });
+        return total / klineData5m.length;
+    }
     async initSymbolStorageFromDb() {
         //从数据库读取
-        (await Symbol.find({})).map(({ name, klineData5m, boll5m, KDJ5m }) => {
-            this.symbolStorage[name] = { klineData5m, boll5m, KDJ5m }
+        (await Symbol.find({})).map(({ name, klineData5m, boll5m, KDJ5m, wave }) => {
+            this.symbolStorage[name] = { klineData5m, boll5m, KDJ5m, wave }
         })
     }
     /**初始化symbol数据库 */
@@ -219,7 +228,8 @@ module.exports = class SymbolServer {
                     this.symbolStorage[symbolKey] = {
                         klineData5m: res.data,
                         boll5m: bollLine(res.data),//this.symbolStorage[symbolKey] ? [...this.symbolStorage[symbolKey].boll5m] : [{}],
-                        KDJ5m: KDJLine(res.data, 9)//取得5分线JDK//this.symbolStorage[symbolKey] ? [...this.symbolStorage[symbolKey].KDJ5m] : [{}],
+                        KDJ5m: KDJLine(res.data, 9),//取得5分线JDK//this.symbolStorage[symbolKey] ? [...this.symbolStorage[symbolKey].KDJ5m] : [{}],
+                        wave: this.getAverageWave(res.data)
                     }
                     bar.tick();
                 } else {
@@ -242,14 +252,15 @@ module.exports = class SymbolServer {
             if (symbolKey && this.symbolStorage.hasOwnProperty(symbolKey) && /USDT$/.test(symbolKey)) {
                 client.ws.candles(symbolKey, '5m', payload => {
                     const { symbol, startTime, closeTime, open, close, high, low, volume, quoteVolume, trades, buyVolume, quoteBuyVolume } = payload;
-                    const { klineData5m, boll5m, KDJ5m } = this.symbolStorage[symbol];
+                    let { klineData5m, boll5m, KDJ5m, wave } = this.symbolStorage[symbol];
                     if (klineData5m[klineData5m.length - 1][0] !== startTime) {
                         if (boll5m.length === klineData5m.length) boll5m.shift();
                         if (KDJ5m.length === klineData5m.length) KDJ5m.shift();
                         klineData5m.shift();
                         klineData5m.push([startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume]);
                         boll5m.push(bollLine(klineData5m, klineData5m.length, startTime));
-                        KDJ5m.push(KDJLine(klineData5m, 9, KDJ5m))
+                        KDJ5m.push(KDJLine(klineData5m, 9, KDJ5m));
+                        wave = this.getAverageWave(klineData5m);
                         // KDJ5m.push(KDJLine(klineData5m, 9, {
                         //     singleData: klineData5m[klineData5m.length - 2],
                         //     lastKDJData: KDJ5m[KDJ5m.length - 2],
@@ -277,11 +288,13 @@ module.exports = class SymbolServer {
         console.time('同步完成，耗时');
         for (let symbolKey in this.symbolStorage) {
             if (this.symbolStorage.hasOwnProperty(symbolKey)) {
+                const { boll5m, KDJ5m, klineData5m, wave } = this.symbolStorage[symbolKey];
                 await Symbol.findOneAndUpdate({
                     name: symbolKey,
-                    boll5m: this.symbolStorage[symbolKey].boll5m,
-                    KDJ5m: this.symbolStorage[symbolKey].KDJ5m,
-                    klineData5m: this.symbolStorage[symbolKey].klineData5m
+                    boll5m,
+                    KDJ5m,
+                    klineData5m,
+                    wave: wave || 0
                 }, e => { console.log(e); });
             }
         }

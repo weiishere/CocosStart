@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-09-18 17:51:48
+ * @LastEditTime: 2020-09-21 20:13:20
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -50,12 +50,12 @@ module.exports = class SellIntoCorrections extends Tactics {
         //关于交易的一些历史记录（用于BS线）
         this.historyForDeal = [];
         this.checkBuyTime = 0;
-        this.checkSymbolTime = 10;
+        this.checkSymbolTime = 30;//寻币且默认入场检测的次数（之后若不停机，还是继续寻币，但还做不做入场检测，还有开关keepBuyFaildChangeSymbol）
         this.parameterBackup = this.parameter = Object.assign({
             usdtAmount: 11,//每次入场数量（USDT）
             serviceCharge: 0.00075,//币安手续费(千一)
             serviceChargeDiscounts: 0.15,//优惠费率(返费，暂不考虑))
-            checkBuyRate: 5000,//入场时间检查速率
+            checkBuyRate: 7000,//入场时间检查速率
             riseStayCheckRateForBuy: 8000,//未入场及上涨情况下，判断间隔等待时间
             riseBuyRange: 0.001,//上涨情况下，入场的上涨幅度
             autoSymbol: true,//自动切币
@@ -71,9 +71,10 @@ module.exports = class SellIntoCorrections extends Tactics {
             //isLiveRiseStopLossRate: true,
             stopLossRate: 0.1,//下跌情况（亏损）下跌止损点
             maxStayTime: 24 * 60,//亏损但未达到止损值的情况下，最久呆的时间(分钟)
-            faildBuyTimeForChange: 15,//进场失败次数，用于切币
+            faildBuyTimeForChange: 20,//进场失败次数，用于切币
             isAllowLoadUpBuy: true,//是否允许加仓
-            pauseFaildChangeSymbol: true,//若需切币且推荐币为空，是否暂停
+            pauseFaildChangeSymbol: false,//若需切币且推荐币为空，是否停止
+            keepBuyFaildChangeSymbol: true,//若需切币且推荐币为空且不停机，在寻币同时是否还做入场检测
             //symbolDriveMod: false,//选币驱动模式
         }, parameter || {});
 
@@ -111,7 +112,8 @@ module.exports = class SellIntoCorrections extends Tactics {
             isAllowLoadUpBuy: [false, "是否允许加仓"],
             faildBuyTimeForChange: [false, "未盈利情况下需切币的进场失败次数(<100)，若“自动切币”功能打开，超过100次会强制切币"],
             //symbolDriveMod: [false, "选币驱动模式，会保持选币一直运行，如果有新币产生，即尽快出场(盈利或亏损在0.5个点内)并切币进入，打开此开关需保证有及其严格的选币方案"],
-            pauseFaildChangeSymbol: [false, "是否待机等待。(关闭此项，进场失败次数达到n次，或者切币10次为空则会停机)"]
+            pauseFaildChangeSymbol: [false, "切币但无币是否停机。(打开此项，进场失败次数达到n次且切币10次为空则会停机)"],
+            keepBuyFaildChangeSymbol: [false, "在待机无限寻币的同时，在寻币同时是否还做入场检测（若”切币但无币是否停机“配置打开，此项无效）"],
         };
         this.presentPrice = 0;//当前价格
         //当前的交易信息
@@ -145,6 +147,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             // const speed = this.tacticesHelper.getWaveSpeedList(21);
             // this.avSpeed.push(speed.reduce((pre, cur) => Math.abs(pre) + Math.abs(cur), 0) / (speed.length || 1));
             this.averageWave = this.tacticesHelper.getAverageWave();
+            this.loadUpBuyHelper.setStepGrids();
             await this.tacticesHelper.getPresentPrice(true);//获取最新价格
         } catch (e) {
             console.log(e);
@@ -255,12 +258,16 @@ module.exports = class SellIntoCorrections extends Tactics {
                 } else {
                     //无币
                     if (this.checkSymbolTime === 0) {
-                        if (!this.parameter.pauseFaildChangeSymbol) {
+                        if (this.parameter.pauseFaildChangeSymbol) {
                             this.addHistory('info', `未搜寻到新币（10次），实例即将停止...`, true);
                             return false;
                         } else {
-                            this.addHistory('info', `未搜寻到新币，开始待机无限制切币搜寻(不再做入场监测)...`, true);
-                            return undefined;
+                            if (this.parameter.keepBuyFaildChangeSymbol) {
+                                this.addHistory('info', `未搜寻到新币，开始待机无限制切币搜寻(保持入场监测)...`, true);
+                            } else {
+                                this.addHistory('info', `未搜寻到新币，开始待机无限制切币搜寻(不再做入场监测)...`, true);
+                                return undefined;
+                            }
                         }
                     } else {
                         this.checkSymbolTime--;
@@ -527,7 +534,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             //如果盈利为正
             if (_profit > this.presentDeal.historyProfit) {
                 //利润大于上一次统计的利润，持续盈利中...
-                this.addHistory('info', `记录到更高盈利：${_profit}`, true);
+                this.addHistory('info', `记录到更高盈利：${_profit}U，盈利率：${_profit / this.presentDeal.costing}`, true, { color: '#0C75C0' });
                 this.presentDeal.historyProfit = _profit;//存储最高利润
                 return false;
             } else {
@@ -562,6 +569,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             //盈利为负（亏损）
             //获取亏损率
             //this.presentDeal.historyProfit = _profit;//重置最高盈利(考虑先盈利很高，突然暴跌后，重新拉回来，但没有冲破最高盈利，一直无法出场)
+            const _stopLossRate = Math.abs(Number(this.getProfit() / this.presentDeal.costing));
             if (!this.riseTimer) {
                 this.riseTimer = setTimeout(async () => {
                     this.addHistory('info', `亏损状态时间超时，进行止损操作`);
@@ -571,10 +579,10 @@ module.exports = class SellIntoCorrections extends Tactics {
             }
             if (_profit < this.presentDeal.historyProfit) {
                 //亏损大于上一次统计的亏损，持续亏损中...
-                this.addHistory('info', `记录到更高亏损：${_profit}`, true);
+                this.addHistory('info', `记录到更高亏损：${_profit}U，亏损率：${_stopLossRate}`, true, { color: '#0C75C0' });
                 this.presentDeal.historyProfit = _profit;//存储最高亏损
             }
-            const _stopLossRate = Math.abs(Number(this.getProfit() / this.presentDeal.costing));
+
             if (_stopLossRate >= this.parameter.stopLossRate) {
                 //止损流程
                 //再观察一定时间，看是否涨回去
@@ -584,13 +592,9 @@ module.exports = class SellIntoCorrections extends Tactics {
                         //再次观察亏损
                         const _profit = this.getProfit();
                         const _stopLossRate2 = Math.abs(Number(_profit / this.presentDeal.costing));
-                        if (_stopLossRate2 > 0) {
+                        if (_profit > 0) {
                             this.addHistory('info', `扭亏为盈，继续等待出场时机...`);
                             this.presentDeal.historyProfit = _profit;
-                            // if (_profit > this.presentDeal.historyProfit) {
-                            //     //可能是爆拉，直接顶破最高盈利历史记录
-                            //     this.presentDeal.historyProfit = _profit;
-                            // }
                             resolve(false);
                         } else {
                             if (_stopLossRate2 >= this.parameter.stopLossRate) {
@@ -601,18 +605,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                             } else {
                                 //说明在回涨，观察
                                 this.addHistory('info', `二次判断，亏损降低，亏损率：${_stopLossRate2.toFixed(6)}，低于止损点${this.parameter.stopLossRate}，继续等待出场时机...`, true);
-                                resolve(false);
-                                //获取相对最高亏损，回调的涨幅
-                                // const diff = Math.abs(this.presentDeal.historyProfit - _profit);
-                                // const _lossStopLossRate = Math.abs(diff / this.presentDeal.historyProfit) * 100;
-                                // if (this.parameter.lossStopLossRate !== 0 && _lossStopLossRate > this.parameter.lossStopLossRate) {
-                                //     //回涨的弧度超过一个值，止损
-                                //     this.addHistory('info', `二次判断，继续亏损,亏损率：${_stopLossRate2.toFixed(6)}，低于止损点${this.parameter.stopLossRate}，但回涨幅度已高于${this.parameter.lossStopLossRate}%，进行止损操作`);
-                                //     if (await this.deal('sell')) resolve(true); else resolve(false);
-                                // } else {
-                                //     this.addHistory('info', `二次判断，亏损降低，亏损率：${_stopLossRate2.toFixed(6)}，低于止损点${this.parameter.stopLossRate}，继续等待出场时机...`, true);
-                                //     resolve(false);
-                                // }
+                                resolve(false)
                             }
                         }
                     }, this.parameter.riseStayCheckRateForSell);
@@ -793,7 +786,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 }
             }
             this.loadUpBuyHelper.loadUpList = this.loadUpBuyHelper.loadUpList.filter(item => item.roundId === this.roundId);
-            
+
             this.roundId = Date.parse(new Date());//下一回合
             this.roundRunTime = 0;
             //if (this.nextSymbol) this.symbol = this.nextSymbol;//出场成功之后切换币

@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 00:05:32
- * @LastEditTime: 2020-09-18 11:15:47
+ * @LastEditTime: 2020-09-21 17:36:34
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -185,16 +185,17 @@ export default function HistoryRecord() {
                 }
             >
                 {tactics && tactics.buyState && <div className='presentDealWrap'>
-                    <div><label>成本</label>：{tactics.presentDeal.costing}</div>
-                    <div><label>入场均价</label>：{tactics.presentDeal.averagePrice}</div>
-                    <div><label>当前市场价</label>：{tactics.presentPrice}</div>
+                    <div><label>成本(USDT)</label>：{tactics.presentDeal.costing}U</div>
+                    <div><label>当前市场价</label>：{tactics.presentPrice}U</div>
+                    <div><label>最后入场价格</label>：{tactics.presentDeal.payPrice}U</div>
+                    <div><label>入场均价</label>：{tactics.presentDeal.averagePrice}U</div>
+                    <div><label>入场币数量</label>：{tactics.presentDeal.amount}枚</div>
+                    <div><label>最高盈亏</label>：{tactics.presentDeal.historyProfit}U</div>
                     <div><label>10小时平均波动率</label>：{tactics.averageWave * 100}%</div>
-                    <div><label>最后入场价格</label>：{tactics.presentDeal.payPrice}</div>
-                    <div><label>入场币数量</label>：{tactics.presentDeal.amount}</div>
-                    <div><label>最高盈亏</label>：{tactics.presentDeal.historyProfit}</div>
                     <div><label>补仓倍数/次数</label>：
                     {tactics.loadUpBuyHelper.loadUpList.filter(i => i.roundId === tactics.roundId).reduce((pre, cur) => pre + cur.times, 0)}/
                     {tactics.loadUpBuyHelper.loadUpList.filter(i => i.roundId === tactics.roundId).length}</div>
+                    <div><label>补仓网格</label>：{tactics.loadUpBuyHelper.stepGrids.map(i => i.rate).join('->')}</div>
                 </div>}
             </Modal>
         </div>
