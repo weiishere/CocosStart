@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-25 17:58:01
- * @LastEditTime: 2020-08-14 18:11:52
+ * @LastEditTime: 2020-09-23 16:50:53
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -21,5 +21,10 @@ export default {
     getIndicatorLine: '/api/getIndicatorLine',
     clearNormalInfo: '/api/clearNormalInfo',
     clearNormalInfo: '/api/clearNormalInfo',
-    updateLoadUpBuy: '/api/updateLoadUpBuy'
+    updateLoadUpBuy: '/api/updateLoadUpBuy',
+
+    getStrategy: '/api/strategy/get',
+    createStrategy: '/api/strategy/create',
+    updateStrategy: '/api/strategy/update',
+    setStrategy: '/api/strategy/set'
 }

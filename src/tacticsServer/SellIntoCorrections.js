@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-09-21 20:13:20
+ * @LastEditTime: 2020-09-23 20:57:24
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -143,6 +143,9 @@ module.exports = class SellIntoCorrections extends Tactics {
             // this.avSpeed.push(speed.reduce((pre, cur) => Math.abs(pre) + Math.abs(cur), 0) / (speed.length || 1));
             this.averageWave = this.tacticesHelper.getAverageWave();
             this.loadUpBuyHelper.setStepGrids();
+            if(this.strategyId){
+                this.tacticesHelper.setStrategy();
+            }
         } catch (e) {
             console.log(e);
         }
@@ -812,6 +815,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             'advancedOption',
             'depth',
             'presentPrice',
+            'strategy',
             'ticker'].forEach(item => result[item] = this[item]);
         result['loadUpBuyHelper'] = this.loadUpBuyHelper.getInfo();
         return result;
@@ -834,6 +838,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             'imitateRun',
             'profitSymbol',
             'parameterBackup',
+            'strategy',
             'presentPrice',//缓存到数据库，免得服务重启，这里是0，s导致瞬间出场
             'advancedOption'].forEach(item => result[item] = this[item]);
         result['loadUpBuyHelper'] = JSON.stringify(this.loadUpBuyHelper.getInfo());
@@ -851,6 +856,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             'historyForDeal',
             'presentDeal',
             'roundId',
+            'strategy',
             'buyState'].forEach(item => result[item] = this[item]);
         result['loadUpBuyHelper'] = this.loadUpBuyHelper.getInfo();
         return result;

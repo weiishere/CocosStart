@@ -1,13 +1,15 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-016 18:19:58
- * @LastEditTime: 2020-09-17 17:57:01
+ * @LastEditTime: 2020-09-23 21:09:56
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
  */
 const { client } = require('../lib/binancer');
 const { symbolStorage } = require('./restrainGroup');
+const { System } = require('../config')
+const { Strategy } = require('../db');
 
 module.exports = class TacticsHelper {
     constructor(tactices) {
@@ -96,5 +98,23 @@ module.exports = class TacticsHelper {
         });
         return total / klineData5m.length;
     }
-
+    /**按照策略重置参数,id为空时会调用自身的ID查询策略 */
+    async setStrategy(id) {
+        if (!id && !this.tactices.strategy.id) {
+            console.error('策略应用失败：id不存在');
+            return false;
+        }
+        //else if (this.tactices.strategy.id === id) return; 可能是重置策略，所以这里不能限制
+        const _strategy = (await Strategy.find({ _id: id || this.tactices.strategy.id }))[0];
+        if (_strategy.version !== System.version) {
+            console.error('策略版本不对应，无法应用');
+            return;
+        }
+        const { _id, name, version } = _strategy;
+        this.tactices.strategy = { id: _id, name, version };
+        this.tactices.parameter = Object.assign({}, _strategy.options.parameter);
+        this.tactices.loadUpBuyHelper = Object.assign(this.tactices.loadUpBuyHelper, _strategy.options.loadUpBuyHelper);
+        this.tactices.advancedOption = Object.assign(this.tactices.advancedOption, _strategy.options.advancedOption);
+        this.tactices.addHistory('info', `已应用策略-${_strategy.name}`, true, { isMap: true });
+    }
 }

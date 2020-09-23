@@ -1,8 +1,7 @@
 import React from 'react';
-import { Input, Tooltip, Button, Select, InputNumber, Tag, Modal, Popover, Switch } from 'antd';
+import { Input, Tooltip, Button, Select, InputNumber, Tag, Modal, Popover, Switch, message, AutoComplete } from 'antd';
 import { PlusOutlined, CaretRightOutlined, PauseOutlined, IssuesCloseOutlined, SwapOutlined, ReloadOutlined, PauseCircleOutlined, SettingOutlined, PoweroffOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons'
 import { requester } from '@src/tool/Requester'
-import { message } from 'antd';
 import EventHub from '@client/EventHub'
 import AdvancedSetPanel from './AdvancedSetPanel'
 import { apiDateCode } from '@src/config'
@@ -22,6 +21,11 @@ export default function ControlPanel({ uid }) {
     const [disables, setDisables] = React.useState([true, true, true]);
     const [modalVisible, setModalVisible] = React.useState(false);
     const [targetTactice, setTargetTactice] = React.useState(null);
+    const [strategys, setStrategys] = React.useState([
+        //{ _id: '123', name: '实例策略',version:'2.1' }
+    ]);
+    const [strategyValue, setStrategyValue] = React.useState('');
+    const [newStrategyName, setNewStrategyName] = React.useState('');
     const key = 'loading';
     const addTactice = () => {
         message.loading({ content: 'loading..', key, duration: 0 });
@@ -144,6 +148,78 @@ export default function ControlPanel({ uid }) {
             }
         });
     }
+    const strategyCommond = {
+        find: () => {
+            message.loading({ content: 'loading..', key, duration: 0 });
+            requester({
+                url: api.getStrategy,
+                params: { uid },
+                option: {
+                    baseUrl: 'API_server_url',
+                    faileBack: error => message.error({ content: error, key, duration: 2 })
+                }
+            }).then(({ res }) => {
+                if (res.data.code !== apiDateCode.success) {
+                    message.error({ content: res.data.msg, key, duration: 2 });
+                } else {
+                    message.destroy();
+                    setStrategys(res.data.data)
+                }
+            });
+        },
+        update: () => {
+
+        },
+        create: () => {
+            if (!newStrategyName) {
+                message.warn('请输入策略名称');
+                return false;
+            }
+            message.loading({ content: 'loading..', key, duration: 0 });
+            const { dynamicGrids, intervalTime, isStopRise, mod, restrainEnable, target } = targetTactice.loadUpBuyHelper;
+            requester({
+                url: api.createStrategy, type: 'post',
+                params: {
+                    strategy: {
+                        name: newStrategyName, uid,
+                        options: {
+                            parameter: targetTactice.parameter,
+                            loadUpBuyHelper: { dynamicGrids, intervalTime, isStopRise, mod, restrainEnable, target },
+                            advancedOption: targetTactice.advancedOption
+                        }
+                    }
+                },
+                option: {
+                    baseUrl: 'API_server_url',
+                    faileBack: error => message.error({ content: error, key, duration: 2 })
+                }
+            }).then(({ res }) => {
+                if (res.data.code !== apiDateCode.success) {
+                    message.error({ content: res.data.msg, key, duration: 2 });
+                } else {
+                    strategyCommond.find();
+                }
+            });
+        },
+        set: () => {
+            if (!strategyValue) { message.warn('请选择策略'); return; }
+            message.loading({ content: 'loading..', key, duration: 0 });
+            requester({
+                url: api.setStrategy, type: 'post',
+                params: { tid: chooseTacticeId, strategyId: strategyValue, version: strategys.find(item => item._id === strategyValue).version },//tid, strategyId, version
+                option: {
+                    baseUrl: 'API_server_url',
+                    faileBack: error => message.error({ content: error, key, duration: 2 })
+                }
+            }).then(({ res }) => {
+                if (res.data.code !== apiDateCode.success) {
+                    message.error({ content: res.data.msg, key, duration: 2 });
+                } else {
+                    message.destroy();
+                }
+            });
+        }
+    }
     React.useEffect(() => {
         // window.setTimeout(() => {
         //     alert('update')
@@ -176,14 +252,15 @@ export default function ControlPanel({ uid }) {
         //运行币切换
         EventHub.getInstance().addEventListener('switchTactics', 'cp_switchTactics', payload => {
             setChooseTacticeId(payload.id);
-            setTargetTactice(payload)
+            setTargetTactice(payload);
+            setStrategyValue(payload.strategy.id);
             if (payload.runState) {
                 setDisables([true, false, true]);
             } else {
                 setDisables([false, true, false]);
             }
         });
-
+        strategyCommond.find();
     }, []);//symbolStr, chooseTacticeId, disables
     const openEditModal = (mod) => {
         setModal(Object.assign({}, modal, { key: mod.key, title: mod.desc, value: mod.value }));
@@ -293,7 +370,31 @@ export default function ControlPanel({ uid }) {
                     openEditModal(item)
                 }} key={item.key} color='#2E384E'>{item.desc}：{typeof (item.value) === 'number' ? item.value : (item.value ? '是' : '否')}</Tag><br /></Popover>)
             }
-            <center>{chooseTacticeId && <Button onClick={() => { setModalVisible(true) }} type="link" icon={<SettingOutlined />}>高级设置</Button>}</center>
+            <center>{chooseTacticeId && <>
+                <Button onClick={() => { setModalVisible(true) }} type="link"><i className="iconfont_default">&#xe61f;</i>高级配置</Button>
+                <Popover
+                    title='策略管理'
+                    trigger="click"
+                    content={<div>
+                        <label>当前已应用的策略</label>
+                        <div>
+                            <Select value={strategyValue} style={{ width: '10rem' }} onChange={e => { setStrategyValue(e) }}>
+                                {strategys.map((item, i) => <Option key={`key_${i}`} value={item._id}>{`${item.name}(v${item.version})`}</Option>)}
+                            </Select>
+                            <Tooltip placement="bottom" title="删除已选择策略">
+                                &nbsp;<DeleteOutlined onClick={() => { }} />&nbsp;
+                            </Tooltip>
+                            <Input style={{ width: '10rem' }} value={newStrategyName} placeholder="新的策略名称" onChange={e => setNewStrategyName(e.target.value)} />
+                        </div>
+                        <div style={{ marginTop: '0.5rem' }}>
+                            <Button disabled={!strategyValue ? true : false} type="primary" style={{ width: '31.5%' }} onClick={strategyCommond.set}><i className="iconfont_default">&#xe630;</i>&nbsp;应用策略</Button>&nbsp;&nbsp;
+                            <Button type="primary" style={{ width: '31.5%' }}><i className="iconfont_default">&#xe640;</i>&nbsp;覆盖策略</Button>&nbsp;&nbsp;
+                            <Button type="primary" style={{ width: '31.5%' }} onClick={strategyCommond.create}><i className="iconfont_default">&#xe666;</i>&nbsp;新建策略</Button>
+                        </div>
+                    </div>}>
+                    <Button type="link"><i className="iconfont_default">&#xe611;</i>策略管理</Button>
+                </Popover>
+            </>}</center>
         </div>
         {<Modal
             title={`高级配置-${targetTactice && targetTactice.name}`}

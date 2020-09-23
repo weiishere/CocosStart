@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 15:09:27
- * @LastEditTime: 2020-09-18 11:16:20
+ * @LastEditTime: 2020-09-23 19:48:02
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -27,7 +27,7 @@ import { WsRoute } from '@src/config'
 import { requester } from '@src/tool/Requester'
 import { switchTactics, getQueryString } from '@client/utils'
 import api from '@client/api';
-import { apiDateCode } from '@src/config';
+import { apiDateCode, System } from '@src/config';
 import './style/style.less'
 
 const getHash = () => {
@@ -93,8 +93,8 @@ export default function App() {
                     <Col span={7} style={{ height: '100%' }}>
                         <MultipleWatch uid={user.id} />
                     </Col>
-                    <Col span={10} style={{ height: '100%',border:'solid 1px #ccc' }}>
-                        <span className='head-title'>控制面板-({tacticeName}-{symbol})</span>
+                    <Col span={10} style={{ height: '100%', border: 'solid 1px #ccc' }}>
+                        <span className='head-title'>控制面板(v{System.version})-({tacticeName}-{symbol})</span>
                         <section className='customerWrap'>
                             <div><ControlPanel uid={user.id} /></div>
                             <div>
@@ -123,7 +123,7 @@ export default function App() {
                             <Col span={24}><Income /></Col>
                         </Row>
                         <Row style={{ height: '60%', position: 'relative' }}>
-                            <Statistics/>
+                            <Statistics />
                             {/* <Col span={18}>
                                 <IncomeUnit />
                             </Col>

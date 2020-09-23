@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-09-21 14:00:19
+ * @LastEditTime: 2020-09-23 14:18:01
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -17,7 +17,8 @@ const System = {
   Public_path: '/public/',
   api_base_url: 'https://api.binance.com/api/v3/',
   apiKey: 'N0TxBgVpvpPZFoGPaJ901Bdi2w7dtn0aozqP1MIXQ5EY51nDYtqUzAQgSRKKfeaM',
-  apiSecret: '5f6BRKXLIRBG89nfKtcRg33jbAaMELQ3q2zi3PFLGXH0G7S6166inHtJ82SfGRe8'
+  apiSecret: '5f6BRKXLIRBG89nfKtcRg33jbAaMELQ3q2zi3PFLGXH0G7S6166inHtJ82SfGRe8',
+  version: '2.1'
 }
 
 const WsConfig = {
@@ -54,7 +55,7 @@ const SendEmail = {
   service: 'smtp.abcd.com', // SMTP服务提供商域名
   username: 'postmaster@abcd.com', // 用户名/用户邮箱
   password: 'password', // 邮箱密码
-  sender_address: '"XX平台 👥" <postmaster@abcd.com>'
+  sender_address: '"量化交易平台 👥" <wei.huang@hotmail.com>'
 }
 
 module.exports = {

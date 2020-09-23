@@ -16,12 +16,12 @@ const serverScoket = require('./server-scoket');
 const childProcess = require('child_process')
 const { System } = require('./config')
 const { connectDB } = require('./db/mongoMaster');
-// import ApiRoutes from './routes/api-routes.js'
+const StrategyRoutes = require('./routes/strategy-routes.js');
 const ApiRoutes = require('./routes/api-routes.js');
 const EventHub = require('./tool/EventHub');
 const config = require('../webpack.config.js');
 const app = new Koa();
-const { Symbol } = require('./db');
+//const { Symbol } = require('./db');
 
 const compiler = webpack(config);
 
@@ -56,6 +56,7 @@ app.use(devMiddleware(compiler, {
 // 服务的静态文件地址
 app.use(staticServer(__dirname + System.Public_path))
     .use(ApiRoutes.routes())
+    .use(StrategyRoutes.routes())
     .use(ApiRoutes.allowedMethods());
 //启动数据库
 connectDB(async () => {
