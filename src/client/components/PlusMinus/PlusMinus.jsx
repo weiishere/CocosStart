@@ -32,6 +32,7 @@ const option = () => {
             text: `出场盈亏`,
             subtext: `当前合计：${data.reduce((pre, cur) => pre + cur.value, 0)} U`
         },
+        backgroundColor: '#000000',
         tooltip: {
             trigger: 'axis',
             axisPointer: {            // 坐标轴指示器，坐标轴触发有效
@@ -47,7 +48,7 @@ const option = () => {
         grid: {
             top: '27%',
             bottom: 30,
-            right:20,
+            right: 20,
         },
         yAxis: {
             type: 'value',
@@ -122,11 +123,11 @@ export default function PlusMinus() {
         //         myChart.setOption(option());
         //     }
         // });
-        EventHub.getInstance().addEventListener('historyRecord','pm_historyRecord', ({historyForDeal}) => {
+        EventHub.getInstance().addEventListener('historyRecord', 'pm_historyRecord', ({ historyForDeal }) => {
             //console.log(historyForDeal)
-            
+
             data = historyForDeal.filter(item => item.type === 'sell').map(item => {
-                if(!item.content.profit) console.log(item);
+                if (!item.content.profit) console.log(item);
                 return {
                     value: item.content.profit,
                     name: Number(item.content.profit.toFixed(3)),

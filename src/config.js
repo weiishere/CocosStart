@@ -42,8 +42,8 @@ const apiDateCode = {
 }
 
 const DB = {
-  host: '118.114.242.126', // 服务器地址
-  //host: '127.0.0.1',
+  //host: '118.114.242.126', // 服务器地址
+  host: '127.0.0.1',
   port: 27017, // 数据库端口号
   username: 'admin', // 数据库用户名
   password: 'admin888', // 数据库密码

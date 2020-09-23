@@ -376,7 +376,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             await fn();
         } else {
             //停止
-            this.stop();
+            //this.stop();
         }
 
     }

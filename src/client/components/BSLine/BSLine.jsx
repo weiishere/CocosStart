@@ -76,7 +76,7 @@ const option = (symbol, price) => {
         //     data: ['日K', 'MA5', 'MA10', 'MA20', 'MA30']
         // },
         grid: {
-            right: '3%',
+            //right: '8%',
             bottom: '17%'
         },
         xAxis: {
@@ -164,9 +164,24 @@ const option = (symbol, price) => {
                     //         }
                     //     }
                     // ]
+                },
+                
+            },
+            {
+                type: 'line',
+                markLine: {
+                    symbol: "none",
+                    label: { position: "end" },
+                    data: [{
+                        silent: true,
+                        lineStyle: {
+                            type: "solid",
+                            color: "#f7f180",
+                        },
+                        yAxis: [Number(price)] 
+                    }]
                 }
             }
-
         ]
     };
 }
@@ -190,7 +205,7 @@ const optionVolume = () => {
         },
         grid: {
             left: '5%',
-            right: '3%',
+            //right: '3%',
             bottom: '13%',
             top: '20%',
             containLabel: true

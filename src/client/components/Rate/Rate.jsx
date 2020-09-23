@@ -61,6 +61,7 @@ const option = (symbol, presentTradeInfo) => ({
             type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
         }
     },
+    backgroundColor: '#000000',
     title: {
         text: `挂单(${symbol || localStorage.getItem("SymbleForBs")})`,
         subtext: presentTradeInfo && `最新成交：${dateFormat(new Date(presentTradeInfo.tradeTime), "HH:mm:ss")} 成交${Number(presentTradeInfo.quantity)}枚，均价：${Number(presentTradeInfo.price)}`

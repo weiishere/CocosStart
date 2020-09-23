@@ -29,7 +29,7 @@ const columns = [
         dataIndex: 'nowRiseRate',
     },
     {
-        title: '补仓(倍)',
+        title: '投入/补仓(倍)',
         dataIndex: 'loadUp',
     },
     {
@@ -77,11 +77,11 @@ export default function Statistics() {
                     symbol: item.symbol,
                     status: `${item.runState ? '运行中/' + (item.buyState ? '场内' : '场外') : '未运行'}`,
                     nowRiseRate: item.buyState && lastHistoryForDeal.type === 'buy' ? Number((lastHistoryForDeal.content.profit / item.presentDeal.costing).toFixed(5)) : '-',
-                    loadUp: times,
+                    loadUp: item.parameter.usdtAmount * (times + 1) + 'U / ' + times,
                     //buyUsdtAmount: Number(item.presentDeal.amount.toFixed(2)),
-                    count: item.historyForDeal.filter(item => item.type === 'sell' && item.content.profit > 0).length + '/' + item.historyForDeal.filter(item => item.type === 'sell').length,
+                    count: item.historyForDeal.filter(item => item.type === 'sell' && item.content.profit > 0).length + ' / ' + item.historyForDeal.filter(item => item.type === 'sell').length,
                     //riseRate: Number(((rise / (item.parameter.usdtAmount)) * 100).toFixed(4)) + '%',
-                    riseRate: item.historyForDeal.filter(item => item.type === 'sell').reduce((pre, cur) => pre + cur.content.profit, 0).toFixed(5)
+                    riseRate: Number(item.historyForDeal.filter(item => item.type === 'sell').reduce((pre, cur) => pre + cur.content.profit, 0).toFixed(5))
                 }
             });
             setData(list);

@@ -83,6 +83,8 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
         if (!isRequest) {
             setLoadUpBuyHelper(_loadUpBuyHelper);
         } else {
+            const key = 'loading';
+            message.loading({ content: '处理中..', key, duration: 0 });
             requester({
                 url: api.updateLoadUpBuy, type: 'post',
                 params: { tid: tactice.id, loadUpBuy: _loadUpBuyHelper },
