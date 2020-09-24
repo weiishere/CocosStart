@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 02:37:01
- * @LastEditTime: 2020-09-17 14:27:22
+ * @LastEditTime: 2020-09-24 15:04:55
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -64,9 +64,9 @@ export default function Statistics() {
             //const target = payload.find(item => item.target);
             let ckeckedKey = -1;
             const runIcon = <i title='运行中' className="iconfont_default runStyle rotation">&#xe61e;</i>;
-            const buyIcon = <i title='场内' className="iconfont_default runStyle">&#xe617;</i>;
+            const buyIcon = <i title='场内' className="iconfont_default runStyle">&#xe8ab;</i>;
             const stopIcon = <i title='未运行' className="iconfont_default">&#xe65e;</i>;
-            const sellIcon = <i title='场外' className="iconfont_default">&#xe600;</i>;
+            const sellIcon = <i title='场外' className="iconfont_default">&#xe6e8;</i>;
             const list = payload.map((item, i) => {
                 if (item.target) ckeckedKey = i;
                 const lastHistoryForDeal = item.historyForDeal[item.historyForDeal.length - 1];

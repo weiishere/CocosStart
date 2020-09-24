@@ -4,6 +4,7 @@ import { PlusOutlined, CaretRightOutlined, PauseOutlined, IssuesCloseOutlined, S
 import { requester } from '@src/tool/Requester'
 import EventHub from '@client/EventHub'
 import AdvancedSetPanel from './AdvancedSetPanel'
+import StrategyPanel from './StrategyPanel'
 import { apiDateCode } from '@src/config'
 import { switchTactics } from '@client/utils'
 import api from '@client/api';
@@ -25,7 +26,6 @@ export default function ControlPanel({ uid }) {
         //{ _id: '123', name: '实例策略',version:'2.1' }
     ]);
     const [strategyValue, setStrategyValue] = React.useState('');
-    const [newStrategyName, setNewStrategyName] = React.useState('');
     const key = 'loading';
     const addTactice = () => {
         message.loading({ content: 'loading..', key, duration: 0 });
@@ -148,138 +148,24 @@ export default function ControlPanel({ uid }) {
             }
         });
     }
-    const strategyCommond = {
-        find: () => {
-            //message.loading({ content: 'loading..', key, duration: 0 });
-            requester({
-                url: api.getStrategy,
-                params: { uid },
-                option: {
-                    baseUrl: 'API_server_url',
-                    faileBack: error => message.error({ content: error, key, duration: 2 })
-                }
-            }).then(({ res }) => {
-                if (res.data.code !== apiDateCode.success) {
-                    message.error({ content: res.data.msg, key, duration: 2 });
-                } else {
-                    //message.destroy();
-                    setStrategys(res.data.data)
-                }
-            });
-        },
-        update: () => {
-            message.loading({ content: 'loading..', key, duration: 0 });
-            requester({
-                url: api.updateStrategy, type: 'post',
-                params: {
-                    _id: strategyValue,
-                    tid: chooseTacticeId,
-                    strategy: {
-                        uid
-                    }
-                },
-                option: {
-                    baseUrl: 'API_server_url',
-                    faileBack: error => message.error({ content: error, key, duration: 2 })
-                }
-            }).then(({ res }) => {
-                if (res.data.code !== apiDateCode.success) {
-                    message.error({ content: res.data.msg, key, duration: 2 });
-                } else {
-                    message.success({ content: `操作已完成`, key, duration: 2 });
-                    //strategyCommond.find();
-                }
-            });
-        },
-        create: () => {
-            if (!newStrategyName) {
-                message.warn('请输入策略名称');
-                return false;
+    const sgetStrategyList = () => {
+        requester({
+            url: api.getStrategy,
+            params: { uid },
+            option: {
+                baseUrl: 'API_server_url',
+                faileBack: error => message.error({ content: error, key, duration: 2 })
             }
-            message.loading({ content: 'loading..', key, duration: 0 });
-            requester({
-                url: api.createStrategy, type: 'post',
-                params: {
-                    tid: chooseTacticeId,
-                    strategy: {
-                        name: newStrategyName, uid
-                    }
-                },
-                option: {
-                    baseUrl: 'API_server_url',
-                    faileBack: error => message.error({ content: error, key, duration: 2 })
-                }
-            }).then(({ res }) => {
-                if (res.data.code !== apiDateCode.success) {
-                    message.error({ content: res.data.msg, key, duration: 2 });
-                } else {
-                    message.success({ content: `操作已完成`, key, duration: 2 });
-                    strategyCommond.find();
-                }
-            });
-        },
-        set: () => {
-            if (!strategyValue) { message.warn('请选择策略'); return; }
-            message.loading({ content: 'loading..', key, duration: 0 });
-            requester({
-                url: api.setStrategy, type: 'post',
-                params: { tid: chooseTacticeId, strategyId: strategyValue, version: strategys.find(item => item._id === strategyValue).version },//tid, strategyId, version
-                option: {
-                    baseUrl: 'API_server_url',
-                    faileBack: error => message.error({ content: error, key, duration: 2 })
-                }
-            }).then(({ res }) => {
-                if (res.data.code !== apiDateCode.success) {
-                    message.error({ content: res.data.msg, key, duration: 2 });
-                } else {
-                    message.success({ content: `操作已完成`, key, duration: 2 });
-                }
-            });
-        },
-        remove: () => {
-            message.loading({ content: 'loading..', key, duration: 0 });
-            requester({
-                url: api.removeStrategy, type: 'post',
-                params: { id: strategyValue },
-                option: {
-                    baseUrl: 'API_server_url',
-                    faileBack: error => message.error({ content: error, key, duration: 2 })
-                }
-            }).then(({ res }) => {
-                if (res.data.code !== apiDateCode.success) {
-                    message.error({ content: res.data.msg, key, duration: 2 });
-                } else {
-                    message.success({ content: `删除操作已完成`, key, duration: 2 });
-                    setStrategyValue('');
-                    strategyCommond.find();
-                }
-            });
-        },
-        unbind: () => {
-
-            message.loading({ content: 'loading..', key, duration: 0 });
-            requester({
-                url: api.unbindStrategy, type: 'post',
-                params: { tid: chooseTacticeId },
-                option: {
-                    baseUrl: 'API_server_url',
-                    faileBack: error => message.error({ content: error, key, duration: 2 })
-                }
-            }).then(({ res }) => {
-                if (res.data.code !== apiDateCode.success) {
-                    message.error({ content: res.data.msg, key, duration: 2 });
-                } else {
-                    message.success({ content: `解除操作已完成`, key, duration: 2 });
-                    setStrategyValue('');
-                }
-            });
-        }
+        }).then(({ res }) => {
+            if (res.data.code !== apiDateCode.success) {
+                message.error({ content: res.data.msg, key, duration: 2 });
+            } else {
+                //message.destroy();
+                setStrategys(res.data.data)
+            }
+        });
     }
     React.useEffect(() => {
-        // window.setTimeout(() => {
-        //     alert('update')
-        //     setSymbolStr('update');
-        // }, 3000)
         //选中推荐交易对之后，切换待选币
         EventHub.getInstance().addEventListener('chooseSymbol', 'cp_chooseSymbol', payload => {
             setSymbolStr(payload.symbol);
@@ -294,7 +180,7 @@ export default function ControlPanel({ uid }) {
             })));
             const _targetTactice = payload.find(item => item.target === true);
             //_targetTactice && setParamter(_targetTactice.parameterDesc.map(item => ({ parameterDesc: item, value: _targetTactice.parameter[item] })));
-            if (_targetTactice.strategy.id) setStrategyValue(_targetTactice.strategy.id);
+            //if (_targetTactice.strategy.id) setStrategyValue(_targetTactice.strategy.id);
             let paramArr = [];
             if (_targetTactice) {
                 for (let key of Object.keys(_targetTactice.parameterDesc)) {
@@ -314,7 +200,7 @@ export default function ControlPanel({ uid }) {
             } else {
                 setDisables([false, true, false]);
             }
-            strategyCommond.find();
+            sgetStrategyList();
         });
     }, []);//symbolStr, chooseTacticeId, disables
     const openEditModal = (mod) => {
@@ -430,39 +316,18 @@ export default function ControlPanel({ uid }) {
                 <Popover
                     title='策略管理'
                     trigger="click"
-                    content={<div>
-                        <div>
-                            当前已应用策略：<Select value={strategyValue} style={{ width: '10rem' }} onChange={e => { setStrategyValue(e) }}>
-                                {strategys.map((item, i) => <Option key={`key_${i}`} value={item._id}>{`${item.name}(v${item.version})`}</Option>)}
-                            </Select>
-                            {/* <Tooltip placement="bottom" title="删除此策略">
-                                &nbsp;<Button disabled={strategyValue ? false : true} onClick={() => { }}
-                                    type="primary" shape="circle" icon={<DeleteOutlined />} />
-                            </Tooltip> */}
-                        </div>
-                        <div style={{ marginTop: '0.5rem' }}>
-                            <center>
-                                <Button disabled={!strategyValue ? true : false} type="primary" onClick={strategyCommond.set}><i className="iconfont_default">&#xe630;</i>&nbsp;应用</Button>&nbsp;&nbsp;
-                                <Button disabled={(targetTactice && targetTactice.strategy.id) ? false : true} type="primary" onClick={strategyCommond.unbind}><i className="iconfont_default">&#xe648;</i>&nbsp;解除</Button>&nbsp;&nbsp;
-                                <Button disabled={!strategyValue ? true : false} type="primary" onClick={strategyCommond.update}><i className="iconfont_default">&#xe640;</i>&nbsp;覆写</Button>&nbsp;&nbsp;
-                                <Popconfirm
-                                    title="是否确认删除此策略?"
-                                    onConfirm={strategyCommond.remove}
-                                    okText="确认"
-                                    cancelText="取消"
-                                >
-                                    <Button disabled={!strategyValue ? true : false} type="primary"><i className="iconfont_default">&#xe7aa;</i>&nbsp;删除</Button>
-                                </Popconfirm>
-
-                            </center>
-                        </div>
-                        <div style={{ marginTop: '0.5rem' }}>
-                            <center>
-                                <Input style={{ width: '10rem' }} value={newStrategyName} placeholder="新的策略名称" onChange={e => setNewStrategyName(e.target.value)} />&nbsp;
-                                <Button type="primary" onClick={strategyCommond.create}><i className="iconfont_default">&#xe666;</i>&nbsp;新增并应用</Button>
-                            </center>
-                        </div>
-                    </div>}>
+                    content={
+                        <StrategyPanel
+                            uid={uid}
+                            strategyValue={strategyValue}
+                            setStrategyValue={setStrategyValue}
+                            setStrategys={setStrategys}
+                            strategys={strategys}
+                            targetTactice={targetTactice}
+                            chooseTacticeId={chooseTacticeId}
+                            sgetStrategyList={sgetStrategyList}
+                        />
+                    }>
                     <Tooltip placement="right" title={`应用策略：${(targetTactice && targetTactice.strategy.name) || '暂无'}`}>
                         <Button type="link"><i className="iconfont_default">&#xe611;</i>策略管理</Button>
                     </Tooltip>

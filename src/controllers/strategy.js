@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-23 16:21:28
- * @LastEditTime: 2020-09-23 20:54:39
+ * @LastEditTime: 2020-09-24 14:34:56
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -48,7 +48,7 @@ module.exports = {
             }
             ctx.body = {
                 code: apiDateCode.success,
-                data: {},
+                data: result,
                 msg: 'success'
             };
         }
@@ -104,7 +104,9 @@ module.exports = {
             await Strategy.findOneAndRemove(id);
             const _tacticesLauncher = TacticesLauncher.getInstance();
             //将所有应用此策略的任务取消掉
-            _tacticesLauncher.tacticsList.filter(item => item.strategy.id === id).forEach(item => item.strategy = {})
+            _tacticesLauncher.tacticsList.filter(item => item.strategy.id === id).forEach(item =>
+                item.strategy = {}
+            )
             ctx.body = {
                 code: apiDateCode.success,
                 msg: 'success'

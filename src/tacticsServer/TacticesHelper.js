@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-016 18:19:58
- * @LastEditTime: 2020-09-23 21:09:56
+ * @LastEditTime: 2020-09-24 14:20:51
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -117,8 +117,8 @@ module.exports = class TacticsHelper {
             this.tactices.addHistory('info', `策略版本不对应，无法应用`, true, { isMap: true });
             return;
         }
-        const { _id, name, version } = _strategy;
-        this.tactices.strategy = { id: _id, name, version };
+        const { name, version } = _strategy;
+        this.tactices.strategy = { id: _strategy.id, name, version };
         this.tactices.parameter = Object.assign({}, _strategy.options.parameter);
         this.tactices.loadUpBuyHelper = Object.assign(this.tactices.loadUpBuyHelper, _strategy.options.loadUpBuyHelper);
         this.tactices.advancedOption = Object.assign(this.tactices.advancedOption, _strategy.options.advancedOption);
