@@ -143,7 +143,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             // this.avSpeed.push(speed.reduce((pre, cur) => Math.abs(pre) + Math.abs(cur), 0) / (speed.length || 1));
             this.averageWave = this.tacticesHelper.getAverageWave();
             this.loadUpBuyHelper.setStepGrids();
-            if(this.strategyId){
+            if(this.strategy.id){
                 this.tacticesHelper.setStrategy();
             }
         } catch (e) {

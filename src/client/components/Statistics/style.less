@@ -4,6 +4,7 @@
     position: absolute;
     top:0;
     left: 0;
+    border-top: solid 1px #eee;
     .ant-table-small .ant-table-thead > tr > th{
         background: #000;
         color:#ccc;
@@ -25,5 +26,27 @@
     }
     .ant-table table{
         font-size: 0.75rem;
+    }
+    i{
+        cursor: default;
+    }
+    .runStyle{
+        color: rgb(202, 90, 90);
+        font-weight: normal;
+    }
+    .rotation{
+        float: left;
+        -webkit-animation:myEffect 5s linear infinite;
+    }
+}
+@-webkit-keyframes myEffect {
+	0% {
+	transform:rotate(0deg);
+    }
+    50% {
+        transform:rotate(180deg);
+    }
+    100% {
+        transform:rotate(360deg);
     }
 }

@@ -105,9 +105,16 @@ module.exports = class TacticsHelper {
             return false;
         }
         //else if (this.tactices.strategy.id === id) return; 可能是重置策略，所以这里不能限制
-        const _strategy = (await Strategy.find({ _id: id || this.tactices.strategy.id }))[0];
+        const strategys = (await Strategy.find({ _id: id || this.tactices.strategy.id }));
+        if (strategys.length === 0) {
+            console.error(`已应用策略不存在或被删除（${id || this.tactices.strategy.id}）`);
+            this.tactices.addHistory('info', `已应用策略不存在或被删除`, true, { isMap: true });
+            return;
+        }
+        const _strategy = strategys[0];
         if (_strategy.version !== System.version) {
             console.error('策略版本不对应，无法应用');
+            this.tactices.addHistory('info', `策略版本不对应，无法应用`, true, { isMap: true });
             return;
         }
         const { _id, name, version } = _strategy;

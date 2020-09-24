@@ -63,6 +63,10 @@ export default function Statistics() {
         EventHub.getInstance().addEventListener('mapTacticsList', 'st_mapTacticsList', payload => {
             //const target = payload.find(item => item.target);
             let ckeckedKey = -1;
+            const runIcon = <i title='运行中' className="iconfont_default runStyle rotation">&#xe61e;</i>;
+            const buyIcon = <i title='场内' className="iconfont_default runStyle">&#xe617;</i>;
+            const stopIcon = <i title='未运行' className="iconfont_default">&#xe65e;</i>;
+            const sellIcon = <i title='场外' className="iconfont_default">&#xe600;</i>;
             const list = payload.map((item, i) => {
                 if (item.target) ckeckedKey = i;
                 const lastHistoryForDeal = item.historyForDeal[item.historyForDeal.length - 1];
@@ -71,11 +75,14 @@ export default function Statistics() {
                     .map(item => ({ value: item.content.profit }))
                     .reduce((pre, cur) => pre + cur.value, 0) + (item.buyState ? lastHistoryForDeal.content.profit : 0);
                 const times = item.loadUpBuyHelper.loadUpList.filter(i => i.roundId === item.roundId).reduce((pre, cur) => pre + cur.times, 0);
+
+
+                const iconArr = [item.runState ? runIcon : stopIcon, ' / ', item.buyState ? buyIcon : sellIcon]
                 return {
                     key: i,
                     name: item.name + (item.imitateRun ? '(模拟)' : ''),
                     symbol: item.symbol,
-                    status: `${item.runState ? '运行中/' + (item.buyState ? '场内' : '场外') : '未运行'}`,
+                    status: iconArr,//`${item.runState ? '运行中/' + (item.buyState ? '场内' : '场外') : '未运行'}`,
                     nowRiseRate: item.buyState && lastHistoryForDeal.type === 'buy' ? Number((lastHistoryForDeal.content.profit / item.presentDeal.costing).toFixed(5)) : '-',
                     loadUp: item.parameter.usdtAmount * (times + 1) + 'U / ' + times,
                     //buyUsdtAmount: Number(item.presentDeal.amount.toFixed(2)),

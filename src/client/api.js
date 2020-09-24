@@ -26,5 +26,7 @@ export default {
     getStrategy: '/api/strategy/get',
     createStrategy: '/api/strategy/create',
     updateStrategy: '/api/strategy/update',
-    setStrategy: '/api/strategy/set'
+    setStrategy: '/api/strategy/set',
+    removeStrategy: '/api/strategy/remove',
+    unbindStrategy: '/api/strategy/unbind'
 }

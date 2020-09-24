@@ -8,7 +8,8 @@
  */
 const { mongoose } = require('./mongoMaster');
 const dateFormat = require('format-datetime');
-const {System} = require('../config');
+const { System } = require('../config');
+
 
 const strategyModel = mongoose.model('Strategy', new mongoose.Schema({
     name: String,
@@ -35,10 +36,17 @@ module.exports = {
             error(err)
         }
     },
-    findOneAndUpdate: async function (strategy, error) {
+    findOneAndUpdate: async function (query, strategy, error) {
         try {
-            const result = await strategyModel.findOneAndUpdate({ _id: strategy._id }, { ...strategy })
+            const result = await strategyModel.findOneAndUpdate(query, { date: Date.now(), ...strategy })
             return result;
+        } catch (err) {
+            error(err)
+        }
+    },
+    findOneAndRemove: async function (id, error) {
+        try {
+            return await strategyModel.findOneAndRemove({ _id: id });
         } catch (err) {
             error(err)
         }
