@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-09-24 15:32:39
+ * @LastEditTime: 2020-09-24 19:05:49
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -32,7 +32,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.nextSymbol = [];
         //盈利/亏损的交易对
         this.profitSymbol = [
-            // { symbol: 'ETHUSDT', profit: 15.2, buyCount: 2 }
+            // { symbol: 'ETHUSDT', inCosting }
         ];
         this.roundId = Date.parse(new Date());//交易回合
         this.roundRunTime = 0;
