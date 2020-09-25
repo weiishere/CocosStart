@@ -27,7 +27,7 @@ module.exports = {
         const result = await Strategy.find({ uid });
         ctx.body = {
             code: apiDateCode.success,
-            data: result
+            data: result//考虑到策略隐秘问题，是否要连options一起返回到前端
         };
         next();
     },
