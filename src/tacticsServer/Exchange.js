@@ -1,3 +1,12 @@
+/*
+ * @Author: weishere.huang
+ * @Date: 2020-09-25 15:49:50
+ * @LastEditTime: 2020-09-25 15:52:07
+ * @LastEditors: weishere.huang
+ * @Description: 
+ * @~~
+ */
+
 const { client } = require('../lib/binancer');
 const dateFormat = require('format-datetime');
 const { ExchangeDB } = require('../db');
@@ -17,6 +26,7 @@ class Exchange {
         this.commission = 0;//手续费
         this.orderId = '';
     }
+
     async saveToDB({ uid, tid, roundId }) {
         // symbol: String,
         // orderId: String,
