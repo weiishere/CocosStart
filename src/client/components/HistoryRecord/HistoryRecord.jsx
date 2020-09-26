@@ -41,7 +41,7 @@ export default function HistoryRecord() {
                 if (target.runState) {
                     if (target.buyState) {
 
-                        setStateStr(`出场检测中，交易信息≈${(+(+target.presentDeal.payPrice).toFixed(5))}U/${+(+target.presentDeal.amount.toFixed(5))}枚`);
+                        setStateStr(`出场检测中，交易信息≈${(+(+target.presentDeal.dealPrice).toFixed(5))}U/${+(+target.presentDeal.amount.toFixed(5))}枚`);
                     } else {
                         setStateStr(`第${target.checkBuyTime}次入场检测...`);
                     }
@@ -153,7 +153,7 @@ export default function HistoryRecord() {
             {/* {presentDeal && <Popover content={<div className='presentDealWrap'>
                 <div><label>成本</label>：{presentDeal.costing}</div>
                 <div><label>入场均价</label>：{presentDeal.averagePrice}</div>
-                <div><label>最后入场价格</label>：{presentDeal.payPrice}</div>
+                <div><label>最后入场价格</label>：{presentDeal.dealPrice}</div>
                 <div><label>入场币数量</label>：{presentDeal.amount}</div>
                 <div><label>最高盈亏</label>：{presentDeal.historyProfit}</div>
             </div>} title="当前交易信息">
@@ -187,7 +187,7 @@ export default function HistoryRecord() {
                 {tactics && tactics.buyState && <div className='presentDealWrap'>
                     <div><label>成本(USDT)</label>：{tactics.presentDeal.costing}U</div>
                     <div><label>当前市场价</label>：{tactics.presentPrice}U</div>
-                    <div><label>最后入场价格</label>：{tactics.presentDeal.payPrice}U</div>
+                    <div><label>最后入场价格</label>：{tactics.presentDeal.dealPrice}U</div>
                     <div><label>入场均价</label>：{tactics.presentDeal.averagePrice}U</div>
                     <div><label>入场币数量</label>：{tactics.presentDeal.amount}枚</div>
                     <div><label>最高盈亏</label>：{tactics.presentDeal.historyProfit}U</div>

@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-25 15:49:50
- * @LastEditTime: 2020-09-25 15:52:07
+ * @LastEditTime: 2020-09-26 16:33:11
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -13,7 +13,8 @@ const { ExchangeDB } = require('../db');
 
 
 class Exchange {
-    constructor(symbol) {
+    constructor(symbol, roundId) {
+        this.id = 0;//交易DB的ID
         this.symbol = symbol;//交易对
         //this.usdtQuantity = 0;//涉及的usdt数量
         this.expectDealQuantity = 0;//期望的交易数量
@@ -24,10 +25,11 @@ class Exchange {
         this.dealDate = new Date();
         this.imitateRun = false;
         this.commission = 0;//手续费
-        this.orderId = '';
+        this.orderId = roundId;
+        this.dealThenInfo = {}//交易发生后的交易信息
     }
 
-    async saveToDB({ uid, tid, roundId }) {
+    async saveToDB({ uid, tid }) {
         // symbol: String,
         // orderId: String,
         // dealType: String,
@@ -43,11 +45,10 @@ class Exchange {
         // imitateRun: { type: Boolean, default: true },
         // dealQuantity: { type: Number, default: 0 },
         // dealDate: { type: Date, default: Date.now }
-        return (await ExchangeDB.create({
+        const result = (await ExchangeDB.create({
             symbol: this.symbol,
-            orderId: this.orderId,
             dealType: this instanceof BuyDeal ? 'buy' : 'sell',
-            uid, tid, roundId,
+            uid, tid,
             expectDealQuantity: this.expectDealQuantity,
             dealQuantity: this.dealQuantity,
             dealAmount: this.dealAmount,
@@ -55,17 +56,19 @@ class Exchange {
             dealPrice: this.dealPrice,
             commission: this.commission,
             imitateRun: this.imitateRun,
-            dealQuantity: this.dealQuantity
+            dealQuantity: this.dealQuantity,
+            dealThenInfo: this.dealThenInfo
         }, (e) => {
             console.log('存储Exchange出错', e);
         }))
+        this.id = result.id;
     }
 }
 
 class BuyDeal extends Exchange {
     /**传入是否模拟，当前市场价，期望买入的币数量 */
-    constructor(symbol, imitateRun, marketPrice, expectDealQuantity) {
-        super(symbol);
+    constructor(symbol, roundId, imitateRun, marketPrice, expectDealQuantity) {
+        super(symbol, roundId);
         this.expectDealQuantity = expectDealQuantity;
         this.imitateRun = imitateRun;
         this.marketPrice = marketPrice;
@@ -95,8 +98,8 @@ class BuyDeal extends Exchange {
     }
 }
 class SellDeal extends Exchange {
-    constructor(symbol, imitateRun, marketPrice, expectDealQuantity) {
-        super(symbol);
+    constructor(symbol, roundId, imitateRun, marketPrice, expectDealQuantity) {
+        super(symbol, roundId);
         this.expectDealQuantity = expectDealQuantity;
         this.imitateRun = imitateRun;
         this.marketPrice = marketPrice;

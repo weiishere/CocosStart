@@ -134,7 +134,7 @@ module.exports = class LoadUpBuyHelper {
                 this.tactices.addHistory('info', `【补仓】跌幅到止损线的${result.rate}%，触及step模式补仓，补仓${result.times}倍(预计${result.amount / result.price}枚${this.tactices.symbol})！`, true, { color: '#D2746B' });
                 await this.tactices.deal('buy', result.amount);
                 this.tactices.presentDeal.historyProfit = this.tactices.getProfit();//需要重置一下最高亏损，不然可能导致重复补仓
-                this.loadUpList[this.loadUpList.length - 1].price = this.tactices.presentDeal.payPrice;//更新买入价格
+                this.loadUpList[this.loadUpList.length - 1].price = this.tactices.presentDeal.dealPrice;//更新买入价格
             }
         } else if (this.mod === 'target') {
             const result = this.safeCheck();

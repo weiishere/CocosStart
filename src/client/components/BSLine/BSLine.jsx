@@ -335,7 +335,7 @@ export default function BSLine() {
 
         EventHub.getInstance().addEventListener('mapTacticsList', 'bs_mapTacticsList', payload => {
             const target = payload.find(item => item.target);
-            persentPrice = !target ? 0 : (target.buyState ? target.presentDeal.payPrice : 0);
+            persentPrice = !target ? 0 : (target.buyState ? target.presentDeal.dealPrice : 0);
             averagePrice = !target ? 0 : (target.buyState ? target.presentDeal.averagePrice : 0);
             averageWave = !target ? 0 : (target.averageWave * 100).toFixed(4);
             if (!target) return;
