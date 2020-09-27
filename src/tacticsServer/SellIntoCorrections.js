@@ -127,6 +127,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             // tradesDoneQuantity: 0,//当前交易已经处理完成的币数量（如果tradesDoneQuantity=amount即完成）随着pushTrade弃用而弃用！！
             // tradesDoneAmount: 0//已经完成的金额，随着pushTrade弃用而弃用！！
         }
+        this.strategy = {}
         this.exchangeQueue = [];//本轮已经完成的交易队列
         //加仓对象
         this.loadUpBuyHelper = new LoadUpBuyHelper(this);
@@ -659,7 +660,9 @@ module.exports = class SellIntoCorrections extends Tactics {
                 costing: this.presentDeal.costing,
                 inCosting: this.presentDeal.costing
             }, false, { color: 'red' });
-
+            if (!this.buyState) {
+                this.tacticesHelper.roundBegin();
+            }
             //#region
             /*
             if (this.imitateRun) {
@@ -820,7 +823,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             */
             //#endregion
             if (!usdtAmount || this.presentDeal.amount === 0) {
-                this.roundEnd();
+                this.tacticesHelper.roundEnd();
             } else {
 
             }
@@ -830,14 +833,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.riseTimer && clearTimeout(this.riseTimer);//清除超时timer
         return true;
     }
-    roundEnd() {
-        this.exchangeQueue = [];//重置
-        this.presentDeal.rtProfit = undefined;//重置
-        this.presentDeal.historyProfit = 0;
-        this.loadUpBuyHelper.loadUpList = this.loadUpBuyHelper.loadUpList.filter(item => item.roundId === this.roundId);
-        this.roundId = Date.parse(new Date());//下一回合
-        this.roundRunTime = 0;
-    }
+
     getInfo() {
         let result = {};
         ['id',

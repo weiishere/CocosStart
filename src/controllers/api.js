@@ -1,12 +1,12 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-09-24 16:25:32
+ * @LastEditTime: 2020-09-27 15:04:45
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
  */
-const { Symbol } = require('../db');
+const { Symbol, RoundResult } = require('../db');
 const { TacticesLauncher } = require('../tacticsServer')
 const { apiDateCode, System } = require('../config');
 const dateFormat = require('format-datetime');
@@ -286,93 +286,31 @@ module.exports = {
     }
     ctx.body = resultData;
     next();
+  },
+  getRoundResultList: async (ctx, next) => {
+    const { tid, roundId, uid } = ctx.query;
+    let resultData = {};
+    try {
+      let result = {};
+      if (uid) {
+        result = RoundResult.find({ uid });
+      } else if (tid) {
+        result = RoundResult.find({ tid });
+      } else if (roundId) {
+        result = RoundResult.find({ roundId });
+      }
+      resultData = {
+        code: apiDateCode.success,
+        data: result,
+        msg: 'success'
+      }
+    } catch (e) {
+      resultData = {
+        msg: 'getRoundResultList:获取错误',
+        code: apiDateCode.serverError
+      }
+    }
+    next();
   }
 };
-// const getKDJ = ({ klineData5m, KDJ5m }, n) => {
-//   let result = [];
-//   klineData5m.forEach((item, i) => {
-//     if (i > n) {
-//       const klineData5mForN = [...klineData5m].splice(i, n);
-//       const L9 = klineData5mForN.sort((a, b) => (a[3] - b[3]))[0][3];
-//       const H9 = klineData5mForN.sort((a, b) => (b[2] - a[2]))[0][2];
-//       const RSV = ((item[4] - L9) / (H9 - L9)) * 100;
-//       //算法1
-//       let lastKDJ5m = result.find(kdj => kdj.startTime === klineData5m[i - 1][0]);//上一个
-//       lastKDJ5m = lastKDJ5m ? lastKDJ5m : { K: 50, D: 50 };
-//       const K = (2 / 3) * lastKDJ5m.K + (1 / 3) * RSV;
-//       const D = (2 / 3) * lastKDJ5m.D + (1 / 3) * K;
 
-
-//       // //算法2
-//       // let K, D;
-//       // if (result.length <= 3) {
-//       //   K = 50;
-//       //   D = 50;
-//       // } else {
-//       //   const lastKDJData = [...result].splice(result.length - 3 - 1, 3);
-//       //   //const isRsvNull = lastKDJData.some(item => !item.RSV);
-//       //   K = lastKDJData.reduce((pre, cur) => pre + cur.RSV, 0) / 3;
-//       //   D = lastKDJData.reduce((pre, cur) => pre + cur.K, 0) / 3;
-//       // }
-//       const J = 3 * K - 2 * D;
-//       const startTime = item[0];
-//       const formartStartTime = dateFormat(new Date(startTime), "yyyy/MM/dd HH:mm")
-//       result.push({ startTime, formartStartTime, K, D, J, RSV })
-//     }
-//   })
-//   return result;
-// }
-/**
-    1499040000000,      // 开盘时间
-    "0.01634790",       // 开盘价
-    "0.80000000",       // 最高价
-    "0.01575800",       // 最低价
-    "0.01577100",       // 收盘价(当前K线未结束的即为最新价)
-    "148976.11427815",  // 成交量
-    1499644799999,      // 收盘时间
-    "2434.19055334",    // 成交额
-    308,                // 成交笔数
-    "1756.87402397",    // 主动买入成交量
-    "28.46694368",      // 主动买入成交额
-    "17928899.62484339" // 请忽略该参数
- */
-
-// export const Get = (ctx, next) => {
-//   ctx.body = {
-//     result: 'get',
-//     name: ctx.params.name,
-//     para: ctx.query
-//   }
-
-//   next()
-// }
-
-// export const Post = async (ctx, next) => {
-//   ctx.body = {
-//     result: 'post',
-//     name: ctx.params.name,
-//     para: ctx.request.body
-//   }
-
-//   next()
-// }
-
-// export const Put = (ctx, next) => {
-//   ctx.body = {
-//     result: 'put',
-//     name: ctx.params.name,
-//     para: ctx.request.body
-//   }
-
-//   next()
-// }
-
-// export const Delete = (ctx, next) => {
-//   ctx.body = {
-//     result: 'delete',
-//     name: ctx.params.name,
-//     para: ctx.request.body
-//   }
-
-//   next()
-// }

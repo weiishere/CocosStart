@@ -24,6 +24,7 @@ module.exports = router
   .get('/api/getAdvancedRestran', controllers.api.getAdvancedRestran)
   .get('/api/refreshSymbol', controllers.api.refreshSymbol)
   .get('/api/getIndicatorLine', controllers.api.getIndicatorLine)
+  .get('/api/roundResult/get', controllers.api.getRoundResultList)
   .post('/api/switchSymbol', controllers.api.switchSymbol)
   .post('/api/initTactics', controllers.api.initTactics)
   .post('/api/tacticsOrder', controllers.api.tacticsOrder)
@@ -31,3 +32,4 @@ module.exports = router
   .post('/api/updateAdvancedRestran', controllers.api.updateAdvancedRestran)
   .post('/api/clearNormalInfo', controllers.api.clearNormalInfo)
   .post('/api/updateLoadUpBuy', controllers.api.updateLoadUpBuy)
+  
