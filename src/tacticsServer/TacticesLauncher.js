@@ -11,7 +11,7 @@ const SellIntoCorrections = require('./SellIntoCorrections');
 const { WsConfig, WsRoute } = require('../config')
 const { client } = require('../lib/binancer');
 const { userRooms } = require('../controllers/user')
-const { Task } = require('../db');
+const { Task, ExchangeDB } = require('../db');
 const { reExecute } = require('../tool/Common');
 const { getSymbolStorageFromDB } = require('./restrainGroup');
 //const { scoketCandles } = require('./binanceScoketBind');
@@ -116,6 +116,12 @@ module.exports = class TacticesLauncher {
             tactics.loadUpBuyHelper = Object.assign(tactics.loadUpBuyHelper, JSON.parse(mod.loadUpBuyHelper));
             delete mod.loadUpBuyHelper;
             tactics = Object.assign(tactics, mod);
+            if (tactics.buyState) {
+                ExchangeDB.find({ roundId: tactics.roundId }).forEach(item=>{
+                    //tactics.exchangeQueue = 
+                    console.log(item);
+                })
+            }
             this.tacticsList.push(tactics);
             tactics.initialize(tactics.symbol);
             if (tactics.runState) {

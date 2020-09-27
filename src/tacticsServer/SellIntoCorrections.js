@@ -117,7 +117,9 @@ module.exports = class SellIntoCorrections extends Tactics {
             dealPrice: 0,//买入价格
             averagePrice: 0,//均价
             amount: 0,//购买后持有的相应代币数量
+            rtProfit: undefined,//当前盈利
             historyProfit: 0,//当前交易的历史盈利
+            //下面的基本没啥用，考虑去掉
             buyOrderInfo: null,
             sellOrderInfo: null,
             orderId: '',//当前交易的orderId，可能是买，也可能是卖
@@ -125,7 +127,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             // tradesDoneQuantity: 0,//当前交易已经处理完成的币数量（如果tradesDoneQuantity=amount即完成）随着pushTrade弃用而弃用！！
             // tradesDoneAmount: 0//已经完成的金额，随着pushTrade弃用而弃用！！
         }
-        this.exchangeQueue = { buy: [], sell: [] };//本轮已经完成的交易队列
+        this.exchangeQueue = [];//本轮已经完成的交易队列
         //加仓对象
         this.loadUpBuyHelper = new LoadUpBuyHelper(this);
         this.tacticesHelper = new TacticesHelper(this);
@@ -520,7 +522,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             return (await this.deal('sell'));
             return false;
         };
-        const _profit = this.getProfit();
+        const _profit = this.presentDeal.rtProfit = this.getProfit();
         //this.profitSymbol[this.profitSymbol.length - 1] = { symbol: this.symbol, profit: _profit };
         this.addHistory('profitChange', _profit);
         if (_profit >= 0) {
@@ -617,16 +619,14 @@ module.exports = class SellIntoCorrections extends Tactics {
                 return false;
             }
         }
-
-        //console.log(price + '---' + this.presentPrice)
-        // this.addHistory('info', `暂时标定不卖出，继续...`);
-        // return false;
     }
     /**理论利润，用于即时计算利润（通过深度图），即若按照当前价格卖掉，获得的回报减去成本价 */
     getProfit(amount, istheoryPrice) {
         let _amount = amount || this.presentDeal.amount;
         if (istheoryPrice) return Number(_amount * this.tacticesHelper.getTheoryPrice(_amount).avePrive * (1 - this.parameter.serviceCharge) - this.presentDeal.costing);
-        return Number(_amount * this.presentPrice * (1 - this.parameter.serviceCharge) - this.presentDeal.costing);
+        const commissionTotal = this.exchangeQueue.reduce((pre, cur) => { pre + cur.commission }, 0);
+        return Number(_amount * this.presentPrice - commissionTotal - this.presentDeal.costing);
+        //return Number(_amount * this.presentPrice * (1 - this.parameter.serviceCharge) - this.presentDeal.costing);
     }
     /**第二个参数usdtAmount用于补仓和减仓 */
     async deal(order, usdtAmount) {
@@ -637,19 +637,19 @@ module.exports = class SellIntoCorrections extends Tactics {
             this.checkSymbolTime = 10;
             const dealAmount = this.buyState ? usdtAmount : this.parameter.usdtAmount;
             this.addHistory('info', `将进行市价买入，投入交易数：${dealAmount}U，预估价格：${price}`);
-            const buyDeal = new BuyDeal(this.symbol, this.imitateRun, price, dealAmount);
-            await buyDeal.deal();
+            const buyDeal = new BuyDeal(this.symbol, this.roundId, this.imitateRun, price, dealAmount);
+            await buyDeal.deal(this.parameter.serviceCharge);
             this.presentDeal = Object.assign(this.presentDeal,
                 {
                     dealPrice: buyDeal.dealPrice,//买入价,暂时等于市价
                     costing: this.buyState ? this.presentDeal.costing : 0,//考虑补仓的时候buyState=true
-                    amount: this.presentDeal.amount + buyDeal.dealQuantity,
-                    historyProfit: this.presentDeal.historyProfit,//当前交易的历史盈利，每买入一次，需要重置为0
+                    amount: this.presentDeal.amount + buyDeal.dealQuantity
                 });
+            this.presentDeal.historyProfit = this.getProfit();//当前交易的历史盈利，每买入一次，需要重置
             this.presentDeal.averagePrice = this.presentDeal.costing / this.presentDeal.amount;
             buyDeal.dealThenInfo = Object.assign({}, this.presentDeal);
             await buyDeal.saveToDB(this);
-            this.exchangeQueue.buy.push(buyDeal);
+            this.exchangeQueue.push(buyDeal);
             this.addHistory('buy', {
                 symbol: this.symbol,
                 dealAmount: buyDeal.dealQuantity,
@@ -738,19 +738,19 @@ module.exports = class SellIntoCorrections extends Tactics {
         } else if (order === 'sell') {
             const dealAmount = usdtAmount || this.presentDeal.amount;//卖出的币数量
             this.addHistory('info', `将进行市价卖出，交易数量:${this.presentDeal.amount}`);
-            const sellDeal = new SellDeal(this.symbol, this.imitateRun, price, dealAmount);
-            await sellDeal.deal();
+            const sellDeal = new SellDeal(this.symbol, this.roundId, this.imitateRun, price, dealAmount);
+            await sellDeal.deal(this.parameter.serviceCharge);
             this.presentDeal = Object.assign(this.presentDeal,
                 {
                     dealPrice: sellDeal.dealPrice,//买入价,暂时等于市价
                     costing: usdtAmount ? this.presentDeal.costing - sellDeal.dealAmount : 0,//考虑补仓的时候buyState=true
                     amount: this.presentDeal.amount - buyDeal.dealQuantity,
-                    historyProfit: this.getProfit()
                 });
+            this.presentDeal.historyProfit = this.getProfit();//当前交易的历史盈利，每卖出一次，需要重置
             this.presentDeal.averagePrice = this.presentDeal.costing / this.presentDeal.amount;
             //await sellDeal.saveToDB({ uid: this.uid, tid: this.id, roundId: this.roundId });
             await sellDeal.saveToDB(this);
-            this.exchangeQueue.sell.push(sellDeal);
+            this.exchangeQueue.push(sellDeal);
             this.addHistory('sell', {
                 symbol: this.symbol,
                 dealAmount: sellDeal.dealQuantity,
@@ -820,11 +820,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             */
             //#endregion
             if (!usdtAmount || this.presentDeal.amount === 0) {
-                //usdtAmount为空表示全数卖出
-                this.exchangeQueue = { buy: [], sell: [] };//重置
-                this.loadUpBuyHelper.loadUpList = this.loadUpBuyHelper.loadUpList.filter(item => item.roundId === this.roundId);
-                this.roundId = Date.parse(new Date());//下一回合
-                this.roundRunTime = 0;
+                this.roundEnd();
             } else {
 
             }
@@ -833,6 +829,14 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.tacticesHelper.resetParam();//重置参数
         this.riseTimer && clearTimeout(this.riseTimer);//清除超时timer
         return true;
+    }
+    roundEnd() {
+        this.exchangeQueue = [];//重置
+        this.presentDeal.rtProfit = undefined;//重置
+        this.presentDeal.historyProfit = 0;
+        this.loadUpBuyHelper.loadUpList = this.loadUpBuyHelper.loadUpList.filter(item => item.roundId === this.roundId);
+        this.roundId = Date.parse(new Date());//下一回合
+        this.roundRunTime = 0;
     }
     getInfo() {
         let result = {};
@@ -845,7 +849,8 @@ module.exports = class SellIntoCorrections extends Tactics {
             'presentDeal',
             'roundId',
             'averageWave',
-            'historyForDeal',
+            //'historyForDeal',
+            'exchangeQueue',
             'checkBuyTime',
             'runState',
             'buyState',
@@ -873,7 +878,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             'presentDeal',
             'roundId',
             'history',
-            'historyForDeal',
+            //'historyForDeal',
             'checkBuyTime',
             'runState',
             'buyState',
@@ -895,7 +900,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             'runState',
             'parameter',
             'imitateRun',
-            'historyForDeal',
+            //'historyForDeal',
             'presentDeal',
             'roundId',
             'strategy',

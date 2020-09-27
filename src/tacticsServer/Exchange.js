@@ -25,7 +25,8 @@ class Exchange {
         this.dealDate = new Date();
         this.imitateRun = false;
         this.commission = 0;//手续费
-        this.orderId = roundId;
+        this.roundId = roundId;
+        this.orderId = 0;
         this.dealThenInfo = {}//交易发生后的交易信息
     }
 
@@ -49,6 +50,7 @@ class Exchange {
             symbol: this.symbol,
             dealType: this instanceof BuyDeal ? 'buy' : 'sell',
             uid, tid,
+            roundId: this.roundId,
             expectDealQuantity: this.expectDealQuantity,
             dealQuantity: this.dealQuantity,
             dealAmount: this.dealAmount,
@@ -73,7 +75,7 @@ class BuyDeal extends Exchange {
         this.imitateRun = imitateRun;
         this.marketPrice = marketPrice;
     }
-    async deal() {
+    async deal(serviceCharge) {
         this.dealDate = dateFormat(new Date(), "yyyy/MM/dd HH:mm");
         if (!this.imitateRun) {
             const { status, type, transactTime, executedQty, orderId, origQty, fills, symbol } = await client.order({
@@ -94,6 +96,7 @@ class BuyDeal extends Exchange {
             this.dealQuantity = this.expectDealQuantity;
             this.dealAmount = this.expectDealQuantity * this.marketPrice;
             this.dealPrice = this.marketPrice;
+            this.commission += Number(this.dealAmount * serviceCharge);
         }
     }
 }
@@ -125,8 +128,9 @@ class SellDeal extends Exchange {
             this.dealQuantity = this.expectDealQuantity;
             this.dealAmount = this.expectDealQuantity * this.marketPrice;
             this.dealPrice = this.marketPrice;
+            this.commission += Number(this.dealAmount * serviceCharge);
         }
     }
 }
 
-module.exports = { Exchange, BuyDeal, SellDeal }
+module.exports = { BuyDeal, SellDeal }
