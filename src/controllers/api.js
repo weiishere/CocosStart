@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-09-27 15:04:45
+ * @LastEditTime: 2020-09-28 17:51:48
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -10,6 +10,7 @@ const { Symbol, RoundResult } = require('../db');
 const { TacticesLauncher } = require('../tacticsServer')
 const { apiDateCode, System } = require('../config');
 const dateFormat = require('format-datetime');
+const { getRoundResultList, getSimpleRoundResultList } = require('../tacticsServer/roundResult');
 
 module.exports = {
   initTactics: async (ctx, next) => {
@@ -258,6 +259,7 @@ module.exports = {
     } else if (order === '3') {
       tactices.history = tactices.history.filter(item => !(item.type === 'buy' || item.type === 'sell'));
       tactices.historyForDeal = [];
+      tactices.exchangeQueue = [];
     }
     //_tacticesLauncher.mapTotacticsList(tactices.uid, tid, true);
     _tacticesLauncher.pushHistory(tactices.uid, tactices.id, {
@@ -291,25 +293,44 @@ module.exports = {
     const { tid, roundId, uid } = ctx.query;
     let resultData = {};
     try {
-      let result = {};
-      if (uid) {
-        result = RoundResult.find({ uid });
-      } else if (tid) {
-        result = RoundResult.find({ tid });
-      } else if (roundId) {
-        result = RoundResult.find({ roundId });
-      }
-      resultData = {
+      let result = await getRoundResultList({ tid, roundId, uid });
+      resultData = result ? {
         code: apiDateCode.success,
         data: result,
         msg: 'success'
-      }
+      } : {
+          msg: 'getRoundResultList错误',
+          code: apiDateCode.serverError
+        }
     } catch (e) {
       resultData = {
-        msg: 'getRoundResultList:获取错误',
+        msg: 'getRoundResultList:获取错误' + e,
         code: apiDateCode.serverError
       }
     }
+    ctx.body = resultData;
+    next();
+  },
+  getSimpleRoundResultList: async (ctx, next) => {
+    const { tid, roundId, uid } = ctx.query;
+    let resultData = {};
+    try {
+      let result = getSimpleRoundResultList({ tid, roundId, uid });
+      resultData = result ? {
+        code: apiDateCode.success,
+        data: result,
+        msg: 'success'
+      } : {
+          msg: 'getSimpleRoundResultList错误:',
+          code: apiDateCode.serverError
+        }
+    } catch (e) {
+      resultData = {
+        msg: 'getSimpleRoundResultList:获取错误:' + e,
+        code: apiDateCode.serverError
+      }
+    }
+    ctx.body = resultData;
     next();
   }
 };

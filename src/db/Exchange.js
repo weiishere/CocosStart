@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-23 16:08:14
- * @LastEditTime: 2020-09-26 16:25:14
+ * @LastEditTime: 2020-09-28 15:30:43
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -25,7 +25,7 @@ const exchangeModel = mongoose.model('Exchange', new mongoose.Schema({
     commission: { type: Number, default: 0 },
     imitateRun: { type: Boolean, default: true },
     dealQuantity: { type: Number, default: 0 },
-    dealDate: { type: Date, default: Date.now },
+    dealDate: String,
     dealThenInfo: { type: Object, default: {} }
 }));
 

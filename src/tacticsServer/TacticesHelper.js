@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-016 18:19:58
- * @LastEditTime: 2020-09-27 14:41:34
+ * @LastEditTime: 2020-09-28 18:11:05
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -15,6 +15,7 @@ module.exports = class TacticsHelper {
     constructor(tactices) {
         this.tactices = tactices;
     }
+
     /**通过深度图获取可能最终成交的理论交易模型和理论均价 */
     getTheoryPrice(amount) {
         let _amount = 0;
@@ -127,30 +128,37 @@ module.exports = class TacticsHelper {
     roundBegin() {
         RoundResult.create({
             symbol: this.tactices.symbol, isDone: false,
-            tid: this.tactices.id, uid: this.tactices.uid,
-            exchangeQueue: this.tactices.exchangeQueue, profit: this.tactices.getProfit,
-            startTime: Date.parse(new Date()), endTime: '', strategy: this.tactices.strategy,
-            inCosting: this.tactices.presentDeal.costing, outCosting: 0,
+            tid: this.tactices.id, uid: this.tactices.uid, roundId: this.tactices.roundId,
+            exchangeQueue: [],
+            profit: this.tactices.getProfit(),
+            startTime: Date.parse(new Date()), endTime: '', strategyId: this.tactices.strategy.id || '',
+            inCosting: this.tactices.presentDeal.costing, outCosting: 0, commission: 0,
             loadUpBuy: []
         }, e => {
             console.log('新增RoundResult失败', e);
         });
     }
     roundEnd() {
+        const thisExchangeQueue = his.tactices.exchangeQueue.filter(item => item.roundId = this.tactices.roundId);
+        const commissionTotal = thisExchangeQueue.reduce((pre, cur) => pre + cur.commission, 0);
         RoundResult.findOneAndUpdate({ roundId: this.tactices.roundId }, {
             isDone: true,
-            exchangeQueue: this.tactices.exchangeQueue, profit: this.tactices.getProfit,
-            endTime: Date.parse(new Date()), strategy: this.tactices.strategy,
-            outCosting: this.tactices.presentDeal.costing,
-            loadUpBuy: this.tactices.loadUpBuy
+            exchangeQueue: thisExchangeQueue, profit: this.tactices.getProfit(),
+            endTime: Date.parse(new Date()), strategyId: this.tactices.strategy.id || '',
+            outCosting: this.tactices.presentDeal.costing, commission: commissionTotal,
+            loadUpBuy: this.tactices.loadUpBuyHelper.loadUpList.filter(item => item.roundId === this.tactices.roundId)
         }, e => {
             console.log('更新RoundResult失败', e);
         });
-        this.tactices.exchangeQueue = [];//重置
+        const now = Date.parse(new Date());
+        this.tactices.exchangeQueue = this.tactices.exchangeQueue.filter(item => {
+            return (now - item.dealDate) < 10800000 ? true : false;
+        });//清除3小时前的交易
         this.tactices.presentDeal.rtProfit = undefined;//重置
         this.tactices.presentDeal.historyProfit = 0;
-        this.tactices.loadUpBuyHelper.loadUpList = this.loadUpBuyHelper.loadUpList.filter(item => item.roundId === this.roundId);
-        this.tactices.roundId = Date.parse(new Date());//下一回合
+        this.tactices.loadUpBuyHelper.loadUpList = this.tactices.loadUpBuyHelper.loadUpList.filter(item => item.roundId === this.tactices.roundId);
+        this.tactices.roundId = this.tactices.getNewId('r_'); //下一回合
         this.tactices.roundRunTime = 0;
+        this.historyStatistics = doHistoryStatistics();
     }
 }

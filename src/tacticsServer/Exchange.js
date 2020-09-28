@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-25 15:49:50
- * @LastEditTime: 2020-09-26 16:33:11
+ * @LastEditTime: 2020-09-28 18:06:02
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -13,16 +13,17 @@ const { ExchangeDB } = require('../db');
 
 
 class Exchange {
-    constructor(symbol, roundId) {
+    constructor(symbol, tid, roundId) {
         this.id = 0;//交易DB的ID
         this.symbol = symbol;//交易对
+        this.tid = tid;
         //this.usdtQuantity = 0;//涉及的usdt数量
         this.expectDealQuantity = 0;//期望的交易数量
         this.dealQuantity = 0;//交易的币数量
         this.dealAmount = 0;//交易完成之后的实际交易额
         this.marketPrice = 0;//交易时的市场价
         this.dealPrice = 0;//交易完成之后的实际平均价格
-        this.dealDate = new Date();
+        this.dealDate = '';
         this.imitateRun = false;
         this.commission = 0;//手续费
         this.roundId = roundId;
@@ -30,7 +31,7 @@ class Exchange {
         this.dealThenInfo = {}//交易发生后的交易信息
     }
 
-    async saveToDB({ uid, tid }) {
+    async saveToDB({ uid }) {
         // symbol: String,
         // orderId: String,
         // dealType: String,
@@ -49,7 +50,7 @@ class Exchange {
         const result = (await ExchangeDB.create({
             symbol: this.symbol,
             dealType: this instanceof BuyDeal ? 'buy' : 'sell',
-            uid, tid,
+            uid, tid: this.tid,
             roundId: this.roundId,
             expectDealQuantity: this.expectDealQuantity,
             dealQuantity: this.dealQuantity,
@@ -59,7 +60,8 @@ class Exchange {
             commission: this.commission,
             imitateRun: this.imitateRun,
             dealQuantity: this.dealQuantity,
-            dealThenInfo: this.dealThenInfo
+            dealThenInfo: this.dealThenInfo,
+            dealDate: this.dealDate
         }, (e) => {
             console.log('存储Exchange出错', e);
         }))
@@ -69,14 +71,14 @@ class Exchange {
 
 class BuyDeal extends Exchange {
     /**传入是否模拟，当前市场价，期望买入的币数量 */
-    constructor(symbol, roundId, imitateRun, marketPrice, expectDealQuantity) {
-        super(symbol, roundId);
+    constructor(symbol, tid, roundId, imitateRun, marketPrice, expectDealQuantity) {
+        super(symbol, tid, roundId);
         this.expectDealQuantity = expectDealQuantity;
         this.imitateRun = imitateRun;
         this.marketPrice = marketPrice;
     }
     async deal(serviceCharge) {
-        this.dealDate = dateFormat(new Date(), "yyyy/MM/dd HH:mm");
+        this.dealDate = Date.parse(new Date());//dateFormat(new Date(), "yyyy/MM/dd HH:mm");
         if (!this.imitateRun) {
             const { status, type, transactTime, executedQty, orderId, origQty, fills, symbol } = await client.order({
                 symbol: this.symbol,
@@ -101,14 +103,14 @@ class BuyDeal extends Exchange {
     }
 }
 class SellDeal extends Exchange {
-    constructor(symbol, roundId, imitateRun, marketPrice, expectDealQuantity) {
-        super(symbol, roundId);
+    constructor(symbol, tid, roundId, imitateRun, marketPrice, expectDealQuantity) {
+        super(symbol, tid, roundId);
         this.expectDealQuantity = expectDealQuantity;
         this.imitateRun = imitateRun;
         this.marketPrice = marketPrice;
     }
-    async deal() {
-        this.dealDate = dateFormat(new Date(), "yyyy/MM/dd HH:mm");
+    async deal(serviceCharge) {
+        this.dealDate = Date.parse(new Date());//dateFormat(new Date(), "yyyy/MM/dd HH:mm");
         if (!this.imitateRun) {
             const { status, type, transactTime, executedQty, orderId, origQty, fills, symbol } = await client.order({
                 symbol: this.symbol,

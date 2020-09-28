@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-27 13:00:46
- * @LastEditTime: 2020-09-27 13:33:48
+ * @LastEditTime: 2020-09-28 16:10:08
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -12,7 +12,7 @@ const dateFormat = require('format-datetime');
 
 const roundResultModel = mongoose.model('RoundResult', new mongoose.Schema({
     symbol: String,
-    orderId: String,
+    roundId: String,
     tid: String,
     uid: String,
     isDone: { type: Boolean, default: false },
@@ -20,10 +20,11 @@ const roundResultModel = mongoose.model('RoundResult', new mongoose.Schema({
     profit: { type: Number, default: 0 },
     startTime: String,
     endTime: String,
-    strategy: { type: Object, default: {} },
+    strategyId: { type: String, default: '' },
     inCosting: { type: Number, default: 0 },
     outCosting: { type: Number, default: 0 },
-    loadUpBuy: { type: Object, default: {} }
+    loadUpBuy: { type: Array, default: [] },
+    commission: { type: Number, default: 0 },
 }));
 
 
@@ -37,7 +38,13 @@ module.exports = {
     },
     create: async function (roundResult, error) {
         try {
-            const result = await new roundResultModel(roundResult).save();
+            const _roundResult = Object.assign({
+                symbol: '', isDone: false, tid: '', uid: '', roundId: '',
+                exchangeQueue: [], profit: 0,
+                startTime: Date.parse(new Date()), endTime: '', strategyId: '',
+                inCosting: 0, outCosting: 0, commission: 0, loadUpBuy: []
+            }, roundResult)
+            const result = await new roundResultModel(_roundResult).save();
             return result;
         } catch (err) {
             error(err)
@@ -45,7 +52,7 @@ module.exports = {
     },
     findOneAndUpdate: async function (jquery, roundResult, error) {
         try {
-            return await roundResultModel.findByIdAndUpdate(jquery, ...roundResult);
+            return await roundResultModel.findOneAndUpdate(jquery, { ...roundResult });
         } catch (err) {
             error(err)
         }

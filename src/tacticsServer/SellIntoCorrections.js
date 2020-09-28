@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-09-26 17:46:15
+ * @LastEditTime: 2020-09-28 18:20:21
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -35,7 +35,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.profitSymbol = [
             // { symbol: 'ETHUSDT', inCosting }
         ];
-        this.roundId = Date.parse(new Date());//交易回合
+        this.roundId = this.getNewId('r_');//Date.parse(new Date());//交易回合
         this.roundRunTime = 0;
         this.history = []
         this.depth = null;//深度
@@ -625,8 +625,8 @@ module.exports = class SellIntoCorrections extends Tactics {
     getProfit(amount, istheoryPrice) {
         let _amount = amount || this.presentDeal.amount;
         if (istheoryPrice) return Number(_amount * this.tacticesHelper.getTheoryPrice(_amount).avePrive * (1 - this.parameter.serviceCharge) - this.presentDeal.costing);
-        const commissionTotal = this.exchangeQueue.reduce((pre, cur) => { pre + cur.commission }, 0);
-        return Number(_amount * this.presentPrice - commissionTotal - this.presentDeal.costing);
+        const commissionTotal = this.exchangeQueue.reduce((pre, cur) => pre + cur.commission, 0);
+        return Number(_amount * this.presentPrice * (1 - this.parameter.serviceCharge) - commissionTotal - this.presentDeal.costing);
         //return Number(_amount * this.presentPrice * (1 - this.parameter.serviceCharge) - this.presentDeal.costing);
     }
     /**第二个参数usdtAmount用于补仓和减仓 */
@@ -638,7 +638,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             this.checkSymbolTime = 10;
             const dealAmount = this.buyState ? usdtAmount : this.parameter.usdtAmount;
             this.addHistory('info', `将进行市价买入，投入交易数：${dealAmount}U，预估价格：${price}`);
-            const buyDeal = new BuyDeal(this.symbol, this.roundId, this.imitateRun, price, dealAmount);
+            const buyDeal = new BuyDeal(this.symbol, this.id, this.roundId, this.imitateRun, price, dealAmount);
             await buyDeal.deal(this.parameter.serviceCharge);
             this.presentDeal = Object.assign(this.presentDeal,
                 {
@@ -741,17 +741,18 @@ module.exports = class SellIntoCorrections extends Tactics {
         } else if (order === 'sell') {
             const dealAmount = usdtAmount || this.presentDeal.amount;//卖出的币数量
             this.addHistory('info', `将进行市价卖出，交易数量:${this.presentDeal.amount}`);
-            const sellDeal = new SellDeal(this.symbol, this.roundId, this.imitateRun, price, dealAmount);
+            const sellDeal = new SellDeal(this.symbol, this.id, this.roundId, this.imitateRun, price, dealAmount);
             await sellDeal.deal(this.parameter.serviceCharge);
             this.presentDeal = Object.assign(this.presentDeal,
                 {
                     dealPrice: sellDeal.dealPrice,//买入价,暂时等于市价
                     costing: usdtAmount ? this.presentDeal.costing - sellDeal.dealAmount : 0,//考虑补仓的时候buyState=true
-                    amount: this.presentDeal.amount - buyDeal.dealQuantity,
+                    amount: this.presentDeal.amount - sellDeal.dealQuantity,
                 });
             this.presentDeal.historyProfit = this.getProfit();//当前交易的历史盈利，每卖出一次，需要重置
             this.presentDeal.averagePrice = this.presentDeal.costing / this.presentDeal.amount;
             //await sellDeal.saveToDB({ uid: this.uid, tid: this.id, roundId: this.roundId });
+            sellDeal.dealThenInfo = Object.assign({}, this.presentDeal);
             await sellDeal.saveToDB(this);
             this.exchangeQueue.push(sellDeal);
             this.addHistory('sell', {
@@ -845,8 +846,8 @@ module.exports = class SellIntoCorrections extends Tactics {
             'presentDeal',
             'roundId',
             'averageWave',
-            //'historyForDeal',
-            'exchangeQueue',
+            'historyForDeal',
+            //'exchangeQueue',
             'checkBuyTime',
             'runState',
             'buyState',
@@ -861,6 +862,13 @@ module.exports = class SellIntoCorrections extends Tactics {
             'strategy',
             'ticker'].forEach(item => result[item] = this[item]);
         result['loadUpBuyHelper'] = this.loadUpBuyHelper.getInfo();
+        result['exchangeQueue'] = this.exchangeQueue.map(item => ({
+            roundId: item.item,
+            dealType: item.dealType,
+            dealDate: this.dealDate,
+            symbol: this.symbol,
+            dealPrice: this.dealPrice
+        }));
         return result;
     }
     getDBInfo() {

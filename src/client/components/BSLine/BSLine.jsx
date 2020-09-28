@@ -366,14 +366,6 @@ export default function BSLine() {
                     //myChart.setOption(option(target.symbol, close));
                 }
             }
-            // markPointData = target.historyForDeal.map((item, i) => ({
-            //     name: '标点' + i,
-            //     coord: [dateFormat(new Date(item.time), "HH:mm"), item.content.price],
-            //     value: item.content.price,
-            //     itemStyle: {
-            //         color: item.type === 'buy' ? 'red' : 'green'//'rgb(41,60,85)'
-            //     }
-            // }));
         });
         EventHub.getInstance().addEventListener('historyRecord', 'bs_historyRecord', ({ historyForDeal }) => {
             markPointData = historyForDeal.map((item, i) => ({

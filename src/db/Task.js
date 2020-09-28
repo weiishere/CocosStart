@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-17 17:40:11
- * @LastEditTime: 2020-08-19 19:00:21
+ * @LastEditTime: 2020-09-28 17:20:19
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -18,6 +18,7 @@ const taskModel = mongoose.model('Task', new mongoose.Schema({
     uid: String,
     name: String,
     updateDate: { type: Date, default: Date.now },
+    historyStatistics: { type: Object, default: {} },//历史统计数据
     taskJson: String
 }));
 
@@ -41,7 +42,7 @@ module.exports = {
     findOneAndUpdate: async function (task, error) {
         try {
             var query = { tid: task.tid }
-            const result = await taskModel.findOneAndUpdate(query, { updateDate: dateFormat(new Date(), "yyyy/MM/dd HH:mm:ss"),...task }, { upsert: true })
+            const result = await taskModel.findOneAndUpdate(query, { updateDate: dateFormat(new Date(), "yyyy/MM/dd HH:mm:ss"), ...task }, { upsert: true })
             return result;
         } catch (err) {
             error(err)

@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-28 02:58:03
- * @LastEditTime: 2020-09-22 10:40:27
+ * @LastEditTime: 2020-09-28 16:35:25
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -14,6 +14,7 @@ const { userRooms } = require('../controllers/user')
 const { Task, ExchangeDB } = require('../db');
 const { reExecute } = require('../tool/Common');
 const { getSymbolStorageFromDB } = require('./restrainGroup');
+const { BuyDeal, SellDeal } = require('./Exchange');
 //const { scoketCandles } = require('./binanceScoketBind');
 
 module.exports = class TacticesLauncher {
@@ -110,16 +111,26 @@ module.exports = class TacticesLauncher {
     async initTasks() {
         process.env.CHILD_PROCESS === '0' && await getSymbolStorageFromDB();//先初始化SymbolStorage
         const tasks = await Task.find({});
-        tasks.forEach(({ uid, name, taskJson }) => {
+        tasks.forEach(async ({ uid, name, taskJson }) => {
             const mod = JSON.parse(taskJson);
             let tactics = new SellIntoCorrections(uid, name, mod.parameter);
             tactics.loadUpBuyHelper = Object.assign(tactics.loadUpBuyHelper, JSON.parse(mod.loadUpBuyHelper));
             delete mod.loadUpBuyHelper;
             tactics = Object.assign(tactics, mod);
             if (tactics.buyState) {
-                ExchangeDB.find({ roundId: tactics.roundId }).forEach(item=>{
+                const exchangeList = await ExchangeDB.find({ roundId: tactics.roundId });
+                exchangeList.forEach(item => {
                     //tactics.exchangeQueue = 
-                    console.log(item);
+                    let dealObj;
+                    if (item.dealType === 'buy') {
+                        dealObj = new BuyDeal(item.symbol, item.id, item.roundId, item.imitateRun, item.marketPrice, item.dealAmount);
+                    } else {
+                        dealObj = new SellDeal(item.symbol, item.id, item.roundId, item.imitateRun, item.marketPrice, item.dealAmount);
+                    }
+                    dealObj = Object.assign(dealObj, item);
+                    dealObj = Object.assign(dealObj, item);
+                    dealObj.id = item.id;
+                    tactics.exchangeQueue.push(dealObj);
                 })
             }
             this.tacticsList.push(tactics);
@@ -140,7 +151,8 @@ module.exports = class TacticesLauncher {
                     tid: task.id,
                     uid: task.uid,
                     name: task.name,
-                    taskJson: JSON.stringify(task.getDBInfo())
+                    taskJson: JSON.stringify(task.getDBInfo()),
+                    historyStatistics: task.historyStatistics
                 }, function (err) { console.error(err) });
             });
             resolve(true);
