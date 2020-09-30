@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 15:09:27
- * @LastEditTime: 2020-09-23 19:48:02
+ * @LastEditTime: 2020-09-30 18:12:09
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -29,7 +29,7 @@ import { switchTactics, getQueryString } from '@client/utils'
 import api from '@client/api';
 import { apiDateCode, System } from '@src/config';
 import './style/style.less'
-
+let sokt;
 const getHash = () => {
     let hash = location.hash + '';
     return hash.substring(1, hash.length);
@@ -38,7 +38,7 @@ export default function App() {
     const [tacticeName, setTacticeName] = React.useState('');
     const [symbol, setSymbol] = React.useState('');
     const [user, setUser] = React.useState(null);
-    let sokt;
+    
     React.useEffect(() => {
         const uid = getQueryString('uid');
         //加载选中币
@@ -57,12 +57,20 @@ export default function App() {
                 //广播historyRecord数据
                 EventHub.getInstance().dispatchEvent('historyRecord', data);
             });
+            scoket.on(WsRoute.EXCHANGE_LIST, data => {
+                //广播交易数据数据
+                EventHub.getInstance().dispatchEvent('exchangeQueue', data);
+            });
+            scoket.on(WsRoute.ROUND_RESULT_INFORM, data => {
+                //广播交易回合通知
+                EventHub.getInstance().dispatchEvent('roundResultInform', data);
+            });
         });
 
         EventHub.getInstance().addEventListener('switchTactics', 'app_switchTactics', payload => {
             setTacticeName(payload.name);
             setSymbol(payload.symbol);
-            sokt.emit('regTid', getHash());
+            //sokt.emit('regTid', getHash());
         });
 
         if (uid) {
@@ -157,6 +165,7 @@ if (("onhashchange" in window) && ((typeof document.documentMode === "undefined"
     // 浏览器支持onhashchange事件
     window.onhashchange = () => {
         let hash = location.hash + '';
+        sokt.emit('regTid', getHash());
         switchTactics(getQueryString('uid'), hash.substring(1, hash.length));
     };  // TODO，对应新的hash执行的操作函数
 }

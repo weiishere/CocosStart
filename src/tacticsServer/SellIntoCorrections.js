@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-09-28 18:20:21
+ * @LastEditTime: 2020-10-01 00:37:36
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -36,7 +36,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             // { symbol: 'ETHUSDT', inCosting }
         ];
         this.roundId = this.getNewId('r_');//Date.parse(new Date());//交易回合
-        this.roundRunTime = 0;
+        this.roundRunStartTime = 0;
         this.history = []
         this.depth = null;//深度
         this.ticker = null;
@@ -47,7 +47,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.checkBuyTime = 0;
         this.checkSymbolTime = 30;//寻币且默认入场检测的次数（之后若不停机，还是继续寻币，但还做不做入场检测，还有开关keepBuyFaildChangeSymbol）
         this.parameterBackup = this.parameter = Object.assign({
-            usdtAmount: 11,//每次入场数量（USDT）
+            usdtAmount: 25,//每次入场数量（USDT）
             serviceCharge: 0.00075,//币安手续费(千一)
             serviceChargeDiscounts: 0.15,//优惠费率(返费，暂不考虑))
             checkBuyRate: 7000,//入场时间检查速率
@@ -76,8 +76,8 @@ module.exports = class SellIntoCorrections extends Tactics {
         //基于基本逻辑下的高级约束(入场约束，出场约束，动态参数，选币方案)
         this.advancedOption = {
             premiseForBase: [],
-            premiseForBuy: ['last5kRise', 'bollStandard'],
-            premiseForSell: ['fastRise'],
+            premiseForBuy: ['bollStandardUP', 'last10mNoFastRise'],
+            premiseForSell: ['fastRise', 'hasLoadUpNoSell'],
             premiseJoin: { premiseForBase: 'and', premiseForBuy: 'or', premiseForSell: 'and' },
             dynamicParam: ['setRiseStopLossRate'],
             symbolElecter: ['blacklist', 'history24h']
@@ -113,9 +113,10 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.presentPrice = 0;//当前价格
         //当前的交易信息
         this.presentDeal = {
-            costing: 0,//成本,
+            inCosting: 0,//入场成本,
+            outCosting: 0,//回收成本,
             dealPrice: 0,//买入价格
-            averagePrice: 0,//均价
+            winPrice: 0,//扭亏价格
             amount: 0,//购买后持有的相应代币数量
             rtProfit: undefined,//当前盈利
             historyProfit: 0,//当前交易的历史盈利
@@ -124,8 +125,6 @@ module.exports = class SellIntoCorrections extends Tactics {
             sellOrderInfo: null,
             orderId: '',//当前交易的orderId，可能是买，也可能是卖
             tradeRole: 'buyer',//'seller',当前的交易角色，用于
-            // tradesDoneQuantity: 0,//当前交易已经处理完成的币数量（如果tradesDoneQuantity=amount即完成）随着pushTrade弃用而弃用！！
-            // tradesDoneAmount: 0//已经完成的金额，随着pushTrade弃用而弃用！！
         }
         this.strategy = {}
         this.exchangeQueue = [];//本轮已经完成的交易队列
@@ -501,6 +500,7 @@ module.exports = class SellIntoCorrections extends Tactics {
     async sell() {
         //高级
         let allowResult = this.advancedOption.premiseForSell.length === 0 ? false : true;//如果没有约束则直接放过
+        const _profit = this.presentDeal.rtProfit = this.getProfit();
         for (let i = 0; i < restrainGroup.premiseForSell.length; i++) {
             const restrain = restrainGroup.premiseForSell[i];
             if (this.advancedOption.premiseForSell.some(item => item === restrain.key)) {
@@ -521,22 +521,20 @@ module.exports = class SellIntoCorrections extends Tactics {
         if (this.advancedOption.premiseJoin.premiseForSell === 'and' && allowResult) {
             this.addHistory('info', `出场约束满足所配置的所以条件，进行出场操作`, true, { color: '#5bb3ab' });
             return (await this.deal('sell'));
-            return false;
         };
-        const _profit = this.presentDeal.rtProfit = this.getProfit();
         //this.profitSymbol[this.profitSymbol.length - 1] = { symbol: this.symbol, profit: _profit };
         this.addHistory('profitChange', _profit);
         if (_profit >= 0) {
             this.riseTimer && clearTimeout(this.riseTimer);//清除超时timer
-            if (this.parameter.stopRiseRate !== 0 && _profit / this.presentDeal.costing > this.parameter.stopRiseRate) {
+            if (this.parameter.stopRiseRate !== 0 && _profit / this.presentDeal.inCosting > this.parameter.stopRiseRate) {
                 //盈利止盈点
-                this.addHistory('info', `盈利：${_profit / this.presentDeal.costing}，已大于最高止盈点：${this.parameter.stopRiseRate}，准备卖出...`);
+                this.addHistory('info', `盈利：${_profit / this.presentDeal.inCosting}，已大于最高止盈点：${this.parameter.stopRiseRate}，准备卖出...`);
                 return (await this.deal('sell'));
             }
             //如果盈利为正
             if (_profit > this.presentDeal.historyProfit) {
                 //利润大于上一次统计的利润，持续盈利中...
-                this.addHistory('info', `记录到更高盈利：${_profit}U，盈利率：${_profit / this.presentDeal.costing}`, true, { color: '#ddbfbe' });
+                this.addHistory('info', `记录到更高盈利：${_profit}U，盈利率：${_profit / this.presentDeal.inCosting}`, true, { color: '#ddbfbe' });
                 this.presentDeal.historyProfit = _profit;//存储最高利润
                 return false;
             } else {
@@ -545,14 +543,14 @@ module.exports = class SellIntoCorrections extends Tactics {
                 const _riseStopLossRate = (diff / this.presentDeal.historyProfit) * 100;
 
                 if (_riseStopLossRate > this.parameter.riseStopLossRate) {
-                    this.addHistory('info', `盈利下降，且大于止盈拐点，剩余盈利率：` + _profit / this.presentDeal.costing, true);
+                    this.addHistory('info', `盈利下降，且大于止盈拐点，剩余盈利率：` + _profit / this.presentDeal.inCosting, true);
                     //亏损率大于一个值,判断当前盈利率，选择是否止盈
-                    if (_profit / this.presentDeal.costing < this.parameter.lowestRiseRate) {
+                    if (_profit / this.presentDeal.inCosting < this.parameter.lowestRiseRate) {
                         //盈利率小于某一个值的话，就不予止盈，否则没太大意义（避免某一下的急跌造成割肉，却没赚到什么）
-                        this.addHistory('info', `相比最大历史盈利，下降量${_riseStopLossRate.toFixed(6)}%，大于${this.parameter.riseStopLossRate}%，但低于最低出场盈利率${this.parameter.lowestRiseRate}，继续观察...`, true);
+                        this.addHistory('info', `相比最大历史盈利，下降量${_riseStopLossRate.toFixed(2)}%，大于${this.parameter.riseStopLossRate}%，但低于最低出场盈利率${this.parameter.lowestRiseRate}，继续观察...`, true);
                         return false;
                     } else {
-                        this.addHistory('info', `相比最大历史盈利，下降量${_riseStopLossRate.toFixed(6)}%，大于${this.parameter.riseStopLossRate}%，且高于最低出场盈利率${this.parameter.lowestRiseRate}，进行止盈操作！`);
+                        this.addHistory('info', `相比最大历史盈利，下降量${_riseStopLossRate.toFixed(2)}%，大于${this.parameter.riseStopLossRate}%，且高于最低出场盈利率${this.parameter.lowestRiseRate}，进行止盈操作！`);
                         //再次确认深度价是否也符合
                         if (((this.presentDeal.historyProfit - this.getProfit(this.presentDeal.amount, true)) / this.presentDeal.historyProfit) * 100 > this.parameter.riseStopLossRate) {
                             return (await this.deal('sell'));
@@ -563,7 +561,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 } else {
                     if (_riseStopLossRate === 0) return false;
                     //亏损率还未大于一个值，持续观察
-                    this.addHistory('info', `盈利下降量${Number(_riseStopLossRate.toFixed(6))}%，未达止盈拐点，继续观察盈利情况...`, true);
+                    this.addHistory('info', `盈利下降量${Number(_riseStopLossRate.toFixed(2))}%，未达止盈拐点，继续观察盈利情况...`, true);
                     return false;
                 }
             }
@@ -571,7 +569,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             //盈利为负（亏损）
             //获取亏损率
             //this.presentDeal.historyProfit = _profit;//重置最高盈利(考虑先盈利很高，突然暴跌后，重新拉回来，但没有冲破最高盈利，一直无法出场)
-            const _stopLossRate = Math.abs(Number(this.getProfit() / this.presentDeal.costing));
+            const _stopLossRate = Math.abs(Number(this.getProfit() / this.presentDeal.inCosting));
             if (!this.riseTimer && this.parameter.maxStayTime !== 0) {
                 this.riseTimer = setTimeout(async () => {
                     this.addHistory('info', `亏损状态时间超时，进行止损操作`);
@@ -593,7 +591,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                     setTimeout(async () => {
                         //再次观察亏损
                         const _profit = this.getProfit();
-                        const _stopLossRate2 = Math.abs(Number(_profit / this.presentDeal.costing));
+                        const _stopLossRate2 = Math.abs(Number(_profit / this.presentDeal.inCosting));
                         if (_profit > 0) {
                             this.addHistory('info', `扭亏为盈，继续等待出场时机...`);
                             this.presentDeal.historyProfit = _profit;
@@ -603,7 +601,9 @@ module.exports = class SellIntoCorrections extends Tactics {
                                 this.riseTimer && clearTimeout(this.riseTimer);
                                 //仍然大于止损值，割肉
                                 this.addHistory('info', `二次判断，继续亏损,亏损率：${_stopLossRate2.toFixed(6)}，仍然超过${this.parameter.stopLossRate}，进行止损操作`);
-                                resolve(await this.deal('sell'));
+                                this.loadUpBuyHelper.lightenMod = true;//打开减仓模式
+                                return false;
+                                //resolve(await this.deal('sell'));//--------------------------这里暂时不止损了，改为变成减仓模式
                             } else {
                                 //说明在回涨，观察
                                 this.addHistory('info', `二次判断，亏损降低，亏损率：${_stopLossRate2.toFixed(6)}，低于止损点${this.parameter.stopLossRate}，继续等待出场时机...`, true);
@@ -624,212 +624,89 @@ module.exports = class SellIntoCorrections extends Tactics {
     /**理论利润，用于即时计算利润（通过深度图），即若按照当前价格卖掉，获得的回报减去成本价 */
     getProfit(amount, istheoryPrice) {
         let _amount = amount || this.presentDeal.amount;
-        if (istheoryPrice) return Number(_amount * this.tacticesHelper.getTheoryPrice(_amount).avePrive * (1 - this.parameter.serviceCharge) - this.presentDeal.costing);
-        const commissionTotal = this.exchangeQueue.reduce((pre, cur) => pre + cur.commission, 0);
-        return Number(_amount * this.presentPrice * (1 - this.parameter.serviceCharge) - commissionTotal - this.presentDeal.costing);
-        //return Number(_amount * this.presentPrice * (1 - this.parameter.serviceCharge) - this.presentDeal.costing);
+        if (istheoryPrice) return Number(_amount * this.tacticesHelper.getTheoryPrice(_amount).avePrive * (1 - this.parameter.serviceCharge) + this.presentDeal.outCosting - this.presentDeal.inCosting);
+        //return Number(_amount * this.presentPrice * (1 - this.parameter.serviceCharge) - this.presentDeal.inCosting);
+        return Number(_amount * this.presentPrice * (1 - this.parameter.serviceCharge) + this.presentDeal.outCosting - this.presentDeal.inCosting);
     }
-    /**第二个参数usdtAmount用于补仓和减仓 */
-    async deal(order, usdtAmount) {
+    /**第二个参数dealQuantity用于补仓和减仓 */
+    async deal(order, dealQuantity) {
+
         const price = this.presentPrice = await this.tacticesHelper.getPresentPrice(true);
         this.checkSymbolTime = 10;
         this.checkBuyTime = 0;
         if (order === 'buy') {
+            if (!dealQuantity) {
+                this.presentDeal = {
+                    inCosting: 0, outCosting: 0, dealPrice: 0, winPrice: 0, amount: 0, rtProfit: undefined, historyProfit: 0,
+                }
+            }
             this.checkSymbolTime = 10;
-            const dealAmount = this.buyState ? usdtAmount : this.parameter.usdtAmount;
-            this.addHistory('info', `将进行市价买入，投入交易数：${dealAmount}U，预估价格：${price}`);
-            const buyDeal = new BuyDeal(this.symbol, this.id, this.roundId, this.imitateRun, price, dealAmount);
+            const quantity = dealQuantity || this.parameter.usdtAmount / price;
+            this.addHistory('info', `将进行市价买入，预计买入${quantity}枚${this.symbol}，预估价格：${price}，投入${quantity * price}U`);
+            const buyDeal = new BuyDeal(this.symbol, this.id, this.roundId, this.imitateRun, price, quantity);
             await buyDeal.deal(this.parameter.serviceCharge);
             this.presentDeal = Object.assign(this.presentDeal,
                 {
                     dealPrice: buyDeal.dealPrice,//买入价,暂时等于市价
-                    costing: this.buyState ? this.presentDeal.costing : 0,//考虑补仓的时候buyState=true
+                    inCosting: dealQuantity ? this.presentDeal.inCosting + buyDeal.costing : buyDeal.costing,//考虑补仓的时候buyState=true
                     amount: this.presentDeal.amount + buyDeal.dealQuantity
                 });
             this.presentDeal.historyProfit = this.getProfit();//当前交易的历史盈利，每买入一次，需要重置
-            this.presentDeal.averagePrice = this.presentDeal.costing / this.presentDeal.amount;
+            this.presentDeal.winPrice = this.presentDeal.amount === 0 ? 0 : (this.presentDeal.inCosting - this.presentDeal.outCosting) / this.presentDeal.amount;
             buyDeal.dealThenInfo = Object.assign({}, this.presentDeal);
+            buyDeal.signStr = dealQuantity ? '补仓' : '入场';
             await buyDeal.saveToDB(this);
+
             this.exchangeQueue.push(buyDeal);
             this.addHistory('buy', {
                 symbol: this.symbol,
+                signStr: buyDeal.signStr,
                 dealAmount: buyDeal.dealQuantity,
                 profit: this.getProfit(),
-                averagePrice: this.presentDeal.averagePrice,
-                price: this.presentDeal.dealPrice,
-                costing: this.presentDeal.costing,
-                inCosting: this.presentDeal.costing
+                winPrice: this.presentDeal.winPrice,
+                price: buyDeal.dealPrice,
+                costing: this.presentDeal.inCosting
             }, false, { color: 'red' });
-            if (!this.buyState) {
-                this.tacticesHelper.roundBegin();
+            if (!dealQuantity) {
+                await this.tacticesHelper.roundBegin();
             }
-            //#region
-            /*
-            if (this.imitateRun) {
-                //const hadBuyAmount = this.buyState ? (usdtAmount / price + this.presentDeal.amount) : this.parameter.usdtAmount / price, ;
-                this.presentDeal = Object.assign(this.presentDeal,
-                    {
-                        dealPrice: price,//买入价
-                        costing: this.buyState ? this.presentDeal.costing + (usdtAmount * (1 + this.parameter.serviceCharge))
-                            : this.parameter.usdtAmount * (1 + this.parameter.serviceCharge),//模拟的时候这里成本等于usdt量
-                        usdtAmount: this.buyState ? (usdtAmount / price + this.presentDeal.amount) : this.parameter.usdtAmount / price,//因为是模拟，这里是理论值
-                        historyProfit: this.buyState ? this.presentDeal.historyProfit : 0,//当前交易的历史盈利
-                    });
-                //this.presentDeal.averagePrice = (this.loadUpBuyHelper.reduce((pre, cur) => pre + cur.price, 0) + price) / this.presentDeal.amount;//均价：所有价格除以购买数量
-                this.presentDeal.averagePrice = this.presentDeal.costing / this.presentDeal.amount;//均价：所有价格除以购买数量
-                this.addHistory('buy', {
-                    symbol: this.symbol,
-                    dealAmount: dealAmount / price,
-                    orderInfo: null,
-                    profit: this.getProfit(),
-                    averagePrice: this.presentDeal.averagePrice,
-                    price,
-                    costing: this.presentDeal.costing
-                }, false, { color: 'red' });
-            } else {
-                //真实购买，入场数量可以通过市价获取，需要通过推送获取到最终的交易均价，再获取到成本
-                //this.dealTimer && clearInterval(this.dealTimer);
 
-                this.presentDeal = Object.assign(this.presentDeal,
-                    {
-                        dealPrice: price,//买入价,暂时等于市价
-                        //这里成本暂时等于usdt量加手续费，之后获取订单后会更新
-                        costing: this.buyState ? this.presentDeal.costing : 0,//考虑补仓的时候buyState=true
-                        inCosting: this.buyState ? this.presentDeal.inCosting : 0,
-                        amount: this.buyState ? this.presentDeal.amount : 0,
-                        historyProfit: this.buyState ? this.presentDeal.historyProfit : 0,//当前交易的历史盈利
-                        // tradesDoneQuantity: 0,//处理完成的币数量
-                        // tradesDoneAmount: 0//已经处理完的金额
-                    });
-                try {
-                    this.addHistory('info', `将进行市价买入，投入交易数：${dealAmount}U，预估价格：${price}`);
-                    //挂单
-                    const { status, type, transactTime, executedQty, orderId, origQty, fills, symbol } = await client.order({
-                        symbol: this.symbol,
-                        type: 'MARKET',
-                        side: 'BUY',
-                        quantity: this.tacticesHelper.getDecimalsForCount(dealAmount / price)
-                    });
-                    this.presentDeal.buyOrderInfo = { type, transactTime, executedQty, orderId, origQty, fills, symbol, commission: 0, tradesDoneQuantity: 0, tradesDoneAmount: 0 };
-                    this.presentDeal.orderId = this.presentDeal.buyOrderInfo.orderId;
-                    //this.addHistory('info', `交易完成，交易价格：${price}，完成数量:${this.presentDeal.amount}`);
-                    // 这里是市价买入，是立即成交的
-                    fills.forEach(item => {
-                        //通过BNB交手续费，那么这里导致数量不会扣减，就是实际到账数量
-                        this.presentDeal.buyOrderInfo.tradesDoneQuantity += Number(item.qty);
-                        this.presentDeal.buyOrderInfo.tradesDoneAmount += Number(item.qty) * Number(item.price);
-                    });
-                    this.presentDeal.dealPrice = this.presentDeal.buyOrderInfo.tradesDoneAmount / this.presentDeal.buyOrderInfo.tradesDoneQuantity;
-                    this.presentDeal.amount += this.presentDeal.buyOrderInfo.tradesDoneQuantity;//购买的数量
-                    this.presentDeal.costing += (this.presentDeal.buyOrderInfo.tradesDoneAmount * this.presentDeal.dealPrice) * (1 + this.parameter.serviceCharge);//实际成本，需加收手续费
-                    this.presentDeal.averagePrice = this.presentDeal.costing / this.presentDeal.amount;//均价：所有价格除以购买数量
-                    this.addHistory('buy', {
-                        symbol: this.symbol,
-                        dealAmount: this.presentDeal.buyOrderInfo.tradesDoneQuantity,
-                        orderInfo: this.presentDeal.buyOrderInfo,
-                        profit: this.getProfit(),
-                        averagePrice: this.presentDeal.averagePrice,
-                        price: this.presentDeal.dealPrice,
-                        costing: this.presentDeal.costing,
-                        inCosting: this.presentDeal.costing
-                    }, false, { color: 'red' });
-                } catch (e) {
-                    console.error(e);
-                }
-            } */
-            //#endregion
         } else if (order === 'sell') {
-            const dealAmount = usdtAmount || this.presentDeal.amount;//卖出的币数量
-            this.addHistory('info', `将进行市价卖出，交易数量:${this.presentDeal.amount}`);
-            const sellDeal = new SellDeal(this.symbol, this.id, this.roundId, this.imitateRun, price, dealAmount);
+            const quantity = dealQuantity || this.presentDeal.amount;//需要回收的U数量
+            this.addHistory('info', `将进行市价卖出，预计卖出${quantity}枚${this.symbol}，预估价格：${price}，回收${quantity * price}U`);
+            const sellDeal = new SellDeal(this.symbol, this.id, this.roundId, this.imitateRun, price, quantity);
             await sellDeal.deal(this.parameter.serviceCharge);
             this.presentDeal = Object.assign(this.presentDeal,
                 {
                     dealPrice: sellDeal.dealPrice,//买入价,暂时等于市价
-                    costing: usdtAmount ? this.presentDeal.costing - sellDeal.dealAmount : 0,//考虑补仓的时候buyState=true
+                    outCosting: dealQuantity ? this.presentDeal.outCosting + sellDeal.costing : sellDeal.costing,//考虑补仓的时候buyState=true
                     amount: this.presentDeal.amount - sellDeal.dealQuantity,
                 });
             this.presentDeal.historyProfit = this.getProfit();//当前交易的历史盈利，每卖出一次，需要重置
-            this.presentDeal.averagePrice = this.presentDeal.costing / this.presentDeal.amount;
+            this.presentDeal.winPrice = this.presentDeal.amount === 0 ? 0 : (this.presentDeal.inCosting - this.presentDeal.outCosting) / this.presentDeal.amount;
             //await sellDeal.saveToDB({ uid: this.uid, tid: this.id, roundId: this.roundId });
             sellDeal.dealThenInfo = Object.assign({}, this.presentDeal);
+            sellDeal.signStr = dealQuantity ? '减仓' : '出场';
             await sellDeal.saveToDB(this);
+
             this.exchangeQueue.push(sellDeal);
             this.addHistory('sell', {
                 symbol: this.symbol,
+                signStr: sellDeal.signStr,
                 dealAmount: sellDeal.dealQuantity,
-                price: this.presentDeal.dealPrice,
-                profit: this.getProfit(),
-                costing: this.presentDeal.costing,
-                // inCosting: costingBuy,
-                // outCosting: this.presentDeal.costing
+                price: sellDeal.dealPrice,
+                winPrice: this.presentDeal.winPrice,
+                profit: this.presentDeal.outCosting - this.presentDeal.inCosting,
+                costing: this.presentDeal.outCosting
             }, false, { color: 'green' });
-            //#region 
-            /*
-            if (this.imitateRun) {
-                //模拟卖出
-                //获得回收金额
-                this.profitSymbol.push({ symbol: this.symbol, profit: this.getProfit() });
-                const costingBuy = this.presentDeal.costing;
-                this.presentDeal.costing = this.presentDeal.amount * (1 - this.parameter.serviceCharge) * price;
-                this.addHistory('sell', {
-                    symbol: this.symbol,
-                    dealAmount: usdtAmount ? usdtAmount / price : this.presentDeal.amount,
-                    orderInfo: null,
-                    price: price,
-                    profit: this.presentDeal.costing - costingBuy,
-                    costing: this.presentDeal.costing,
-                    inCosting: costingBuy,
-                    outCosting: this.presentDeal.costing
-                }, false, { color: 'green' });
-                this.presentDeal.amount = 0;
-            } else {
-                //真实卖出
-                try {
-                    this.addHistory('info', `将进行市价卖出，交易数量:${this.presentDeal.amount}`);
-                    //挂单
-                    const { status, type, transactTime, executedQty, orderId, origQty, fills, symbol } = await client.order({
-                        symbol: this.symbol,
-                        type: 'MARKET',
-                        side: 'SELL',
-                        quantity: this.presentDeal.amount
-                    });
-                    this.presentDeal.sellOrderInfo = { type, transactTime, executedQty, orderId, origQty, fills, symbol, commission: 0, tradesDoneQuantity: 0, tradesDoneAmount: 0 };
-                    this.presentDeal.orderId = this.presentDeal.sellOrderInfo.orderId;
-                    fills.forEach(item => {
-                        this.presentDeal.sellOrderInfo.tradesDoneQuantity += Number(item.qty);
-                        this.presentDeal.sellOrderInfo.tradesDoneAmount += Number(item.qty) * Number(item.price);
-                        this.presentDeal.sellOrderInfo.commission += Number(item.commission);
-                    });
 
-                    this.presentDeal.dealPrice = this.presentDeal.sellOrderInfo.tradesDoneAmount / this.presentDeal.sellOrderInfo.tradesDoneQuantity;//实际交易均价
-                    const costingBuy = this.presentDeal.costing;//因为要重设costing，这里先缓存一下
-                    this.presentDeal.amount = 0;//实际交易数量
-                    this.presentDeal.costing = this.presentDeal.sellOrderInfo.tradesDoneAmount * (1 - this.parameter.serviceCharge);//回本，这里是实际到账，手续费通过BNB另外扣了，所以还是要加手续费
-                    this.addHistory('sell', {
-                        symbol: this.symbol,
-                        dealAmount: this.presentDeal.sellOrderInfo.tradesDoneQuantity,
-                        orderInfo: this.presentDeal.sellOrderInfo,
-                        inCosting: costingBuy,
-                        costing: costingBuy,
-                        outCosting: this.presentDeal.costing,
-                        profit: this.presentDeal.costing - costingBuy,//卖出回本减去买入的成本，为什么不用getProfit，因为getProfit是理论利润
-                        price: this.presentDeal.dealPrice
-                    }, false, { color: 'green' });
-                    this.profitSymbol.push({ symbol: this.symbol, profit: this.presentDeal.costing - costingBuy });
-                } catch (e) {
-                    console.error(e);
-                }
-            }
-            */
-            //#endregion
-            if (!usdtAmount || this.presentDeal.amount === 0) {
-                this.tacticesHelper.roundEnd();
+            if (!dealQuantity) {
+                await this.tacticesHelper.roundEnd();
             } else {
 
             }
-
         }
+        require('./TacticesLauncher').getInstance().pushExchange(this.uid, this.id, this.symbol, this.exchangeQueue);
         this.tacticesHelper.resetParam();//重置参数
         this.riseTimer && clearTimeout(this.riseTimer);//清除超时timer
         return true;
@@ -848,6 +725,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             'averageWave',
             'historyForDeal',
             //'exchangeQueue',
+            'roundRunStartTime',
             'checkBuyTime',
             'runState',
             'buyState',
@@ -859,16 +737,17 @@ module.exports = class SellIntoCorrections extends Tactics {
             'advancedOption',
             'depth',
             'presentPrice',
+            'historyStatistics',
             'strategy',
             'ticker'].forEach(item => result[item] = this[item]);
         result['loadUpBuyHelper'] = this.loadUpBuyHelper.getInfo();
-        result['exchangeQueue'] = this.exchangeQueue.map(item => ({
-            roundId: item.item,
-            dealType: item.dealType,
-            dealDate: this.dealDate,
-            symbol: this.symbol,
-            dealPrice: this.dealPrice
-        }));
+        // result['exchangeQueue'] = this.exchangeQueue.map(item => ({
+        //     roundId: item.roundId,
+        //     dealType: item.dealType,
+        //     dealDate: item.dealDate,
+        //     symbol: item.symbol,
+        //     dealPrice: item.dealPrice
+        // }));
         return result;
     }
     getDBInfo() {
@@ -883,12 +762,14 @@ module.exports = class SellIntoCorrections extends Tactics {
             'roundId',
             'history',
             //'historyForDeal',
+            'roundRunStartTime',
             'checkBuyTime',
             'runState',
             'buyState',
             'imitateRun',
             'profitSymbol',
             'parameterBackup',
+            'historyStatistics',
             'strategy',
             'presentPrice',//缓存到数据库，免得服务重启，这里是0，s导致瞬间出场
             'advancedOption'].forEach(item => result[item] = this[item]);
@@ -905,6 +786,8 @@ module.exports = class SellIntoCorrections extends Tactics {
             'parameter',
             'imitateRun',
             //'historyForDeal',
+            'roundRunStartTime',
+            'historyStatistics',
             'presentDeal',
             'roundId',
             'strategy',

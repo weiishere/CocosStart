@@ -1,12 +1,13 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:43:33
- * @LastEditTime: 2020-09-28 17:57:40
+ * @LastEditTime: 2020-09-30 17:27:46
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
  */
 const uuid = require('uuid');
+const { getRoundResultList } = require('./roundResult')
 
 module.exports = class Tactics {
     constructor(uid, name, parameter) {
@@ -20,19 +21,44 @@ module.exports = class Tactics {
     getNewId(sign) {
         return (sign || '') + (parseInt(Math.random() * 1000000000) + Date.parse(new Date()) / 1000);
     }
-    doHistoryStatistics() {
-        const totalProfit = 0;//历史总盈亏
-        const totalCommission = 0;//历史总手续费
-        const roundCount = 0;//交易回合次数
-        const winRoundCount = 0;//盈利次数
-        const averageProfit = 0;//平均盈亏
-        const averageBuyInTime = 0;//平均入场耗时
-        const averageSellOutTime = 0;//平均出场耗时
-        const averagePutInto = 0;//平均投入U
-        const averageLoadUpCount = 0;//平均补仓次数
-        const switchSymbolCount = 0;//成功切币次数
-        return {
-            totalProfit, totalCommission, roundCount, winRoundCount, averageProfit, averageBuyInTime, averageSellOutTime, switchSymbolCount, averagePutInto, averageLoadUpCount
+    async doHistoryStatistics() {
+        const roundResultList = await getRoundResultList({ uid: this.uid, tid: this.id });
+        let totalProfit = 0;//历史总盈亏
+        let totalCommission = 0;//历史总手续费
+        let roundCount = 0;//交易回合次数
+        let winRoundCount = 0;//盈利次数
+        let averageProfit = 0;//平均盈亏
+        let averageBuyingTime = 0;//平均场内耗时
+        let averagePutInto = 0;//平均投入U
+        let averageLoadUpCount = 0;//平均补仓次数
+        //let switchSymbolCount = 0;//成功切币次数
+
+        let totalBuyingTime = 0;
+        let totalPutInto = 0;
+        let totalLoadUpCount = 0;
+        roundResultList.forEach(roundResult => {
+            totalProfit += roundResult.profit;
+            totalCommission += roundResult.commission;
+            if (roundResult.profit > 0) winRoundCount++;
+            totalBuyingTime += (roundResult.endTime - roundResult.startTime);
+            totalPutInto += roundResult.inCosting;
+            totalLoadUpCount += roundResult.loadUpBuy.length;
+        });
+        roundCount = roundResultList.length;
+        averageProfit = roundCount === 0 ? 0 : totalProfit / roundCount;
+        averageBuyingTime = roundCount === 0 ? 0 : totalBuyingTime / roundCount;
+        averagePutInto = roundCount === 0 ? 0 : totalPutInto / roundCount;
+        averageLoadUpCount = roundCount === 0 ? 0 : totalLoadUpCount / roundCount;
+
+        this.historyStatistics = {
+            totalProfit,
+            totalCommission,
+            roundCount,
+            winRoundCount,
+            averageProfit,
+            averageBuyingTime,
+            averagePutInto,
+            averageLoadUpCount
         }
     }
 }

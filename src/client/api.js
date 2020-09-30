@@ -28,5 +28,8 @@ export default {
     updateStrategy: '/api/strategy/update',
     setStrategy: '/api/strategy/set',
     removeStrategy: '/api/strategy/remove',
-    unbindStrategy: '/api/strategy/unbind'
+    unbindStrategy: '/api/strategy/unbind',
+    getSimpleRoundResult: '/api/roundResult/getSimple',
+    getRoundResult: '/api/roundResult/get',
+    getParameterDesc: '/api/getParameterDesc'
 }

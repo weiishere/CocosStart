@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-23 16:08:14
- * @LastEditTime: 2020-09-28 15:30:43
+ * @LastEditTime: 2020-09-29 16:34:44
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -25,14 +25,20 @@ const exchangeModel = mongoose.model('Exchange', new mongoose.Schema({
     commission: { type: Number, default: 0 },
     imitateRun: { type: Boolean, default: true },
     dealQuantity: { type: Number, default: 0 },
+    costing: { type: Number, default: 0 },
     dealDate: String,
-    dealThenInfo: { type: Object, default: {} }
+    dealThenInfo: { type: Object, default: {} },
+    signStr: String
 }));
 
 
 module.exports = {
-    find: async function (query) {
+    find: async function (query, limitTime) {
         try {
+            if (limitTime) {
+                const t = Date.parse(new Date()) - limitTime;
+                return await exchangeModel.find(query).gte('dealDate', t).exec();
+            }
             return await exchangeModel.find(query).exec();
         } catch (err) {
             error(err)

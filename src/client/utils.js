@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-28 17:13:05
- * @LastEditTime: 2020-09-08 14:31:27
+ * @LastEditTime: 2020-09-30 17:41:46
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -13,7 +13,7 @@ import api from '@client/api';
 
 let lastTacticsId = '';
 export const switchTactics = (uid, id) => {
-    if (/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id)) {
+    if (/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id) || /^t_[0-9]{10}$/.test(id)) {
         //切换Tactics
         if (switchTactics === id) return;
         lastTacticsId = id;

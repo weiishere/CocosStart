@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-25 15:49:50
- * @LastEditTime: 2020-09-28 18:06:02
+ * @LastEditTime: 2020-09-30 15:09:44
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -17,7 +17,6 @@ class Exchange {
         this.id = 0;//交易DB的ID
         this.symbol = symbol;//交易对
         this.tid = tid;
-        //this.usdtQuantity = 0;//涉及的usdt数量
         this.expectDealQuantity = 0;//期望的交易数量
         this.dealQuantity = 0;//交易的币数量
         this.dealAmount = 0;//交易完成之后的实际交易额
@@ -29,6 +28,9 @@ class Exchange {
         this.roundId = roundId;
         this.orderId = 0;
         this.dealThenInfo = {}//交易发生后的交易信息
+        this.costing = 0;
+        this.dealType = '';
+        this.signStr = ''
     }
 
     async saveToDB({ uid }) {
@@ -49,7 +51,7 @@ class Exchange {
         // dealDate: { type: Date, default: Date.now }
         const result = (await ExchangeDB.create({
             symbol: this.symbol,
-            dealType: this instanceof BuyDeal ? 'buy' : 'sell',
+            dealType: this.dealType,//this instanceof BuyDeal ? 'buy' : 'sell',
             uid, tid: this.tid,
             roundId: this.roundId,
             expectDealQuantity: this.expectDealQuantity,
@@ -61,11 +63,13 @@ class Exchange {
             imitateRun: this.imitateRun,
             dealQuantity: this.dealQuantity,
             dealThenInfo: this.dealThenInfo,
-            dealDate: this.dealDate
+            dealDate: this.dealDate,
+            costing: this.costing,
+            signStr: this.signStr
         }, (e) => {
             console.log('存储Exchange出错', e);
         }))
-        this.id = result.id;
+        if (result) this.id = result.id;
     }
 }
 
@@ -76,6 +80,7 @@ class BuyDeal extends Exchange {
         this.expectDealQuantity = expectDealQuantity;
         this.imitateRun = imitateRun;
         this.marketPrice = marketPrice;
+        this.dealType = 'buy';
     }
     async deal(serviceCharge) {
         this.dealDate = Date.parse(new Date());//dateFormat(new Date(), "yyyy/MM/dd HH:mm");
@@ -96,10 +101,11 @@ class BuyDeal extends Exchange {
             this.dealPrice = this.dealAmount / this.dealQuantity;
         } else {
             this.dealQuantity = this.expectDealQuantity;
-            this.dealAmount = this.expectDealQuantity * this.marketPrice;
+            this.dealAmount = this.dealQuantity * this.marketPrice;
             this.dealPrice = this.marketPrice;
             this.commission += Number(this.dealAmount * serviceCharge);
         }
+        this.costing = this.dealAmount + this.commission;
     }
 }
 class SellDeal extends Exchange {
@@ -108,6 +114,7 @@ class SellDeal extends Exchange {
         this.expectDealQuantity = expectDealQuantity;
         this.imitateRun = imitateRun;
         this.marketPrice = marketPrice;
+        this.dealType = 'sell';
     }
     async deal(serviceCharge) {
         this.dealDate = Date.parse(new Date());//dateFormat(new Date(), "yyyy/MM/dd HH:mm");
@@ -128,10 +135,11 @@ class SellDeal extends Exchange {
             this.dealPrice = this.dealAmount / this.dealQuantity;
         } else {
             this.dealQuantity = this.expectDealQuantity;
-            this.dealAmount = this.expectDealQuantity * this.marketPrice;
+            this.dealAmount = this.dealQuantity * this.marketPrice;
             this.dealPrice = this.marketPrice;
             this.commission += Number(this.dealAmount * serviceCharge);
         }
+        this.costing = this.dealAmount - this.commission;
     }
 }
 

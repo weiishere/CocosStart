@@ -27,6 +27,7 @@ export default function ControlPanel({ uid }) {
     ]);
     const [strategyValue, setStrategyValue] = React.useState('');
     const key = 'loading';
+    let parameterDesc = {};
     const addTactice = () => {
         message.loading({ content: 'loading..', key, duration: 0 });
         let quickName, quickSymbol;
@@ -165,7 +166,20 @@ export default function ControlPanel({ uid }) {
             }
         });
     }
+    const asyncGetParameterDesc = async () => {
+        parameterDesc = await requester({
+            url: api.getParameterDesc,
+            option: {
+                baseUrl: 'API_server_url',
+                faileBack: error => {
+                    message.error({ content: error, key, duration: 2 });
+                }
+            }
+        });
+        console.log('');
+    }
     React.useEffect(() => {
+        asyncGetParameterDesc();
         //选中推荐交易对之后，切换待选币
         EventHub.getInstance().addEventListener('chooseSymbol', 'cp_chooseSymbol', payload => {
             setSymbolStr(payload.symbol);
@@ -179,8 +193,6 @@ export default function ControlPanel({ uid }) {
                 runState: item.runState
             })));
             const _targetTactice = payload.find(item => item.target === true);
-            //_targetTactice && setParamter(_targetTactice.parameterDesc.map(item => ({ parameterDesc: item, value: _targetTactice.parameter[item] })));
-            //if (_targetTactice.strategy.id) setStrategyValue(_targetTactice.strategy.id);
             let paramArr = [];
             if (_targetTactice) {
                 for (let key of Object.keys(_targetTactice.parameterDesc)) {

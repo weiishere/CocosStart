@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-27 13:00:46
- * @LastEditTime: 2020-09-28 16:10:08
+ * @LastEditTime: 2020-09-29 18:34:37
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -31,7 +31,8 @@ const roundResultModel = mongoose.model('RoundResult', new mongoose.Schema({
 module.exports = {
     find: async function (query) {
         try {
-            return await roundResultModel.find(query).exec();
+            const result =  await roundResultModel.find(query).exec();
+            return result;
         } catch (err) {
             error(err)
         }

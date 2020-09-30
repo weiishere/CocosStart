@@ -26,6 +26,7 @@ module.exports = router
   .get('/api/getIndicatorLine', controllers.api.getIndicatorLine)
   .get('/api/roundResult/get', controllers.api.getRoundResultList)
   .get('/api/roundResult/getSimple', controllers.api.getSimpleRoundResultList)
+  .get('/api/getParameterDesc',controllers.api.getParameterDesc)
   .post('/api/switchSymbol', controllers.api.switchSymbol)
   .post('/api/initTactics', controllers.api.initTactics)
   .post('/api/tacticsOrder', controllers.api.tacticsOrder)

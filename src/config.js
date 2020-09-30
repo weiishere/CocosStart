@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-09-23 14:18:01
+ * @LastEditTime: 2020-09-30 01:34:44
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -30,9 +30,11 @@ const WsConfig = {
 
 const WsRoute = {
   MULTIPLE_PRICE_CHANGE: 'multiple_price_change',
+  EXCHANGE_LIST: 'exchange_list',
   TACTICS_LIST: 'tacticsList',
   KLINE_DATA: 'kline_data',
-  HISTORY_LIST: 'history_list'
+  HISTORY_LIST: 'history_list',
+  ROUND_RESULT_INFORM: 'round_result_inform'
 }
 
 const apiDateCode = {

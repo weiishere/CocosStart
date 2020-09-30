@@ -26,7 +26,7 @@ let volumeData = [[], [], []]
 let rawData = JSON.parse(localStorage.getItem("klineDataForBs")) || []
 let markPointData = [];
 let persentPrice = 0;
-let averagePrice = 0;
+let winPrice = 0;
 let averageWave = 0;
 // function splitData(rawData) {
 //     var categoryData = [];
@@ -40,8 +40,11 @@ let averageWave = 0;
 //         values: values
 //     };
 // }
-
+let optionParam = {
+    symbol: '', price: 0
+}
 const option = (symbol, price) => {
+
     const dates = rawData.map(function (item) {
         return item[0];
     });
@@ -51,9 +54,9 @@ const option = (symbol, price) => {
     });
     return {
         title: {
-            text: `BS线(${symbol || localStorage.getItem("SymbleForBs")})`,
+            text: `BS线(${(symbol || optionParam.symbol) || localStorage.getItem("SymbleForBs")})`,
             left: 0,
-            subtext: `当前价格：${Number(price)}U${persentPrice ? '/入场价：' + Number(persentPrice) + 'U' : ''}${averagePrice ? '/成本均价：' + Number(averagePrice) + 'U' : ''}/波动率：${Number(averageWave)}%`
+            subtext: `当前价格：${Number((price || optionParam.price))}U${persentPrice ? '/入场价：' + Number(persentPrice) + 'U' : ''}${(winPrice && winPrice > 0) ? '/扭亏价：' + Number(winPrice) + 'U' : ''}/波动率：${Number(averageWave)}%`
         },
         backgroundColor: '#21202D',
         tooltip: {
@@ -165,7 +168,7 @@ const option = (symbol, price) => {
                     //     }
                     // ]
                 },
-                
+
             },
             {
                 type: 'line',
@@ -178,12 +181,13 @@ const option = (symbol, price) => {
                             type: "solid",
                             color: "#f7f180",
                         },
-                        yAxis: [Number(price)] 
+                        yAxis: [Number(price)]
                     }]
                 }
             }
         ]
     };
+    optionParam = { symbol, price };
 }
 const optionVolume = () => {
     return {
@@ -291,7 +295,7 @@ const initKlineData = (myChart, myVolumeChart, symbol) => {
 const setOptionForNoCover = (myChart, myVolumeChart, symbol, price) => {
     let _option = myChart.getOption();
     let oldOption = option(symbol, price);
-    let _option2 = myVolumeChart.getOption();
+    //let _option2 = myVolumeChart.getOption();
     let oldOption2 = optionVolume();
     myChart.setOption(Object.assign({}, _option, {
         title: oldOption.title,
@@ -302,7 +306,7 @@ const setOptionForNoCover = (myChart, myVolumeChart, symbol, price) => {
     }));
     oldOption2.dataZoom[0].start = oldOption2.dataZoom[1].start = _option.dataZoom[0].start;
     //myVolumeChart.setOption(_option2);
-    myVolumeChart.setOption(oldOption2)
+    myVolumeChart && myVolumeChart.setOption(oldOption2)
     // myVolumeChart.setOption(Object.assign(_option2, {
     //     series: oldOption2.series
     // }));
@@ -336,7 +340,7 @@ export default function BSLine() {
         EventHub.getInstance().addEventListener('mapTacticsList', 'bs_mapTacticsList', payload => {
             const target = payload.find(item => item.target);
             persentPrice = !target ? 0 : (target.buyState ? target.presentDeal.dealPrice : 0);
-            averagePrice = !target ? 0 : (target.buyState ? target.presentDeal.averagePrice : 0);
+            winPrice = !target ? 0 : (target.buyState ? target.presentDeal.winPrice : 0);
             averageWave = !target ? 0 : (target.averageWave * 100).toFixed(4);
             if (!target) return;
             if (symbol !== target.symbol) {
@@ -367,19 +371,19 @@ export default function BSLine() {
                 }
             }
         });
-        EventHub.getInstance().addEventListener('historyRecord', 'bs_historyRecord', ({ historyForDeal }) => {
-            markPointData = historyForDeal.map((item, i) => ({
+        EventHub.getInstance().addEventListener('exchangeQueue', 'bs_exchangeQueue', (exchangeQueue) => {
+            markPointData = exchangeQueue.map((item, i) => ({
                 name: '标点' + i,
-                coord: [dateFormat(new Date(item.time), "HH:mm"), item.content.price],
-                value: item.content.price,
+                coord: [dateFormat(new Date(+item.dealDate), "HH:mm"), item.dealPrice],
+                value: item.dealPrice,
                 itemStyle: {
-                    color: item.type === 'buy' ? 'red' : 'green'//'rgb(41,60,85)'
+                    color: item.dealType === 'buy' ? 'red' : 'green',//'rgb(41,60,85)'
+                    borderColor: '#cccccc',
+                    borderWidth: (item.signStr === '入场' || item.signStr === '出场') ? 1 : 0
                 }
             }));
+            setOptionForNoCover(myChart);
         });
-        // window.setInterval(() => {
-        //     initKlineData(myChart, symbol);
-        // }, 60000);//1分钟矫正一次
     }, []);
     return <><div id='bs-line'></div><div id='volume-line'></div></>
 }

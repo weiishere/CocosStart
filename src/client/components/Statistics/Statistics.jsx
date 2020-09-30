@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 02:37:01
- * @LastEditTime: 2020-09-28 13:46:52
+ * @LastEditTime: 2020-09-30 22:49:38
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -29,7 +29,7 @@ const columns = [
         dataIndex: 'nowRiseRate',
     },
     {
-        title: '投入/补仓(倍)',
+        title: '总投入/补仓(倍)',
         dataIndex: 'loadUp',
     },
     {
@@ -52,7 +52,6 @@ const columns = [
 //         nowRiseRate: `-0.00254`,
 //         count: 24,
 //         riseRate: '77%',
-
 //     });
 // }
 
@@ -64,31 +63,30 @@ export default function Statistics() {
             //const target = payload.find(item => item.target);
             let ckeckedKey = -1;
             const runIcon = <i title='运行中' className="iconfont_default runStyle rotation">&#xe61e;</i>;
-            const buyIcon = <i title='场内' className="iconfont_default runStyle">&#xe8ab;</i>;
+            const buyIcon = <i title='场内' className="iconfont_default runStyle">&#xe601;</i>;
             const stopIcon = <i title='未运行' className="iconfont_default">&#xe65e;</i>;
-            const sellIcon = <i title='场外' className="iconfont_default">&#xe6e8;</i>;
+            const sellIcon = <i title='场外' className="iconfont_default">&#xe60a;</i>;
+            const imitateRunIcon = <i title='模拟运行' className="iconfont_default">&#xe69f;</i>
             const list = payload.map((item, i) => {
                 if (item.target) ckeckedKey = i;
-                const lastHistoryForDeal = item.historyForDeal[item.historyForDeal.length - 1];
+                //const lastHistoryForDeal = item.historyForDeal[item.historyForDeal.length - 1];
                 //const nowRiseRate = item.buyState && lastHistoryForDeal.type === 'buy' ? (lastHistoryForDeal.content.profit).toFixed(5) : '-';
-                const rise = item.historyForDeal.filter(item => item.type === 'sell')
-                    .map(item => ({ value: item.content.profit }))
-                    .reduce((pre, cur) => pre + cur.value, 0) + (item.buyState ? lastHistoryForDeal.content.profit : 0);
+                // const rise = item.historyForDeal.filter(item => item.type === 'sell')
+                //     .map(item => ({ value: item.content.profit }))
+                //     .reduce((pre, cur) => pre + cur.value, 0) + (item.buyState ? lastHistoryForDeal.content.profit : 0);
                 const times = item.loadUpBuyHelper.loadUpList.filter(i => i.roundId === item.roundId).reduce((pre, cur) => pre + cur.times, 0);
-
-
                 const iconArr = [item.runState ? runIcon : stopIcon, ' / ', item.buyState ? buyIcon : sellIcon]
                 return {
                     key: i,
-                    name: item.name + (item.imitateRun ? '(模拟)' : ''),
+                    name: [<span style={{ color: item.imitateRun ? '#3c93bd' : '#ddd' }}>{item.name}</span>],//[item.name, (item.imitateRun ? imitateRunIcon : '')],
                     symbol: item.symbol,
                     status: iconArr,//`${item.runState ? '运行中/' + (item.buyState ? '场内' : '场外') : '未运行'}`,
-                    nowRiseRate: item.buyState && lastHistoryForDeal.type === 'buy' ? Number((lastHistoryForDeal.content.profit / item.presentDeal.costing).toFixed(5)) : '-',
-                    loadUp: item.parameter.usdtAmount * (times + 1) + 'U / ' + times,
+                    nowRiseRate: item.buyState ? Number((item.presentDeal.rtProfit / item.presentDeal.inCosting).toFixed(4)) : '-',
+                    loadUp: item.buyState ? (Number(item.presentDeal.inCosting.toFixed(4)) + 'U / ' + times) : '-',
                     //buyUsdtAmount: Number(item.presentDeal.amount.toFixed(2)),
-                    count: item.historyForDeal.filter(item => item.type === 'sell' && item.content.profit > 0).length + ' / ' + item.historyForDeal.filter(item => item.type === 'sell').length,
+                    count: (item.historyStatistics.winRoundCount || 0) + ' / ' + (item.historyStatistics.roundCount || 0),
                     //riseRate: Number(((rise / (item.parameter.usdtAmount)) * 100).toFixed(4)) + '%',
-                    riseRate: Number(item.historyForDeal.filter(item => item.type === 'sell').reduce((pre, cur) => pre + cur.content.profit, 0).toFixed(5))
+                    riseRate: Number(((item.historyStatistics.totalProfit || 0) + (item.buyState ? item.presentDeal.rtProfit : 0)).toFixed(4))
                 }
             });
             setData(list);

@@ -197,7 +197,7 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                 <TabPane tab={<div>补仓方案&nbsp;<Tooltip title="补仓开关需要打开，这里配置补仓的必备条件"><QuestionCircleOutlined /></Tooltip></div>} key="6">
                     <div>
                         <label><Switch checked={loadUpBuyHelper.dynamicGrids} onChange={checked => onChangeLoadUpBuy('dynamicGrids', checked, true)} />&nbsp;动态网格</label>&nbsp;&nbsp;&nbsp;&nbsp;
-                        <label><Switch checked={loadUpBuyHelper.restrainEnable} onChange={checked => onChangeLoadUpBuy('restrainEnable', checked, true)} />&nbsp;补仓约束(按入场条件)</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label><Switch checked={loadUpBuyHelper.restrainEnable} onChange={checked => onChangeLoadUpBuy('restrainEnable', checked, true)} />&nbsp;拐点补仓</label>&nbsp;&nbsp;&nbsp;&nbsp;
                         <label><Switch checked={loadUpBuyHelper.isStopRise} onChange={checked => onChangeLoadUpBuy('isStopRise', checked, true)} />&nbsp;扭亏即尽快止盈</label>
                     </div>
                     <div style={{ marginTop: '1rem' }}>

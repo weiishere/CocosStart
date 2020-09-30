@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-09-28 17:51:48
+ * @LastEditTime: 2020-09-30 22:34:44
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -22,7 +22,7 @@ module.exports = {
         code: apiDateCode.nullError
       }
     } else {
-      const result = TacticesLauncher.getInstance().initTactics(uid, symbol, name || '', {});
+      const result = await TacticesLauncher.getInstance().initTactics(uid, symbol, name || '', {});
       if (result) {
         resultData = {
           code: apiDateCode.success,
@@ -78,6 +78,8 @@ module.exports = {
         history: tactics.history,
         historyForDeal: tactics.historyForDeal
       });
+      tactics && _tacticesLauncher.pushExchange(uid, id, tactics.symbol, tactics.exchangeQueue);
+      tactics && _tacticesLauncher.pushRoundResultInform(uid, id, 'switch');
       resultData = {
         code: apiDateCode.success,
         data: tactics ? tactics.getInfo() : {}
@@ -312,10 +314,10 @@ module.exports = {
     next();
   },
   getSimpleRoundResultList: async (ctx, next) => {
-    const { tid, roundId, uid } = ctx.query;
+    const { tid, roundId, uid, count } = ctx.query;
     let resultData = {};
     try {
-      let result = getSimpleRoundResultList({ tid, roundId, uid });
+      let result = await getSimpleRoundResultList({ tid, roundId, uid }, count);
       resultData = result ? {
         code: apiDateCode.success,
         data: result,
@@ -331,6 +333,27 @@ module.exports = {
       }
     }
     ctx.body = resultData;
+    next();
+  },
+  getParameterDesc: (ctx, next) => {
+    const tacticsList = TacticesLauncher.getInstance().tacticsList;
+    if (tacticsList.length) {
+      const tempTactics = tacticsList[0];
+      let resultData = {
+        code: apiDateCode.success,
+        data: tempTactics.parameterDesc,
+        msg: 'success'
+      }
+      ctx.body = resultData;
+    } else {
+      let resultData = {
+        code: apiDateCode.success,
+        data: [],
+        msg: 'success'
+      }
+      ctx.body = resultData;
+    }
+
     next();
   }
 };

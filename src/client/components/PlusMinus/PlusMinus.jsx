@@ -1,7 +1,10 @@
 import React from 'react';
 import echarts from 'echarts';
 import EventHub from '@client/EventHub'
+import { requester } from '@src/tool/Requester'
+import api from '@client/api';
 import dateFormat from 'format-datetime'
+import { message } from 'antd';
 import './style.less'
 
 
@@ -9,21 +12,7 @@ import './style.less'
 
 let data = [];
 // [
-//     { "value": 0.024698000000000775, "name": 0.024698000000000775.toFixed(3), "label": { position: 'top' }, "itemStyle": { "color": "red" } },
-//     { "value": -0.01451600000000397, "name": -0.01451600000000397.toFixed(3), "label": { position: 'bottom' }, "itemStyle": { "color": "green" } },
-//     { "value": 0.009473000000003395, "name": 0.009473000000003395.toFixed(3), "label": { position: 'top' }, "itemStyle": { "color": "red" } },
-//     { "value": 0.034328000000002135, "name": 0.034328000000002135.toFixed(3), "label": { position: 'top' }, "itemStyle": { "color": "red" } },
-//     { "value": 0.024698000000000775, "name": 0.024698000000000775.toFixed(3), "label": { position: 'top' }, "itemStyle": { "color": "red" } },
-//     { "value": -0.01451600000000397, "name": -0.01451600000000397.toFixed(3), "label": { position: 'top' }, "itemStyle": { "color": "green" } },
-//     { "value": 0.009473000000003395, "name": 0.009473000000003395.toFixed(3), "label": { position: 'top' }, "itemStyle": { "color": "red" } },
-//     { "value": 0.034328000000002135, "name": 0.034328000000002135.toFixed(3), "label": { position: 'top' }, "itemStyle": { "color": "red" } },
-//     { "value": 0.040037000000001655, "name": 0.040037000000001655.toFixed(3), "label": { position: 'top' }, "itemStyle": { "color": "red" } },
-//     { "value": 0.004804000000003583, "name": 0.004804000000003583.toFixed(3), "label": { position: 'top' }, "itemStyle": { "color": "red" } },
-//     { "value": 0.024698000000000775, "name": 0.024698000000000775.toFixed(3), "label": { position: 'top' }, "itemStyle": { "color": "red" } },
-//     { "value": -0.01451600000000397, "name": -0.01451600000000397.toFixed(3), "label": { position: 'top' }, "itemStyle": { "color": "green" } },
-//     { "value": 0.009473000000003395, "name": 0.009473000000003395.toFixed(3), "label": { position: 'top' }, "itemStyle": { "color": "red" } },
-//     { "value": 0.034328000000002135, "name": 0.034328000000002135.toFixed(3), "label": { position: 'top' }, "itemStyle": { "color": "red" } },
-//     { "value": -0.054328000000002135, "name": -0.054328000000002135.toFixed(3), "label": { position: 'top' }, "itemStyle": { "color": "green" } }
+//     { "value": 0.024698000000000775, symbol: 'ADAUSDT', "name": 0.024698000000000775.toFixed(3), time: 1601283338000, "label": { position: 'top' }, "itemStyle": { "color": "red" } },
 // ]
 const option = () => {
     const showData = data.slice(data.length > 15 ? data.length - 15 : 0, data.length)
@@ -41,8 +30,8 @@ const option = () => {
             formatter: function (param) {
                 const { data, axisValue } = param[0];
                 return axisValue ? `${axisValue}<br/>交易对：${data.symbol}
-                ${data.inCosting ? '<br/>入场成本：' + data.inCosting : ''}
-                ${data.outCosting ? '<br/>出场成本：' + data.outCosting : ''}<br/>盈亏：${data.value}` : ''
+                ${data.inCosting ? '<br/>入场总量：' + data.inCosting : ''}
+                ${data.outCosting ? '<br/>出场总量：' + data.outCosting : ''}<br/>盈亏：${data.value}` : ''
             }
         },
         grid: {
@@ -81,15 +70,81 @@ const option = () => {
         ]
     }
 };
-
-
+const getRoundResult = (myChart, statics) => {
+    requester({
+        url: api.getSimpleRoundResult,
+        params: { tid: statics.id, uid: statics.uid, count: 15 },
+        option: { baseUrl: 'API_server_url', failedBack: (error) => message.error({ content: error, duration: 2 }) }
+    }).then(({ res }) => {
+        data = res.data.data.map(item => {
+            return {
+                value: item.profit,
+                name: Number(item.profit.toFixed(3)) + '',
+                label: { position: 'top' },
+                itemStyle: { color: item.profit < 0 ? 'green' : 'red' },
+                time: +item.endTime,
+                symbol: item.symbol,
+                // inCosting: item.inCosting,
+                // outCosting: item.outCosting
+            }
+        });
+        const l = data.length;
+        for (let i = l; i < 15; i++) data.push({ value: 0, name: '', time: 0 });
+        myChart.setOption(option());
+        realTimeRoundResult(myChart, statics);
+    });
+}
+const realTimeRoundResult = (myChart, target) => {
+    //const target = Object.prototype.toString.call(statistics) === "[object Array]" ? statistics.find(item => item.target) : statistics;
+    //const target = statistics.find(item => item.target);
+    if (target.buyState) {
+        const _data = {
+            value: target.presentDeal.rtProfit,
+            name: Number(target.presentDeal.rtProfit.toFixed(3)) + '',
+            label: { position: 'top' },
+            itemStyle: { color: target.presentDeal.rtProfit < 0 ? 'green' : 'red' },
+            time: +target.roundRunStartTime,
+            symbol: target.symbol,
+            tag: 'realTime'
+        }
+        let isAdd = false;
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].time === 0) {
+                data[i] = _data;
+                isAdd = true;
+                break;
+            }
+        }
+        if (!isAdd) {
+            data.shift();
+            data.push(_data);
+        }
+        const l = data.length;
+        for (let i = l; i < 15; i++) data.push({ value: 0, name: '', time: 0 });
+        myChart.setOption(option());
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].tag) {
+                data[i] = { value: 0, name: '', time: 0 }
+            }
+        }
+    }
+}
 export default function PlusMinus() {
     const [index] = React.useState(0);
     React.useEffect(() => {
         var myChart = echarts.init(document.getElementById("plus-minus"), 'dark');
-        EventHub.getInstance().addEventListener('historyRecord', 'pm_historyRecord', ({ historyForDeal }) => {
-            //console.log(historyForDeal)
-
+        EventHub.getInstance().addEventListener('switchTactics', 'pm_switchTactics', payload => {
+            getRoundResult(myChart, payload);
+            //realTimeRoundResult(myChart, payload);
+        });
+        EventHub.getInstance().addEventListener('roundResultInform', 'pm_roundResultInform', ({ order, tactices }) => {
+            getRoundResult(myChart, tactices);
+        });
+        EventHub.getInstance().addEventListener('mapTacticsList', 'pm_mapTacticsList', payload => {
+            const target = payload.find(item => item.target)
+            target && realTimeRoundResult(myChart, target);
+        });
+        /*EventHub.getInstance().addEventListener('historyRecord', 'pm_historyRecord', ({ historyForDeal }) => {
             data = historyForDeal.filter(item => item.type === 'sell').map(item => {
                 if (!item.content.profit) console.log(item);
                 return {
@@ -121,7 +176,7 @@ export default function PlusMinus() {
                 data.push({ value: 0, name: '', time: 0 });
             }
             myChart.setOption(option());
-        });
+        });*/
         myChart.setOption(option());
     }, []);
     return <div id='plus-minus'></div>

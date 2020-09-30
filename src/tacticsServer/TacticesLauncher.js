@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-28 02:58:03
- * @LastEditTime: 2020-09-28 16:35:25
+ * @LastEditTime: 2020-09-30 23:09:53
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -15,6 +15,7 @@ const { Task, ExchangeDB } = require('../db');
 const { reExecute } = require('../tool/Common');
 const { getSymbolStorageFromDB } = require('./restrainGroup');
 const { BuyDeal, SellDeal } = require('./Exchange');
+const { default: Item } = require('antd/lib/list/Item');
 //const { scoketCandles } = require('./binanceScoketBind');
 
 module.exports = class TacticesLauncher {
@@ -117,22 +118,21 @@ module.exports = class TacticesLauncher {
             tactics.loadUpBuyHelper = Object.assign(tactics.loadUpBuyHelper, JSON.parse(mod.loadUpBuyHelper));
             delete mod.loadUpBuyHelper;
             tactics = Object.assign(tactics, mod);
-            if (tactics.buyState) {
-                const exchangeList = await ExchangeDB.find({ roundId: tactics.roundId });
-                exchangeList.forEach(item => {
-                    //tactics.exchangeQueue = 
-                    let dealObj;
-                    if (item.dealType === 'buy') {
-                        dealObj = new BuyDeal(item.symbol, item.id, item.roundId, item.imitateRun, item.marketPrice, item.dealAmount);
-                    } else {
-                        dealObj = new SellDeal(item.symbol, item.id, item.roundId, item.imitateRun, item.marketPrice, item.dealAmount);
-                    }
-                    dealObj = Object.assign(dealObj, item);
-                    dealObj = Object.assign(dealObj, item);
-                    dealObj.id = item.id;
-                    tactics.exchangeQueue.push(dealObj);
-                })
-            }
+            const exchangeList = await ExchangeDB.find({ tid: tactics.id }, 10800000);
+            //const now = Date.parse(new Date());
+            exchangeList.forEach(item => {
+                let dealObj;
+                if (item.dealType === 'buy') {
+                    dealObj = new BuyDeal(item.symbol, item.id, item.roundId, item.imitateRun, item.marketPrice, item.dealAmount);
+                } else {
+                    dealObj = new SellDeal(item.symbol, item.id, item.roundId, item.imitateRun, item.marketPrice, item.dealAmount);
+                }
+                dealObj = Object.assign(dealObj, item.toObject());
+                dealObj = Object.assign(dealObj, item.toObject());
+                dealObj.id = item.id;
+                tactics.exchangeQueue.push(dealObj);
+            })
+            await tactics.doHistoryStatistics();
             this.tacticsList.push(tactics);
             tactics.initialize(tactics.symbol);
             if (tactics.runState) {
@@ -166,16 +166,18 @@ module.exports = class TacticesLauncher {
     setScoket(scoketIO) {
         this.scoketIO = scoketIO;
     }
-    initTactics(uid, symbol, name, parameter) {
+    async initTactics(uid, symbol, name, parameter) {
         try {
-            let _tactics = this.tacticsList.find(item => (item.symbol === symbol && item.uid === uid));//一个用户亦种币最多跑一个程序
-            if (!_tactics) {
-                _tactics = new SellIntoCorrections(uid, name || `${symbol}_${this.tacticsList.length + 1}`, parameter);
-                this.tacticsList.push(_tactics);
-            }
+            // let _tactics = this.tacticsList.find(item => (item.uid === uid && item.symbol === symbol));
+            // if (!_tactics) {
+            //     _tactics = new SellIntoCorrections(uid, name || `${symbol}_${this.tacticsList.length + 1}`, parameter);
+            //     this.tacticsList.push(_tactics);
+            // }
+            const _tactics = new SellIntoCorrections(uid, name || `${symbol}_${this.tacticsList.length + 1}`, parameter);
+            this.tacticsList.push(_tactics);
             _tactics.initialize(symbol);
             this.mapTotacticsList(uid, _tactics.id, true);
-            this.syncData();
+            await this.syncData();
             return _tactics;
         } catch (e) {
             console.error(`initTactics Error${e}`)
@@ -230,6 +232,35 @@ module.exports = class TacticesLauncher {
                 if (tid === id) {
                     this.scoketIO.to(scoketId).emit(WsRoute.MULTIPLE_PRICE_CHANGE, symbolList);
                 }
+            })
+        }
+    }
+    /**exchangeQueue可以缺省 */
+    pushExchange(uid, id, symbol, exchangeQueue) {
+        const _exchangeQueue = exchangeQueue || this.tacticsList.find(item => item.id === id).exchangeQueue;
+        const r = userRooms.find(r => r.uid === uid);
+        if (r) {
+            r.tids.forEach(({ tid, scoketId }) => {
+                if (tid === id) {
+                    this.scoketIO.to(scoketId).emit(WsRoute.EXCHANGE_LIST, _exchangeQueue.filter(item => item.symbol === symbol).map(item => ({
+                        roundId: item.roundId,
+                        dealType: item.dealType,
+                        dealDate: item.dealDate,
+                        symbol: item.symbol,
+                        dealPrice: item.dealPrice,
+                        signStr: item.signStr
+                    })));
+                }
+            })
+        }
+    }
+    /**推送交易回合通知 */
+    pushRoundResultInform(uid, id, order) {
+        const tactices = this.tacticsList.find(item => item.id === id);
+        const r = userRooms.find(r => r.uid === uid);
+        if (r) {
+            r.tids.forEach(({ tid, scoketId }) => {
+                tid === id && this.scoketIO.to(scoketId).emit(WsRoute.ROUND_RESULT_INFORM, { order, tactices: tactices.getInfo() });
             })
         }
     }

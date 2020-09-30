@@ -76,8 +76,8 @@ const restrain = {
                 if (chooseItem && chooseItem !== tactics.symbol) {
                     //只要亏损不大于0.2个点，就切币
                     if ((tactics.buyState &&
-                        Number(tactics.getProfit() / tactics.presentDeal.costing) > maxLoss[0] &&
-                        Number(tactics.getProfit() / tactics.presentDeal.costing) < maxLoss[1]) ||
+                        Number(tactics.getProfit() / tactics.presentDeal.inCosting) > maxLoss[0] &&
+                        Number(tactics.getProfit() / tactics.presentDeal.inCosting) < maxLoss[1]) ||
                         !tactics.buyState) {
                         tactics.addHistory('info', `【注意】在切币驱动模式下检测到新币且满足切币条件，即将切币至（${chooseItem}）...`, true, { color: "#85A3FF" });
                         tactics.checkBuyTime = 0;
@@ -274,7 +274,7 @@ const restrain = {
             desc: '当涨幅过大或补仓扭亏时，调整拐点止盈点，及时出货，保障利润，调整此值使出场更敏感',
             param: { step: 0.1 },
             method: async (tactics) => {
-                let riseRate = tactics.getProfit() / tactics.presentDeal.costing;
+                let riseRate = tactics.getProfit() / tactics.presentDeal.inCosting;
                 if (!tactics.buyState || riseRate < 0) return;
                 const { step } = getParam('dynamicParam', 'setRiseStopLossRate');//获取步进值
                 let lastriseStopLossRate = tactics.parameterBackup.riseStopLossRate;
@@ -325,7 +325,7 @@ const restrain = {
                 if (tactics.presentDeal.historyProfit > 0) return;
                 const { maxRate, lossRate } = getParam('dynamicParam', 'setLossStopRiseRate');
                 let lossStopLossRate = tactics.parameterBackup.lossStopLossRate;
-                let _lossRate = tactics.presentDeal.historyProfit / tactics.presentDeal.costing;//lossRate肯定为负才说明是亏
+                let _lossRate = tactics.presentDeal.historyProfit / tactics.presentDeal.inCosting;//lossRate肯定为负才说明是亏
                 if (_lossRate / tactics.parameter.stopLossRate >= -maxRate) {
                     //最大亏损大于达到止损值的90%了
                     lossStopLossRate = lossRate;//回最大亏损的60就割肉
@@ -355,7 +355,7 @@ const restrain = {
                 //上一个5分线的开盘价跟当前价格比对
                 const presentPrice = tactics.getPresentPrice();
                 if ((tactics.KLineItem5m.recent.open - presentPrice) / tactics.KLineItem5m.recent.open > maxLoss) {
-                    const _stopLossRate = Math.abs(Number(tactics.getProfit() / tactics.presentDeal.costing));
+                    const _stopLossRate = Math.abs(Number(tactics.getProfit() / tactics.presentDeal.inCosting));
                     if (_stopLossRate >= stopLossRate) {
                         stopLossRate = _stopLossRate + 0.0001;
                     }

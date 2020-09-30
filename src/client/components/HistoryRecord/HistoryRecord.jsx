@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 00:05:32
- * @LastEditTime: 2020-09-21 17:36:34
+ * @LastEditTime: 2020-09-30 16:43:31
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -130,11 +130,11 @@ export default function HistoryRecord() {
                             (() => {
                                 switch (item.type) {
                                     case 'buy':
-                                        return <div style={{ color: item.color || '#999' }}>买入{item.content.symbol.replace('USDT', '')}币{item.content.dealAmount}枚，
-                                均价:{Number(item.content.price)} U，当前成本{item.content.costing} U</div>
+                                        return <div style={{ color: item.color || '#999' }}>【{item.content.signStr}】买入{item.content.symbol.replace('USDT', '')}币{item.content.dealAmount}枚，
+                                买入均价:{Number(item.content.price)} U，入场成本{item.content.costing} U</div>
                                     case 'sell':
-                                        return <div style={{ color: item.color || '#999' }}>卖出{item.content.symbol.replace('USDT', '')}币{item.content.dealAmount}枚，
-                                均价:{Number(item.content.price)}，回本{item.content.costing} U，盈亏:{item.content.profit} U</div>
+                                        return <div style={{ color: item.color || '#999' }}>【{item.content.signStr}】卖出{item.content.symbol.replace('USDT', '')}币{item.content.dealAmount}枚，
+                                卖出均价:{Number(item.content.price)}，累计回本{item.content.costing} U，盈亏:{item.content.profit} U</div>
                                     case 'info':
                                         return <div style={{ color: item.color || '#999' }}>{item.content}</div>
                                     default:
@@ -150,16 +150,6 @@ export default function HistoryRecord() {
         <div className='operation_wrap'>
             {history.length}条 <label><Switch checked={isGoBottom} size="small" style={{ verticalAlign: 'sub' }}
                 onChange={changeSwitch} />自动置底</label>&nbsp;
-            {/* {presentDeal && <Popover content={<div className='presentDealWrap'>
-                <div><label>成本</label>：{presentDeal.costing}</div>
-                <div><label>入场均价</label>：{presentDeal.averagePrice}</div>
-                <div><label>最后入场价格</label>：{presentDeal.dealPrice}</div>
-                <div><label>入场币数量</label>：{presentDeal.amount}</div>
-                <div><label>最高盈亏</label>：{presentDeal.historyProfit}</div>
-            </div>} title="当前交易信息">
-                <InfoCircleOutlined style={{ color: '#fff', float: 'right', lineHeight: '1.7rem', margin: '0 0.5rem' }} />
-            </Popover>} */}
-
             {tactics && tactics.buyState && <InfoCircleOutlined style={{ color: '#fff', float: 'right', lineHeight: '1.7rem', margin: '0 0.5rem' }} onClick={() => { setPresentDealModal(true) }} />}
             <Popconfirm placement="top" title={`确认删除${['一般', '关键', '交易'][msgListType - 1]}记录？`} onConfirm={() => clearNormalInfo(msgListType)}
                 okText="删除" cancelText="取消" icon={<QuestionOutlined />}>
@@ -185,10 +175,10 @@ export default function HistoryRecord() {
                 }
             >
                 {tactics && tactics.buyState && <div className='presentDealWrap'>
-                    <div><label>成本(USDT)</label>：{tactics.presentDeal.costing}U</div>
+                    <div><label>场内成本(USDT)</label>：{tactics.presentDeal.inCosting-tactics.presentDeal.outCosting}U</div>
                     <div><label>当前市场价</label>：{tactics.presentPrice}U</div>
                     <div><label>最后入场价格</label>：{tactics.presentDeal.dealPrice}U</div>
-                    <div><label>入场均价</label>：{tactics.presentDeal.averagePrice}U</div>
+                    {tactics.presentDeal.winPrice < 0 && <div><label>扭亏均价</label>：{tactics.presentDeal.winPrice}U</div>}
                     <div><label>入场币数量</label>：{tactics.presentDeal.amount}枚</div>
                     <div><label>最高盈亏</label>：{tactics.presentDeal.historyProfit}U</div>
                     <div><label>10小时平均波动率</label>：{tactics.averageWave * 100}%</div>
