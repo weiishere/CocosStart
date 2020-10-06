@@ -56,7 +56,7 @@ const option = (symbol, price) => {
         title: {
             text: `BS线(${(symbol || optionParam.symbol) || localStorage.getItem("SymbleForBs")})`,
             left: 0,
-            subtext: `当前价格：${Number((price || optionParam.price))}U${persentPrice ? '/入场价：' + Number(persentPrice) + 'U' : ''}${(winPrice && winPrice > 0) ? '/扭亏价：' + Number(winPrice) + 'U' : ''}/波动率：${Number(averageWave)}%`
+            subtext: `当前价格：${Number((price || optionParam.price))}U${persentPrice ? '/入场价：' + Number(persentPrice) + 'U' : ''}${(winPrice && winPrice > 0) ? '/扭亏价：' + Number(winPrice.toFixed(5)) + 'U' : ''}/波动率：${Number(averageWave)}%`
         },
         backgroundColor: '#21202D',
         tooltip: {

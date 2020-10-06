@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 22:33:14
- * @LastEditTime: 2020-09-30 13:17:33
+ * @LastEditTime: 2020-10-05 03:46:19
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -16,7 +16,7 @@ import EventHub from '@client/EventHub'
 import { message } from 'antd';
 import './style.less'
 
-let symbolTicker = {};
+let symbolTicker = null;
 let rawData = JSON.parse(localStorage.getItem("klineData")) || [];//[['2015/12/31', '3570.47', '3539.18', '-33.69', '-0.94%', '3538.35', '3580.6', '176963664', '25403106', '-']].reverse();
 let bollData = {
     UP: [],
@@ -145,7 +145,7 @@ const option = (symbol) => {
     return {
         title: {
             text: `5分线(${symbol})`,
-            subtext: symbolTicker ? `H:${+symbolTicker.high} / L:${+symbolTicker.low} / O:${+symbolTicker.open} / C:${+symbolTicker.curDayClose} 日幅:${symbolTicker.priceChangePercent}%` : ''
+            subtext: symbolTicker ? `${symbol}-tiker H:${+symbolTicker.high} / L:${+symbolTicker.low} / O:${+symbolTicker.open} / C:${+symbolTicker.curDayClose} 日幅:${symbolTicker.priceChangePercent}%` : ''
         },
         backgroundColor: '#21202D',
         // legend: {
@@ -363,11 +363,12 @@ export default function KLine() {
                     change(target.symbol);
                 }, 10000);
             }
-            if (target && target.KLineItem1m.startTime && target.symbol === theSymbol) {
+            if (target && target.KLineItem5m.present.startTime && target.symbol === theSymbol) {
                 symbolTicker = target.ticker;
                 const { startTime, isFinal, open, close, low, high } = target.KLineItem5m.present;
                 const date = dateFormat(new Date(startTime), "HH:mm");
                 if (rawData[rawData.length - 1][0] !== date) {
+                    console.log(target.KLineItem5m.present)
                     rawData.push([date, close, close, close, close, startTime]);
                     if (rawData.length === hoursInterval * 60 / 5) {
                         rawData.shift();

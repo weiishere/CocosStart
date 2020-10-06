@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 02:37:01
- * @LastEditTime: 2020-09-30 22:49:38
+ * @LastEditTime: 2020-10-05 03:50:24
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -33,7 +33,7 @@ const columns = [
         dataIndex: 'loadUp',
     },
     {
-        title: '盈利/出场数',
+        title: '盈利/回合数',
         dataIndex: 'count',
     },
     {
@@ -74,15 +74,17 @@ export default function Statistics() {
                 // const rise = item.historyForDeal.filter(item => item.type === 'sell')
                 //     .map(item => ({ value: item.content.profit }))
                 //     .reduce((pre, cur) => pre + cur.value, 0) + (item.buyState ? lastHistoryForDeal.content.profit : 0);
-                const times = item.loadUpBuyHelper.loadUpList.filter(i => i.roundId === item.roundId).reduce((pre, cur) => pre + cur.times, 0);
+                const timesPlus = item.loadUpBuyHelper.loadUpList.filter(i => (i.roundId === item.roundId && (i.type === '+' || !i.type))).reduce((pre, cur) => pre + cur.times, 0);
+                const timesSubtract = item.loadUpBuyHelper.loadUpList.filter(i => (i.roundId === item.roundId && i.type === '-')).reduce((pre, cur) => pre + cur.times, 0);
                 const iconArr = [item.runState ? runIcon : stopIcon, ' / ', item.buyState ? buyIcon : sellIcon]
+                const nowRiseRate = item.presentDeal.rtProfit / item.presentDeal.inCosting;
                 return {
                     key: i,
                     name: [<span style={{ color: item.imitateRun ? '#3c93bd' : '#ddd' }}>{item.name}</span>],//[item.name, (item.imitateRun ? imitateRunIcon : '')],
                     symbol: item.symbol,
                     status: iconArr,//`${item.runState ? '运行中/' + (item.buyState ? '场内' : '场外') : '未运行'}`,
-                    nowRiseRate: item.buyState ? Number((item.presentDeal.rtProfit / item.presentDeal.inCosting).toFixed(4)) : '-',
-                    loadUp: item.buyState ? (Number(item.presentDeal.inCosting.toFixed(4)) + 'U / ' + times) : '-',
+                    nowRiseRate: item.buyState ? [<span style={{ color: nowRiseRate > 0 ? 'red' : 'green' }}>{Number(nowRiseRate.toFixed(4))}</span>] : '-',
+                    loadUp: item.buyState ? (Number((item.presentDeal.inCosting - item.presentDeal.outCosting).toFixed(4)) + 'U / ' + (timesPlus - timesSubtract)) : '-',
                     //buyUsdtAmount: Number(item.presentDeal.amount.toFixed(2)),
                     count: (item.historyStatistics.winRoundCount || 0) + ' / ' + (item.historyStatistics.roundCount || 0),
                     //riseRate: Number(((rise / (item.parameter.usdtAmount)) * 100).toFixed(4)) + '%',

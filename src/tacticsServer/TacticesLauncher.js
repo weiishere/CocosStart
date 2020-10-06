@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-28 02:58:03
- * @LastEditTime: 2020-09-30 23:09:53
+ * @LastEditTime: 2020-10-06 00:41:25
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -15,8 +15,9 @@ const { Task, ExchangeDB } = require('../db');
 const { reExecute } = require('../tool/Common');
 const { getSymbolStorageFromDB } = require('./restrainGroup');
 const { BuyDeal, SellDeal } = require('./Exchange');
-const { default: Item } = require('antd/lib/list/Item');
+const { mailTo } = require('../tool/sendEmail')
 //const { scoketCandles } = require('./binanceScoketBind');
+
 
 module.exports = class TacticesLauncher {
     constructor() {
@@ -30,7 +31,7 @@ module.exports = class TacticesLauncher {
         this.allTicker = null;
         this.syncDataGo();
         this.startWaveSpeedData();
-
+        this.sendEmailOnTime();
     }
     static getInstance() {
         if (!this.tacticesLauncher) {
@@ -324,5 +325,30 @@ module.exports = class TacticesLauncher {
                 }
             })
         }, 2000);
+    }
+    /**定时器发送通知邮件 */
+    sendEmailOnTime() {
+        setInterval(() => {
+            if (Date.parse(new Date()) % (60 * 60 * 1000) < 60000) {
+                //整点报告
+
+                mailTo({
+                    subject: '当前运行中的任务情况',
+                    content: this.tacticsList.filter(item => item.buyState).map(item => {
+                        const elapsedTime = (Date.parse(new Date()) - item.roundRunStartTime) / 60000;
+                        return `
+                        <div>
+                            <p>任务名：${item.name}(${item.symbol})</p>
+                            <p>当前盈亏/盈亏率：${item.presentDeal.rtProfit}/${item.presentDeal.rtProfit / (item.presentDeal.inCosting - item.presentDeal.outCosting)}</p>
+                            <p>场内成本：${item.presentDeal.inCosting - item.presentDeal.outCosting}</p>
+                            <p>已耗时：${parseInt(elapsedTime / 60)}时${parseInt(elapsedTime % 60)}分</p>
+                            <p>历史盈亏：${item.historyStatistics.totalProfit}</p><hr/>
+                            <p>盈利/回合数：${(item.historyStatistics.winRoundCount || 0)}/${(item.historyStatistics.roundCount || 0)}</p><hr/>
+                        </div>`
+                    }).join('')
+                })
+            }
+
+        }, 1000 * 60);
     }
 }

@@ -99,20 +99,13 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
             });
         }
     }
-    // const modChange = (e) => {
-    //     let _loadUpBuyHelper = Object.assign({}, loadUpBuyHelper);
-    //     _loadUpBuyHelper.mod = e.target.value;
-    //     setLoadUpBuyHelper(_loadUpBuyHelper);
-    // }
-    const comitLoadUpBuy = () => {
-
-    }
     React.useEffect(() => {
         modalVisible && getAdvancedRestranList(() => {
             modalVisible && setParamters(paramter);
             modalVisible && setAdvancedOption({ ...tactice.advancedOption });
+            modalVisible && setLoadUpBuyHelper({ ...tactice.loadUpBuyHelper });
         });
-
+        console.log(tactice.loadUpBuyHelper)
     }, [modalVisible]);
 
     return <div className='advanced_set_panel'>
@@ -161,7 +154,7 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                         &nbsp; {item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
                 </TabPane> */}
                 <TabPane tab={<div>入场约束&nbsp;<Tooltip title="入场约束先于基础入场逻辑执行（即符合约束条件还需进行入场基础判断）"><QuestionCircleOutlined /></Tooltip></div>} key="2">
-                    约束关系：<Radio.Group name="radiogroup" defaultValue={advancedOption.premiseJoin.premiseForBuy}
+                    约束关系：<Radio.Group name="radiogroup" value={advancedOption.premiseJoin.premiseForBuy}
                         onChange={(e) => onChange('premiseJoin', 'premiseForBuy', e.target.value)}>
                         <Radio value='and'>且</Radio>
                         <Radio value='or'>或</Radio>
@@ -172,7 +165,7 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                         &nbsp; {item.label}</label>&nbsp;<Tooltip title={item.desc}><QuestionCircleOutlined /></Tooltip></div>)}
                 </TabPane>
                 <TabPane tab={<div>出场约束&nbsp;<Tooltip title="出场约束优先级高于基础出场逻辑（符合条件立即卖出，不再进行出场基础判断）"><QuestionCircleOutlined /></Tooltip></div>} key="3">
-                    约束关系：<Radio.Group name="radiogroup" defaultValue={advancedOption.premiseJoin.premiseForSell}
+                    约束关系：<Radio.Group name="radiogroup" value={advancedOption.premiseJoin.premiseForSell}
                         onChange={(e) => onChange('premiseJoin', 'premiseForSell', e.target.value)}>
                         <Radio value='and'>且</Radio>
                         <Radio value='or'>或</Radio>
@@ -196,12 +189,20 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                 </TabPane>
                 <TabPane tab={<div>补仓方案&nbsp;<Tooltip title="补仓开关需要打开，这里配置补仓的必备条件"><QuestionCircleOutlined /></Tooltip></div>} key="6">
                     <div>
-                        <label><Switch checked={loadUpBuyHelper.dynamicGrids} onChange={checked => onChangeLoadUpBuy('dynamicGrids', checked, true)} />&nbsp;动态网格</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                        {/* <label><Switch checked={loadUpBuyHelper.dynamicGrids} onChange={checked => onChangeLoadUpBuy('dynamicGrids', checked, true)} />&nbsp;动态网格</label>&nbsp;&nbsp;&nbsp;&nbsp; */}
+                        <label>网格模式：
+                            <Radio.Group name="dynamicGrids" value={loadUpBuyHelper.dynamicGrids}
+                                onChange={(e) => onChangeLoadUpBuy('dynamicGrids', e.target.value, true)}>
+                                <Radio value='default'>静态</Radio>
+                                <Radio value='dynamic'>动态</Radio>
+                                <Radio value='wave'>波动</Radio>
+                            </Radio.Group>
+                        </label>&nbsp;&nbsp;&nbsp;&nbsp;
                         <label><Switch checked={loadUpBuyHelper.restrainEnable} onChange={checked => onChangeLoadUpBuy('restrainEnable', checked, true)} />&nbsp;拐点补仓</label>&nbsp;&nbsp;&nbsp;&nbsp;
                         <label><Switch checked={loadUpBuyHelper.isStopRise} onChange={checked => onChangeLoadUpBuy('isStopRise', checked, true)} />&nbsp;扭亏即尽快止盈</label>
                     </div>
                     <div style={{ marginTop: '1rem' }}>
-                        补仓模式：<Radio.Group name="radiogroup" defaultValue={loadUpBuyHelper.mod}
+                        补仓模式：<Radio.Group name="radiogroup" value={loadUpBuyHelper.mod}
                             onChange={e => onChangeLoadUpBuy('mod', e.target.value, true)}>
                             <Radio value='step'>逐级补仓(step)&nbsp;<Tooltip title="根据跌幅进行动态逐级补仓"><QuestionCircleOutlined /></Tooltip></Radio>
                             <Radio value='target'>目标补仓(target)&nbsp;<Tooltip title="设定一个扭亏目标涨幅，假设实现此涨幅即可扭亏，此模式对资金量要求较高"><QuestionCircleOutlined /></Tooltip></Radio>
@@ -223,7 +224,7 @@ export default function AdvancedSetPanel({ modalVisible, tactice, paramter, upda
                             type='number'
                             value={loadUpBuyHelper.intervalTime}
                             size='small'
-                            style={{ width: '15rem' }}
+                            style={{ width: '10rem' }}
                             enterButton="确认修改"
                             maxLength={3}
                             disabled={false}

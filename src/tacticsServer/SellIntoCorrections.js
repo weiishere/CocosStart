@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-10-01 00:37:36
+ * @LastEditTime: 2020-10-05 03:34:59
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -14,6 +14,7 @@ const { scoketCandles } = require('./binanceScoketBind');
 const LoadUpBuyHelper = require('./LoadUpBuyHelper')
 const TacticesHelper = require('./TacticesHelper')
 const { BuyDeal, SellDeal } = require('./Exchange');
+const { mailTo } = require('../tool/sendEmail')
 
 module.exports = class SellIntoCorrections extends Tactics {
     constructor(uid, name, parameter) {
@@ -142,7 +143,9 @@ module.exports = class SellIntoCorrections extends Tactics {
         try {
             await this.tacticesHelper.getPresentPrice(true);//获取最新价格
             this.KLineItem5m.present = (await client.candles({ symbol, interval: '5m', limit: 1 }))[0];
+            this.KLineItem5m.present && (this.KLineItem5m.present['startTime'] = this.KLineItem5m.present['openTime']);//坑爹玩意儿，字段不一样，必须重新赋个字段
             this.KLineItem1m = (await client.candles({ symbol, interval: '1m', limit: 1 }))[0];
+            this.KLineItem1m && (this.KLineItem1m['startTime'] = this.KLineItem1m['openTime']);//坑爹玩意儿，字段不一样，必须重新赋个字段
             // const speed = this.tacticesHelper.getWaveSpeedList(21);
             // this.avSpeed.push(speed.reduce((pre, cur) => Math.abs(pre) + Math.abs(cur), 0) / (speed.length || 1));
             this.averageWave = this.tacticesHelper.getAverageWave();
@@ -161,9 +164,10 @@ module.exports = class SellIntoCorrections extends Tactics {
      * @isDouble
      */
     addHistory(type, content, isDouble, option) {
-        if (isDouble && this.history.length !== 0 && this.history[this.history.length - 1].type === type && this.history[this.history.length - 1].content === content) {
+        const lastItem = () => this.history[this.history.length - 1];
+        if (isDouble && this.history.length !== 0 && lastItem().type === type && lastItem().content === content) {
             this.historyDoubleCount++;
-            this.history[this.history.length - 1].time = Date.parse(new Date());
+            lastItem().time = Date.parse(new Date());
             require('./TacticesLauncher').getInstance().pushHistory(this.uid, this.id, {
                 history: this.history,
                 historyForDeal: this.historyForDeal
@@ -174,17 +178,20 @@ module.exports = class SellIntoCorrections extends Tactics {
             color: '#999',
             iconType: '',
             subType: '',
+            tempMsg: false,
             isMap: (type === 'info' ? false : true)
         }, option || {});
+        if (this.history.length > 0 && lastItem().tempMsg && lastItem().subType === theOption.subType) this.history.pop();
         type !== 'profitChange' && this.history.push({
             type: type,//order、info、buy、sell
             time: Date.parse(new Date()),
             content: content,//`实例已${(this.runState ? "运行" : "停止")}${this.imitateRun ? "模拟" : ""}`
             color: theOption.color,
-            subType: theOption.subType
+            subType: theOption.subType,
+            tempMsg: theOption.tempMsg
         })
         if (type === 'buy' || type === 'sell') {
-            this.historyForDeal.push({ ...this.history[this.history.length - 1], symbol: this.symbol });
+            this.historyForDeal.push({ ...lastItem(), symbol: this.symbol });
         } else if (type === 'profitChange') {
             let hfdItem = this.historyForDeal[this.historyForDeal.length - 1];
             if (hfdItem) {
@@ -534,7 +541,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             //如果盈利为正
             if (_profit > this.presentDeal.historyProfit) {
                 //利润大于上一次统计的利润，持续盈利中...
-                this.addHistory('info', `记录到更高盈利：${_profit}U，盈利率：${_profit / this.presentDeal.inCosting}`, true, { color: '#ddbfbe' });
+                this.addHistory('info', `记录到更高盈利：${_profit}U，盈利率：${_profit / this.presentDeal.inCosting}`, true, { color: '#ddbfbe', tempMsg: true, subType: 'lub' });
                 this.presentDeal.historyProfit = _profit;//存储最高利润
                 return false;
             } else {
@@ -579,11 +586,11 @@ module.exports = class SellIntoCorrections extends Tactics {
             }
             if (_profit < this.presentDeal.historyProfit) {
                 //亏损大于上一次统计的亏损，持续亏损中...
-                this.addHistory('info', `记录到更高亏损：${_profit}U，亏损率：${_stopLossRate}`, true, { color: '#4abf69' });
+                this.addHistory('info', `记录到更高亏损：${_profit}U，亏损率：${_stopLossRate}`, true, { color: '#4abf69', tempMsg: true, subType: 'lub' });
                 this.presentDeal.historyProfit = _profit;//存储最高亏损
             }
-
-            if (_stopLossRate >= this.parameter.stopLossRate) {
+            //如果减仓模式打开，就不确认出场了
+            if (_stopLossRate >= this.parameter.stopLossRate && !this.loadUpBuyHelper.lightenMod) {
                 //止损流程
                 //再观察一定时间，看是否涨回去
                 this.addHistory('info', `当前处于亏损状态,亏损率：${_stopLossRate.toFixed(6)}，超过${this.parameter.stopLossRate}，${this.parameter.riseStayCheckRateForSell}ms后进行下一步判断是否止损...`, true);
@@ -600,10 +607,21 @@ module.exports = class SellIntoCorrections extends Tactics {
                             if (_stopLossRate2 >= this.parameter.stopLossRate) {
                                 this.riseTimer && clearTimeout(this.riseTimer);
                                 //仍然大于止损值，割肉
-                                this.addHistory('info', `二次判断，继续亏损,亏损率：${_stopLossRate2.toFixed(6)}，仍然超过${this.parameter.stopLossRate}，进行止损操作`);
+                                //this.addHistory('info', `二次判断，继续亏损,亏损率：${_stopLossRate2.toFixed(6)}，仍然超过${this.parameter.stopLossRate}，进行止损操作`);
+                                //resolve(await this.deal('sell'));
+
+                                //这里暂时不止损了，改为变成减仓模式
+                                this.addHistory('info', `二次判断，继续亏损,亏损率：${_stopLossRate2.toFixed(6)}，仍然超过${this.parameter.stopLossRate}，进入减仓模式`, { color: '#cc00ff' });
                                 this.loadUpBuyHelper.lightenMod = true;//打开减仓模式
-                                return false;
-                                //resolve(await this.deal('sell'));//--------------------------这里暂时不止损了，改为变成减仓模式
+                                const elapsedTime = (Date.parse(new Date()) - this.roundRunStartTime) / 60000
+                                mailTo({
+                                    content:
+                                        `<p>投入成本：${this.presentDeal.inCosting}</p>
+                                        <p>已耗时：${parseInt(elapsedTime / 60)}时${parseInt(elapsedTime % 60)}分</p>
+                                        <p>当前任务盈亏：${this.historyStatistics.totalProfit + this.presentDeal.rtProfit}</p>`,
+                                    subject: `【提醒】任务${this.name}(${this.symbol})跌破止损值`
+                                });
+                                resolve(false);
                             } else {
                                 //说明在回涨，观察
                                 this.addHistory('info', `二次判断，亏损降低，亏损率：${_stopLossRate2.toFixed(6)}，低于止损点${this.parameter.stopLossRate}，继续等待出场时机...`, true);
@@ -614,7 +632,12 @@ module.exports = class SellIntoCorrections extends Tactics {
                 });
             } else {
                 //持续观察
-                this.addHistory('info', `当前处于亏损状态，亏损率：${_stopLossRate.toFixed(6)}，但未达止损点，继续等待出场时机...`, true);
+                if (this.loadUpBuyHelper.lightenMod) {
+                    this.addHistory('info', `当前处于亏损状态，亏损率：${_stopLossRate.toFixed(6)}，已超过止损点，等待减仓时机...`, true, { tempMsg: true, subType: 'lub' });
+                } else {
+                    this.addHistory('info', `当前处于亏损状态，亏损率：${_stopLossRate.toFixed(6)}，但未达止损点，继续等待出场时机...`, true, { tempMsg: true, subType: 'lub' });
+                }
+
                 //加仓
                 this.parameter.isAllowLoadUpBuy && await this.loadUpBuyHelper.run(this.roundId);
                 return false;
@@ -679,7 +702,8 @@ module.exports = class SellIntoCorrections extends Tactics {
             this.presentDeal = Object.assign(this.presentDeal,
                 {
                     dealPrice: sellDeal.dealPrice,//买入价,暂时等于市价
-                    outCosting: dealQuantity ? this.presentDeal.outCosting + sellDeal.costing : sellDeal.costing,//考虑补仓的时候buyState=true
+                    //outCosting: dealQuantity ? this.presentDeal.outCosting + sellDeal.costing : sellDeal.costing,//考虑补仓的时候buyState=true\
+                    outCosting: this.presentDeal.outCosting + sellDeal.costing,
                     amount: this.presentDeal.amount - sellDeal.dealQuantity,
                 });
             this.presentDeal.historyProfit = this.getProfit();//当前交易的历史盈利，每卖出一次，需要重置
@@ -696,7 +720,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 dealAmount: sellDeal.dealQuantity,
                 price: sellDeal.dealPrice,
                 winPrice: this.presentDeal.winPrice,
-                profit: this.presentDeal.outCosting - this.presentDeal.inCosting,
+                profit: dealQuantity ? 0 : this.getProfit(),
                 costing: this.presentDeal.outCosting
             }, false, { color: 'green' });
 

@@ -21,6 +21,7 @@ const option = () => {
             text: `出场盈亏`,
             subtext: `当前合计：${data.reduce((pre, cur) => pre + cur.value, 0)} U`
         },
+        animation: false,
         backgroundColor: '#000000',
         tooltip: {
             trigger: 'axis',
@@ -29,9 +30,9 @@ const option = () => {
             },
             formatter: function (param) {
                 const { data, axisValue } = param[0];
-                return axisValue ? `${axisValue}<br/>交易对：${data.symbol}
-                ${data.inCosting ? '<br/>入场总量：' + data.inCosting : ''}
-                ${data.outCosting ? '<br/>出场总量：' + data.outCosting : ''}<br/>盈亏：${data.value}` : ''
+                return axisValue ? `${axisValue}<br/>交易对：${data.symbol}<br>入场时间：${data.startTime}
+                ${data.inCosting ? '<br/>入场总量：' + data.inCosting : ''}${data.outCosting ? '<br/>出场总量：' + data.outCosting : ''}
+                <br/>盈亏：${data.value}<br/>耗时：${parseInt(data.elapsedTime / 60)}时${parseInt(data.elapsedTime % 60)}分` : ''
             }
         },
         grid: {
@@ -84,14 +85,16 @@ const getRoundResult = (myChart, statics) => {
                 itemStyle: { color: item.profit < 0 ? 'green' : 'red' },
                 time: +item.endTime,
                 symbol: item.symbol,
-                // inCosting: item.inCosting,
-                // outCosting: item.outCosting
+                startTime: dateFormat(new Date(+item.startTime), "MM-dd HH:mm"),
+                elapsedTime: (item.endTime - item.startTime) / 60000,
+                inCosting: item.inCosting,
+                outCosting: item.outCosting
             }
         });
         const l = data.length;
         for (let i = l; i < 15; i++) data.push({ value: 0, name: '', time: 0 });
         myChart.setOption(option());
-        realTimeRoundResult(myChart, statics);
+        statics.buyState && realTimeRoundResult(myChart, statics);
     });
 }
 const realTimeRoundResult = (myChart, target) => {
@@ -104,7 +107,10 @@ const realTimeRoundResult = (myChart, target) => {
             label: { position: 'top' },
             itemStyle: { color: target.presentDeal.rtProfit < 0 ? 'green' : 'red' },
             time: +target.roundRunStartTime,
+            startTime: dateFormat(new Date(+target.roundRunStartTime), "MM-dd HH:mm"),
+            elapsedTime: (Date.parse(new Date()) - target.roundRunStartTime) / 60000,
             symbol: target.symbol,
+            inCosting: target.presentDeal.inCosting,
             tag: 'realTime'
         }
         let isAdd = false;
@@ -125,6 +131,7 @@ const realTimeRoundResult = (myChart, target) => {
         for (let i = 0; i < data.length; i++) {
             if (data[i].tag) {
                 data[i] = { value: 0, name: '', time: 0 }
+                break;
             }
         }
     }
@@ -142,7 +149,7 @@ export default function PlusMinus() {
         });
         EventHub.getInstance().addEventListener('mapTacticsList', 'pm_mapTacticsList', payload => {
             const target = payload.find(item => item.target)
-            target && realTimeRoundResult(myChart, target);
+            target && target.buyState && realTimeRoundResult(myChart, target);
         });
         /*EventHub.getInstance().addEventListener('historyRecord', 'pm_historyRecord', ({ historyForDeal }) => {
             data = historyForDeal.filter(item => item.type === 'sell').map(item => {

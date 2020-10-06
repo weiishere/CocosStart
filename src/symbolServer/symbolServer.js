@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-18 23:49:06
- * @LastEditTime: 2020-09-21 14:32:20
+ * @LastEditTime: 2020-10-06 19:51:40
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -164,6 +164,7 @@ const KDJLine = (klineData, n, KDJ5m) => {
     }
 
 }
+let lastm5Time = '';
 module.exports = class SymbolServer {
     constructor() {
         this.symbolStorage = {}
@@ -248,37 +249,42 @@ module.exports = class SymbolServer {
     /**订阅最新K线流 */
     async incrementKlineData() {
         //const prices = await client.prices();
+        let symbolKeys = [];
         for (let symbolKey in this.symbolStorage) {
             if (symbolKey && this.symbolStorage.hasOwnProperty(symbolKey) && /USDT$/.test(symbolKey)) {
-                client.ws.candles(symbolKey, '5m', payload => {
-                    const { symbol, startTime, closeTime, open, close, high, low, volume, quoteVolume, trades, buyVolume, quoteBuyVolume } = payload;
-                    let { klineData5m, boll5m, KDJ5m, wave } = this.symbolStorage[symbol];
-                    if (klineData5m[klineData5m.length - 1][0] !== startTime) {
-                        if (boll5m.length === klineData5m.length) boll5m.shift();
-                        if (KDJ5m.length === klineData5m.length) KDJ5m.shift();
-                        klineData5m.shift();
-                        klineData5m.push([startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume]);
-                        boll5m.push(bollLine(klineData5m, klineData5m.length, startTime));
-                        KDJ5m.push(KDJLine(klineData5m, 9, KDJ5m));
-                        wave = this.getAverageWave(klineData5m);
-                        // KDJ5m.push(KDJLine(klineData5m, 9, {
-                        //     singleData: klineData5m[klineData5m.length - 2],
-                        //     lastKDJData: KDJ5m[KDJ5m.length - 2],
-                        //     JDKlist: KDJ5m
-                        // }));
-
-                    } else {
-                        klineData5m[klineData5m.length - 1] = [startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume];
-                        // KDJ5m[KDJ5m.length - 1] = KDJLine(klineData5m, 24, {
-                        //     singleData: klineData5m[klineData5m.length - 1],
-                        //     lastKDJData: KDJ5m[KDJ5m.length - 2],
-                        //     JDKlist: KDJ5m
-                        // });
-                        // boll5m[boll5m.length - 1] = bollLine(klineData5m, klineData5m.length - 1, startTime);
-                    }
-                })
+                symbolKeys.push(symbolKey);
             }
         }
+        client.ws.candles(symbolKeys, '5m', payload => {
+            const { symbol, startTime, closeTime, open, close, high, low, volume, quoteVolume, trades, buyVolume, quoteBuyVolume } = payload;
+            let { klineData5m, boll5m, KDJ5m, wave } = this.symbolStorage[symbol];
+            if (klineData5m[klineData5m.length - 1][0] !== startTime) {
+                if (lastm5Time === startTime) return;
+                lastm5Time = startTime;
+                console.log(startTime + '|' + dateFormat(new Date(startTime), "MM/dd HH:mm"));
+                if (boll5m.length === klineData5m.length) boll5m.shift();
+                if (KDJ5m.length === klineData5m.length) KDJ5m.shift();
+                klineData5m.shift();
+                klineData5m.push([startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume]);
+                boll5m.push(bollLine(klineData5m, klineData5m.length, startTime));
+                KDJ5m.push(KDJLine(klineData5m, 9, KDJ5m));
+                wave = this.getAverageWave(klineData5m);
+                // KDJ5m.push(KDJLine(klineData5m, 9, {
+                //     singleData: klineData5m[klineData5m.length - 2],
+                //     lastKDJData: KDJ5m[KDJ5m.length - 2],
+                //     JDKlist: KDJ5m
+                // }));
+
+            } else {
+                klineData5m[klineData5m.length - 1] = [startTime, open, high, low, close, volume, closeTime, quoteVolume, trades, buyVolume, quoteBuyVolume];
+                // KDJ5m[KDJ5m.length - 1] = KDJLine(klineData5m, 24, {
+                //     singleData: klineData5m[klineData5m.length - 1],
+                //     lastKDJData: KDJ5m[KDJ5m.length - 2],
+                //     JDKlist: KDJ5m
+                // });
+                // boll5m[boll5m.length - 1] = bollLine(klineData5m, klineData5m.length - 1, startTime);
+            }
+        })
         console.log('订阅最新k线数据流完成!');
     }
     /**同步至数据库(2分钟一次) */

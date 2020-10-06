@@ -54,10 +54,10 @@ const DB = {
 }
 
 const SendEmail = {
-  service: 'smtp.abcd.com', // SMTP服务提供商域名
-  username: 'postmaster@abcd.com', // 用户名/用户邮箱
-  password: 'password', // 邮箱密码
-  sender_address: '"量化交易平台 👥" <wei.huang@hotmail.com>'
+  smtp: 'smtp.qq.com', // SMTP服务提供商域名
+  mailFrom: '279012130@qq.com', // 用户名/用户邮箱
+  pop3_authorization: 'hvrhrxilbmgccaba', // 邮箱密码
+  imap_authorization:'chbyartxhifgbjjd'
 }
 
 module.exports = {

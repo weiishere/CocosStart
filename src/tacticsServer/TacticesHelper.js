@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-016 18:19:58
- * @LastEditTime: 2020-09-30 16:07:12
+ * @LastEditTime: 2020-10-06 02:02:35
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -10,6 +10,7 @@ const { client } = require('../lib/binancer');
 const { symbolStorage } = require('./restrainGroup');
 const { System } = require('../config')
 const { Strategy, RoundResult } = require('../db');
+const { mailTo } = require('../tool/sendEmail')
 
 module.exports = class TacticsHelper {
     constructor(tactices) {
@@ -144,21 +145,33 @@ module.exports = class TacticsHelper {
     async roundEnd() {
         const thisExchangeQueue = this.tactices.exchangeQueue.filter(item => item.roundId === this.tactices.roundId);
         const commissionTotal = thisExchangeQueue.reduce((pre, cur) => pre + cur.commission, 0);
-        RoundResult.findOneAndUpdate({ roundId: this.tactices.roundId }, {
+        await RoundResult.findOneAndUpdate({ roundId: this.tactices.roundId }, {
             isDone: true,
             exchangeQueue: thisExchangeQueue, profit: this.tactices.getProfit(),
             endTime: Date.parse(new Date()), strategyId: this.tactices.strategy.id || '',
+            inCosting: this.tactices.presentDeal.inCosting,
             outCosting: this.tactices.presentDeal.outCosting, commission: commissionTotal,
             loadUpBuy: this.tactices.loadUpBuyHelper.loadUpList.filter(item => item.roundId === this.tactices.roundId)
         }, e => {
             console.log('更新RoundResult失败', e);
         });
+        const elapsedTime = (Date.parse(new Date()) - this.tactices.roundRunStartTime) / 60000
         const now = Date.parse(new Date());
         //清除3小时前但不是该交易回合的交易
         this.tactices.exchangeQueue = this.tactices.exchangeQueue.filter(item => !((now - item.dealDate) > 10800000 && item.roundId !== this.tactices.roundId));
         this.tactices.loadUpBuyHelper.loadUpList = [];//this.tactices.loadUpBuyHelper.loadUpList.filter(item => item.roundId === this.tactices.roundId);
-        this.tactices.roundId = this.tactices.getNewId('r_'); //下一回合
         await this.tactices.doHistoryStatistics();
+        mailTo({
+            content:
+                `<p>回合ID：${this.tactices.roundId}</p>
+                <p>投入成本：${this.tactices.presentDeal.inCosting}</p>
+                <p>回收成本：${this.tactices.presentDeal.outCosting}</p>
+                <p>耗时：${parseInt(elapsedTime / 60)}时${parseInt(elapsedTime % 60)}分</p>
+                <p>本次盈亏：${this.tactices.presentDeal.outCosting - this.tactices.presentDeal.inCosting}</p>
+                <p>历史总盈亏：${this.tactices.historyStatistics.totalProfit}</p>`,
+            subject: `任务“${this.tactices.name}”(${this.tactices.symbol})完成回合交易`
+        });
+        this.tactices.roundId = this.tactices.getNewId('r_'); //下一回合
         require('./TacticesLauncher').getInstance().pushRoundResultInform(this.tactices.uid, this.tactices.id, 'roundBegin');
     }
 }

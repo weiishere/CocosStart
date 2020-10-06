@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-14 13:49:13
- * @LastEditTime: 2020-09-22 10:32:16
+ * @LastEditTime: 2020-10-06 17:55:28
  * @LastEditors: weishere.huang
  * @Description: premiseForBuy：不能进，premiseForSell：必须出
  * @~~
@@ -51,7 +51,29 @@ const getAverageWave = (symbol) => {
     });
     return total / klineData5m.length;
 }
-
+const kdjCross = (symbolObj, KDJindex, type) => {
+    if (!symbolObj) {
+        console.error('kdjCross-symbolObj不存在');
+        return false;
+    }
+    const KDJData = symbolObj.KDJ5m[KDJindex];
+    const KDJDataLast = symbolObj.KDJ5m[KDJindex - 1];
+    if (type === 'glod') {
+        if (KDJData.J < 50 && Math.abs(KDJData.K - KDJData.D) + Math.abs(KDJData.K - KDJData.J) <= 10 && KDJDataLast.K <= KDJData.K && KDJData.K >= KDJData.D && KDJDataLast.K <= KDJDataLast.D) {
+            //当前K线小于45、三线之间差额小于10，且K线呈上扬趋势，且K大于D线、且上一条K先小于D先，说明两个点之间出现了金叉
+            return true;
+        } else {
+            return false;
+        }
+    } else if (type === 'die') {
+        if (KDJData.J > 50 && Math.abs(KDJData.K - KDJData.D) + Math.abs(KDJData.K - KDJData.J) <= 10 && KDJDataLast.K >= KDJData.K && KDJData.K <= KDJData.D && KDJDataLast.K >= KDJDataLast.D) {
+            //当前K线大于60、三线之间差额小于10，且K线呈下落趋势，且K大于D线、且上一条K先小于D先，说明两个点之间出现了金叉
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
 //process.env.CHILD_PROCESS === '0' && getSymbolStorageFromDB();//如果没有开子进程通信，就自己去数据库拿
 
 const restrain = {
@@ -150,6 +172,19 @@ const restrain = {
                     return true;
                 };
                 return false;
+            }
+        },
+        {
+            key: 'KDJStandard',
+            label: 'KDJ指标-金叉',
+            desc: '只能金叉入场，其他拒绝',
+            method: async (tactics) => {
+                const symbolObj = symbolStorage[tactics.symbol];
+                if (kdjCross(symbolObj, symbolObj.KDJ5m.length - 1, 'glod') || kdjCross(symbolObj, symbolObj.KDJ5m.length - 2, 'glod')) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         },
         {
@@ -274,7 +309,7 @@ const restrain = {
             desc: '当涨幅过大或补仓扭亏时，调整拐点止盈点，及时出货，保障利润，调整此值使出场更敏感',
             param: { step: 0.1 },
             method: async (tactics) => {
-                let riseRate = tactics.getProfit() / tactics.presentDeal.inCosting;
+                let riseRate = tactics.presentDeal.historyProfit / tactics.presentDeal.inCosting;
                 if (!tactics.buyState || riseRate < 0) return;
                 const { step } = getParam('dynamicParam', 'setRiseStopLossRate');//获取步进值
                 let lastriseStopLossRate = tactics.parameterBackup.riseStopLossRate;
@@ -426,22 +461,13 @@ const restrain = {
                         console.log('lastSymbolList还未收到数据(子线程未开？)');
                         return lastSymbolList;
                     }
-                    const fn = (symbolObj, KDJindex) => {
-                        const KDJData = symbolObj.KDJ5m[KDJindex];
-                        const KDJDataLast = symbolObj.KDJ5m[KDJindex - 1];
-                        if (KDJData.J <= 45 && Math.abs(KDJData.K - KDJData.D) + Math.abs(KDJData.K - KDJData.J) <= 10 && KDJDataLast.K < KDJData.K && KDJData.K > KDJData.D && KDJDataLast.K > KDJDataLast.D) {
-                            //当前K线小于45、三线之间差额小于10，且K线呈上扬趋势，且K大于D线、且上一条K先小于D先，说明两个点之间出现了金叉
-                            return true;
-                        }
-                        return false;
-                    }
                     return lastSymbolList.filter(item => {
                         const symbolObj = symbolStorage[item.symbol];
-                        if (!symbolObj) {
-                            //console.log(item.symbol)
+                        if (kdjCross(symbolObj, symbolObj.KDJ5m.length - 1, 'glod') || kdjCross(symbolObj, symbolObj.KDJ5m.length - 2, 'glod')) {
+                            return true;
+                        } else {
                             return false;
                         }
-                        return (fn(symbolObj, symbolObj.KDJ5m.length - 1) || fn(symbolObj, symbolObj.KDJ5m.length - 2));
                     });
                 } catch (e) {
                     console.log('KDJStandard选币发生错误：' + e);

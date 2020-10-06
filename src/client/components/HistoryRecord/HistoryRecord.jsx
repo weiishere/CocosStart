@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 00:05:32
- * @LastEditTime: 2020-09-30 16:43:31
+ * @LastEditTime: 2020-10-02 12:54:47
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -134,7 +134,7 @@ export default function HistoryRecord() {
                                 买入均价:{Number(item.content.price)} U，入场成本{item.content.costing} U</div>
                                     case 'sell':
                                         return <div style={{ color: item.color || '#999' }}>【{item.content.signStr}】卖出{item.content.symbol.replace('USDT', '')}币{item.content.dealAmount}枚，
-                                卖出均价:{Number(item.content.price)}，累计回本{item.content.costing} U，盈亏:{item.content.profit} U</div>
+                                卖出均价:{Number(item.content.price)}，累计回本{item.content.costing} U{item.content.profit ? ',盈亏' + item.content.profit + ' U' : ''}</div>
                                     case 'info':
                                         return <div style={{ color: item.color || '#999' }}>{item.content}</div>
                                     default:
@@ -175,7 +175,7 @@ export default function HistoryRecord() {
                 }
             >
                 {tactics && tactics.buyState && <div className='presentDealWrap'>
-                    <div><label>场内成本(USDT)</label>：{tactics.presentDeal.inCosting-tactics.presentDeal.outCosting}U</div>
+                    <div><label>场内成本(USDT)</label>：{tactics.presentDeal.inCosting - tactics.presentDeal.outCosting}U</div>
                     <div><label>当前市场价</label>：{tactics.presentPrice}U</div>
                     <div><label>最后入场价格</label>：{tactics.presentDeal.dealPrice}U</div>
                     {tactics.presentDeal.winPrice < 0 && <div><label>扭亏均价</label>：{tactics.presentDeal.winPrice}U</div>}
