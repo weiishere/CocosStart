@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-08-18 23:49:06
- * @LastEditTime: 2020-10-06 19:51:40
+ * @LastEditTime: 2020-10-09 15:56:53
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -248,7 +248,6 @@ module.exports = class SymbolServer {
     }
     /**订阅最新K线流 */
     async incrementKlineData() {
-        //const prices = await client.prices();
         let symbolKeys = [];
         for (let symbolKey in this.symbolStorage) {
             if (symbolKey && this.symbolStorage.hasOwnProperty(symbolKey) && /USDT$/.test(symbolKey)) {

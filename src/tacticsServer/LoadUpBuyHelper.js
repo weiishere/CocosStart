@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-02 18:19:58
- * @LastEditTime: 2020-10-06 19:38:36
+ * @LastEditTime: 2020-10-09 17:10:35
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -75,7 +75,7 @@ module.exports = class LoadUpBuyHelper {
         return obj;
     }
     //加仓检查
-    stepCheckForLoadUp() {
+    async stepCheckForLoadUp() {
         if (this.tactices.presentDeal.historyProfit > 0) return false;//这句代码暂时也没太大意义，传过来的数据肯定是负值，不过还是约束下
         //获取最高亏损与止损值的比例
         const rate = Math.abs((this.tactices.getProfit() / this.tactices.presentDeal.inCosting) / this.tactices.parameter.stopLossRate) * 100;
@@ -85,20 +85,18 @@ module.exports = class LoadUpBuyHelper {
             //获取入场约束中的BOLL和KDJ约束
             const arr = restrainGroup.premiseForBuy.filter(item => item.key === 'bollStandardDN' || item.key === 'KDJStandard');
             //符合金叉或者boll线，才补仓，这里重置this.stepGrids的rate都为0，检查的时候会逐级检查，若为0就赋值并传送
-            let isNoPass = arr.some(item => {
-                const re = item.method(this.tactices);
-                console.log(this.tactices.name, re);
-                return re;
-            });
-            if (isNoPass) {
-                console.log(this.tactices.name);
+            // let isNoPass = await arr.some(async (item) => {
+            //     const re = await item.method(this.tactices);
+            //     if (re) console.log(this.tactices.name, item.key + '符合补仓要求');
+            //     return re;
+            // });
+            let isNoPass = false;
+            for (let i = 0; i < arr.length; i++) {
+                if (await arr[i].method(this.tactices)) {
+                    isNoPass = true;
+                    break;
+                }
             }
-            // for (let i = 0; i < arr.length; i++) {
-            //     if (!arr[i].method(this.tactices)) {
-            //         isPass = false;
-            //         break;
-            //     }
-            // }
             if (isNoPass) {
                 for (let j = 0; j < this.stepGrids.length; j++) {
                     if (this.stepGrids[j].rate === 0) {
@@ -109,7 +107,7 @@ module.exports = class LoadUpBuyHelper {
                     }
                 }
             }
-        } else {
+        } else if (this.dynamicGrids !== 'dynamic') {
             //获取最高补仓记录
             const thisLoadUp = this.loadUpList.filter(item => (item.mod === 'step' && item.roundId === this.roundId));//获取本轮交易的补仓记录
             const maxLoadUpIndex = thisLoadUp.length === 0 ? 0 : [...thisLoadUp].sort((a, b) => b.index - a.index).shift().index;//获取最大亏损时的补仓记录(根据序号)
@@ -195,7 +193,7 @@ module.exports = class LoadUpBuyHelper {
         //const tactices = require('./TacticesLauncher').getInstance().tacticsList.find(item => item.id === tid);
         this.tradeDone = false;
         if (this.mod === 'step') {
-            const nextLoadUp = this.stepCheckForLoadUp();
+            const nextLoadUp = await this.stepCheckForLoadUp();
             if (nextLoadUp) {
                 if (!rightNow && this.restrainEnable) {
                     this.tactices.addHistory('info', `【补仓检测】跌幅到止损线的${nextLoadUp.rate}%，触及step模式补仓，观察5秒后价格`, true, { color: '#D2746B' });

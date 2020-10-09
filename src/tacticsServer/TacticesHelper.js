@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-016 18:19:58
- * @LastEditTime: 2020-10-06 02:02:35
+ * @LastEditTime: 2020-10-09 16:32:54
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -11,6 +11,7 @@ const { symbolStorage } = require('./restrainGroup');
 const { System } = require('../config')
 const { Strategy, RoundResult } = require('../db');
 const { mailTo } = require('../tool/sendEmail')
+const { requester } = require('../tool/Requester')
 
 module.exports = class TacticsHelper {
     constructor(tactices) {
@@ -46,9 +47,16 @@ module.exports = class TacticsHelper {
     async getPresentPrice(newPrice) {
         if (this.tactices.presentPrice && !newPrice) return this.tactices.presentPrice;
         try {
-            const allPrice = await client.prices();
-            this.tactices.presentPrice = allPrice[this.tactices.symbol];
-            return allPrice[this.tactices.symbol];
+            // console.log(await client.prices({ symbol: 'ETHUSDT' }));
+            // const allPrice = await client.prices({ symbol: this.tactices.symbol });
+            // this.tactices.presentPrice = allPrice[this.tactices.symbol];
+            // return allPrice[this.tactices.symbol];
+            const result = await requester({
+                url: 'ticker/price',
+                params: { symbol: this.tactices.symbol },
+                option: { failedBack: (error) => console.error(error) }
+            });
+            return Number(result.res.data.price);
         } catch (e) {
             console.log('获取最新价格失败:' + e)
             return this.tactices.presentPrice;

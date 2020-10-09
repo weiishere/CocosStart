@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-10-05 03:34:59
+ * @LastEditTime: 2020-10-09 16:50:03
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -414,7 +414,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         if (this.buyState) {
             this.buyState = false;
             await this.deal('sell');
-            
+
         } else {
 
         }
@@ -569,7 +569,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 } else {
                     if (_riseStopLossRate === 0) return false;
                     //亏损率还未大于一个值，持续观察
-                    this.addHistory('info', `盈利下降量${Number(_riseStopLossRate.toFixed(2))}%，未达止盈拐点，继续观察盈利情况...`, true);
+                    this.addHistory('info', `盈利下降量${Number(_riseStopLossRate.toFixed(2))}%，未达止盈拐点，继续观察盈利情况...`, true, { tempMsg: true, subType: 'stc' });
                     return false;
                 }
             }
