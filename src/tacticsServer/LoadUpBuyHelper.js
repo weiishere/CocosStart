@@ -24,6 +24,7 @@ module.exports = class LoadUpBuyHelper {
         this.intervalTime = 5;//补仓间隔（分钟）
         this.tradeDone = true;
         this.lightenMod = false;//减仓模式
+        this.stepGrids = [];//网格
         this.loadUpList = [
             // {
             //     roundId: 0,
@@ -37,9 +38,10 @@ module.exports = class LoadUpBuyHelper {
         ]
         //补仓历史记录
     }
+    /**配置网格 */
     setStepGrids() {
         const level = parseInt(this.tactices.averageWave * 1000);
-        this.stepGrids = [
+        let arr = [
             { index: 1, rate: 0, times: 1 },
             { index: 2, rate: 0, times: 0.5 },
             { index: 3, rate: 0, times: 1 },//第三次补仓，劳资给你多来点儿
@@ -48,23 +50,18 @@ module.exports = class LoadUpBuyHelper {
         ];
         if (this.dynamicGrids === 'wave') {
             const stepDivisor = i => parseInt(10 + (level + i) * i * 1.1);
-            this.stepGrids.forEach((item, i) => item.rate = stepDivisor(i + 1));
-            this.tactices.addHistory('info', `波动网格，波动因子为${level}，补仓网格已调整为[${this.stepGrids.map(i => i.rate).join('->')}]`, true, { color: "#759AA0" });
+            arr.forEach((item, i) => item.rate = stepDivisor(i + 1));
+            this.tactices.addHistory('info', `波动网格，波动因子为${level}，补仓网格已调整为[${arr.map(i => i.rate).join('->')}]`, true, { color: "#759AA0" });
+            this.stepGrids = arr;
         } else if (this.dynamicGrids === 'default') {
-            this.stepGrids.forEach((item, i) => item.rate = 10 + i * 5);
-            this.tactices.addHistory('info', `静态网格，补仓网格为[${this.stepGrids.map(i => i.rate).join('->')}]`, true, { color: "#759AA0" });
+            arr.forEach((item, i) => item.rate = 10 + i * 5);
+            this.tactices.addHistory('info', `静态网格，补仓网格为[${arr.map(i => i.rate).join('->')}]`, true, { color: "#759AA0" });
+            this.stepGrids = arr;
         } else if (this.dynamicGrids === 'dynamic') {
-            //符合金叉或者boll线，才补仓，这里重置this.stepGrids的rate都为0，检查的时候会逐级检查，若为0就赋值并传送
-            this.stepGrids = [
-                { index: 1, rate: 0, times: 1 },
-                { index: 2, rate: 0, times: 1 },
-                { index: 3, rate: 0, times: 2 },//第三次补仓，劳资给你多来点儿
-                { index: 4, rate: 0, times: 1 },
-                { index: 5, rate: 0, times: 1 }
-            ];
             this.tactices.addHistory('info', `动态网格，遵循BOLL或KDJ寻找底部择机补仓`, true, { color: "#759AA0" });
         }
     }
+    /**添加加减仓记录 */
     pushLoadUpList({ index, times, amount, mod, rate, type }) {
         const obj = {
             type,
@@ -85,16 +82,30 @@ module.exports = class LoadUpBuyHelper {
         let nextLoadUp;
         if (this.dynamicGrids === 'dynamic' && rate > 10) {
             if (!this.stepGrids.some(item => item.rate === 0)) return null;
-            //获取入场约束中的BOLL和KDJ约束（满足其一即可）
+            //获取入场约束中的BOLL和KDJ约束
             const arr = restrainGroup.premiseForBuy.filter(item => item.key === 'bollStandardDN' || item.key === 'KDJStandard');
-            for (let i = 0; i < arr.length; i++) {
-                if (arr[i].method(this.tactices)) {
-                    for (let j = 0; j < this.stepGrids.length; j++) {
-                        if (this.stepGrids[j].rate === 0) {
-                            this.stepGrids[j].rate = rate.toFixed(3);
-                            nextLoadUp = this.stepGrids[j];
-                            return nextLoadUp;
-                        }
+            //符合金叉或者boll线，才补仓，这里重置this.stepGrids的rate都为0，检查的时候会逐级检查，若为0就赋值并传送
+            let isNoPass = arr.some(item => {
+                const re = item.method(this.tactices);
+                console.log(this.tactices.name, re);
+                return re;
+            });
+            if (isNoPass) {
+                console.log(this.tactices.name);
+            }
+            // for (let i = 0; i < arr.length; i++) {
+            //     if (!arr[i].method(this.tactices)) {
+            //         isPass = false;
+            //         break;
+            //     }
+            // }
+            if (isNoPass) {
+                for (let j = 0; j < this.stepGrids.length; j++) {
+                    if (this.stepGrids[j].rate === 0) {
+                        this.stepGrids[j].rate = Number(rate.toFixed(1));
+                        nextLoadUp = this.stepGrids[j];
+                        console.log(this.tactices.name, nextLoadUp);
+                        return nextLoadUp;
                     }
                 }
             }
@@ -176,7 +187,7 @@ module.exports = class LoadUpBuyHelper {
         }
         const nowDate = Date.parse(new Date());
         if (nowDate - this.lastLoadUpTime < 60000 * this.intervalTime) {
-            this.tactices.addHistory('info', `离上次补仓时间不及${this.intervalTime}分钟，暂不补仓...`, true, { color: "#759AA0", tempMsg: true, subType: 'lub' });
+            this.tactices.addHistory('info', `离上次补仓时间不及${this.intervalTime}分钟，暂不做补仓检测...`, true, { color: "#759AA0", tempMsg: true, subType: 'lub' });
             return;
         }
         if (!this.tradeDone) return;
@@ -225,6 +236,21 @@ module.exports = class LoadUpBuyHelper {
             if (result) {
 
             }
+        }
+    }
+    roundEnd() {
+        this.loadUpList = [];//this.tactices.loadUpBuyHelper.loadUpList.filter(item => item.roundId === this.tactices.roundId);
+        if (this.dynamicGrids === 'dynamic') {
+            //符合金叉或者boll线，才补仓，所以网格点是待定的，这里重置this.stepGrids的rate都为0，检查的时候会逐级检查，若为0就赋值并传送，为后续可能的减仓做数据依据
+            this.stepGrids = [
+                { index: 1, rate: 0, times: 1 },
+                { index: 2, rate: 0, times: 1 },
+                { index: 3, rate: 0, times: 2 },//第三次补仓，劳资给你多来点儿
+                { index: 4, rate: 0, times: 1 },
+                { index: 5, rate: 0, times: 1 }
+            ];
+        } else {
+            this.setStepGrids();
         }
     }
     getInfo() {

@@ -139,7 +139,7 @@ module.exports = class TacticsHelper {
             console.log('新增RoundResult失败', e);
         });
         this.tactices.loadUpBuyHelper.lightenMod = false;//关闭减仓模式
-        this.tactices.roundRunStartTime = Date.parse(new Date());//重置开始时间
+        this.tactices.roundRunStartTime = this.tactices.loadUpBuyHelper.lastLoadUpTime = Date.parse(new Date());//重置开始时间
         require('./TacticesLauncher').getInstance().pushRoundResultInform(this.tactices.uid, this.tactices.id, 'roundBegin');
     }
     async roundEnd() {
@@ -159,7 +159,7 @@ module.exports = class TacticsHelper {
         const now = Date.parse(new Date());
         //清除3小时前但不是该交易回合的交易
         this.tactices.exchangeQueue = this.tactices.exchangeQueue.filter(item => !((now - item.dealDate) > 10800000 && item.roundId !== this.tactices.roundId));
-        this.tactices.loadUpBuyHelper.loadUpList = [];//this.tactices.loadUpBuyHelper.loadUpList.filter(item => item.roundId === this.tactices.roundId);
+        this.tactices.loadUpBuyHelper.roundEnd();
         await this.tactices.doHistoryStatistics();
         mailTo({
             content:

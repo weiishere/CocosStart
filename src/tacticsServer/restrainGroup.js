@@ -52,10 +52,6 @@ const getAverageWave = (symbol) => {
     return total / klineData5m.length;
 }
 const kdjCross = (symbolObj, KDJindex, type) => {
-    if (!symbolObj) {
-        console.error('kdjCross-symbolObj不存在');
-        return false;
-    }
     const KDJData = symbolObj.KDJ5m[KDJindex];
     const KDJDataLast = symbolObj.KDJ5m[KDJindex - 1];
     if (type === 'glod') {
@@ -67,7 +63,7 @@ const kdjCross = (symbolObj, KDJindex, type) => {
         }
     } else if (type === 'die') {
         if (KDJData.J > 50 && Math.abs(KDJData.K - KDJData.D) + Math.abs(KDJData.K - KDJData.J) <= 10 && KDJDataLast.K >= KDJData.K && KDJData.K <= KDJData.D && KDJDataLast.K >= KDJDataLast.D) {
-            //当前K线大于60、三线之间差额小于10，且K线呈下落趋势，且K大于D线、且上一条K先小于D先，说明两个点之间出现了金叉
+            //当前K线大于60、三线之间差额小于10，且K线呈下落趋势，且K大于D线、且上一条K先小于D先，说明两个点之间出现了死叉
             return true;
         } else {
             return false;
@@ -180,6 +176,7 @@ const restrain = {
             desc: '只能金叉入场，其他拒绝',
             method: async (tactics) => {
                 const symbolObj = symbolStorage[tactics.symbol];
+                if (!symbolObj) return false;
                 if (kdjCross(symbolObj, symbolObj.KDJ5m.length - 1, 'glod') || kdjCross(symbolObj, symbolObj.KDJ5m.length - 2, 'glod')) {
                     return true;
                 } else {
@@ -463,6 +460,7 @@ const restrain = {
                     }
                     return lastSymbolList.filter(item => {
                         const symbolObj = symbolStorage[item.symbol];
+                        if (!symbolObj) return false;
                         if (kdjCross(symbolObj, symbolObj.KDJ5m.length - 1, 'glod') || kdjCross(symbolObj, symbolObj.KDJ5m.length - 2, 'glod')) {
                             return true;
                         } else {

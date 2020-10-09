@@ -342,7 +342,7 @@ module.exports = class TacticesLauncher {
                             <p>当前盈亏/盈亏率：${item.presentDeal.rtProfit}/${item.presentDeal.rtProfit / (item.presentDeal.inCosting - item.presentDeal.outCosting)}</p>
                             <p>场内成本：${item.presentDeal.inCosting - item.presentDeal.outCosting}</p>
                             <p>已耗时：${parseInt(elapsedTime / 60)}时${parseInt(elapsedTime % 60)}分</p>
-                            <p>历史盈亏：${item.historyStatistics.totalProfit}</p><hr/>
+                            <p>历史盈亏：${item.historyStatistics.totalProfit}</p>
                             <p>盈利/回合数：${(item.historyStatistics.winRoundCount || 0)}/${(item.historyStatistics.roundCount || 0)}</p><hr/>
                         </div>`
                     }).join('')

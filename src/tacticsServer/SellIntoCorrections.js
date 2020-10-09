@@ -60,7 +60,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             /** 出场检测速率*/
             checkSellRate: 5000,
             riseStayCheckRateForSell: 15000,//止损等待时间
-            stopRiseRate: 0.2,//强制止盈涨幅
+            stopRiseRate: 0,//强制止盈涨幅
             lowestRiseRate: 0.008,//最低盈利，少了这个值不止盈
             riseStopLossRate: 50,//上涨情况（盈利）下跌止盈点（拐点止盈）
             //lossStopLossRate: 0,//下跌情况（亏损）上涨止损点
@@ -412,8 +412,9 @@ module.exports = class SellIntoCorrections extends Tactics {
         this.mainTimer && clearInterval(this.mainTimer);
         //this.dealTimer && clearInterval(this.dealTimer);
         if (this.buyState) {
-            await this.deal('sell');
             this.buyState = false;
+            await this.deal('sell');
+            
         } else {
 
         }
@@ -581,7 +582,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                 this.riseTimer = setTimeout(async () => {
                     this.addHistory('info', `亏损状态时间超时，进行止损操作`);
                     await this.deal('sell')
-                    tactics.buyState = false;
+                    this.buyState = false;
                 }, this.parameter.maxStayTime * 60000);
             }
             if (_profit < this.presentDeal.historyProfit) {
