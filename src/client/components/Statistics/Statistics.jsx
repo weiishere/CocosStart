@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-24 02:37:01
- * @LastEditTime: 2020-10-05 03:50:24
+ * @LastEditTime: 2020-10-09 19:34:31
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -80,7 +80,9 @@ export default function Statistics() {
                 const nowRiseRate = item.presentDeal.rtProfit / item.presentDeal.inCosting;
                 return {
                     key: i,
-                    name: [<span style={{ color: item.imitateRun ? '#3c93bd' : '#ddd' }}>{item.name}</span>],//[item.name, (item.imitateRun ? imitateRunIcon : '')],
+                    name: [<span onClick={() => {
+                        location.replace(`#${item.id}`);
+                    }} style={{ color: item.imitateRun ? '#3c93bd' : '#ddd', cursor: "pointer" }}>{item.name}</span>],//[item.name, (item.imitateRun ? imitateRunIcon : '')],
                     symbol: item.symbol,
                     status: iconArr,//`${item.runState ? '运行中/' + (item.buyState ? '场内' : '场外') : '未运行'}`,
                     nowRiseRate: item.buyState ? [<span style={{ color: nowRiseRate > 0 ? 'red' : 'green' }}>{Number(nowRiseRate.toFixed(4))}</span>] : '-',
