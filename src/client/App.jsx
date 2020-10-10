@@ -18,6 +18,7 @@ import Rate from '@components/Rate'
 import BSLine from '@components/BSLine'
 import Income from '@components/Income'
 import IncomeUnit from '@components/IncomeUnit'
+import EventList from '@components/EventList'
 import Statistics from '@components/Statistics'
 import ControlPanel from '@components/ControlPanel'
 import Login from './Login'
@@ -128,7 +129,7 @@ export default function App() {
                     </Col>
                     <Col span={8}>
                         <Row style={{ height: '40%' }}>
-                            <Col span={24}><Income /></Col>
+                            <Col span={24}><EventList /></Col>
                         </Row>
                         <Row style={{ height: '60%', position: 'relative' }}>
                             <Statistics />

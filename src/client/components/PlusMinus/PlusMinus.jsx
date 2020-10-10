@@ -103,7 +103,7 @@ const realTimeRoundResult = (myChart, target) => {
     if (target.buyState) {
         const _data = {
             value: target.presentDeal.rtProfit,
-            name: Number(target.presentDeal.rtProfit.toFixed(3)) + '',
+            name: target.presentDeal.rtProfit ? Number(target.presentDeal.rtProfit.toFixed(3)) + '' : '',
             label: { position: 'top' },
             itemStyle: { color: target.presentDeal.rtProfit < 0 ? 'green' : 'red' },
             time: +target.roundRunStartTime,

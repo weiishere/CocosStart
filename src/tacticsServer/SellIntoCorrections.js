@@ -551,11 +551,11 @@ module.exports = class SellIntoCorrections extends Tactics {
                 const _riseStopLossRate = (diff / this.presentDeal.historyProfit) * 100;
 
                 if (_riseStopLossRate > this.parameter.riseStopLossRate) {
-                    this.addHistory('info', `盈利下降，且大于止盈拐点，剩余盈利率：` + _profit / this.presentDeal.inCosting, true);
+                    //this.addHistory('info', `盈利下降，且大于止盈拐点，剩余盈利率：` + _profit / this.presentDeal.inCosting, true);
                     //亏损率大于一个值,判断当前盈利率，选择是否止盈
                     if (_profit / this.presentDeal.inCosting < this.parameter.lowestRiseRate) {
                         //盈利率小于某一个值的话，就不予止盈，否则没太大意义（避免某一下的急跌造成割肉，却没赚到什么）
-                        this.addHistory('info', `相比最大历史盈利，下降量${_riseStopLossRate.toFixed(2)}%，大于${this.parameter.riseStopLossRate}%，但低于最低出场盈利率${this.parameter.lowestRiseRate}，继续观察...`, true);
+                        this.addHistory('info', `相比最大历史盈利，下降量${_riseStopLossRate.toFixed(2)}%，大于${this.parameter.riseStopLossRate}%，但低于最低出场盈利率${this.parameter.lowestRiseRate}，继续观察...`, true, { tempMsg: true, subType: 'lub' });
                         return false;
                     } else {
                         this.addHistory('info', `相比最大历史盈利，下降量${_riseStopLossRate.toFixed(2)}%，大于${this.parameter.riseStopLossRate}%，且高于最低出场盈利率${this.parameter.lowestRiseRate}，进行止盈操作！`);
