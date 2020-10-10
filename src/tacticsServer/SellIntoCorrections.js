@@ -263,6 +263,7 @@ module.exports = class SellIntoCorrections extends Tactics {
                     this.initialize(chooseItem);
                     this.checkSymbolTime = 10;
                     this.checkBuyTime = 0;
+                    require('./TacticesLauncher').getInstance().pushRoundResultInform(this.uid, this.id, 'switchSymbol');
                 } else {
                     //无币
                     if (this.checkSymbolTime === 0) {
@@ -693,6 +694,8 @@ module.exports = class SellIntoCorrections extends Tactics {
             }, false, { color: 'red' });
             if (!dealQuantity) {
                 await this.tacticesHelper.roundBegin();
+            } else {
+                require('./TacticesLauncher').getInstance().pushRoundResultInform(this.uid, this.id, 'loadUp');
             }
 
         } else if (order === 'sell') {
@@ -728,7 +731,7 @@ module.exports = class SellIntoCorrections extends Tactics {
             if (!dealQuantity) {
                 await this.tacticesHelper.roundEnd();
             } else {
-
+                require('./TacticesLauncher').getInstance().pushRoundResultInform(this.uid, this.id, 'lightenUp');
             }
         }
         require('./TacticesLauncher').getInstance().pushExchange(this.uid, this.id, this.symbol, this.exchangeQueue);

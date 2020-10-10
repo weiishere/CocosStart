@@ -180,6 +180,6 @@ module.exports = class TacticsHelper {
             subject: `任务“${this.tactices.name}”(${this.tactices.symbol})完成回合交易`
         });
         this.tactices.roundId = this.tactices.getNewId('r_'); //下一回合
-        require('./TacticesLauncher').getInstance().pushRoundResultInform(this.tactices.uid, this.tactices.id, 'roundBegin');
+        require('./TacticesLauncher').getInstance().pushRoundResultInform(this.tactices.uid, this.tactices.id, 'roundEnd');
     }
 }

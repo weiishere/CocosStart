@@ -12,7 +12,7 @@ import dateFormat from 'format-datetime'
 import './style.less'
 import EventHub from '@client/EventHub'
 
-
+const eventName = ['switchSymbol', 'loadUp', 'lightenUp', 'roundBegin', 'roundEnd'];
 const stringTemplate = {
     buyIn: ({ name, eventTime, inCosting }) => {
         return `【入场】“${name}”于${dateFormat(new Date(eventTime), "dd日HH:mm:ss")}完成入场，入场金额${inCosting.toFixed(4)}U`
@@ -34,7 +34,7 @@ const stringTemplate = {
 }
 export default function EventList() {
     React.useEffect(() => {
-
+        
 
     }, []);
     return <div id='eventList'>
