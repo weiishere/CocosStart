@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-27 11:50:17
- * @LastEditTime: 2020-10-09 16:50:03
+ * @LastEditTime: 2020-10-11 15:52:00
  * @LastEditors: weishere.huang
  * @Description: 追涨杀跌对象
  * @~~
@@ -137,6 +137,7 @@ module.exports = class SellIntoCorrections extends Tactics {
     async initialize(symbol) {
         //if (this.runState) return false;//运行期间不允许更改
         this.symbol = symbol;
+        scoketCandles();
         this.symbolInfo = await require('./TacticesLauncher').getInstance().getExchangeInfo(this.symbol);
         //初始化时给点5/1分线数据
         //client.candles({ symbol, interval: '5m', limit: 1 }).then(data => this.KLineItem5m.present = data[0]);
@@ -156,7 +157,7 @@ module.exports = class SellIntoCorrections extends Tactics {
         } catch (e) {
             console.log(e);
         }
-        scoketCandles();
+        
     }
     /**添加历史记录:isDouble：如果重复两条记录，是否允许重复添加
      * @type:info/profitChange
@@ -533,6 +534,8 @@ module.exports = class SellIntoCorrections extends Tactics {
         };
         //this.profitSymbol[this.profitSymbol.length - 1] = { symbol: this.symbol, profit: _profit };
         this.addHistory('profitChange', _profit);
+        //加减仓检测
+        this.parameter.isAllowLoadUpBuy && await this.loadUpBuyHelper.run(this.roundId);
         if (_profit >= 0) {
             this.riseTimer && clearTimeout(this.riseTimer);//清除超时timer
             if (this.parameter.stopRiseRate !== 0 && _profit / this.presentDeal.inCosting > this.parameter.stopRiseRate) {
@@ -639,9 +642,6 @@ module.exports = class SellIntoCorrections extends Tactics {
                 } else {
                     this.addHistory('info', `当前处于亏损状态，亏损率：${_stopLossRate.toFixed(6)}，但未达止损点，继续等待出场时机...`, true, { tempMsg: true, subType: 'lub' });
                 }
-
-                //加仓
-                this.parameter.isAllowLoadUpBuy && await this.loadUpBuyHelper.run(this.roundId);
                 return false;
             }
         }

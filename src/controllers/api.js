@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-10-10 20:17:10
+ * @LastEditTime: 2020-10-11 14:12:41
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -356,7 +356,7 @@ module.exports = {
 
     next();
   },
-  getEventQueue: (ctx, next) => {
+  getEventQueue: async (ctx, next) => {
     let result = await getSimpleRoundResultList({ tid, roundId, uid }, 20);
     next();
   }

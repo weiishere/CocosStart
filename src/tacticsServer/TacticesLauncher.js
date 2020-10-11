@@ -16,7 +16,6 @@ const { reExecute } = require('../tool/Common');
 const { getSymbolStorageFromDB } = require('./restrainGroup');
 const { BuyDeal, SellDeal } = require('./Exchange');
 const { mailTo } = require('../tool/sendEmail')
-//const { scoketCandles } = require('./binanceScoketBind');
 
 
 module.exports = class TacticesLauncher {

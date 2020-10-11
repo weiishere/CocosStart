@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-09-02 18:19:58
- * @LastEditTime: 2020-10-09 17:10:35
+ * @LastEditTime: 2020-10-11 15:53:36
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -76,7 +76,7 @@ module.exports = class LoadUpBuyHelper {
     }
     //加仓检查
     async stepCheckForLoadUp() {
-        if (this.tactices.presentDeal.historyProfit > 0) return false;//这句代码暂时也没太大意义，传过来的数据肯定是负值，不过还是约束下
+        if (this.tactices.presentDeal.historyProfit > 0) return false;//暂不做盈利加仓
         //获取最高亏损与止损值的比例
         const rate = Math.abs((this.tactices.getProfit() / this.tactices.presentDeal.inCosting) / this.tactices.parameter.stopLossRate) * 100;
         let nextLoadUp;
@@ -127,7 +127,7 @@ module.exports = class LoadUpBuyHelper {
     }
     //减仓检查
     async stepCheckForLightenUp() {
-        if (this.tactices.presentDeal.historyProfit > 0) return false;//这句代码暂时也没太大意义，传过来的数据肯定是负值，不过还是约束下
+        if (this.tactices.presentDeal.historyProfit > 0) return false;
         //获取最高亏损与止损值的比例
         //const rate = Math.abs((this.tactices.getProfit() / this.tactices.presentDeal.inCosting) / this.tactices.parameter.stopLossRate) * 100;
         if (!this.tradeDone) return;
