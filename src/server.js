@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 16:47:54
- * @LastEditTime: 2020-08-19 18:57:28
+ * @LastEditTime: 2020-10-13 12:37:37
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -24,7 +24,8 @@ const app = new Koa();
 //const { Symbol } = require('./db');
 
 const compiler = webpack(config);
-
+const {buy} = require('./marginServer');
+buy();
 // 由于webpack-dev-middleware是一个标准的express中间件，在Koa中不能直接使用它，因此需要将webpack-dev-middleware封装一下，以便Koa能够直接使用。
 const devMiddleware = (compiler, opts) => {
     const middleware = webpackDevMiddleware(compiler, opts);

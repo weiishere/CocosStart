@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 15:53:13
- * @LastEditTime: 2020-09-30 01:34:44
+ * @LastEditTime: 2020-10-13 13:09:56
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -16,8 +16,14 @@ const System = {
   API_server_port: '3000',
   Public_path: '/public/',
   api_base_url: 'https://api.binance.com/api/v3/',
-  apiKey: 'N0TxBgVpvpPZFoGPaJ901Bdi2w7dtn0aozqP1MIXQ5EY51nDYtqUzAQgSRKKfeaM',
-  apiSecret: '5f6BRKXLIRBG89nfKtcRg33jbAaMELQ3q2zi3PFLGXH0G7S6166inHtJ82SfGRe8',
+  user_4620:{
+    apiKey: 'JnTRXStyJURnb7lJYQRVAjgwNwLnntiSZlV0eJWS6UaobY3PkXh6eDtb4ev9u50B',
+    apiSecret: 'CiJ5FlOuJxGJFjqLyu8ZdTbcK50vQXaK8Dah8Au0ajuwkzO5hMMkQQPStwUIebe3',
+  },
+  user_0722:{
+    // apiKey: 'N0TxBgVpvpPZFoGPaJ901Bdi2w7dtn0aozqP1MIXQ5EY51nDYtqUzAQgSRKKfeaM',
+    // apiSecret: '5f6BRKXLIRBG89nfKtcRg33jbAaMELQ3q2zi3PFLGXH0G7S6166inHtJ82SfGRe8',
+  },
   version: '2.1'
 }
 
