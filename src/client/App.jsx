@@ -30,6 +30,8 @@ import { switchTactics, getQueryString } from '@client/utils'
 import api from '@client/api';
 import { apiDateCode, System } from '@src/config';
 import './style/style.less'
+
+
 let sokt;
 const getHash = () => {
     let hash = location.hash + '';

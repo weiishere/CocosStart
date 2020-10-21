@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 16:47:54
- * @LastEditTime: 2020-10-13 12:37:37
+ * @LastEditTime: 2020-10-21 16:17:48
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -21,11 +21,12 @@ const ApiRoutes = require('./routes/api-routes.js');
 const EventHub = require('./tool/EventHub');
 const config = require('../webpack.config.js');
 const app = new Koa();
+const views = require('koa-views')
 //const { Symbol } = require('./db');
 
 const compiler = webpack(config);
-const {buy} = require('./marginServer');
-buy();
+// const {buy} = require('./marginServer');
+// buy();
 // 由于webpack-dev-middleware是一个标准的express中间件，在Koa中不能直接使用它，因此需要将webpack-dev-middleware封装一下，以便Koa能够直接使用。
 const devMiddleware = (compiler, opts) => {
     const middleware = webpackDevMiddleware(compiler, opts);
@@ -45,6 +46,9 @@ app.use(body());
 app.use(devMiddleware(compiler, {
     publicPath: config.output.publicPath
 }));
+app.use(views('/', {
+    extension: 'html'
+}))
 // app.use(require("webpack-dev-middleware")(compiler, {
 //     noInfo: true, publicPath: config.output.publicPath
 // }));
