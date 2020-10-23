@@ -10,9 +10,9 @@ const { client } = require('../lib/binancer2');
 
 const buy = async (symbol) => {
     try {
-        //const result = await client.futuresMarketSell('BTCUSDT', 0.01, { positionSide: 'SHORT' });
+        const result = await client.futuresMarketBuy('BTCUSDT', 0.2, { positionSide: 'LONG' });
         // const result = await client.futuresUserTrades("BTCUSDT");
-        // console.log(result);
+        console.log(result);
 
         // const result = await client.futuresAccount();
         // const positions = result.positions.filter(item => item.symbol === 'BTCUSDT');
@@ -23,13 +23,14 @@ const buy = async (symbol) => {
         //     console.log(data);
         // });
 
-        let position_data = await client.futuresPositionRisk(), markets = Object.keys( position_data );
-        for ( let market of markets ) {
-          let obj = position_data[market], size = Number( obj.positionAmt );
-          if ( size == 0 ) continue;
-          console.log( `${obj.leverage}x\t${market}\t${obj.unRealizedProfit}` );
-          console.info( obj ); //positionAmt entryPrice markPrice unRealizedProfit liquidationPrice leverage marginType isolatedMargin isAutoAddMargin maxNotionalValue
-        }
+        //持仓
+        // let position_data = await client.futuresPositionRisk(), markets = Object.keys( position_data );
+        // for ( let market of markets ) {
+        //   let obj = position_data[market], size = Number( obj.positionAmt );
+        //   if ( size == 0 ) continue;
+        //   console.log( `${obj.leverage}x\t${market}\t${obj.unRealizedProfit}` );
+        //   console.info( obj ); //positionAmt entryPrice markPrice unRealizedProfit liquidationPrice leverage marginType isolatedMargin isAutoAddMargin maxNotionalValue
+        // }
     } catch (e) {
         console.log(e);
     }

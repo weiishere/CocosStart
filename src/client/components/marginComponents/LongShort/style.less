@@ -1,0 +1,54 @@
+.longShort{
+    display: flex;
+    &>div.md{
+        height: 100%;
+        width: 1rem;
+        background: #eee;
+    }
+    &>div.ls{
+        flex: 1;
+        background: #000;
+        color: #ddd;
+        display: flex;
+        flex-direction: column;
+        ul{
+           list-style: none;  
+           width: 100%;   
+           padding: 0;
+           display: flex;
+           flex-direction: column;
+           flex: 1;
+           li{
+               flex: 1;
+               padding: 0 0.2rem;
+           }
+        }
+        h3{
+            margin: 0 0.2rem;
+            color: #ddd;
+            height: 2rem;
+            line-height: 2rem;
+            border-bottom: solid 1px #8a8989;
+            span{
+                font-size: 0.8rem;
+            }
+        }
+        &.ls_left{
+            h3>span{
+                color: rgb(6, 146, 76);
+            }
+            li{
+                text-align: left;
+            }
+        }
+        &.ls_right{
+            h3>span{
+                color: rgb(179, 35, 30);
+            }
+            text-align: right;
+            li{
+                text-align: right;
+            }
+        }
+    }
+}

@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-22 16:36:15
- * @LastEditTime: 2020-08-14 12:09:46
+ * @LastEditTime: 2020-10-21 16:29:08
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -94,7 +94,14 @@ module.exports = {
         //new webpack.HotModuleReplacementPlugin(),
         new webpack.NoEmitOnErrorsPlugin(),
         new HtmlWebpackPlugin({
-            template:'./src/index.html'
+            filename: 'index.html',
+            template: './src/index.html',
+            chunk: 'app'
+        }),
+        new HtmlWebpackPlugin({
+            filename: 'margin.html',
+            template: './src/margin.html',
+            chunk: 'app'
         }),
         //这个主要是将生成的vendor.dll.js文件加上hash值插入到页面中。
         new AddAssetHtmlWebpackPlugin({
@@ -103,7 +110,7 @@ module.exports = {
             hash: true,
         }),
         new webpack.DllReferencePlugin({
-        	manifest: path.resolve(__dirname, './dist/dll/vendor.manifest.json')  // +
+            manifest: path.resolve(__dirname, './dist/dll/vendor.manifest.json')  // +
         })
     ]
 };
