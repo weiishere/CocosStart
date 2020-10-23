@@ -16,9 +16,16 @@ export default function LongShort() {
                 <li>
                     <span>盈亏：</span>25.3(55%)
                 </li>
+                <li>
+                    <span>手续费：</span>0.5
+                </li>
             </ul>
         </div>
-        <div className='md'></div>
+        <div className='md'>
+            <div className='short' style={{ top: '1rem' }}><span>12687</span></div>
+            <div className='price' style={{ top: '3rem' }}><span>12600</span></div>
+            <div className='long' style={{ top: '6rem' }}><span>12500</span></div>
+        </div>
         <div className='ls ls_right'>
             <h3><span>(11520)</span>持仓-空</h3>
             <ul>
@@ -30,6 +37,9 @@ export default function LongShort() {
                 </li>
                 <li>
                     25.3(55%) <span>：盈亏</span>
+                </li>
+                <li>
+                    0.5<span>：手续费</span>
                 </li>
             </ul>
         </div>

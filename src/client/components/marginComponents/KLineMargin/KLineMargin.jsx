@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-07-23 22:33:14
- * @LastEditTime: 2020-10-05 03:46:19
+ * @LastEditTime: 2020-10-23 16:46:29
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -144,7 +144,7 @@ const option = (symbol) => {
     });
     return {
         title: {
-            text: `5分线(${symbol})`,
+            text: `BTC`,
             subtext: symbolTicker ? `${symbol}-tiker H:${+symbolTicker.high} / L:${+symbolTicker.low} / O:${+symbolTicker.open} / C:${+symbolTicker.curDayClose} 日幅:${symbolTicker.priceChangePercent}%` : ''
         },
         backgroundColor: '#21202D',
@@ -171,10 +171,10 @@ const option = (symbol) => {
                 最高：${param[0].value[4]}<br/>最低：${param[0].value[3]}<br/>涨跌：${((param[0].value[2] - param[0].value[1]) / param[0].value[2] * 100).toFixed(2)}`;
             }
         },
-        legend: {
-            data: ['UP', 'MB', 'DN'],
-            top: "1%"
-        },
+        // legend: {
+        //     data: ['UP', 'MB', 'DN'],
+        //     top: "1%"
+        // },
         xAxis: {
             type: 'category',
             data: dates,
@@ -189,7 +189,8 @@ const option = (symbol) => {
         grid: {
             bottom: 60,
             left: 50,
-            right: '3%'
+            right: '3%',
+            top:30
         },
 
         dataZoom: [{
@@ -276,8 +277,8 @@ const setOptionForNoCover = (myChart, symbol) => {
         yAxis: oldOption.yAxis,
         series: oldOption.series
     }));
-    const myChartKdj = echarts.init(document.getElementById("kdj-line"), 'dark');
-    myChartKdj.setOption(optionForKdj());
+    // const myChartKdj = echarts.init(document.getElementById("kdj-line"), 'dark');
+    // myChartKdj.setOption(optionForKdj());
 }
 
 const initKlineData = (myChart, symbol, callback) => {
@@ -328,12 +329,12 @@ const initKlineData = (myChart, symbol, callback) => {
     });
 }
 
-export default function KLine() {
+export default function KLineMargin() {
     const [index] = React.useState(0);
     let theSymbol = '';
     let lastKlineDate;
     React.useEffect(() => {
-        var myChart = echarts.init(document.getElementById("k-line"), 'dark');
+        var myChart = echarts.init(document.getElementById("k-line-mobile"), 'dark');
         myChart.setOption(option(localStorage.getItem("klineSymbol") || ''));
         let timer;
         const change = (symbol) => {
@@ -380,9 +381,9 @@ export default function KLine() {
                 //myChart.setOption(option(target.symbol));
             }
         });
-        window.setInterval(() => {
-            if (localStorage.getItem("klineSymbol")) initKlineData(myChart, localStorage.getItem("klineSymbol"), () => { });
-        }, 60000);
+        // window.setInterval(() => {
+        //     if (localStorage.getItem("klineSymbol")) initKlineData(myChart, localStorage.getItem("klineSymbol"), () => { });
+        // }, 60000);
     }, []);
-    return <><div id='k-line'></div><div id='kdj-line'></div></>
+    return <><div id='k-line-mobile'></div></>
 }
