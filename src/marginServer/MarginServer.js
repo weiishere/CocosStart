@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-10-26 13:46:51
- * @LastEditTime: 2020-10-26 17:09:29
+ * @LastEditTime: 2020-10-26 23:50:24
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -83,9 +83,9 @@ module.exports = class Margin {
             //开启
             //启动价格监控
             //拉取订单信息
-            this.lineStatus = this.statusRefresh();
             const looper = async () => {
                 clearTimeout(this.mainTimer);
+                this.lineStatus = this.statusRefresh();
                 this.frameLoop.forEach(item => item.fn());
                 this.mainTimer = setTimeout(async () => {
                     this.runState && await looper();
@@ -96,5 +96,5 @@ module.exports = class Margin {
             //暂停
         }
     }
-
+    
 }
