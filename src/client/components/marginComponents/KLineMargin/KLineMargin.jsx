@@ -143,10 +143,10 @@ const option = (symbol) => {
         return [+item[1], +item[4], +item[3], +item[2]];
     });
     return {
-        title: {
-            text: `BTC`,
-            subtext: symbolTicker ? `${symbol}-tiker H:${+symbolTicker.high} / L:${+symbolTicker.low} / O:${+symbolTicker.open} / C:${+symbolTicker.curDayClose} 日幅:${symbolTicker.priceChangePercent}%` : ''
-        },
+        // title: {
+        //     text: `BTC`,
+        //     subtext: symbolTicker ? `${symbol}-tiker H:${+symbolTicker.high} / L:${+symbolTicker.low} / O:${+symbolTicker.open} / C:${+symbolTicker.curDayClose} 日幅:${symbolTicker.priceChangePercent}%` : ''
+        // },
         backgroundColor: '#21202D',
         // legend: {
         //     data: [symbol, 'MA5', 'MA10', 'MA20', 'MA30'],
@@ -190,7 +190,7 @@ const option = (symbol) => {
             bottom: 60,
             left: 50,
             right: '3%',
-            top:30
+            top:10
         },
 
         dataZoom: [{

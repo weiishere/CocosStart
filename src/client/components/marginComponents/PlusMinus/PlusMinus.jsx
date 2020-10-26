@@ -24,7 +24,7 @@ const option = () => {
     const showData = data.slice(data.length > 15 ? data.length - 15 : 0, data.length)
     return {
         title: {
-            text: `出场盈亏`,
+            text: `平仓盈亏`,
             //subtext: `当前合计：${data.reduce((pre, cur) => pre + cur.value, 0)} U`
         },
         animation: false,
@@ -42,9 +42,9 @@ const option = () => {
             }
         },
         grid: {
-            top: '38%',
-            bottom: 20,
-            left: 60,
+            top: '30%',
+            bottom: 10,
+            left: 80,
             right: 20,
         },
         yAxis: {
