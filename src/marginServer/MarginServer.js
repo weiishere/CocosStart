@@ -1,3 +1,11 @@
+/*
+ * @Author: weishere.huang
+ * @Date: 2020-10-26 13:46:51
+ * @LastEditTime: 2020-10-26 17:09:29
+ * @LastEditors: weishere.huang
+ * @Description: 
+ * @~~
+ */
 const { client } = require('../lib/binancer2');
 const { Trade, PositionLong, PositionShort } = require('./Position');
 
@@ -26,7 +34,7 @@ module.exports = class Margin {
             loadUpStep: 0.2,//补仓步进值
             maxBuying: 2,//最大买入值
         }
-        this.powerState = false;
+        this.runState = false;
         this.btcPrice = 0;
         this.positionLong = new PositionLong();
         this.positionShort = new PositionShort();
@@ -35,6 +43,7 @@ module.exports = class Margin {
         this.presentInfo = {
             hadProfit: 0,//已经实现的盈利
         }
+        this.frameLoop = [{ name: '', fn: () => { } }];
     }
     /**刷新状态 */
     statusRefresh() {
@@ -63,18 +72,26 @@ module.exports = class Margin {
     }
     /**初始化 */
     initialize() {
-        if (this.powerState) {
+        if (this.runState) {
             this.powerSwitch(true);
         }
     }
     /**开关 */
-    powerSwitch(order) {
-        this.powerState = order;
+    async powerSwitch(order) {
+        this.runState = order;
         if (order) {
             //开启
             //启动价格监控
             //拉取订单信息
             this.lineStatus = this.statusRefresh();
+            const looper = async () => {
+                clearTimeout(this.mainTimer);
+                this.frameLoop.forEach(item => item.fn());
+                this.mainTimer = setTimeout(async () => {
+                    this.runState && await looper();
+                }, this.baseRate);
+            }
+            await looper();
         } else {
             //暂停
         }
