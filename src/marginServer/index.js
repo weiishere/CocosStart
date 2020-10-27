@@ -1,7 +1,7 @@
 /*
  * @Author: weishere.huang
  * @Date: 2020-10-12 14:09:11
- * @LastEditTime: 2020-10-13 16:58:57
+ * @LastEditTime: 2020-10-27 14:11:45
  * @LastEditors: weishere.huang
  * @Description: 
  * @~~
@@ -19,9 +19,9 @@ const buy = async (symbol) => {
         // console.log(positions);
 
 
-        // client.futuresLiquidationStream('BTCUSDT', (data) => {
-        //     console.log(data);
-        // });
+        client.futuresMarkPriceStream('BTCUSDT', (data) => {
+            console.log(data);
+        });
 
         //持仓
         // let position_data = await client.futuresPositionRisk(), markets = Object.keys( position_data );

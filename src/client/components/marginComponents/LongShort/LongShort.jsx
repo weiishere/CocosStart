@@ -22,9 +22,9 @@ export default function LongShort() {
             </ul>
         </div>
         <div className='md'>
-            <div className='short' style={{ top: '1rem' }}><span>12687</span></div>
-            <div className='price' style={{ top: '3rem' }}><span>12600</span></div>
-            <div className='long' style={{ top: '6rem' }}><span>12500</span></div>
+            <div className='short' style={{ top: '1rem' }}><span>12687.09</span></div>
+            <div className='price' style={{ top: '3rem' }}><span>12600.33</span></div>
+            <div className='long' style={{ top: '6rem' }}><span>12500.45</span></div>
         </div>
         <div className='ls ls_right'>
             <h3><span>(11520)</span>持仓-空</h3>

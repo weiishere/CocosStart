@@ -6,19 +6,26 @@ class Position {
         this.profit = 0;
         this.commission = 0;
         this.tradeList = [];
-        this.state = 'out';//in-场内、out-场外
+        this.state = 'init';//init-初始化、in-场内、out-场外
     }
     addTrade(info) {
         const trade = new Trade(info);
         trade.profit = 10;
         if (trade.side === 'SELL') {
             this.quantity -= trade.executedQty;
+            this.state = 'out';
         } else {
             this.quantity += trade.executedQty;
             this.state = 'in';
         }
         this.commission += trade.commission;
         this.tradeList.push(trade);
+    }
+    async buy(price, quantity) {
+        this.state = 'in';
+    }
+    async sell(price, quantity) {
+        this.state = 'in';
     }
     securityRefresh(btcPrice) {
         if (btcPrice) this.security = Number((btcPrice / this.quantity / 100).toFixed(2));

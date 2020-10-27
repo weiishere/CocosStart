@@ -7,4 +7,7 @@ module.exports = class MarginLauncher {
         if (!this.MarginLauncher) this.MarginLauncher = new MarginLauncher();
         return this.MarginLauncher;
     }
+    setScoket(scoketIO) {
+        this.scoketIO = scoketIO;
+    }
 }
