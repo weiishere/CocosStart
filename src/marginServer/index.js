@@ -19,9 +19,7 @@ const buy = async (symbol) => {
         // console.log(positions);
 
 
-        client.futuresMarkPriceStream('BTCUSDT', (data) => {
-            console.log(data);
-        });
+        
 
         //持仓
         // let position_data = await client.futuresPositionRisk(), markets = Object.keys( position_data );
