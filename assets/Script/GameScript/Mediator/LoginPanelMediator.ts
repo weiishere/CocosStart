@@ -35,7 +35,7 @@ export class LoginPanelMediator extends Mediator {
     public listNotificationInterests(): string[] {
         return [
             CommandDefine.UserLoginResponse,
-            CommandDefine.UserLoginRequest
+            //CommandDefine.UserLoginRequest
         ];
     }
 
