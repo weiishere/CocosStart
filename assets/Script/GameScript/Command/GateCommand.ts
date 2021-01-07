@@ -3,20 +3,20 @@ import { INotification } from "../../Framework/interfaces/INotification";
 import Command from "../../Framework/patterns/command/Command";
 import { GatePanelMediator } from "../Mediator/GatePanelMediator";
 import { MediatorDefine } from "../MahjongConst/MediatorDefine";
-import { ApplicationGlobal } from "../MahjongConst/ApplicationGlobal"
+import { NotificationDefine } from "../MahjongConst/NotificationDefine"
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { ProxyDefine } from "../MahjongConst/ProxyDefine";
 import { GateProxy } from "../Proxy/GateProxy";
-import { NotificationDefine } from "../MahjongConst/NotificationDefine"
-import { GateCommand } from "../Command/GateCommand"
 
-export class StartupCommand extends Command {
+export class GateCommand extends Command {
     public execute(notification: INotification): void {
         
-        Facade.Instance.registerMediator(new GatePanelMediator(MediatorDefine.GatePanel, ApplicationGlobal.GatePanel));
-
-        Facade.Instance.registerProxy(new GateProxy(ProxyDefine.Gate));
-
-        Facade.Instance.registerCommand(CommandDefine.GateCommand, GateCommand);
+        
+        switch (notification.getType()) {
+            case NotificationDefine.CheckLogin:
+                console.log('----检查登录状态----');
+                break;
+        }
     }
+
 }

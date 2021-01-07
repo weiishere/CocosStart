@@ -1,3 +1,3 @@
 export class ApplicationGlobal {
-    public static HallPanel: cc.Node = null;
+    public static GatePanel: cc.Node = null;
 }

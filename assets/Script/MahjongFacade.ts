@@ -7,10 +7,11 @@ import { CommandDefine } from "./GameScript/MahjongConst/CommandDefine";
 // import { ProxyDefine } from "./GameScript/GameConst/ProxyDefine";
 // import { LoginRequestProxy } from "./GameScript/Proxy/LoginRequestProxy";
 
-export class ApplicationFacade extends Facade {
+export class MahjongFacade extends Facade {
     public initializeController(): void {
         super.initializeController();
         this.registerCommand(CommandDefine.StartUp, StartupCommand);
+        
         //this.registerCommand(CommandDefine.CheckLoginState, CheckedLoginStateCommand);
         // this.registerCommand(CommandDefine.OpenLoginPanel, OpenLoginPanelCommand);
         // this.registerCommand(CommandDefine.UserLoginRequest, UserLoginRequestCommand);
@@ -28,5 +29,6 @@ export class ApplicationFacade extends Facade {
 
     public startup(): void {
         this.sendNotification(CommandDefine.StartUp);
+        this.sendNotification(CommandDefine.InitGatePanel, {});
     }
-}
+}   

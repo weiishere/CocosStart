@@ -5,10 +5,12 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
+import { MahjongFacade } from "./MahjongFacade";
+import { ApplicationGlobal } from "./GameScript/MahjongConst/ApplicationGlobal";
 
 @ccclass
-export default class NewClass extends cc.Component {
+export default class Game extends cc.Component {
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -16,12 +18,16 @@ export default class NewClass extends cc.Component {
     @property
     text: string = 'hello';
 
-    // LIFE-CYCLE CALLBACKS:
+    @property(cc.Prefab)
+    gateView: cc.Prefab = null;
 
-    // onLoad () {}
 
-    start () {
+    onLoad() {
+        ApplicationGlobal.GatePanel = this.node;
+    }
 
+    start() {
+        new MahjongFacade().startup();
     }
 
     // update (dt) {}

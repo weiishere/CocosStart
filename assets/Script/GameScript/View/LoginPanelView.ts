@@ -9,6 +9,7 @@ export class LoginPanelView extends ViewComponent {
     bindUI(): void {
         this.loginButton = this.root.getChildByName("login").getComponent(cc.Button);
         this.tipsLabel = this.root.getChildByName("label").getComponent(cc.Label);
+        
     }
 
     public setLoginEvent(callback: Function): void {
