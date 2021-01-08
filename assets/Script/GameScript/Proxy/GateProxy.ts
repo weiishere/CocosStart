@@ -19,7 +19,8 @@ export class GateProxy extends BaseProxy {
     // ]
     /**检查登录状态 */
     public checkLogin(): boolean {
-        return this.repository.userInfo.uid ? true : false;
+        let loginData = this.getLocalCacheDataProxy().getLoginData();
+        return loginData != null ? true : false;
     }
     public getUserInfo(): UserInfo {
         return this.repository.userInfo;

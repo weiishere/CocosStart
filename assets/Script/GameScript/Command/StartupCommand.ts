@@ -21,8 +21,13 @@ export class StartupCommand extends Command {
         Facade.Instance.registerMediator(new GatePanelMediator(MediatorDefine.GatePanel, ApplicationGlobal.GatePanel));
         /**放到command的notification命令或逻辑注意一个原则：可能会被其他view重用，不然尽量放到mediator中 */
         Facade.Instance.registerCommand(CommandDefine.GateCommand, GateCommand);
+        
+        Facade.Instance.registerMediator(new GatePanelMediator(MediatorDefine.GatePanel, ApplicationGlobal.GatePanel));
+        // StartupCommand 只执行一次
+        this.facade.removeCommand(CommandDefine.StartUp);
 
         //初始化Gate
-        //this.sendNotification(CommandDefine.InitGatePanel, {});
+        this.sendNotification(CommandDefine.InitGatePanel, {});
+
     }
 }
