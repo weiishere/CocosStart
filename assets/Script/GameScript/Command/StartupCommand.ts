@@ -7,7 +7,7 @@ import { ApplicationGlobal } from "../MahjongConst/ApplicationGlobal"
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { ProxyDefine } from "../MahjongConst/ProxyDefine";
 import { GateProxy } from "../Proxy/GateProxy";
-import { NotificationDefine } from "../MahjongConst/NotificationDefine"
+import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine"
 import { GateCommand } from "../Command/GateCommand"
 
 export class StartupCommand extends Command {
@@ -16,6 +16,10 @@ export class StartupCommand extends Command {
 
         Facade.Instance.registerProxy(new GateProxy(ProxyDefine.Gate));
 
+        /**放到command的notification命令或逻辑注意一个原则：可能会被其他view重用，不然尽量放到mediator中 */
         Facade.Instance.registerCommand(CommandDefine.GateCommand, GateCommand);
+
+        //初始化Gate
+        //this.sendNotification(CommandDefine.InitGatePanel, {});
     }
 }
