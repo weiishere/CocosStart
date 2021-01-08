@@ -1,20 +1,43 @@
-import Proxy from "../../Framework/patterns/proxy/Proxy";
+import BaseProxy from "./BaseProxy";
 import { CommandDefine } from "../GameConst/CommandDefine";
 import { GateRepository, UserInfo } from "../repositories/GateRepository";
 
 
-export class GateProxy extends Proxy {
+export class GateProxy extends BaseProxy {
     private repository: GateRepository;
     public constructor(proxyName: string = null, data: any = null) {
         super(proxyName, data);
-        debugger
         this.repository = new GateRepository();
     }
+    // protected keyMap = [
+    //     { sysKey: '', serverKey: '' },
+    //     { sysKey: '', serverKey: '' },
+    //     { sysKey: '', serverKey: '' },
+    //     { sysKey: '', serverKey: '' },
+    //     { sysKey: '', serverKey: '' },
+    //     { sysKey: '', serverKey: '' },
+    // ]
     /**检查登录状态 */
     public checkLogin(): boolean {
         return this.repository.userInfo.uid ? true : false;
     }
-    public login(userInfo: UserInfo): void {
-        this.repository.userInfo = userInfo;
+    public getUserInfo(): UserInfo {
+        return this.repository.userInfo;
     }
+    public login(userInfoData): void {
+        //需要对userInfoData进行转义，或者拆分，因为服务器的数据和客户端的数据结构不一致
+        this.repository.userInfo = userInfoData;
+    }
+    // public dataTranslate(data, type, directionTo: 'sys' | 'server',) {
+    //     let result;
+    //     switch (directionTo) {
+    //         case 'server':
+
+    //             break;
+    //         case 'sys':
+                
+    //             break;
+    //     }
+    //     return result;
+    // }
 }

@@ -9,7 +9,17 @@ export type UserInfo = {
 }
 
 export class GateRepository {
-    public userInfo: UserInfo
-    public loginPhoneNumber:string
-    public verificationCode:string
+    public userInfo: UserInfo = {
+        uid: '',
+        nickName: '',
+        gender: 0,
+        headImg: '',
+        score: 0,
+        phone: '',
+        openId: ''
+    }
+    public loginPhoneNumber: string = ""
+    public verificationCode: string = ""
+
+
 }
