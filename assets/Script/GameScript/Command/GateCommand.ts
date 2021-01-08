@@ -7,16 +7,18 @@ import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine"
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { ProxyDefine } from "../MahjongConst/ProxyDefine";
 import { GateProxy } from "../Proxy/GateProxy";
+import { BaseCommand } from './BaseCommand';
 
-export class GateCommand extends Command {
+export class GateCommand extends BaseCommand {
     public execute(notification: INotification): void {
         const gateProxy = Facade.Instance.retrieveProxy(ProxyDefine.Gate) as GateProxy;
         switch (notification.getType()) {
             /**检查登录状态 */
             case NotificationTypeDefine.CheckLogin:
-                const { callback } = notification.getBody();
-                const isLogin = gateProxy.checkLogin();
-                callback && callback(isLogin, (isLogin && gateProxy.getUserInfo()));
+                // const { callback } = notification.getBody();
+                // const isLogin = gateProxy.checkLogin();
+                // callback && callback(isLogin, (isLogin && gateProxy.getUserInfo()));
+                this.checkLoginStatus();
                 break;
             /**登录信息录入 */
             case NotificationTypeDefine.UserLogin:
@@ -24,7 +26,7 @@ export class GateCommand extends Command {
                 //虚拟登录
                 gateProxy.login({
                     uid: '0000112',
-                    nickName: 'visitor', 
+                    nickName: 'visitor',
                     gender: 0,
                     headImg: '',
                     score: 0,
@@ -36,6 +38,15 @@ export class GateCommand extends Command {
             case NotificationTypeDefine.Authentication:
 
                 break;
+        }
+    }
+
+    public checkLoginStatus(): void {
+        let loginData = this.getLocalCacheDataProxy().getLoginData();
+        if (loginData === null) {
+            this.sendNotification(CommandDefine.OpenLoginPanel);
+        } else {
+
         }
     }
 

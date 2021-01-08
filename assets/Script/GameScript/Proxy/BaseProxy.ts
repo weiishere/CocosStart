@@ -1,6 +1,8 @@
 import Proxy from "../../Framework/patterns/proxy/Proxy";
 import { CommandDefine } from "../GameConst/CommandDefine";
 import { GateRepository, UserInfo } from "../repositories/GateRepository";
+import { LocalCacheDataProxy } from './LocalCacheDataProxy';
+import { ProxyDefine } from '../MahjongConst/ProxyDefine';
 
 
 export default class BaseProxy extends Proxy {
@@ -36,5 +38,9 @@ export default class BaseProxy extends Proxy {
             }
         }
         return o;
+    }
+
+    protected getLocalCacheDataProxy():LocalCacheDataProxy{
+        return <LocalCacheDataProxy>this.facade.retrieveProxy(ProxyDefine.LocalCacheData);
     }
 }

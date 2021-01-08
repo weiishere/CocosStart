@@ -14,7 +14,6 @@ import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
 
 export class StartupCommand extends Command {
     public execute(notification: INotification): void {
-        Facade.Instance.registerMediator(new GatePanelMediator(MediatorDefine.GatePanel, ApplicationGlobal.GatePanel));
 
         Facade.Instance.registerProxy(new GateProxy(ProxyDefine.Gate));
         Facade.Instance.registerProxy(new WebSockerProxy(ProxyDefine.WebSocket));
@@ -22,8 +21,13 @@ export class StartupCommand extends Command {
 
         /**放到command的notification命令或逻辑注意一个原则：可能会被其他view重用，不然尽量放到mediator中 */
         Facade.Instance.registerCommand(CommandDefine.GateCommand, GateCommand);
+        
+        Facade.Instance.registerMediator(new GatePanelMediator(MediatorDefine.GatePanel, ApplicationGlobal.GatePanel));
+        // StartupCommand 只执行一次
+        this.facade.removeCommand(CommandDefine.StartUp);
 
         //初始化Gate
-        //this.sendNotification(CommandDefine.InitGatePanel, {});
+        this.sendNotification(CommandDefine.InitGatePanel, {});
+
     }
 }
