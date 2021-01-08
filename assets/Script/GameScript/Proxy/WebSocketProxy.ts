@@ -2,6 +2,7 @@ import { LocalCacheDataProxy } from './LocalCacheDataProxy';
 import { LoginData } from '../GameData/LoginData';
 import { OperationDefine } from '../GameConst/OperationDefine';
 import Proxy from '../../Framework/patterns/proxy/Proxy';
+import Facade from '../../Framework/care/Facade';
 
 class WebSocketData {
     gsData: any;
@@ -45,12 +46,12 @@ export class WebSockerProxy extends Proxy {
 
     /** 心跳定时任务编号 */
     private heartbeatIntervalNumber: number = -1;
-    
+
     public constructor(proxyName: string = null, data: any = null) {
         super(proxyName, data);
     }
 
-    connect(wsUrl) {
+    connect(wsUrl: string) {
         if (this.loginData === null) {
             this.loginData = this.getLocalCacheDataProxy().getLoginData();
             this.tokenData = this.getLocalCacheDataProxy().getUserToken();
@@ -72,7 +73,7 @@ export class WebSockerProxy extends Proxy {
     }
 
     getLocalCacheDataProxy(): LocalCacheDataProxy {
-        return null;
+        return <LocalCacheDataProxy>this.facade.retrieveProxy("LocalCacheDataProxy");
     }
 
     onWebSocketOpen(event: Event) {

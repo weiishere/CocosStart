@@ -12,7 +12,6 @@ import { GateCommand } from "../Command/GateCommand"
 
 export class StartupCommand extends Command {
     public execute(notification: INotification): void {
-        
         Facade.Instance.registerMediator(new GatePanelMediator(MediatorDefine.GatePanel, ApplicationGlobal.GatePanel));
 
         Facade.Instance.registerProxy(new GateProxy(ProxyDefine.Gate));
