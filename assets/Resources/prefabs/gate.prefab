@@ -109,15 +109,19 @@
     "_id": ""
   },
   {
-    "__type__": "37771hZKQlArJCwJrx7nGga",
+    "__type__": "8a6f6wotFlAcpwADiZ3T8qS",
     "_name": "",
     "_objFlags": 0,
     "node": {
       "__id__": 1
     },
     "_enabled": true,
-    "LoginView": null,
-    "AccountPanel": null,
+    "LoginView": {
+      "__uuid__": "4890b8da-4005-4714-bcfc-97eac061c875"
+    },
+    "AccountPanel": {
+      "__uuid__": "c38d824a-f2c6-41c9-b4be-65c8b13c387e"
+    },
     "GameList": null,
     "_id": ""
   },

@@ -3,7 +3,7 @@ const { ccclass, property } = cc._decorator;
 //import Facade from "../../Framework/care/Facade";
 import { MahjongFacade } from "../../MahjongFacade";
 import { CommandDefine } from "../MahjongConst/CommandDefine"
-import { NotificationDefine } from "../MahjongConst/NotificationDefine"
+import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine"
 
 @ccclass
 export default class Gate extends cc.Component {
@@ -24,7 +24,7 @@ export default class Gate extends cc.Component {
 
     start() {
         
-        MahjongFacade.Instance.sendNotification(CommandDefine.GateCommand, {}, NotificationDefine.CheckLogin);
+        
     }
     // update (dt) {}
 }

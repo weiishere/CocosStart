@@ -29,6 +29,6 @@ export class MahjongFacade extends Facade {
 
     public startup(): void {
         this.sendNotification(CommandDefine.StartUp);
-        this.sendNotification(CommandDefine.InitGatePanel, {});
+        
     }
 }   
