@@ -11,17 +11,19 @@ import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine"
 import { GateCommand } from "../Command/GateCommand"
 import { WebSockerProxy } from '../Proxy/WebSocketProxy';
 import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
+import { ConfigProxy } from "../Proxy/ConfigProxy";
 
 export class StartupCommand extends Command {
     public execute(notification: INotification): void {
         Facade.Instance.registerProxy(new GateProxy(ProxyDefine.Gate));
         Facade.Instance.registerProxy(new WebSockerProxy(ProxyDefine.WebSocket));
         Facade.Instance.registerProxy(new LocalCacheDataProxy(ProxyDefine.LocalCacheData));
+        Facade.Instance.registerProxy(new ConfigProxy(ProxyDefine.Config));
 
         Facade.Instance.registerMediator(new GatePanelMediator(MediatorDefine.GatePanel, ApplicationGlobal.GatePanel));
         /**放到command的notification命令或逻辑注意一个原则：可能会被其他view重用，不然尽量放到mediator中 */
         Facade.Instance.registerCommand(CommandDefine.GateCommand, GateCommand);
-        
+
         Facade.Instance.registerMediator(new GatePanelMediator(MediatorDefine.GatePanel, ApplicationGlobal.GatePanel));
         // StartupCommand 只执行一次
         this.facade.removeCommand(CommandDefine.StartUp);

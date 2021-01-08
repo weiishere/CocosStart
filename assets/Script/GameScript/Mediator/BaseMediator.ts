@@ -20,7 +20,6 @@ export default class BaseMediator extends Mediator {
     }
 
     protected initSucceed(): void {
-        
     }
 
     /**

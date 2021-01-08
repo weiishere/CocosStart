@@ -4,12 +4,13 @@ import Mediator from "../../Framework/patterns/mediator/Mediator";
 import BaseMediator from "./BaseMediator";
 import { PrefabDefine } from "../MahjongConst/PrefabDefine";
 import { CommandDefine } from "../MahjongConst/CommandDefine";
-import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine"; 
+import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
 import { LoginResponseRepository } from "../repositories/LoginResponseRepository";
 import { GatePanelView } from '../Component/GatePanelView';
 import { ProxyDefine } from "../MahjongConst/ProxyDefine";
 import { GateRepository } from "../repositories/GateRepository"
 import { GateProxy } from "../Proxy/GateProxy"
+import { GateEventDefine } from '../GameConst/Event/GateEventDefine';
 
 export class GatePanelMediator extends BaseMediator {
     //private gatePanelView: GatePanelView = null;
@@ -20,17 +21,6 @@ export class GatePanelMediator extends BaseMediator {
     private gateProxy: GateProxy;
     public constructor(mediatorName: string = null, viewComponent: any = null) {
         super(mediatorName, viewComponent);
-        // this.gateProxy = Facade.Instance.retrieveProxy(ProxyDefine.Gate) as GateProxy;
-        // this.createPrefab(PrefabDefine.GatePanel).then((prefab) => {
-        //     this.viewComponent.addChild(prefab);
-        //     const scriptComp: GatePanelView = (prefab as cc.Component).getComponent('GatePanelView');
-        //     if (this.gateProxy.checkLogin()) {
-        //         this.viewComponent.addChild(cc.instantiate(scriptComp.AccountPanel));
-        //         //this.viewComponent.addChild(cc.instantiate(scriptComp.GameList));
-        //     } else {
-        //         this.viewComponent.addChild(cc.instantiate(scriptComp.LoginView));
-        //     }
-        // })
     }
 
     protected prefabSource(): string {
@@ -38,7 +28,17 @@ export class GatePanelMediator extends BaseMediator {
     }
 
     protected initSucceed(): void {
-        this.sendNotification(CommandDefine.GateCommand, null, NotificationTypeDefine.CheckLogin);
+        this.listenerEvent();
+        this.sendNotification(CommandDefine.GateCommand, null, NotificationTypeDefine.LoadConfig);
+    }
+
+    /** 事件监听方法 */
+    private listenerEvent(): void {
+        this.viewComponent.on(GateEventDefine.LOGIN_BTN_EVENT, this.onLoginBtnEvent);
+    }
+
+    private onLoginBtnEvent(): void {
+
     }
 
     public listNotificationInterests(): string[] {

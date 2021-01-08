@@ -1,5 +1,7 @@
 export enum NotificationTypeDefine {
-    UserLogin = "UserLogin",
+    LoadConfig = "LoadConfig",
+    UserLoginOrRegister = "UserLoginOrRegister",
     CheckLogin = "CheckLogin",
-    Authentication = "Authentication"
+    Authentication = "Authentication",
+    GetVerifyCode = "GetVerifyCode",
 }

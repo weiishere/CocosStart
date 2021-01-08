@@ -8,40 +8,40 @@ import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { ProxyDefine } from "../MahjongConst/ProxyDefine";
 import { GateProxy } from "../Proxy/GateProxy";
 import { BaseCommand } from './BaseCommand';
+import { ConfigProxy } from "../Proxy/ConfigProxy";
 
 export class GateCommand extends BaseCommand {
     public execute(notification: INotification): void {
         const gateProxy = Facade.Instance.retrieveProxy(ProxyDefine.Gate) as GateProxy;
         switch (notification.getType()) {
             /**检查登录状态 */
+            case NotificationTypeDefine.LoadConfig:
+                this.loadConfig();
+                break;
             case NotificationTypeDefine.CheckLogin:
-                // const { callback } = notification.getBody();
-                // const isLogin = gateProxy.checkLogin();
-                // callback && callback(isLogin, (isLogin && gateProxy.getUserInfo()));
                 this.checkLoginStatus();
                 break;
             /**登录信息录入 */
-            case NotificationTypeDefine.UserLogin:
-                const { uid, nickName, gender, headImg, score, phone, openId } = notification.getBody().userInfo;
-                //虚拟登录
-                gateProxy.login({
-                    uid: '0000112',
-                    nickName: 'visitor',
-                    gender: 0,
-                    headImg: '',
-                    score: 0,
-                    phone: '13000000000',
-                    openId: 'XXX'
-                });
+            case NotificationTypeDefine.UserLoginOrRegister:
+                break;
+            case NotificationTypeDefine.GetVerifyCode:
                 break;
             //鉴权
             case NotificationTypeDefine.Authentication:
-
                 break;
         }
     }
 
-    public checkLoginStatus(): void {
+    private loadConfig(): void {
+        let configProxy = <ConfigProxy>this.facade.retrieveProxy(ProxyDefine.Config);
+        configProxy.loadConfig();
+    }
+
+    private getGateProxy(): GateProxy {
+        return <GateProxy>this.facade.retrieveProxy(ProxyDefine.Gate);
+    }
+
+    private checkLoginStatus(): void {
         let loginData = this.getLocalCacheDataProxy().getLoginData();
         if (loginData === null) {
             this.sendNotification(CommandDefine.OpenLoginPanel);
@@ -50,4 +50,13 @@ export class GateCommand extends BaseCommand {
         }
     }
 
+    public getGetVerifyCode(body): void {
+        this.getGateProxy().getVerifyCode(body.phoneNo, () => {
+            
+        });
+    }
+
+    private loginOrRegister(phoneNo): void {
+
+    }
 }

@@ -1,5 +1,5 @@
 
-export class HttpUril {
+export class HttpUtil {
     static METHOD_POST: string = 'POST';
     static METHOD_GET: string = 'GET';
 
@@ -105,7 +105,7 @@ export class HttpUril {
      * @param isAsync           是否异步请求
      * @constructor
      */
-    static send(url:string, resultCb:Function, failCb:Function, method, requestData, acctName='', acctToken='', isAsync = true) {
+    static send(url:string, resultCb:Function, failCb:Function, method, requestData=undefined, acctName='', acctToken='', isAsync = true) {
         if (!url) {
             cc.log('HTTP URL is null');
 
