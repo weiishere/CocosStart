@@ -11,7 +11,9 @@ export class LoginPanelView extends ViewComponent {
         this.tipsLabel = this.root.getChildByName("label").getComponent(cc.Label);
         
     }
-
+    public async bindEvent() {
+        
+    }
     public setLoginEvent(callback: Function): void {
         this.loginButton.node.on(cc.Node.EventType.TOUCH_END, callback, this);
     }

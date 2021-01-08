@@ -8,6 +8,7 @@ export default abstract class ViewComponent extends cc.Component {
         this.root = this.node;
         cc.log(`${this.root.name} onLoad`);
         await this.bindUI();
+        this.bindEvent();
     }
 
     start() {
@@ -24,4 +25,5 @@ export default abstract class ViewComponent extends cc.Component {
     //     })
     // }
     public abstract bindUI(): void
+    public abstract bindEvent(): void
 }

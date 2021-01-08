@@ -32,6 +32,9 @@ export class GatePanelView extends ViewComponent {
         // const b = cc.instantiate(this.LoginView);
         // this.root.addChild(b);
     }
+    public async bindEvent() {
+        
+    }
     start() {
 
     }
