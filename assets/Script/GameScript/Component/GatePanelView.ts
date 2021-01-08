@@ -17,7 +17,7 @@ export class GatePanelView extends ViewComponent {
 
     @property(cc.Prefab)
     GameList: cc.Prefab = null;
-    public async bindUI() {
+    protected async bindUI() {
         // this.loginButton = this.root.getChildByName("login").getComponent(cc.Button);
         // this.tipsLabel = this.root.getChildByName("label").getComponent(cc.Label);
 
@@ -32,7 +32,7 @@ export class GatePanelView extends ViewComponent {
         // const b = cc.instantiate(this.LoginView);
         // this.root.addChild(b);
     }
-    public async bindEvent() {
+    protected async bindEvent() {
         
     }
     start() {

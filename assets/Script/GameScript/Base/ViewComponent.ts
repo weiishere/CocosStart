@@ -24,6 +24,6 @@ export default abstract class ViewComponent extends cc.Component {
     //         });
     //     })
     // }
-    public abstract bindUI(): void
-    public abstract bindEvent(): void
+    protected abstract bindUI(): void
+    protected abstract bindEvent(): void
 }
