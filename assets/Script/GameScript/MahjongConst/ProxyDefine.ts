@@ -1,3 +1,5 @@
 export enum ProxyDefine {
-    Gate = "Gate"
+    Gate = "Gate",
+    WebSocket = "Websocket",
+    LocalCacheData = "LocalCacheData",
 }
