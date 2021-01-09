@@ -1,6 +1,10 @@
 {
   "ver": "1.0.8",
+<<<<<<< HEAD
   "uuid": "1bf10a0f-9b47-4c67-894d-f06bfbb045d9",
+=======
+  "uuid": "31d79885-df49-4852-b683-f0c9deda186b",
+>>>>>>> ee24a0090312fed236a5b98d0d908d66549e073d
   "isPlugin": false,
   "loadPluginInWeb": true,
   "loadPluginInNative": true,
