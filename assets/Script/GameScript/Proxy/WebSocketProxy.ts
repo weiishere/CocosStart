@@ -3,6 +3,11 @@ import { LoginData } from '../GameData/LoginData';
 import { OperationDefine } from '../GameConst/OperationDefine';
 import Proxy from '../../Framework/patterns/proxy/Proxy';
 import Facade from '../../Framework/care/Facade';
+import { ProxyDefine } from '../MahjongConst/ProxyDefine';
+import { CommandDefine } from '../MahjongConst/CommandDefine';
+import { NotificationTypeDefine } from '../MahjongConst/NotificationTypeDefine';
+import { ServerCode } from '../GameConst/ServerCode';
+import { DymjProtocol } from '../Protocol/DymjProtocol';
 
 class WebSocketData {
     gsData: any;
@@ -31,6 +36,21 @@ class WebSocketData {
     }
 }
 
+
+class SendMsgData {
+    op: number;
+    msgType: number;
+    time: number;
+    callback: Function;
+
+    constructor(op: number, msgType: number, time: number, callback: Function) {
+        this.op = op;
+        this.msgType = msgType;
+        this.time = time;
+        this.callback = callback;
+    }
+}
+
 export class WebSockerProxy extends Proxy {
 
     private __wsUrl: string;
@@ -46,6 +66,9 @@ export class WebSockerProxy extends Proxy {
 
     /** 心跳定时任务编号 */
     private heartbeatIntervalNumber: number = -1;
+
+    /** 待返回数据 */
+    private waitResultData: Map<string, SendMsgData> = new Map();
 
     public constructor(proxyName: string = null, data: any = null) {
         super(proxyName, data);
@@ -66,14 +89,14 @@ export class WebSockerProxy extends Proxy {
         }
 
         this.__webSocket = new WebSocket(this.__wsUrl);
-        this.__webSocket.onopen = this.onWebSocketOpen;
-        this.__webSocket.onmessage = this.onWebSocketMessage;
-        this.__webSocket.onclose = this.onWebSocketClose;
-        this.__webSocket.onerror = this.onWebSocketError;
+        this.__webSocket.onopen = this.onWebSocketOpen.bind(this);
+        this.__webSocket.onmessage = this.onWebSocketMessage.bind(this);
+        this.__webSocket.onclose = this.onWebSocketClose.bind(this);
+        this.__webSocket.onerror = this.onWebSocketError.bind(this);
     }
 
     getLocalCacheDataProxy(): LocalCacheDataProxy {
-        return <LocalCacheDataProxy>this.facade.retrieveProxy("LocalCacheDataProxy");
+        return <LocalCacheDataProxy>this.facade.retrieveProxy(ProxyDefine.LocalCacheData);
     }
 
     onWebSocketOpen(event: Event) {
@@ -110,6 +133,11 @@ export class WebSockerProxy extends Proxy {
         let op: number = resData.op;
         // 错误码
         let errorCode: number = dt.errorCode;
+
+        if (this.errorCodeHandle(errorCode)) {
+            return;
+        }
+
         switch (op) {
             case OperationDefine.Authentication:
                 this.gateWayLoginRes(resData);
@@ -137,11 +165,20 @@ export class WebSockerProxy extends Proxy {
         }
     }
 
+    private errorCodeHandle(errorCode: number): boolean {
+        if (errorCode == ServerCode.SUCCEED) {
+            return false;
+        }
+
+        cc.log("网关返回错误码: ", errorCode);
+        return true;
+    }
+
     /**
      * 网关登录成功返回
      */
     gateWayLoginRes(resData) {
-
+        this.facade.sendNotification(CommandDefine.GateCommand, null, NotificationTypeDefine.Authentication);
     }
 
     /**
@@ -157,11 +194,51 @@ export class WebSockerProxy extends Proxy {
 
         // 游戏的操作号，对应 OperationDefine
         let operationNo = gameData.operationNo;
+        // 消息号
+        let msgType = gameData.msgType;
         // 游戏服务返回的错误码
         let errorType = gameData.errorType;
         // 游戏内容
         let content = gameData.content;
 
+        this.deleteSendMsgData(operationNo, msgType);
+    }
+
+    /**
+     * 发送游戏消息
+     * @param {*} op 
+     * @param {*} targetData 
+     */
+    sendGameData(op: number, msgType: number, content: any, callback: Function = null) {
+        let messageObj = {
+            msgType: msgType,
+            content: content,
+            messNum: 0
+        }
+
+        // 由于麻将的客户端发送消息和返回的消息号不一致，这里做了一个转换
+        if (op === OperationDefine.DA_YI_ER_REN_MAHJONG) {
+            msgType = DymjProtocol.dymjMsgTypeConvert(msgType);
+        }
+
+        let msgKey = op + "-" + msgType;
+
+        let sendMsgData = this.waitResultData.get(msgKey);
+        if (sendMsgData) {
+            cc.log(msgKey, "消息还没有返回，已运行时长:", sendMsgData.time);
+            return;
+        }
+
+        if (callback) {
+            this.waitResultData.set(msgKey, new SendMsgData(op, msgType, 5, callback));
+        }
+
+        this.send({ op: op }, messageObj);
+    }
+
+    deleteSendMsgData(op: number, msgType: number) {
+        let msgKey = op + "-" + msgType;
+        this.waitResultData.delete(msgKey);
     }
 
     send(gsData: any, targetData?: any) {
@@ -197,7 +274,7 @@ export class WebSockerProxy extends Proxy {
     startHeartbeatHandle() {
         this.stopHeartbeatHandle();
         // 10秒钟发送一次心跳
-        this.heartbeatIntervalNumber = setInterval(this.heartbeatHandle, 10000);
+        this.heartbeatIntervalNumber = setInterval(this.heartbeatHandle.bind(this), 10000);
     }
 
     stopHeartbeatHandle() {
@@ -206,6 +283,28 @@ export class WebSockerProxy extends Proxy {
         }
         clearInterval(this.heartbeatIntervalNumber);
         this.heartbeatIntervalNumber = -1;
+    }
+
+    /**
+     * 超时消息定时任务
+     */
+    timeoutMsgTimedTask() {
+        for (const key in this.waitResultData.keys()) {
+            let sendMsgData: SendMsgData = this.waitResultData.get(key);
+            if (sendMsgData.time <= 0) {
+                this.waitResultData.delete(key);
+                this.handleTimeoutMsg(sendMsgData);
+            }
+            sendMsgData.time--;
+        }
+    }
+
+    /** 处理超时的定时任务 */
+    handleTimeoutMsg(sendMsgData: SendMsgData) {
+        if (sendMsgData.callback) {
+            sendMsgData.callback();
+            // 提示某个消息已经超时了
+        }
     }
 
     onWebSocketClose(event: Event) {
@@ -217,4 +316,7 @@ export class WebSockerProxy extends Proxy {
         cc.log("onWebSocketError", event);
     }
 
+    onRegister() {
+        setInterval(this.timeoutMsgTimedTask.bind(this), 1000);
+    }
 }

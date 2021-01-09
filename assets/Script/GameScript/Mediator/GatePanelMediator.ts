@@ -34,11 +34,24 @@ export class GatePanelMediator extends BaseMediator {
 
     /** 事件监听方法 */
     private listenerEvent(): void {
-        this.viewComponent.on(GateEventDefine.LOGIN_BTN_EVENT, this.onLoginBtnEvent);
+        // 监听登录按钮请求方法
+        this.viewComponent.on(GateEventDefine.LOGIN_BTN_EVENT, this.onLoginBtnEvent.bind(this));
+        // 监听验证码按钮请求事件
+        this.viewComponent.on(GateEventDefine.GET_VERIFY_CODE, this.onGetVerifyCodeEvent.bind(this));
     }
 
-    private onLoginBtnEvent(): void {
+    private onLoginBtnEvent(event: cc.Event.EventCustom): void {
+        // 停止冒泡
+        event.stopPropagation();
 
+        // 注册或者登录
+        this.sendNotification(CommandDefine.GateCommand, event.getUserData(), NotificationTypeDefine.UserLoginOrRegister);
+    }
+
+    private onGetVerifyCodeEvent(event: cc.Event.EventCustom): void {
+        // 停止冒泡
+        event.stopPropagation();
+        this.sendNotification(CommandDefine.GateCommand, event.getUserData(), NotificationTypeDefine.GetVerifyCode);
     }
 
     public listNotificationInterests(): string[] {

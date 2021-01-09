@@ -9,6 +9,7 @@ import { ProxyDefine } from "../MahjongConst/ProxyDefine";
 import { GateProxy } from "../Proxy/GateProxy";
 import { BaseCommand } from './BaseCommand';
 import { ConfigProxy } from "../Proxy/ConfigProxy";
+import { PhoneRegisterOrLoginData } from '../GameData/PhoneRegisterOrLoginData';
 
 export class GateCommand extends BaseCommand {
     public execute(notification: INotification): void {
@@ -23,11 +24,15 @@ export class GateCommand extends BaseCommand {
                 break;
             /**登录信息录入 */
             case NotificationTypeDefine.UserLoginOrRegister:
+                this.loginOrRegister(notification.getBody())
                 break;
             case NotificationTypeDefine.GetVerifyCode:
+                this.getGetVerifyCode(notification.getBody());
                 break;
-            //鉴权
+            /** websocket鉴权成功之后收到的消息 */
             case NotificationTypeDefine.Authentication:
+                // 这里处理后续功能
+                cc.log("websocket 鉴权成功");
                 break;
         }
     }
@@ -46,17 +51,17 @@ export class GateCommand extends BaseCommand {
         if (loginData === null) {
             this.sendNotification(CommandDefine.OpenLoginPanel);
         } else {
-
+            this.getGateProxy().localCahceLogin(loginData);
         }
     }
 
-    public getGetVerifyCode(body): void {
+    public getGetVerifyCode(body: PhoneRegisterOrLoginData): void {
         this.getGateProxy().getVerifyCode(body.phoneNo, () => {
-            
+
         });
     }
 
-    private loginOrRegister(phoneNo): void {
-
+    private loginOrRegister(body: PhoneRegisterOrLoginData): void {
+        this.getGateProxy().loginOrRegiter(body);
     }
 }

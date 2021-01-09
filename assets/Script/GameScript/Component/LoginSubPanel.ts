@@ -1,6 +1,8 @@
 const { ccclass, property } = cc._decorator;
 import ViewComponent from "../Base/ViewComponent";
 import { PrefabDefine } from "../MahjongConst/PrefabDefine"
+import { GateEventDefine } from '../GameConst/Event/GateEventDefine';
+import { PhoneRegisterOrLoginData } from '../GameData/PhoneRegisterOrLoginData';
 
 @ccclass
 export class LoginSubPanel extends ViewComponent {
@@ -22,15 +24,43 @@ export class LoginSubPanel extends ViewComponent {
         this.cancleButton = this.root.getChildByName("Cancle").getComponent(cc.Button);
     }
     protected bindEvent() {
-        this.verButton.node.on(cc.Node.EventType.TOUCH_END, () => {
-
-        }, this, true);
+        this.loginButton.node.on(cc.Node.EventType.TOUCH_END, this.loginBtnEvent.bind(this))
+        this.verButton.node.on(cc.Node.EventType.TOUCH_END, this.getVerifyCodeEvent.bind(this))
 
     }
     public bindCancleEvent(callback: Function) {
-        
+
         this.node.getChildByName("Cancle").getComponent(cc.Button).node.on(cc.Node.EventType.TOUCH_END, callback, this, true);
     }
+
+    public getVerifyCodeEvent(): void {
+
+        let phoneNo = this.phoneInput.string;
+        if (phoneNo.length != 11) {
+            return;
+        }
+
+        this.dispatchCustomEvent(GateEventDefine.GET_VERIFY_CODE, new PhoneRegisterOrLoginData(phoneNo, "", ""));
+    }
+
+    public loginBtnEvent(): void {
+        let phoneNo = this.phoneInput.string;
+        if (phoneNo.length != 11) {
+            return;
+        }
+
+        let code = this.verificationInput.string;
+        if (code.length != 6) {
+            return;
+        }
+
+        // 验证码可以为空，为空表示登录
+        let inviteCode = this.inviteInput.string;
+
+        this.dispatchCustomEvent(GateEventDefine.LOGIN_BTN_EVENT, new PhoneRegisterOrLoginData(phoneNo, code, inviteCode));
+    }
+
+
     private onTouchEndCallback() {
         // const node = cc.instantiate(this.PhoneLoginAlert);
         // this.root.addChild(node);

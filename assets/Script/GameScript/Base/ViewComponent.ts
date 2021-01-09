@@ -26,4 +26,15 @@ export default abstract class ViewComponent extends cc.Component {
     // }
     protected abstract bindUI(): void
     protected abstract bindEvent(): void
+
+    /**
+     * 发送自定义事件
+     * @param eventName 事件名称
+     * @param body 事件内容
+     */
+    protected dispatchCustomEvent(eventName: string, body: any): void {
+        let custom = new cc.Event.EventCustom(eventName, true);
+        custom.setUserData(body);
+        this.node.dispatchEvent(custom);
+    }
 }
