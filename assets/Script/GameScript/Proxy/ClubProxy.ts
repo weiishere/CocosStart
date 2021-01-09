@@ -30,19 +30,26 @@ export class ClubProxy extends ModuleProxy {
             let s2CJoinClubInfo: S2CJoinClubInfo = <S2CJoinClubInfo>content;
             cc.log("俱乐部登录返回", s2CJoinClubInfo);
 
-            this.sendNotification(CommandDefine.OpenDeskList, s2CJoinClubInfo);
+            this.sendNotification(CommandDefine.OpenDeskList, s2CJoinClubInfo, NotificationTypeDefine.ClubJoinClob);
         } else if (msgType === ClubProtocol.S2C_PUSH_ADD_ROOM) {
             let s2CClubRoomInfoBase: S2CClubRoomInfoBase = <S2CClubRoomInfoBase>content;
+            this.sendNotification(CommandDefine.OpenDeskList, s2CClubRoomInfoBase, NotificationTypeDefine.ClubAddDesk);
         } else if (msgType === ClubProtocol.S2C_HEARTBEAT) {  //推送心跳
             this.sendHeartbeat();
         } else if (msgType === ClubProtocol.S2C_PUSH_ROOM_ROUND) {  //推送房间的局数变化
             let s2CClubPushRoomRound: S2CClubPushRoomRound = <S2CClubPushRoomRound>content;
+            this.sendNotification(CommandDefine.OpenDeskList, s2CClubPushRoomRound, NotificationTypeDefine.ClubRoundCount);
         } else if (msgType === ClubProtocol.S2C_PUSH_ROOM_DELETE) { //推送删除一个房间
             let s2CClubDeleteRoom: S2CClubDeleteRoom = <S2CClubDeleteRoom>content;
+            this.sendNotification(CommandDefine.OpenDeskList, s2CClubDeleteRoom, NotificationTypeDefine.ClubDeleteDesk);
         } else if (msgType === ClubProtocol.S2C_PUSH_ROOM_SIT_DOWN) { //推送玩家坐下
             let s2CClubRoomSitDown: S2CClubRoomSitDown = <S2CClubRoomSitDown>content;
+            this.sendNotification(CommandDefine.OpenDeskList, s2CClubRoomSitDown, NotificationTypeDefine.ClubStiDown);
         } else if (msgType === ClubProtocol.S2C_PUSH_ROOM_STAND_UP) { //推送玩家站起
             let s2CClubRoomStandUp: S2CClubRoomStandUp = <S2CClubRoomStandUp>content;
+            this.sendNotification(CommandDefine.OpenDeskList, s2CClubRoomStandUp, NotificationTypeDefine.ClubStandUp);
+        } else if (msgType === ClubProtocol.C2S_LOGOUT_CLUB) { // 退出俱乐部
+            this.sendNotification(CommandDefine.OpenDeskList, null, NotificationTypeDefine.ClubQuit);
         }
     }
 

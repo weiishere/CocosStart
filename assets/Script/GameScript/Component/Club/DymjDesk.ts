@@ -56,6 +56,7 @@ export default class DymjDesk extends ViewComponent {
             headSprite = this.head2;
         }
 
+        headSprite.node.active = true;
         let nicknameLabel = headSprite.node.getChildByName("Nickname").getComponent(cc.Label);
         nicknameLabel.string = nickname;
         cc.loader.load(head, (err, texture) => {

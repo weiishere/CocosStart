@@ -6,6 +6,7 @@ import DymjDesk from './DymjDesk';
 import { S2CClubRoomSitDown } from '../../GameData/Club/s2c/S2CClubRoomSitDown';
 import { S2CClubRoomStandUp } from '../../GameData/Club/s2c/S2CClubRoomStandUp';
 import { S2CClubPushRoomRound } from '../../GameData/Club/s2c/S2CClubPushRoomRound';
+import { DeskListEventDefine } from '../../GameConst/Event/DeskListEventDefine';
 
 const { ccclass, property } = cc._decorator;
 
@@ -35,7 +36,7 @@ export default class DeskList extends ViewComponent {
     }
     protected bindEvent(): void {
         this.quitClubBtn.node.on(cc.Node.EventType.TOUCH_END, () => {
-            this.node.destroy();
+            this.dispatchCustomEvent(DeskListEventDefine.ClubQuitEvent, null);
         });
     }
 
@@ -57,7 +58,7 @@ export default class DeskList extends ViewComponent {
         }
 
         for (const roomInfo of s2CJoinClubInfo.roomInfos) {
-
+            this.addDesk(roomInfo);
         }
     }
 
@@ -78,6 +79,7 @@ export default class DeskList extends ViewComponent {
     }
 
     sitDown(s2CClubRoomSitDown: S2CClubRoomSitDown) {
+        debugger
         let deskScript = this.getDeskNode(s2CClubRoomSitDown.roomNo);
 
         if (!deskScript) {

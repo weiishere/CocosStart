@@ -13,6 +13,7 @@ import { WebSockerProxy } from '../Proxy/WebSocketProxy';
 import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
 import { ConfigProxy } from "../Proxy/ConfigProxy";
 import { ClubProxy } from '../Proxy/ClubProxy';
+import { DeskListMediator } from '../Mediator/DeskListMediator';
 
 export class StartupCommand extends Command {
     public execute(notification: INotification): void {
@@ -22,10 +23,12 @@ export class StartupCommand extends Command {
         Facade.Instance.registerProxy(new ConfigProxy(ProxyDefine.Config));
 
         Facade.Instance.registerMediator(new GatePanelMediator(MediatorDefine.GatePanel, ApplicationGlobal.GatePanel));
+        Facade.Instance.registerMediator(new DeskListMediator(MediatorDefine.DeskList, ApplicationGlobal.GatePanel));
+
         /**放到command的notification命令或逻辑注意一个原则：可能会被其他view重用，不然尽量放到mediator中 */
         Facade.Instance.registerCommand(CommandDefine.GateCommand, GateCommand);
 
-        
+
         // StartupCommand 只执行一次
         this.facade.removeCommand(CommandDefine.StartUp);
 

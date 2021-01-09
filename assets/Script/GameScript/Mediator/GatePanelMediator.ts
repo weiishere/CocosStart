@@ -87,14 +87,6 @@ export class GatePanelMediator extends BaseMediator {
                     });
                 })
                 break;
-            case CommandDefine.OpenDeskList:
-                this.createPrefab(PrefabDefine.DeskList).then((prefab) => {
-                    this.viewComponent.addChild(prefab);
-
-                    const script = prefab.getComponent("DeskList");
-                    script.loadUserData(this.getLocalCacheDataProxy().getLoginData());
-                });
-                break;
 
         }
     }
