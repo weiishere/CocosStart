@@ -7,5 +7,6 @@ export enum CommandDefine {
     CheckLoginState = "CheckLoginState",
     OpenLoginPanel = "OpenLoginPanel",
     ShowHeaderPanel = "ShowHeaderPanel",
-    OpenToast = "OpenToast"
+    OpenToast = "OpenToast",
+    OpenDeskList = "OpenDeskList",
 }

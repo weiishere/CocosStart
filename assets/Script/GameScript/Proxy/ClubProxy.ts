@@ -29,6 +29,8 @@ export class ClubProxy extends ModuleProxy {
         if (msgType === ClubProtocol.C2S_LOGIN_CLUB) {
             let s2CJoinClubInfo: S2CJoinClubInfo = <S2CJoinClubInfo>content;
             cc.log("俱乐部登录返回", s2CJoinClubInfo);
+
+            this.sendNotification(CommandDefine.OpenDeskList, s2CJoinClubInfo);
         } else if (msgType === ClubProtocol.S2C_PUSH_ADD_ROOM) {
             let s2CClubRoomInfoBase: S2CClubRoomInfoBase = <S2CClubRoomInfoBase>content;
         } else if (msgType === ClubProtocol.S2C_HEARTBEAT) {  //推送心跳
