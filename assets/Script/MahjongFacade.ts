@@ -1,6 +1,6 @@
 // import { OpenLoginPanelCommand } from "./GameScript/Command/OpenLoginPanelCommand";
 // import { UserLoginRequestCommand } from "./GameScript/Command/UserLoginRequestCommand";
-import { CheckedLoginStateCommand } from "./GameScript/Command/CheckedLoginStateCommand";
+//import { CheckedLoginStateCommand } from "./GameScript/Command/CheckedLoginStateCommand";
 import { StartupCommand } from "./GameScript/Command/StartupCommand";
 import Facade from "./Framework/care/Facade";
 import { CommandDefine } from "./GameScript/MahjongConst/CommandDefine";
