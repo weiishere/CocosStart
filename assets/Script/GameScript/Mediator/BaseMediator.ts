@@ -3,6 +3,7 @@ import { INotification } from "../../Framework/interfaces/INotification";
 import Mediator from "../../Framework/patterns/mediator/Mediator";
 import ViewComponent from "../Base/ViewComponent";
 import { ProxyDefine } from "../MahjongConst/ProxyDefine";
+import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
 
 export default class BaseMediator extends Mediator {
     public view: cc.Node = null;
@@ -31,7 +32,7 @@ export default class BaseMediator extends Mediator {
 
     public listNotificationInterests(): string[] {
         return [
-            
+
         ];
     }
 
@@ -40,6 +41,11 @@ export default class BaseMediator extends Mediator {
 
         }
     }
+
+    public getLocalCacheDataProxy(): LocalCacheDataProxy {
+        return <LocalCacheDataProxy>this.facade.retrieveProxy(ProxyDefine.LocalCacheData);
+    }
+
     public createPrefab(res: string): Promise<any> {
         return new Promise((resolve, reject) => {
             cc.loader.loadRes(res, cc.Prefab, (err, prefab: cc.Node) => {

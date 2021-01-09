@@ -57,7 +57,8 @@ export class GatePanelMediator extends BaseMediator {
         return [
             CommandDefine.InitGatePanel,
             CommandDefine.OpenLoginPanel,
-            CommandDefine.OpenToast
+            CommandDefine.OpenToast,
+            CommandDefine.OpenDeskList,
         ];
     }
 
@@ -69,7 +70,6 @@ export class GatePanelMediator extends BaseMediator {
                     break;
                 }
             case CommandDefine.OpenLoginPanel:
-
                 const scriptComp: GatePanelView = this.view.getComponent('GatePanelView');
                 this.viewComponent.addChild(cc.instantiate(scriptComp.LoginView));
                 break
@@ -86,6 +86,14 @@ export class GatePanelMediator extends BaseMediator {
                         this.toastActive = false;
                     });
                 })
+                break;
+            case CommandDefine.OpenDeskList:
+                this.createPrefab(PrefabDefine.DeskList).then((prefab) => {
+                    this.viewComponent.addChild(prefab);
+
+                    const script = prefab.getComponent("DeskList");
+                    script.loadUserData(this.getLocalCacheDataProxy().getLoginData());
+                });
                 break;
 
         }
