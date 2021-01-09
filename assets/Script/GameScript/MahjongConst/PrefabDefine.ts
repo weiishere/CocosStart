@@ -1,3 +1,4 @@
 export enum PrefabDefine {
-    GatePanel = "prefabs/gate"
+    GatePanel = "prefabs/gate",
+    ToastPanel = "prefabs/ToastPanel"
 }

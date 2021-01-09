@@ -31,7 +31,7 @@ export default class BaseMediator extends Mediator {
 
     public listNotificationInterests(): string[] {
         return [
-
+            
         ];
     }
 

@@ -5,7 +5,6 @@ import BaseMediator from "./BaseMediator";
 import { PrefabDefine } from "../MahjongConst/PrefabDefine";
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
-import { LoginResponseRepository } from "../repositories/LoginResponseRepository";
 import { GatePanelView } from '../Component/GatePanelView';
 import { ProxyDefine } from "../MahjongConst/ProxyDefine";
 import { GateRepository } from "../repositories/GateRepository"
@@ -17,7 +16,7 @@ export class GatePanelMediator extends BaseMediator {
     //private component: cc.Component;
 
     private gatePanelViewComponent: GatePanelView;
-
+    private toastActive = false;
     private gateProxy: GateProxy;
     public constructor(mediatorName: string = null, viewComponent: any = null) {
         super(mediatorName, viewComponent);
@@ -58,6 +57,7 @@ export class GatePanelMediator extends BaseMediator {
         return [
             CommandDefine.InitGatePanel,
             CommandDefine.OpenLoginPanel,
+            CommandDefine.OpenToast
         ];
     }
 
@@ -73,6 +73,21 @@ export class GatePanelMediator extends BaseMediator {
                 const scriptComp: GatePanelView = this.view.getComponent('GatePanelView');
                 this.viewComponent.addChild(cc.instantiate(scriptComp.LoginView));
                 break
+            case CommandDefine.OpenToast:
+                if (this.toastActive && !notification.getBody().toastOverlay) {
+                    return;
+                }
+                this.toastActive = true;
+                this.createPrefab(PrefabDefine.ToastPanel).then((toastPrefab) => {
+                    const _toastPrefab = cc.instantiate(toastPrefab);
+                    this.viewComponent.addChild(_toastPrefab);
+                    const script = (_toastPrefab as cc.Node).getComponent('Toast');
+                    script.show(notification.getBody().content, () => {
+                        this.toastActive = false;
+                    });
+                })
+                break;
+
         }
     }
 }

@@ -3,6 +3,9 @@ import ViewComponent from "../Base/ViewComponent";
 import { PrefabDefine } from "../MahjongConst/PrefabDefine"
 import { GateEventDefine } from '../GameConst/Event/GateEventDefine';
 import { PhoneRegisterOrLoginData } from '../GameData/PhoneRegisterOrLoginData';
+import Facade from "../../Framework/care/Facade";
+import { CommandDefine } from "../MahjongConst/CommandDefine";
+import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
 
 @ccclass
 export class LoginSubPanel extends ViewComponent {
@@ -46,11 +49,13 @@ export class LoginSubPanel extends ViewComponent {
     public loginBtnEvent(): void {
         let phoneNo = this.phoneInput.string;
         if (phoneNo.length != 11) {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '您输入的手机格式有误', toastOverlay: false }, '');
             return;
         }
 
         let code = this.verificationInput.string;
         if (code.length != 6) {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '您输入的验证码格式有误', toastOverlay: false }, '');
             return;
         }
 
