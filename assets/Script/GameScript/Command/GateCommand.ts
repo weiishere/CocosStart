@@ -34,7 +34,8 @@ export class GateCommand extends BaseCommand {
                 // 这里处理后续功能
                 cc.log("websocket 鉴权成功");
 
-                this.getGateProxy().joinClub();
+                // 测试用的
+                // this.getGateProxy().joinClub();
                 break;
         }
     }
