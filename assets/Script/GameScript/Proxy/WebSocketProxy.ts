@@ -8,6 +8,9 @@ import { CommandDefine } from '../MahjongConst/CommandDefine';
 import { NotificationTypeDefine } from '../MahjongConst/NotificationTypeDefine';
 import { ServerCode } from '../GameConst/ServerCode';
 import { DymjProtocol } from '../Protocol/DymjProtocol';
+import { ModuleProxy } from './ModuleProxy';
+import { ClubProxy } from './ClubProxy';
+import { UserGold } from '../GameData/UserGold';
 
 class WebSocketData {
     gsData: any;
@@ -41,9 +44,9 @@ class SendMsgData {
     op: number;
     msgType: number;
     time: number;
-    callback: Function;
+    callback: (op: number, msgType: number) => void;
 
-    constructor(op: number, msgType: number, time: number, callback: Function) {
+    constructor(op: number, msgType: number, time: number, callback: (op: number, msgType: number) => void) {
         this.op = op;
         this.msgType = msgType;
         this.time = time;
@@ -69,6 +72,8 @@ export class WebSockerProxy extends Proxy {
 
     /** 待返回数据 */
     private waitResultData: Map<string, SendMsgData> = new Map();
+    /** 模块代理类 */
+    private moduleProxyMap: Map<number, ModuleProxy> = new Map();
 
     public constructor(proxyName: string = null, data: any = null) {
         super(proxyName, data);
@@ -143,9 +148,8 @@ export class WebSockerProxy extends Proxy {
                 this.gateWayLoginRes(resData);
                 break;
             case OperationDefine.USER_GOLD_CHANGE:
-                let userGold = JSON.parse(dt.content);
-                // 更新玩家的分数
-                // this.broadcastUpdateGold(userGold);
+                let userGold = <UserGold>dt.content;
+                this.handleUpdateGold(userGold);
                 break;
             case OperationDefine.C2GGW_Heartbeat:
                 // 心跳返回
@@ -163,6 +167,10 @@ export class WebSockerProxy extends Proxy {
                 }
                 break;
         }
+    }
+
+    private handleUpdateGold(userGold: UserGold): void {
+        cc.log("金币变化: ", userGold);
     }
 
     private errorCodeHandle(errorCode: number): boolean {
@@ -202,14 +210,22 @@ export class WebSockerProxy extends Proxy {
         let content = gameData.content;
 
         this.deleteSendMsgData(operationNo, msgType);
+
+        // 模块处理方法
+        let moduleProxy = this.moduleProxyMap.get(operationNo);
+        if (moduleProxy) {
+            moduleProxy.handle(msgType, content, errorType);
+        }
     }
 
     /**
-     * 发送游戏消息
-     * @param {*} op 
-     * @param {*} targetData 
+     * 发送socket消息
+     * @param op 操作号，对应 OperationDefine
+     * @param msgType 消息号，每个模块有自己的消息号， ClubProtocol, DymjProtocol
+     * @param content 消息内容
+     * @param timeOutCallback 超时回调方法，如果5秒钟没有返回，自动调用该方法
      */
-    sendGameData(op: number, msgType: number, content: any, callback: Function = null) {
+    sendGameData(op: number, msgType: number, content: any, timeOutCallback: (op: number, msgType: number) => void = null) {
         let messageObj = {
             msgType: msgType,
             content: content,
@@ -229,8 +245,8 @@ export class WebSockerProxy extends Proxy {
             return;
         }
 
-        if (callback) {
-            this.waitResultData.set(msgKey, new SendMsgData(op, msgType, 5, callback));
+        if (timeOutCallback) {
+            this.waitResultData.set(msgKey, new SendMsgData(op, msgType, 5, timeOutCallback));
         }
 
         this.send({ op: op }, messageObj);
@@ -302,7 +318,7 @@ export class WebSockerProxy extends Proxy {
     /** 处理超时的定时任务 */
     handleTimeoutMsg(sendMsgData: SendMsgData) {
         if (sendMsgData.callback) {
-            sendMsgData.callback();
+            sendMsgData.callback(sendMsgData.op, sendMsgData.msgType);
             // 提示某个消息已经超时了
         }
     }
@@ -316,7 +332,31 @@ export class WebSockerProxy extends Proxy {
         cc.log("onWebSocketError", event);
     }
 
+    addModuleProxy(moduleProxy: ModuleProxy) {
+        if (!moduleProxy) {
+            return;
+        }
+
+        if (this.moduleProxyMap.has(moduleProxy.getOp())) {
+            return;
+        }
+
+        this.facade.registerProxy(moduleProxy);
+        this.moduleProxyMap.set(moduleProxy.getOp(), moduleProxy);
+    }
+
+    deleteModuleProxy(op: number) {
+        let moduleProxy = this.moduleProxyMap.get(op);
+        if (moduleProxy) {
+            this.facade.removeProxy(moduleProxy.getProxyName());
+        }
+        this.moduleProxyMap.delete(op);
+    }
+
     onRegister() {
         setInterval(this.timeoutMsgTimedTask.bind(this), 1000);
+
+        // 默认注册俱乐部代理
+        this.addModuleProxy(new ClubProxy(ProxyDefine.Club));
     }
 }

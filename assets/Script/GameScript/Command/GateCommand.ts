@@ -33,6 +33,8 @@ export class GateCommand extends BaseCommand {
             case NotificationTypeDefine.Authentication:
                 // 这里处理后续功能
                 cc.log("websocket 鉴权成功");
+
+                this.getGateProxy().joinClub();
                 break;
         }
     }

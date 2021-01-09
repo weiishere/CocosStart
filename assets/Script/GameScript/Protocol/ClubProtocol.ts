@@ -1,7 +1,7 @@
 import { OperationDefine } from '../GameConst/OperationDefine';
 export enum ClubProtocol {
-    SERVER_PUSH = 500;
-    
+    SERVER_PUSH = 500,
+
     /** 获得自己创建的普通包间列表 */
     C2S_GENERAL_ROOM_LIST = OperationDefine.CLUB_SERVICE + 1,
     /** 获得自己加入的俱乐部列表 */

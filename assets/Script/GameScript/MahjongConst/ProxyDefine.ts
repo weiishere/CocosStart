@@ -3,4 +3,5 @@ export enum ProxyDefine {
     WebSocket = "Websocket",
     LocalCacheData = "LocalCacheData",
     Config = "Config",
+    Club = "Club",
 }

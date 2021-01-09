@@ -8,6 +8,10 @@ import { PhoneRegisterOrLoginData } from '../GameData/PhoneRegisterOrLoginData';
 import { ServerCode } from '../GameConst/ServerCode';
 import { WebSockerProxy } from './WebSocketProxy';
 import { LoginData } from '../GameData/LoginData';
+import { OperationDefine } from '../GameConst/OperationDefine';
+import { ClubProtocol } from "../Protocol/ClubProtocol";
+import { ClubC2SLogin } from '../GameData/Club/c2s/ClubC2SLogin';
+import { ClubProxy } from './ClubProxy';
 
 
 export class GateProxy extends BaseProxy {
@@ -23,6 +27,10 @@ export class GateProxy extends BaseProxy {
 
     public getWebSocketProxy(): WebSockerProxy {
         return <WebSockerProxy>this.facade.retrieveProxy(ProxyDefine.WebSocket);
+    }
+
+    public getClubProxy(): ClubProxy {
+        return <ClubProxy>this.facade.retrieveProxy(ProxyDefine.Club);
     }
 
     public getFacadeUrl(): string {
@@ -92,6 +100,7 @@ export class GateProxy extends BaseProxy {
         }, HttpUtil.METHOD_POST, param);
     }
 
+
     /**
      * 登录成功之后的处理
      * @param resultData 
@@ -111,5 +120,9 @@ export class GateProxy extends BaseProxy {
     private connectWebSocket() {
         let ggwUrl = this.getConfigProxy().ggwUrl;
         this.getWebSocketProxy().connect(ggwUrl);
+    }
+
+    public joinClub(): void {
+        this.getClubProxy().joinClub();
     }
 }

@@ -12,6 +12,7 @@ import { GateCommand } from "../Command/GateCommand"
 import { WebSockerProxy } from '../Proxy/WebSocketProxy';
 import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
 import { ConfigProxy } from "../Proxy/ConfigProxy";
+import { ClubProxy } from '../Proxy/ClubProxy';
 
 export class StartupCommand extends Command {
     public execute(notification: INotification): void {
