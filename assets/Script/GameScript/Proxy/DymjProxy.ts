@@ -99,6 +99,9 @@ export class DymjProxy extends ModuleProxy {
         this.sendGameData(DymjProtocol.C_ENTER_ROOM, data, (op: number, msgType: number) => {
         });
     }
+    
+    serverShutDown(): void {
+    }
 
     onRegister() {
 

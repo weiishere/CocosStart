@@ -88,11 +88,17 @@ export class DeskListMediator extends BaseMediator {
             let s2CClubPushRoomRound: S2CClubPushRoomRound = notification.getBody();
             this.updateRoundCount(s2CClubPushRoomRound);
         } else if (notification.getType() === NotificationTypeDefine.ClubQuit) {
-            this.view.destroy();
+            this.destroyView();
         } else if (notification.getType() === NotificationTypeDefine.ClubJoinRoom) {
             let s2CClubJoinRoom: S2CClubJoinRoom = notification.getBody();
             cc.log("准备进入到 ", s2CClubJoinRoom.roomNo);
+        } else if (notification.getType() === NotificationTypeDefine.ClubShutdown) {
+            this.destroyView();
         }
+    }
+
+    destroyView() {
+        this.view.destroy();
     }
 
     private showDeskList(s2CJoinClubInfo: S2CJoinClubInfo) {

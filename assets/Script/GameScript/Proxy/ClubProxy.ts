@@ -79,6 +79,10 @@ export class ClubProxy extends ModuleProxy {
     sendHeartbeat() {
         this.sendGameData(ClubProtocol.C2S_LOGIN_CLUB, '');
     }
+    
+    serverShutDown(): void {
+        this.sendNotification(CommandDefine.OpenDeskList, null, NotificationTypeDefine.ClubShutdown);
+    }
 
     onRegister() {
 

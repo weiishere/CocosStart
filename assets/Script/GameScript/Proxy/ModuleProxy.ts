@@ -23,6 +23,11 @@ export abstract class ModuleProxy extends BaseProxy {
      */
     abstract handle(msgType: number, content: any, errorCode: number): void;
 
+    /**
+     * 服务器被停掉了
+     */
+    abstract serverShutDown():void;
+
     getWebSocketProxy(): WebSockerProxy {
         return <WebSockerProxy>this.facade.retrieveProxy(ProxyDefine.WebSocket);
     }

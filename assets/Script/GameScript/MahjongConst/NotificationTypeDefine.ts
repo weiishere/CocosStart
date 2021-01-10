@@ -12,4 +12,5 @@ export enum NotificationTypeDefine {
     ClubRoundCount = "ClubRoundCount",
     ClubQuit = "ClubQuit",
     ClubJoinRoom = "ClubJoinRoom",
+    ClubShutdown = "ClubShutdown",
 }

@@ -158,13 +158,12 @@ export class WebSockerProxy extends Proxy {
                 break;
             case OperationDefine.Server_Shutdown:
                 // 服务停止消息的通知
-
-                // 大邑麻将服务被停止了
-                if (dt.content == OperationDefine.DA_YI_ER_REN_MAHJONG) {
-                    // this.serverShutdown(FacadeDefine.DZNN_FACADE);
-                } else if (dt.content == OperationDefine.CLUB_SERVICE) {
-                    // 俱乐部服务被停止了
-                    // this.serverShutdown(FacadeDefine.CLUB_FACADE);
+                // 被停掉的OP号
+                let shutdownOp = dt.content;
+                // 模块处理方法
+                let moduleProxy = this.moduleProxyMap.get(shutdownOp);
+                if (moduleProxy) {
+                    moduleProxy.serverShutDown();
                 }
                 break;
         }
