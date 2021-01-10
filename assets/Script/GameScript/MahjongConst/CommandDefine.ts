@@ -11,4 +11,5 @@ export enum CommandDefine {
     OpenDeskList = "OpenDeskList",
     /** 更新玩家金币 */
     UpdatePlayerGold = "UpdatePlayerGold",
+    OpenPromptWindow = "OpenPromptWindow",
 }

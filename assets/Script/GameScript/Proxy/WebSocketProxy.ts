@@ -12,6 +12,7 @@ import { ModuleProxy } from './ModuleProxy';
 import { ClubProxy } from './ClubProxy';
 import { UserGold } from '../GameData/UserGold';
 import { DymjProxy } from './DymjProxy';
+import { GateProxy } from './GateProxy';
 
 class WebSocketData {
     gsData: any;
@@ -105,6 +106,10 @@ export class WebSockerProxy extends Proxy {
         return <LocalCacheDataProxy>this.facade.retrieveProxy(ProxyDefine.LocalCacheData);
     }
 
+    getGateProxy(): GateProxy {
+        return <GateProxy>this.facade.retrieveProxy(ProxyDefine.Gate);
+    }
+
     onWebSocketOpen(event: Event) {
         this.startHeartbeatHandle();
 
@@ -165,9 +170,11 @@ export class WebSockerProxy extends Proxy {
                 if (moduleProxy) {
                     moduleProxy.serverShutDown();
                 }
+                this.getGateProxy().toast("服务器开小差了，请稍候再试！");
                 break;
             case OperationDefine.Server_Goneaway:
                 cc.log(dt.content + " 服务不存在");
+                this.getGateProxy().toast("服务不存在！");
                 break;
         }
     }

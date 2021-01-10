@@ -1,5 +1,4 @@
 import BaseProxy from "./BaseProxy";
-import { CommandDefine } from "../GameConst/CommandDefine";
 import { GateRepository, UserInfo } from "../repositories/GateRepository";
 import { ConfigProxy } from './ConfigProxy';
 import { ProxyDefine } from '../MahjongConst/ProxyDefine';
@@ -8,10 +7,8 @@ import { PhoneRegisterOrLoginData } from '../GameData/PhoneRegisterOrLoginData';
 import { ServerCode } from '../GameConst/ServerCode';
 import { WebSockerProxy } from './WebSocketProxy';
 import { LoginData } from '../GameData/LoginData';
-import { OperationDefine } from '../GameConst/OperationDefine';
-import { ClubProtocol } from "../Protocol/ClubProtocol";
-import { ClubC2SLogin } from '../GameData/Club/c2s/ClubC2SLogin';
 import { ClubProxy } from './ClubProxy';
+import { CommandDefine } from "../MahjongConst/CommandDefine";
 
 
 export class GateProxy extends BaseProxy {
@@ -47,8 +44,11 @@ export class GateProxy extends BaseProxy {
                 // 验证码获取成功
             } else {
                 // 返回错误码，提示用户
+                this.toast("验证码获取失败！");
             }
-        }, (err) => { }, HttpUtil.METHOD_POST, param)
+        }, (err) => {
+            this.toast("请求服务器失败！");
+        }, HttpUtil.METHOD_POST, param)
     }
 
     /**
@@ -65,18 +65,22 @@ export class GateProxy extends BaseProxy {
                 let errorCode = parseInt(response.bd);
                 cc.log("注册失败，错误码: ", errorCode);
                 if (errorCode === ServerCode.USER_NOT_EXIST) {
-
+                    this.toast("用户名或者密码错误！");
                 } else if (errorCode === ServerCode.PHONE_NO_EXIST) {
-
+                    this.toast("手机号已经注册了！");
                 } else if (errorCode === ServerCode.SECURITY_CODE_ERROR) {
-
+                    this.toast("验证码错误！");
                 }
             }
         }, (err) => {
-
+            this.toast("请求服务器失败！");
         }, HttpUtil.METHOD_POST, phoneRegisterOrLoginData);
     }
 
+    /**
+     * 本地缓存数据登录
+     * @param loginData 
+     */
     public localCahceLogin(loginData: LoginData): void {
         let param = {
             p: loginData.password
@@ -90,13 +94,13 @@ export class GateProxy extends BaseProxy {
                 let errorCode = parseInt(response.bd);
                 cc.log("注册失败，错误码: ", errorCode);
                 if (errorCode === ServerCode.USER_NOT_EXIST) {
-
+                    this.toast("用户名或者密码错误！");
                 } else if (errorCode === ServerCode.PWD_ERROR) {
-
+                    this.toast("用户名或者密码错误！");
                 }
             }
         }, (err) => {
-
+            this.toast("请求服务器失败！");
         }, HttpUtil.METHOD_POST, param);
     }
 
@@ -117,12 +121,16 @@ export class GateProxy extends BaseProxy {
     /**
      * 连接websocket
      */
-    private connectWebSocket() {
+    private connectWebSocket(): void {
         let ggwUrl = this.getConfigProxy().ggwUrl;
         this.getWebSocketProxy().connect(ggwUrl);
     }
 
     public joinClub(): void {
         this.getClubProxy().joinClub();
+    }
+
+    public toast(content: string): void {
+        this.sendNotification(CommandDefine.OpenToast, { content: content });
     }
 }

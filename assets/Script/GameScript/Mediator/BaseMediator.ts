@@ -20,7 +20,7 @@ export default class BaseMediator extends Mediator {
             const res = resArr[index];
             await this.createPrefab(res, true);
         }
-
+        
         this.createPrefab(this.prefabSource()).then((prefab) => {
             this.viewComponent.addChild(prefab);
             this.view = prefab;
@@ -35,7 +35,7 @@ export default class BaseMediator extends Mediator {
      * 需要预先加载的文件
      */
     protected inAdvanceLoadFiles(): string[] {
-        return [PrefabDefine.PromptWindow];
+        return [];
     }
 
     /**

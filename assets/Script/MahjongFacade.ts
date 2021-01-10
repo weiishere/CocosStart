@@ -11,10 +11,6 @@ export class MahjongFacade extends Facade {
     public initializeController(): void {
         super.initializeController();
         this.registerCommand(CommandDefine.StartUp, StartupCommand);
-        
-        //this.registerCommand(CommandDefine.CheckLoginState, CheckedLoginStateCommand);
-        // this.registerCommand(CommandDefine.OpenLoginPanel, OpenLoginPanelCommand);
-        // this.registerCommand(CommandDefine.UserLoginRequest, UserLoginRequestCommand);
     }
 
     public initializeModel(): void {

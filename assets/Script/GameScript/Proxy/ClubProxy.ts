@@ -61,10 +61,26 @@ export class ClubProxy extends ModuleProxy {
         }
     }
 
-    errorCodeHandle(erroCode: number) {
-        if (erroCode === ClubErrorCode.SUCCEED) {
+    errorCodeHandle(errorCode: number) {
+        if (errorCode === ClubErrorCode.SUCCEED) {
             return false;
         }
+
+        let errorStr = "";
+        if (errorCode === ClubErrorCode.TOKEN_VERIFY_FAILED) {
+            this.getGateProxy().toast("TOKEN校验失败！");
+        } else if (errorCode === ClubErrorCode.ROOM_NOT_EXIST) {
+            this.getGateProxy().toast("房间不存在！");
+        } else if (errorCode === ClubErrorCode.NOT_POWER) {
+            this.getGateProxy().toast("暂无权限！");
+        } else if (errorCode === ClubErrorCode.MY_DIAMOND_LACK) {
+            this.getGateProxy().toast("您的金币不足！");
+        } else if (errorCode === ClubErrorCode.SYSTEM_MAINTAIN) {
+            this.getGateProxy().toast("系统维护中！");
+        } else if (errorCode === ClubErrorCode.NOT_SEAT) {
+            this.getGateProxy().toast("房间满了，请换一张桌子吧！");
+        }
+
         return true;
     }
 

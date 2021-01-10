@@ -26,6 +26,13 @@ export class GatePanelMediator extends BaseMediator {
         return PrefabDefine.GatePanel;
     }
 
+    /**
+     * 需要预先加载的文件
+     */
+    protected inAdvanceLoadFiles(): string[] {
+        return [PrefabDefine.PromptWindow];
+    }
+
     protected initSucceed(): void {
         this.listenerEvent();
         this.sendNotification(CommandDefine.GateCommand, null, NotificationTypeDefine.LoadConfig);
@@ -42,6 +49,8 @@ export class GatePanelMediator extends BaseMediator {
     private onLoginBtnEvent(event: cc.Event.EventCustom): void {
         // 停止冒泡
         event.stopPropagation();
+
+        event.getUserData()
 
         // 注册或者登录
         this.sendNotification(CommandDefine.GateCommand, event.getUserData(), NotificationTypeDefine.UserLoginOrRegister);

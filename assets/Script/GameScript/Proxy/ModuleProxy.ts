@@ -3,6 +3,7 @@ import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { NotificationTypeDefine } from '../MahjongConst/NotificationTypeDefine';
 import { WebSockerProxy } from './WebSocketProxy';
 import { ProxyDefine } from '../MahjongConst/ProxyDefine';
+import { GateProxy } from './GateProxy';
 
 /**
  * 模块代理类
@@ -26,10 +27,14 @@ export abstract class ModuleProxy extends BaseProxy {
     /**
      * 服务器被停掉了
      */
-    abstract serverShutDown():void;
+    abstract serverShutDown(): void;
 
     getWebSocketProxy(): WebSockerProxy {
         return <WebSockerProxy>this.facade.retrieveProxy(ProxyDefine.WebSocket);
+    }
+
+    getGateProxy(): GateProxy {
+        return <GateProxy>this.facade.retrieveProxy(ProxyDefine.Gate);
     }
 
     /**
