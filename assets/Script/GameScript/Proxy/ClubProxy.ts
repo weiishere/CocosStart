@@ -1,4 +1,3 @@
-import BaseProxy from "./BaseProxy";
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { NotificationTypeDefine } from '../MahjongConst/NotificationTypeDefine';
 import { ModuleProxy } from './ModuleProxy';
@@ -11,6 +10,8 @@ import { S2CClubDeleteRoom } from '../GameData/Club/s2c/S2CClubDeleteRoom';
 import { S2CClubRoomSitDown } from '../GameData/Club/s2c/S2CClubRoomSitDown';
 import { S2CClubRoomStandUp } from '../GameData/Club/s2c/S2CClubRoomStandUp';
 import { S2CClubPushRoomRound } from '../GameData/Club/s2c/S2CClubPushRoomRound';
+import { S2CClubJoinRoom } from '../GameData/Club/s2c/S2CClubJoinRoom';
+import { ClubErrorCode } from '../GameConst/ClubErrorCode';
 
 /**
  * 俱乐部代理类
@@ -25,6 +26,10 @@ export class ClubProxy extends ModuleProxy {
     }
 
     handle(msgType: number, content: any, errorCode: number): void {
+
+        if (this.errorCodeHandle(errorCode)) {
+            return;
+        }
         // 登录返回
         if (msgType === ClubProtocol.C2S_LOGIN_CLUB) {
             let s2CJoinClubInfo: S2CJoinClubInfo = <S2CJoinClubInfo>content;
@@ -50,7 +55,17 @@ export class ClubProxy extends ModuleProxy {
             this.sendNotification(CommandDefine.OpenDeskList, s2CClubRoomStandUp, NotificationTypeDefine.ClubStandUp);
         } else if (msgType === ClubProtocol.C2S_LOGOUT_CLUB) { // 退出俱乐部
             this.sendNotification(CommandDefine.OpenDeskList, null, NotificationTypeDefine.ClubQuit);
+        } else if (msgType === ClubProtocol.C2S_JOIN_ROOM) { // 进入房间
+            let s2CClubJoinRoom: S2CClubJoinRoom = <S2CClubJoinRoom>content;
+            this.sendNotification(CommandDefine.OpenDeskList, s2CClubJoinRoom, NotificationTypeDefine.ClubJoinRoom);
         }
+    }
+
+    errorCodeHandle(erroCode: number) {
+        if (erroCode === ClubErrorCode.SUCCEED) {
+            return false;
+        }
+        return true;
     }
 
     public joinClub(): void {

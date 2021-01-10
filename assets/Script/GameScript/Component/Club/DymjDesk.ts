@@ -1,5 +1,6 @@
 import ViewComponent from '../../Base/ViewComponent';
 import { S2CClubRoomInfoBase } from '../../GameData/Club/s2c/S2CClubRoomInfoBase';
+import { DeskListEventDefine } from '../../GameConst/Event/DeskListEventDefine';
 // Learn TypeScript:
 //  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
 // Learn Attribute:
@@ -26,6 +27,11 @@ export default class DymjDesk extends ViewComponent {
     protected bindUI(): void {
     }
     protected bindEvent(): void {
+        this.node.on(cc.Node.EventType.TOUCH_END, this.deskClickEvent.bind(this));
+    }
+
+    deskClickEvent() {
+        this.dispatchCustomEvent(DeskListEventDefine.JoinDeskEvent, this.roomNo);
     }
 
     start() {

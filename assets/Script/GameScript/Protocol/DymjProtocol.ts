@@ -211,7 +211,7 @@ export class DymjProtocol {
     static TEST_DELETE_DESK: number = (COCOS_MAHJONG_PROTOCOL + 0x0901);
 
     /**
-     * 消息转换方法
+     * 消息转换方法，下面几个消息比较特殊，发送的和返回的消息号是不同的，在前面加了一个负号
      * @param msgType 
      */
     static dymjMsgTypeConvert(msgType: number): number {

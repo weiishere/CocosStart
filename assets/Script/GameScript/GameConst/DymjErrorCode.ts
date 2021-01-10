@@ -1,4 +1,5 @@
 export enum DymjErrorCode {
+    SUCCEED = 0,
     /** 退出房间失败 */
     EXIT_ROOM_FAILURE = 100001,
     /** 低于准入限制 */

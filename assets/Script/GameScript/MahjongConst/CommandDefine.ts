@@ -9,4 +9,6 @@ export enum CommandDefine {
     ShowHeaderPanel = "ShowHeaderPanel",
     OpenToast = "OpenToast",
     OpenDeskList = "OpenDeskList",
+    /** 更新玩家金币 */
+    UpdatePlayerGold = "UpdatePlayerGold",
 }

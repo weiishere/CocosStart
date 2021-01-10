@@ -14,6 +14,9 @@ import { ClubProxy } from '../Proxy/ClubProxy';
 import { ProxyDefine } from "../MahjongConst/ProxyDefine";
 import { DeskListEventDefine } from '../GameConst/Event/DeskListEventDefine';
 import { ClubProtocol } from '../Protocol/ClubProtocol';
+import { ClubC2SJoinRoom } from '../GameData/Club/c2s/ClubC2SJoinRoom';
+import { S2CClubJoinRoom } from '../GameData/Club/s2c/S2CClubJoinRoom';
+import { UserGold } from '../GameData/UserGold';
 
 export class DeskListMediator extends BaseMediator {
 
@@ -25,6 +28,7 @@ export class DeskListMediator extends BaseMediator {
     private listenerEvent(): void {
         // 监听登录按钮请求方法
         this.viewComponent.on(DeskListEventDefine.ClubQuitEvent, this.quitClubBtnEvent.bind(this));
+        this.viewComponent.on(DeskListEventDefine.JoinDeskEvent, this.joinDeskEvent.bind(this));
     }
 
     private quitClubBtnEvent(event: cc.Event.EventCustom) {
@@ -34,17 +38,33 @@ export class DeskListMediator extends BaseMediator {
         });
     }
 
+    private joinDeskEvent(event: cc.Event.EventCustom) {
+        event.stopPropagation();
+
+        let data: ClubC2SJoinRoom = new ClubC2SJoinRoom();
+        data.roomNo = event.getUserData();
+        this.getClubProxy().sendGameData(ClubProtocol.C2S_JOIN_ROOM, data, (op: number, msgType: number) => {
+        });
+    }
+
     public getClubProxy(): ClubProxy {
         return <ClubProxy>this.facade.retrieveProxy(ProxyDefine.Club);
     }
 
     public listNotificationInterests(): string[] {
         return [
-            CommandDefine.OpenDeskList
+            CommandDefine.OpenDeskList,
+            CommandDefine.UpdatePlayerGold,
         ];
     }
 
     public handleNotification(notification: INotification): void {
+
+        if (notification.getName() === CommandDefine.UpdatePlayerGold) {
+            let userGold: UserGold = notification.getBody();
+            this.getViewScript().updateGold(userGold.newGold);
+        }
+
         if (notification.getName() !== CommandDefine.OpenDeskList) {
             return;
         }
@@ -69,6 +89,9 @@ export class DeskListMediator extends BaseMediator {
             this.updateRoundCount(s2CClubPushRoomRound);
         } else if (notification.getType() === NotificationTypeDefine.ClubQuit) {
             this.view.destroy();
+        } else if (notification.getType() === NotificationTypeDefine.ClubJoinRoom) {
+            let s2CClubJoinRoom: S2CClubJoinRoom = notification.getBody();
+            cc.log("准备进入到 ", s2CClubJoinRoom.roomNo);
         }
     }
 

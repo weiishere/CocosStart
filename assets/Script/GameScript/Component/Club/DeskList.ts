@@ -43,7 +43,7 @@ export default class DeskList extends ViewComponent {
     loadUserData(loginData: LoginData): void {
         this.nicknameLabel.string = loginData.nickname;
         this.userNameLabel.string = loginData.userName;
-        this.goldLabel.string = "金币: " + loginData.gold + "";
+        this.updateGold(loginData.gold);
 
         cc.loader.load(loginData.head, (err, texture) => {
             cc.log("head ==== load", err, texture);
@@ -60,6 +60,10 @@ export default class DeskList extends ViewComponent {
         for (const roomInfo of s2CJoinClubInfo.roomInfos) {
             this.addDesk(roomInfo);
         }
+    }
+
+    updateGold(gold: number) {
+        this.goldLabel.string = "金币: " + gold;
     }
 
     addDesk(roomInfo: S2CClubRoomInfoBase) {

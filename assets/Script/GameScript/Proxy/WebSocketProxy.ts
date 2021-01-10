@@ -11,6 +11,7 @@ import { DymjProtocol } from '../Protocol/DymjProtocol';
 import { ModuleProxy } from './ModuleProxy';
 import { ClubProxy } from './ClubProxy';
 import { UserGold } from '../GameData/UserGold';
+import { DymjProxy } from './DymjProxy';
 
 class WebSocketData {
     gsData: any;
@@ -148,7 +149,7 @@ export class WebSockerProxy extends Proxy {
                 this.gateWayLoginRes(resData);
                 break;
             case OperationDefine.USER_GOLD_CHANGE:
-                let userGold = <UserGold>dt.content;
+                let userGold = <UserGold>JSON.parse(dt.content);
                 this.handleUpdateGold(userGold);
                 break;
             case OperationDefine.C2GGW_Heartbeat:
@@ -171,6 +172,10 @@ export class WebSockerProxy extends Proxy {
 
     private handleUpdateGold(userGold: UserGold): void {
         cc.log("金币变化: ", userGold);
+        let loginData = this.getLocalCacheDataProxy().getLoginData();
+        loginData.gold = userGold.newGold;
+        this.getLocalCacheDataProxy().setLoginData(loginData);
+        this.sendNotification(CommandDefine.UpdatePlayerGold, userGold);
     }
 
     private errorCodeHandle(errorCode: number): boolean {
@@ -358,5 +363,6 @@ export class WebSockerProxy extends Proxy {
 
         // 默认注册俱乐部代理
         this.addModuleProxy(new ClubProxy(ProxyDefine.Club));
+        this.addModuleProxy(new DymjProxy(ProxyDefine.Dymj));
     }
 }

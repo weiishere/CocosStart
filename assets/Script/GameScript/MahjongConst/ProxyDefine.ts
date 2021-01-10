@@ -4,4 +4,5 @@ export enum ProxyDefine {
     LocalCacheData = "LocalCacheData",
     Config = "Config",
     Club = "Club",
+    Dymj = "Dymj",
 }
