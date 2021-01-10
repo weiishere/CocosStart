@@ -7,6 +7,13 @@ import { DymjErrorCode } from '../GameConst/DymjErrorCode';
 import { DymjS2CEnterRoom } from '../GameData/Dymj/s2c/DymjS2CEnterRoom';
 import { DymjS2CBeginDealData } from '../GameData/Dymj/s2c/DymjS2CBeginDealData';
 import { DymjS2CPlayerGet } from '../GameData/Dymj/s2c/DymjS2CPlayerGet';
+import { DymjS2CDoNextOperation } from '../GameData/Dymj/s2c/DymjS2CDoNextOperation';
+import { DymjGameResult } from '../GameData/Dymj/s2c/DymjGameResult';
+import { DymjS2CShowOperation } from '../GameData/Dymj/s2c/DymjS2CShowOperation';
+import { DymjS2COpPutRsp } from '../GameData/Dymj/s2c/DymjS2COpPutRsp';
+import { DymjGameOperation } from '../GameData/Dymj/s2c/DymjGameOperation';
+import { DymjUpdateUserCredit } from '../GameData/Dymj/s2c/DymjUpdateUserCredit';
+import { DymjGameReconnData } from '../GameData/Dymj/s2c/DymjGameReconnData';
 
 /**
  * 大邑麻将消息数据代理类
@@ -38,10 +45,19 @@ export class DymjProxy extends ModuleProxy {
         } else if (msgType === DymjProtocol.S_Game_Get) {   //推送玩家摸牌消息
             let dymjS2CPlayerGet: DymjS2CPlayerGet = <DymjS2CPlayerGet>content;
         } else if (msgType === DymjProtocol.S_Game_DoNextOperation_BroadCast) {   //推送玩家下一步的操作
+            let dymjS2CDoNextOperation: DymjS2CDoNextOperation = <DymjS2CDoNextOperation>content;
         } else if (msgType === DymjProtocol.S_Game_Result_BroadCast) {   //推送游戏结束消息
+            let dymjGameResult: DymjGameResult = <DymjGameResult>content;
         } else if (msgType === DymjProtocol.S_Game_ShowOperation) {   //推送提示玩家操作消息
+            let dymjS2CShowOperation: DymjS2CShowOperation = <DymjS2CShowOperation>content;
         } else if (msgType === DymjProtocol.S_Game_PutRsp_BroadCast) {   //推送玩家出牌消息
+            let dymjS2COpPutRsp: DymjS2COpPutRsp = <DymjS2COpPutRsp>content;
         } else if (msgType === DymjProtocol.S_Game_OperationRsp_BroadCast) {   //推送玩家操作之后的消息
+            let dymjGameOperation: DymjGameOperation = <DymjGameOperation>content;
+        } else if (msgType === DymjProtocol.S_UPDATE_PLAYERS_CREDIT) {   //推送玩家分数变化
+            let dymjUpdateUserCredit: DymjUpdateUserCredit = <DymjUpdateUserCredit>content;
+        } else if (msgType === DymjProtocol.S_Game_Reconn) {   //推送玩家重连的数据
+            let dymjGameReconnData: DymjGameReconnData = <DymjGameReconnData>content;
         } else if (msgType === DymjProtocol.S_PUSH_EXIT_ROOM) {   //推送玩家退出游戏消息
         }
     }

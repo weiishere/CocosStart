@@ -83,7 +83,6 @@ export default class DeskList extends ViewComponent {
     }
 
     sitDown(s2CClubRoomSitDown: S2CClubRoomSitDown) {
-        debugger
         let deskScript = this.getDeskNode(s2CClubRoomSitDown.roomNo);
 
         if (!deskScript) {
