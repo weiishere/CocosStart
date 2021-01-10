@@ -152,6 +152,6 @@ export class DeskListMediator extends BaseMediator {
     public onRegister() {
         this.listenerEvent();
         // 提前加载预制组件
-        this.createPrefab(this.prefabSource());
+        this.createPrefab(this.prefabSource(), true);
     }
 }
