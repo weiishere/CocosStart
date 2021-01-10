@@ -38,6 +38,7 @@ export class DymjProxy extends ModuleProxy {
             this.joinRoom(this.joinRoomNo);
         } else if (msgType === DymjProtocol.S_ENTER_ROOM) {
             let dymjS2CEnterRoom: DymjS2CEnterRoom = <DymjS2CEnterRoom>content;
+            // 这里构建麻将界面
         } else if (msgType === DymjProtocol.S_GO_ON) {
         } else if (msgType === DymjProtocol.S_Game_BeginDeal_BroadCast) {   //开始游戏发牌数据
             let dymjS2CBeginDealData: DymjS2CBeginDealData = <DymjS2CBeginDealData>content;
@@ -99,7 +100,7 @@ export class DymjProxy extends ModuleProxy {
         this.sendGameData(DymjProtocol.C_ENTER_ROOM, data, (op: number, msgType: number) => {
         });
     }
-    
+
     serverShutDown(): void {
     }
 

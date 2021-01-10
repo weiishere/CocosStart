@@ -166,6 +166,9 @@ export class WebSockerProxy extends Proxy {
                     moduleProxy.serverShutDown();
                 }
                 break;
+            case OperationDefine.Server_Goneaway:
+                cc.log(dt.content + " 服务不存在");
+                break;
         }
     }
 
