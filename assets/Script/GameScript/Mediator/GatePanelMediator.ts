@@ -68,6 +68,8 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.OpenLoginPanel,
             CommandDefine.OpenToast,
             CommandDefine.OpenDeskList,
+            CommandDefine.InitGateMainPanel,
+            CommandDefine.CloseLoginPanel
         ];
     }
 
@@ -81,9 +83,17 @@ export class GatePanelMediator extends BaseMediator {
             case CommandDefine.OpenLoginPanel:
                 const scriptComp: GatePanelView = this.view.getComponent('GatePanelView');
                 this.viewComponent.addChild(cc.instantiate(scriptComp.LoginView));
-                break
+                break;
+            case CommandDefine.CloseLoginPanel:
+                
+                const _scriptComp: GatePanelView = this.view.getComponent('GatePanelView');
+                
+                //_scriptComp.removePhoneLoginNode();
+                //this.viewComponent.removeChild(_scriptComp)
+                break;
             case CommandDefine.OpenToast:
-                if (this.toastActive && !notification.getBody().toastOverlay) {
+                const { toastOverlay, content } = notification.getBody();
+                if (this.toastActive && !toastOverlay) {
                     return;
                 }
                 this.toastActive = true;
@@ -91,9 +101,30 @@ export class GatePanelMediator extends BaseMediator {
                     const _toastPrefab = cc.instantiate(toastPrefab);
                     this.viewComponent.addChild(_toastPrefab);
                     const script = (_toastPrefab as cc.Node).getComponent('Toast');
-                    script.show(notification.getBody().content, () => {
-                        this.toastActive = false;
-                    });
+                    script.show(content, () => this.toastActive = false);
+                })
+                break;
+
+            case CommandDefine.InitGateMainPanel:
+                this.createPrefab(PrefabDefine.UserInfoPanel).then((userInfoPanel) => {
+                    const { loginData } = notification.getBody();
+                    const _userInfoPanel = cc.instantiate(userInfoPanel);
+                    this.viewComponent.addChild(_userInfoPanel);
+                    _userInfoPanel.parent = cc.find("Canvas");
+                    const script = (_userInfoPanel as cc.Node).getComponent('UserHeader');
+                    script.showAcount(loginData)
+                    // const script = (_toastPrefab as cc.Node).getComponent('Toast');
+                    // script.show(content, () => this.toastActive = false);
+                });
+                this.createPrefab(PrefabDefine.ScrollMsgNode).then((scrollMsgNode) => {
+                    //const { loginData } = notification.getBody();
+                    const _scrollMsgNode = cc.instantiate(scrollMsgNode);
+                    this.viewComponent.addChild(_scrollMsgNode);
+                    _scrollMsgNode.parent = cc.find("Canvas");
+                    const script = (_scrollMsgNode as cc.Node).getComponent('ScrollMsgNode');
+                    script.createContent('sdadasdsadasdawewaeaweaweaweaweawe');
+                    // const script = (_toastPrefab as cc.Node).getComponent('Toast');
+                    // script.show(content, () => this.toastActive = false);
                 })
                 break;
 

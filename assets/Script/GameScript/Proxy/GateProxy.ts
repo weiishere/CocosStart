@@ -9,6 +9,7 @@ import { WebSockerProxy } from './WebSocketProxy';
 import { LoginData } from '../GameData/LoginData';
 import { ClubProxy } from './ClubProxy';
 import { CommandDefine } from "../MahjongConst/CommandDefine";
+import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
 
 
 export class GateProxy extends BaseProxy {
@@ -116,6 +117,9 @@ export class GateProxy extends BaseProxy {
 
         // 登录成功之后连接socket
         this.connectWebSocket();
+        // let loginData = this.getLocalCacheDataProxy().getLoginData();
+        this.sendNotification(CommandDefine.CloseLoginPanel)
+        
     }
 
     /**

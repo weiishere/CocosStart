@@ -1,5 +1,5 @@
 import Proxy from "../../Framework/patterns/proxy/Proxy";
-import { CommandDefine } from "../GameConst/CommandDefine";
+import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { GateRepository, UserInfo } from "../repositories/GateRepository";
 import { LocalCacheDataProxy } from './LocalCacheDataProxy';
 import { ProxyDefine } from '../MahjongConst/ProxyDefine';

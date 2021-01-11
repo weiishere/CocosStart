@@ -13,4 +13,5 @@ export enum NotificationTypeDefine {
     ClubQuit = "ClubQuit",
     ClubJoinRoom = "ClubJoinRoom",
     ClubShutdown = "ClubShutdown",
+    InitGateMainPanel = "InitGateMainPanel"
 }

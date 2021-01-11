@@ -12,4 +12,6 @@ export enum CommandDefine {
     /** 更新玩家金币 */
     UpdatePlayerGold = "UpdatePlayerGold",
     OpenPromptWindow = "OpenPromptWindow",
+    InitGateMainPanel = "InitGateMainPanel",
+    CloseLoginPanel = "CloseLoginPanel"
 }

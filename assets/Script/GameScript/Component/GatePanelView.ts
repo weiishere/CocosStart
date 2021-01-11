@@ -35,6 +35,11 @@ export class GatePanelView extends ViewComponent {
     protected async bindEvent() {
         
     }
+    removePhoneLoginNode(): void {
+        debugger
+        //this.root.removeChild(this.node);
+        this.root.removeAllChildren()
+    }
     start() {
 
     }

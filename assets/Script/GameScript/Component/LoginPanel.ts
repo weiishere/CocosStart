@@ -9,6 +9,7 @@ export class LoginPanel extends ViewComponent {
     private buttonWrap: cc.Node = null;
     private phoneButton: cc.Sprite = null;
     private weixinButton: cc.Sprite = null;
+    private appName: cc.Sprite = null;
 
     @property(cc.Prefab)
     PhoneLoginAlert: cc.Prefab = null;
@@ -17,34 +18,42 @@ export class LoginPanel extends ViewComponent {
         this.buttonWrap = this.root.getChildByName("buttonWrap");
         this.phoneButton = this.buttonWrap.getChildByName("phone").getComponent(cc.Sprite);
         this.weixinButton = this.buttonWrap.getChildByName("weixin").getComponent(cc.Sprite);
+        this.appName = cc.find("Canvas/Gate_bg/appName").getComponent(cc.Sprite);
         this.phoneLoginNode = cc.instantiate(this.PhoneLoginAlert);
 
         this.root.addChild(this.phoneLoginNode);
         this.phoneLoginNode.parent = cc.find("Canvas");
-        this.phoneLoginNode.setScale(1.3);
+        this.phoneLoginNode.setScale(1.1);
         this.phoneLoginNode.opacity = 0;
         this.phoneLoginNode.active = false;
     }
     protected async bindEvent() {
-        this.phoneButton.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEndCallback, this, true);
+        this.phoneButton.node.on(cc.Node.EventType.TOUCH_START, () => {
+            this.phoneButton.node.setPosition(cc.v2(this.phoneButton.node.x, this.phoneButton.node.y - 10));
+        }, this, true);
+
+        this.phoneButton.node.on(cc.Node.EventType.TOUCH_END, this.onPhoneTouchEndCallback, this, true);
+
         const script = this.phoneLoginNode.getComponent('LoginSubPanel');
+
         script.bindCancleEvent(() => {
-            console.log('bindCancleEvent');
+            //console.log('bindCancleEvent');
+            this.appName.node.active = true;
             this.buttonWrap.active = true;
-            cc.tween(this.phoneLoginNode)
-                .to(0.1, { scale: 1.3, opacity: 0 }, { easing: 'sineOut' })
-                .call(() => { this.phoneLoginNode.active = false; })
-                .start()
+            cc.tween(this.phoneLoginNode).to(0.1, { scale: 1.1, opacity: 0 }, { easing: 'sineOut' }).call(() => { this.phoneLoginNode.active = false; }).start()
 
         });
     }
-    private onTouchEndCallback() {
+    private onPhoneTouchEndCallback() {
+        this.appName.node.active = false;
+        this.phoneButton.node.setPosition(cc.v2(this.phoneButton.node.x, this.phoneButton.node.y + 10));
         this.buttonWrap.active = false;
         this.phoneLoginNode.active = true;
         cc.tween(this.phoneLoginNode)
             .to(0.2, { scale: 1.0, opacity: 255 }, { easing: 'sineOut' })
             .start()
     }
+    
     start() {
 
     }
