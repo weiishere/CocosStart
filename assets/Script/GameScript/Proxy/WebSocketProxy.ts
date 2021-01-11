@@ -319,15 +319,13 @@ export class WebSockerProxy extends Proxy {
      * 超时消息定时任务
      */
     timeoutMsgTimedTask() {
-        for (const key in this.waitResultData.keys()) {
-            let sendMsgData: SendMsgData = this.waitResultData.get(key);
+        this.waitResultData.forEach((sendMsgData: SendMsgData, key: string) => {
             if (sendMsgData.time <= 0) {
                 this.waitResultData.delete(key);
-                this.getGateProxy().toast("连接服务器超时，请检查您的网络是否正常！");
                 this.handleTimeoutMsg(sendMsgData);
             }
             sendMsgData.time--;
-        }
+        })
     }
 
     /** 处理超时的定时任务 */
@@ -335,6 +333,7 @@ export class WebSockerProxy extends Proxy {
         if (sendMsgData.callback) {
             sendMsgData.callback(sendMsgData.op, sendMsgData.msgType);
             // 提示某个消息已经超时了
+            this.getGateProxy().toast("连接服务器超时，请检查您的网络是否正常！");
         }
     }
 
