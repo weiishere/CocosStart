@@ -119,6 +119,7 @@ export class GateProxy extends BaseProxy {
         this.connectWebSocket();
         // let loginData = this.getLocalCacheDataProxy().getLoginData();
         this.sendNotification(CommandDefine.CloseLoginPanel)
+        //debugger
         
     }
 

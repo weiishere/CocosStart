@@ -42,9 +42,15 @@ export default class ScrollMsgNode extends cc.Component {
 
     }
 
-    public createContent(content: string): void {
+    public createContent(content: string, width?: number, spriteFrame?: cc.SpriteFrame,): void {
         if (content == null || content.length == 0) {
             return
+        }
+        if (width) {
+            this.node.getChildByName("MaskNode").width = width;
+        }
+        if (spriteFrame) {
+            (this.node.getChildByName("MaskNode") as cc.Node).getComponent(cc.Sprite).spriteFrame = spriteFrame;
         }
         this.contentArr.push(content);
         this.startScroll();

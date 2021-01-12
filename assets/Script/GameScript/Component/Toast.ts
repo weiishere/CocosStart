@@ -20,7 +20,7 @@ export default class NewClass extends cc.Component {
 
     onLoad() {
         this.node.opacity = 0;
-        this.node.setScale(1.2);
+        this.node.setScale(0.9);
     }
 
     start() {
@@ -30,7 +30,7 @@ export default class NewClass extends cc.Component {
         this.node.getChildByName('toast').getComponent(cc.Label).string = content;
         cc.tween(this.node).to(0.2, { opacity: 255, scale: 1 }, { easing: 'sineIn' }).start();
         this.node.getComponent(cc.Sprite).schedule(() => {
-            cc.tween(this.node).to(0.2, { opacity: 0, scale: 1.2 }, { easing: 'sineIn' }).call(() => {
+            cc.tween(this.node).to(0.2, { opacity: 0, scale: 0.9 }, { easing: 'sineIn' }).call(() => {
                 this.node.destroy();
                 callback && callback();
             }).start();

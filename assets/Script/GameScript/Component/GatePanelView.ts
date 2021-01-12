@@ -16,8 +16,17 @@ export class GatePanelView extends ViewComponent {
     AccountPanel: cc.Prefab = null;
 
     @property(cc.Prefab)
+    GateStartPanel: cc.Prefab = null;
+
+    @property(cc.SpriteFrame)
+    MainBG_2: cc.SpriteFrame = null;
+
+    @property(cc.Prefab)
     GameList: cc.Prefab = null;
+
+
     protected async bindUI() {
+        this.node.getChildByName("appName").active = false;
         // this.loginButton = this.root.getChildByName("login").getComponent(cc.Button);
         // this.tipsLabel = this.root.getChildByName("label").getComponent(cc.Label);
 
@@ -28,17 +37,19 @@ export class GatePanelView extends ViewComponent {
         // this.createPrefab(PrefabDefine.GatePanel).then((prefab) => {
         //     this.root.addChild(prefab);
         // })
-        
+
         // const b = cc.instantiate(this.LoginView);
         // this.root.addChild(b);
-    }
-    protected async bindEvent() {
         
     }
+    protected async bindEvent() {
+
+    }
     removePhoneLoginNode(): void {
-        debugger
+        //removeLoginPanel
         //this.root.removeChild(this.node);
-        this.root.removeAllChildren()
+        //this.root.removeChild(this.LoginView);
+        this.LoginView.destroy();
     }
     start() {
 

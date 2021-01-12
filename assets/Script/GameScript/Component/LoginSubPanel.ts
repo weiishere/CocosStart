@@ -65,7 +65,6 @@ export class LoginSubPanel extends ViewComponent {
         this.dispatchCustomEvent(GateEventDefine.LOGIN_BTN_EVENT, new PhoneRegisterOrLoginData(phoneNo, code, inviteCode));
     }
 
-
     private onTouchEndCallback() {
         // const node = cc.instantiate(this.PhoneLoginAlert);
         // this.root.addChild(node);

@@ -20,12 +20,14 @@ export class LoginPanel extends ViewComponent {
         this.weixinButton = this.buttonWrap.getChildByName("weixin").getComponent(cc.Sprite);
         this.appName = cc.find("Canvas/Gate_bg/appName").getComponent(cc.Sprite);
         this.phoneLoginNode = cc.instantiate(this.PhoneLoginAlert);
-
+        this.appName.node.active = true;
         this.root.addChild(this.phoneLoginNode);
-        this.phoneLoginNode.parent = cc.find("Canvas");
+        //this.phoneLoginNode.parent = cc.find("Canvas");这个会破坏节点结构
         this.phoneLoginNode.setScale(1.1);
         this.phoneLoginNode.opacity = 0;
         this.phoneLoginNode.active = false;
+
+        
     }
     protected async bindEvent() {
         this.phoneButton.node.on(cc.Node.EventType.TOUCH_START, () => {
@@ -41,7 +43,6 @@ export class LoginPanel extends ViewComponent {
             this.appName.node.active = true;
             this.buttonWrap.active = true;
             cc.tween(this.phoneLoginNode).to(0.1, { scale: 1.1, opacity: 0 }, { easing: 'sineOut' }).call(() => { this.phoneLoginNode.active = false; }).start()
-
         });
     }
     private onPhoneTouchEndCallback() {
@@ -49,13 +50,13 @@ export class LoginPanel extends ViewComponent {
         this.phoneButton.node.setPosition(cc.v2(this.phoneButton.node.x, this.phoneButton.node.y + 10));
         this.buttonWrap.active = false;
         this.phoneLoginNode.active = true;
-        cc.tween(this.phoneLoginNode)
-            .to(0.2, { scale: 1.0, opacity: 255 }, { easing: 'sineOut' })
-            .start()
+        cc.tween(this.phoneLoginNode).to(0.2, { scale: 1.0, opacity: 255 }, { easing: 'sineOut' }).start()
     }
-    
-    start() {
 
+    start() {
+        // cc.loader.loadRes('textures/gate/gate_bg', cc.SpriteFrame, (error, img) => {
+        //     (cc.find("Canvas/Gate_bg").getComponent(cc.Sprite) as cc.Sprite).spriteFrame = img;
+        // });
     }
 
 }
