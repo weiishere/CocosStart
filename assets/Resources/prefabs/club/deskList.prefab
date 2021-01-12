@@ -52,8 +52,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1364,
-      "height": 780
+      "width": 1334,
+      "height": 750
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -116,8 +116,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1364,
-      "height": 780
+      "width": 1334,
+      "height": 750
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -236,14 +236,14 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        358,
+        345,
         0,
         0,
         0,
         0,
         1,
-        1.065,
-        1.065,
+        1,
+        1,
         1
       ]
     },
@@ -326,7 +326,7 @@
         "__id__": 18
       }
     ],
-    "_active": true,
+    "_active": false,
     "_components": [],
     "_prefab": {
       "__id__": 21
@@ -353,8 +353,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -581.568,
-        358.295,
+        -566.568,
+        344.295,
         0,
         0,
         0,
@@ -863,8 +863,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        613.941,
-        362.384,
+        611.941,
+        350.384,
         0,
         0,
         0,
@@ -1609,18 +1609,6 @@
       "__id__": 1
     },
     "_enabled": true,
-    "nicknameLabel": {
-      "__id__": 13
-    },
-    "userNameLabel": {
-      "__id__": 16
-    },
-    "goldLabel": {
-      "__id__": 19
-    },
-    "headSprite": {
-      "__id__": 10
-    },
     "quitClubBtn": {
       "__id__": 30
     },

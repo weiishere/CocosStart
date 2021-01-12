@@ -51,6 +51,14 @@ export class DeskListMediator extends BaseMediator {
         return <ClubProxy>this.facade.retrieveProxy(ProxyDefine.Club);
     }
 
+    protected isLoadAfterShowPrefavSource(): boolean {
+        return false;
+    }
+
+    protected inAdvanceLoadFiles(): string[] {
+        return [];
+    }
+
     public listNotificationInterests(): string[] {
         return [
             CommandDefine.OpenDeskList,
@@ -114,6 +122,13 @@ export class DeskListMediator extends BaseMediator {
         const script = this.getViewScript();
         script.loadUserData(this.getLocalCacheDataProxy().getLoginData());
         script.loadDeskList(s2CJoinClubInfo);
+
+        const userInfoPanel = cc.loader.getRes(PrefabDefine.UserInfoPanel, cc.Prefab);
+        const _userInfoPanel = cc.instantiate(userInfoPanel) as cc.Node;
+        this.view.addChild(_userInfoPanel);
+        _userInfoPanel.parent = cc.find("Canvas");
+        const userHeaderScript = (_userInfoPanel as cc.Node).getComponent('UserHeader');
+        userHeaderScript.showAcount(this.getLocalCacheDataProxy().getLoginData());
     }
 
     private getViewScript(): DeskList {
@@ -149,9 +164,8 @@ export class DeskListMediator extends BaseMediator {
         return PrefabDefine.DeskList;
     }
 
-    public onRegister() {
+    public async onRegister() {
         this.listenerEvent();
-        // 提前加载预制组件
-        this.createPrefab(this.prefabSource(), true);
+        this.init();
     }
 }

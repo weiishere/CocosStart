@@ -52,15 +52,19 @@ export default class UserHeader extends ViewComponent {
         // signature: ""
         // status: 0
         // userName: "4047487"
-        const { head, nickname, userName,gold } = loginData;
+        const { head, nickname, userName, gold } = loginData;
         this.nickname.string = nickname;
         this.uid.string = userName;
         this.glod.string = gold;
-        cc.loader.load(head, (error, item) => {
-            //this.head.spriteFrame.setTexture(item);
-            this.head.spriteFrame = new cc.SpriteFrame(item)
-            //this.head.node.setContentSize(item.getContentSize());
-        });
+
+        let headTexture = cc.loader.getRes(head, cc.Texture2D);
+        if (headTexture) {
+            this.head.spriteFrame = new cc.SpriteFrame(headTexture);
+        } else {
+            cc.loader.load(head, (error, item) => {
+                this.head.spriteFrame = new cc.SpriteFrame(item)
+            });
+        }
         //this.head.spriteFrame=
     }
     // update (dt) {}

@@ -12,15 +12,6 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class DeskList extends ViewComponent {
-
-    @property(cc.Label)
-    nicknameLabel: cc.Label = null;
-    @property(cc.Label)
-    userNameLabel: cc.Label = null;
-    @property(cc.Label)
-    goldLabel: cc.Label = null;
-    @property(cc.Sprite)
-    headSprite: cc.Sprite = null;
     @property(cc.Button)
     quitClubBtn: cc.Button = null;
     @property(cc.Prefab)
@@ -41,15 +32,15 @@ export default class DeskList extends ViewComponent {
     }
 
     loadUserData(loginData: LoginData): void {
-        this.nicknameLabel.string = loginData.nickname;
-        this.userNameLabel.string = loginData.userName;
+        // this.nicknameLabel.string = loginData.nickname;
+        // this.userNameLabel.string = loginData.userName;
         this.updateGold(loginData.gold);
 
-        cc.loader.load(loginData.head, (err, texture) => {
-            cc.log("head ==== load", err, texture);
-            // this.jsComponent.headSprite.spriteFrame = new cc.SpriteFrame(texture);
-            this.headSprite.spriteFrame = new cc.SpriteFrame(texture);
-        });
+        // cc.loader.load(loginData.head, (err, texture) => {
+        //     cc.log("head ==== load", err, texture);
+        //     // this.jsComponent.headSprite.spriteFrame = new cc.SpriteFrame(texture);
+        //     this.headSprite.spriteFrame = new cc.SpriteFrame(texture);
+        // });
     }
 
     loadDeskList(s2CJoinClubInfo: S2CJoinClubInfo) {
@@ -63,7 +54,7 @@ export default class DeskList extends ViewComponent {
     }
 
     updateGold(gold: number) {
-        this.goldLabel.string = "金币: " + gold;
+        // this.goldLabel.string = "金币: " + gold;
     }
 
     addDesk(roomInfo: S2CClubRoomInfoBase) {

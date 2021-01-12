@@ -20,12 +20,23 @@ export default class BaseMediator extends Mediator {
             const res = resArr[index];
             await this.createPrefab(res, true);
         }
-        
-        this.createPrefab(this.prefabSource()).then((prefab) => {
-            this.viewComponent.addChild(prefab);
-            this.view = prefab;
-            this.initSucceed();
-        });
+
+        if (this.isLoadAfterShowPrefavSource()) {
+            this.createPrefab(this.prefabSource()).then((prefab) => {
+                this.viewComponent.addChild(prefab);
+                this.view = prefab;
+                this.initSucceed();
+            });
+        } else {
+            await this.createPrefab(this.prefabSource(), true);
+        }
+    }
+
+    /**
+     * 是否加载后就显示主预制组件
+     */
+    protected isLoadAfterShowPrefavSource(): boolean {
+        return true;
     }
 
     protected initSucceed(): void {
@@ -70,7 +81,8 @@ export default class BaseMediator extends Mediator {
         return new Promise((resolve, reject) => {
             cc.loader.loadRes(res, cc.Prefab, (err, prefab: cc.Node) => {
                 if (isAdvanceLoad) {
-                    return resolve(null);
+                    resolve(null);
+                    return;
                 }
                 if (prefab) {
                     let _prefab = cc.instantiate(prefab);
