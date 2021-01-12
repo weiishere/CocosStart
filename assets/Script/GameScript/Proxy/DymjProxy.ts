@@ -14,6 +14,10 @@ import { DymjS2COpPutRsp } from '../GameData/Dymj/s2c/DymjS2COpPutRsp';
 import { DymjGameOperation } from '../GameData/Dymj/s2c/DymjGameOperation';
 import { DymjUpdateUserCredit } from '../GameData/Dymj/s2c/DymjUpdateUserCredit';
 import { DymjGameReconnData } from '../GameData/Dymj/s2c/DymjGameReconnData';
+import { DymjC2SEnterUserInfo } from '../GameData/Dymj/c2s/DymjC2SEnterUserInfo';
+import { DymjC2SPutMahjong } from '../GameData/Dymj/c2s/DymjC2SPutMahjong';
+import { DymjC2SOperatioinData } from '../GameData/Dymj/c2s/DymjC2SOperatioinData';
+import { DymjOperationType } from '../GameData/Dymj/DymjOperationType';
 
 /**
  * 大邑麻将消息数据代理类
@@ -99,6 +103,29 @@ export class DymjProxy extends ModuleProxy {
 
         this.sendGameData(DymjProtocol.C_ENTER_ROOM, data, (op: number, msgType: number) => {
         });
+    }
+
+    ready() {
+        let dymjC2SEnterUserInfo: DymjC2SEnterUserInfo = new DymjC2SEnterUserInfo();
+        dymjC2SEnterUserInfo.acctName = this.getUserName();
+        this.sendGameData(DymjProtocol.C_READY, DymjC2SEnterUserInfo);
+    }
+
+    putMahkjong(mahjongValue: number) {
+        let dymjC2SPutMahjong: DymjC2SPutMahjong = new DymjC2SPutMahjong();
+        dymjC2SPutMahjong.acctName = this.getUserName();
+        dymjC2SPutMahjong.mjValue = mahjongValue;
+
+        this.sendGameData(DymjProtocol.C_Game_Put, dymjC2SPutMahjong);
+    }
+
+    operation(opType: DymjOperationType, huValue: number) {
+        let dymjC2SOperatioinData: DymjC2SOperatioinData = new DymjC2SOperatioinData();
+        dymjC2SOperatioinData.acctName = this.getUserName();
+        dymjC2SOperatioinData.oprtType = opType;
+        dymjC2SOperatioinData.mjValues = [huValue];
+
+        this.sendGameData(DymjProtocol.C_Game_Operation, dymjC2SOperatioinData);
     }
 
     serverShutDown(): void {
