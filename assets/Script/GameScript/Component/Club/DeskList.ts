@@ -32,20 +32,12 @@ export default class DeskList extends ViewComponent {
             this.dispatchCustomEvent(DeskListEventDefine.ClubQuitEvent, null);
         });
         this.kuaiSuBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            
+
         });
     }
 
     loadUserData(loginData: LoginData): void {
-        // this.nicknameLabel.string = loginData.nickname;
-        // this.userNameLabel.string = loginData.userName;
         this.updateGold(loginData.gold);
-
-        // cc.loader.load(loginData.head, (err, texture) => {
-        //     cc.log("head ==== load", err, texture);
-        //     // this.jsComponent.headSprite.spriteFrame = new cc.SpriteFrame(texture);
-        //     this.headSprite.spriteFrame = new cc.SpriteFrame(texture);
-        // });
     }
 
     loadDeskList(s2CJoinClubInfo: S2CJoinClubInfo) {

@@ -65,9 +65,18 @@ export default class DymjDesk extends ViewComponent {
         headSprite.node.active = true;
         let nicknameLabel = headSprite.node.getChildByName("Nickname").getComponent(cc.Label);
         nicknameLabel.string = nickname;
-        cc.loader.load(head, (err, texture) => {
-            headSprite.spriteFrame = new cc.SpriteFrame(texture);
-        });
+        // cc.loader.load(head, (err, texture) => {
+        //     headSprite.spriteFrame = new cc.SpriteFrame(texture);
+        // });
+
+        let headTexture = cc.loader.getRes(head, cc.Texture2D);
+        if (headTexture) {
+            headSprite.spriteFrame = new cc.SpriteFrame(headTexture);
+        } else {
+            cc.loader.load(head, (error, item) => {
+                headSprite.spriteFrame = new cc.SpriteFrame(item)
+            });
+        }
     }
 
     standUp(seatNo: number) {

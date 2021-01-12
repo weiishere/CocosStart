@@ -130,9 +130,9 @@ export class DeskListMediator extends BaseMediator {
         script.loadDeskList(s2CJoinClubInfo);
 
         const userInfoPanel = cc.loader.getRes(PrefabDefine.UserInfoPanel, cc.Prefab);
-        const _userInfoPanel = cc.instantiate(userInfoPanel) as cc.Node;
+        let _userInfoPanel = cc.instantiate(userInfoPanel) as cc.Node;
+
         this.view.addChild(_userInfoPanel);
-        _userInfoPanel.parent = cc.find("Canvas");
         const userHeaderScript = (_userInfoPanel as cc.Node).getComponent('UserHeader');
         userHeaderScript.showAcount(this.getLocalCacheDataProxy().getLoginData());
     }
