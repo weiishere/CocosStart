@@ -27,7 +27,7 @@ export default class Game extends cc.Component {
     }
 
     start() {
-        new MahjongFacade().startup();
+        //new MahjongFacade().startup();
     }
 
     // update (dt) {}
