@@ -33,9 +33,18 @@ export default class GateStartPanel extends ViewComponent {
     }
 
     private initEffect(): void {
+        const pdkNode = this.root.getChildByName("gameBg2").getChildByName("gameItem2");
+        const _action2 = cc.repeatForever(cc.sequence(cc.rotateTo(1, 5), cc.rotateTo(1, -5), cc.callFunc(() => { })));
+        pdkNode.runAction(_action2);
+
+
         const mahjongNode = this.root.getChildByName("gameBg1").getChildByName("gameItem1");
         const _action = cc.repeatForever(cc.sequence(cc.moveBy(1, cc.v2(0, 10)), cc.moveBy(1, cc.v2(0, -10)), cc.callFunc(() => { })));
         mahjongNode.runAction(_action);
+
+        const exchangeNode = this.root.getChildByName("gameBg3").getChildByName("gameItem3");
+        const _action3 = cc.repeatForever(cc.sequence(cc.scaleTo(1.2, 1.05), cc.scaleTo(1.2, 0.95), cc.callFunc(() => { })));
+        exchangeNode.runAction(_action3);
     }
 
     protected async bindEvent() {

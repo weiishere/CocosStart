@@ -28,8 +28,8 @@ export default class UserHeader extends ViewComponent {
         this.head = this.root.getChildByName("head").getComponent(cc.Sprite);
         this.nickname = this.root.getChildByName("nickname").getComponent(cc.Label);
         this.uid = this.root.getChildByName("IDMark").getChildByName("uid").getComponent(cc.Label);
-        //this.glod = this.root.getChildByName("glod").getComponent(cc.Label);
-        this.glod = cc.find("Canvas/userHeader/gold_show_bg/glod").getComponent(cc.Label);
+        this.glod = this.root.getChildByName("gold_show_bg").getChildByName("glod").getComponent(cc.Label);
+        //this.glod = cc.find("Canvas/userHeader/gold_show_bg/glod").getComponent(cc.Label);
     }
     protected bindEvent(): void {
 
