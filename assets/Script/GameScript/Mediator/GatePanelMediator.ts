@@ -10,6 +10,9 @@ import { ProxyDefine } from "../MahjongConst/ProxyDefine";
 import { GateRepository } from "../repositories/GateRepository"
 import { GateProxy } from "../Proxy/GateProxy"
 import { GateEventDefine } from '../GameConst/Event/GateEventDefine';
+import { AudioSourceDefine } from '../MahjongConst/AudioSourceDefine';
+import { AudioNotificationTypeDefine } from '../MahjongConst/AudioNotificationTypeDefine';
+import { MusicManager } from '../Other/MusicManager';
 
 export class GatePanelMediator extends BaseMediator {
     //private gatePanelView: GatePanelView = null;
@@ -19,8 +22,12 @@ export class GatePanelMediator extends BaseMediator {
     private toastActive = false;
     private gateProxy: GateProxy;
     private gameStartPanel: cc.Node;
+
+    private musicManager: MusicManager;
+
     public constructor(mediatorName: string = null, viewComponent: any = null) {
         super(mediatorName, viewComponent);
+        this.musicManager = new MusicManager();
     }
 
     protected prefabSource(): string {
@@ -31,10 +38,13 @@ export class GatePanelMediator extends BaseMediator {
      * 需要预先加载的文件
      */
     protected inAdvanceLoadFiles(): string[] {
-        return [PrefabDefine.PromptWindow,
-        PrefabDefine.ScrollMsgNode,
-        PrefabDefine.UserInfoPanel,
-        PrefabDefine.GameStartPanel];
+        return [
+            PrefabDefine.PromptWindow,
+            PrefabDefine.ScrollMsgNode,
+            PrefabDefine.UserInfoPanel,
+            PrefabDefine.GameStartPanel,
+            PrefabDefine.Setting,
+        ];
     }
 
     protected initSucceed(): void {
@@ -65,6 +75,17 @@ export class GatePanelMediator extends BaseMediator {
         event.stopPropagation();
         this.sendNotification(CommandDefine.GateCommand, event.getUserData(), NotificationTypeDefine.GetVerifyCode);
     }
+
+    private openSetting(): void {
+        let settingSource = cc.loader.getRes(PrefabDefine.Setting, cc.Prefab);
+        let settingPrefab = cc.instantiate(settingSource);
+
+        this.viewComponent.addChild(settingPrefab);
+
+        let settingScript = settingPrefab.getComponent("Setting");
+        settingScript.init(this.musicManager);
+    }
+
     private _loginView: cc.Node;
     public listNotificationInterests(): string[] {
         return [
@@ -73,7 +94,8 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.OpenToast,
             CommandDefine.OpenDeskList,
             CommandDefine.InitGateMainPanel,
-            CommandDefine.CloseLoginPanel
+            CommandDefine.CloseLoginPanel,
+            CommandDefine.OpenSetting,
         ];
     }
 
@@ -127,16 +149,20 @@ export class GatePanelMediator extends BaseMediator {
                 })
                 break;
 
+            case CommandDefine.OpenSetting:
+                this.openSetting();
+                break;
             case CommandDefine.InitGateMainPanel:
                 const userInfoPanel = cc.loader.getRes(PrefabDefine.UserInfoPanel, cc.Prefab);
                 const { loginData } = notification.getBody();
-                
+
+                this.musicManager.playMusic(AudioSourceDefine.BackMusic);
                 this.sendNotification(CommandDefine.OpenToast, { content: "欢迎回来" });
                 // cc.loader.loadRes('textures/gate/gate_bg_2', cc.SpriteFrame, (error, img) => {
                 //     (this.viewComponent.getChildByName("Gate_bg").getComponent(cc.Sprite) as cc.Sprite).spriteFrame = img;
                 // });
                 //加载GameStartPanel
-                
+
                 this.gameStartPanel = cc.loader.getRes(PrefabDefine.GameStartPanel, cc.Prefab);
                 this.viewComponent.addChild(cc.instantiate(this.gameStartPanel));
 

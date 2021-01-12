@@ -10,9 +10,9 @@
 
 export class MusicManager {
     // 是否暂停背景音乐
-    isPauseMusic = false;
+    isPauseMusic: boolean = false;
     // 是否暂停音效
-    isPauseEffect = false;
+    isPauseEffect: boolean = false;
 
     effectUrl = null;
     bgUrl = null;
@@ -45,7 +45,7 @@ export class MusicManager {
      * 更新暂停音乐
      * @param {*} value 是否暂停
      */
-    updatePauseMusic(value) {
+    updatePauseMusic(value: boolean) {
         this.isPauseMusic = value;
         this.localStorage.setItem("isPauseMusic", this.isPauseMusic);
 
@@ -60,7 +60,7 @@ export class MusicManager {
      * 更新暂停音效
      * @param {*} value 是否暂停
      */
-    updatePauseEffect(value) {
+    updatePauseEffect(value: boolean) {
         this.isPauseEffect = value;
         this.localStorage.setItem("isPauseEffect", this.isPauseEffect);
 
@@ -73,7 +73,7 @@ export class MusicManager {
      * 更新背景音乐音量
      * @param {*} value 音量大小 0.0-1.0
      */
-    updateMusicVolume(value) {
+    updateMusicVolume(value: number) {
         this.musicVolume = value;
         this.localStorage.setItem("musicVolume", this.musicVolume);
 
@@ -84,7 +84,7 @@ export class MusicManager {
      * 更新音效音量
      * @param {*} value 音量大小 0.0-1.0
      */
-    updateEffectVolume(value) {
+    updateEffectVolume(value: number) {
         this.effectVolume = value;
         this.localStorage.setItem("effectVolume", this.effectVolume);
 
@@ -103,16 +103,23 @@ export class MusicManager {
         }
 
         let path = cc.path.mainFileName(this.bgUrl);
-        cc.loader.loadRes(path, cc.AudioClip, (err, clip) => {
-            if (err) {
-                cc.log("加载背景音乐失败: ", err);
-                return;
-            }
+
+        let clip = cc.loader.getRes(path, cc.AudioClip);
+        if (clip) {
             // 背景音乐循环播放
             var audioID = cc.audioEngine.playMusic(clip, true);
             this.updateMusicVolume(this.musicVolume);
-
-        });
+        } else {
+            cc.loader.loadRes(path, cc.AudioClip, (err, clip) => {
+                if (err) {
+                    cc.log("加载背景音乐失败: ", err);
+                    return;
+                }
+                // 背景音乐循环播放
+                var audioID = cc.audioEngine.playMusic(clip, true);
+                this.updateMusicVolume(this.musicVolume);
+            });
+        }
     }
 
     /**
@@ -128,13 +135,19 @@ export class MusicManager {
         }
 
         let path = cc.path.mainFileName(this.effectUrl);
-        cc.loader.loadRes(path, cc.AudioClip, (err, clip) => {
-            if (err) {
-                cc.log("加载音效失败: ", err);
-                return;
-            }
-            var audioID = cc.audioEngine.playEffect(clip, false);
+        let clip = cc.loader.getRes(path, cc.AudioClip);
+        if (clip) {
+            var audioID = cc.audioEngine.playEffect(clip, true);
             this.updateEffectVolume(this.effectVolume);
-        });
+        } else {
+            cc.loader.loadRes(path, cc.AudioClip, (err, clip) => {
+                if (err) {
+                    cc.log("加载音效失败: ", err);
+                    return;
+                }
+                var audioID = cc.audioEngine.playEffect(clip, true);
+                this.updateEffectVolume(this.effectVolume);
+            });
+        }
     }
 }

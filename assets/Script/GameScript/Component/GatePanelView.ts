@@ -1,6 +1,8 @@
 const { ccclass, property } = cc._decorator;
 import ViewComponent from "../Base/ViewComponent";
 import { PrefabDefine } from "../MahjongConst/PrefabDefine"
+import Facade from '../../Framework/care/Facade';
+import { CommandDefine } from '../MahjongConst/CommandDefine';
 
 @ccclass
 export class GatePanelView extends ViewComponent {
@@ -24,7 +26,6 @@ export class GatePanelView extends ViewComponent {
     @property(cc.Prefab)
     GameList: cc.Prefab = null;
 
-
     protected async bindUI() {
         this.node.getChildByName("appName").active = false;
         // this.loginButton = this.root.getChildByName("login").getComponent(cc.Button);
@@ -40,10 +41,9 @@ export class GatePanelView extends ViewComponent {
 
         // const b = cc.instantiate(this.LoginView);
         // this.root.addChild(b);
-        
+
     }
     protected async bindEvent() {
-
     }
     removePhoneLoginNode(): void {
         //removeLoginPanel
