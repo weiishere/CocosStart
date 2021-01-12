@@ -4,6 +4,7 @@ export enum CommandDefine {
     InitGatePanel = "InitGatePanel",
     GateCommand = "GateCommand",
     StartUp = "StartUp",
+    AudioCommand = "AudioCommand",
     CheckLoginState = "CheckLoginState",
     OpenLoginPanel = "OpenLoginPanel",
     ShowHeaderPanel = "ShowHeaderPanel",
@@ -13,5 +14,6 @@ export enum CommandDefine {
     UpdatePlayerGold = "UpdatePlayerGold",
     OpenPromptWindow = "OpenPromptWindow",
     InitGateMainPanel = "InitGateMainPanel",
-    CloseLoginPanel = "CloseLoginPanel"
+    CloseLoginPanel = "CloseLoginPanel",
+    OpenSetting = "OpenSetting",
 }

@@ -107,6 +107,7 @@ export class DeskListMediator extends BaseMediator {
 
     destroyView() {
         this.view.destroy();
+        this.view = null;
     }
 
     private showDeskList(s2CJoinClubInfo: S2CJoinClubInfo) {
@@ -116,6 +117,11 @@ export class DeskListMediator extends BaseMediator {
             cc.log("获取预制组件失败 ", this.prefabSource());
             return;
         }
+
+        if (this.view) {
+            return;
+        }
+
         this.view = cc.instantiate(prefab);
         this.viewComponent.addChild(this.view);
 
@@ -124,9 +130,9 @@ export class DeskListMediator extends BaseMediator {
         script.loadDeskList(s2CJoinClubInfo);
 
         const userInfoPanel = cc.loader.getRes(PrefabDefine.UserInfoPanel, cc.Prefab);
-        const _userInfoPanel = cc.instantiate(userInfoPanel) as cc.Node;
+        let _userInfoPanel = cc.instantiate(userInfoPanel) as cc.Node;
+
         this.view.addChild(_userInfoPanel);
-        _userInfoPanel.parent = cc.find("Canvas");
         const userHeaderScript = (_userInfoPanel as cc.Node).getComponent('UserHeader');
         userHeaderScript.showAcount(this.getLocalCacheDataProxy().getLoginData());
     }

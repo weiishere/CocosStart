@@ -15,11 +15,8 @@ import { GateProxy } from "../Proxy/GateProxy";
 @ccclass
 export default class GateStartPanel extends ViewComponent {
 
-    @property(cc.Label)
-    label: cc.Label = null;
-
-    @property
-    text: string = 'hello';
+    @property(cc.Node)
+    settingBtn: cc.Node = null;
 
     private mahjongEntrance: cc.Node;
     private pdkEntrance: cc.Node;
@@ -57,6 +54,10 @@ export default class GateStartPanel extends ViewComponent {
         this.exchangeEntrance.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '充值界面', toastOverlay: true }, '')
         }, this, true);
+
+        this.settingBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenSetting, null, '')
+        });
     }
     // onLoad () {
 

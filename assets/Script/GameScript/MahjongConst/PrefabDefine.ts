@@ -5,5 +5,6 @@ export enum PrefabDefine {
     DeskList = "prefabs/club/deskList",
     UserInfoPanel = "prefabs/userHeader",
     ScrollMsgNode = "prefabs/scrollMsgNode",
-    GameStartPanel = "prefabs/gateStartPanel"
+    GameStartPanel = "prefabs/gateStartPanel",
+    Setting = "prefabs/setting",
 }
