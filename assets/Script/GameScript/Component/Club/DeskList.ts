@@ -12,8 +12,10 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class DeskList extends ViewComponent {
-    @property(cc.Button)
-    quitClubBtn: cc.Button = null;
+    @property(cc.Node)
+    quitClubBtn: cc.Node = null;
+    @property(cc.Node)
+    kuaiSuBtn: cc.Node = null;
     @property(cc.Prefab)
     dymjDesk: cc.Prefab = null;
     @property(cc.Node)
@@ -26,8 +28,11 @@ export default class DeskList extends ViewComponent {
     protected bindUI(): void {
     }
     protected bindEvent(): void {
-        this.quitClubBtn.node.on(cc.Node.EventType.TOUCH_END, () => {
+        this.quitClubBtn.on(cc.Node.EventType.TOUCH_END, () => {
             this.dispatchCustomEvent(DeskListEventDefine.ClubQuitEvent, null);
+        });
+        this.kuaiSuBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            
         });
     }
 

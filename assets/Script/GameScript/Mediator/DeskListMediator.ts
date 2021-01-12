@@ -107,6 +107,7 @@ export class DeskListMediator extends BaseMediator {
 
     destroyView() {
         this.view.destroy();
+        this.view = null;
     }
 
     private showDeskList(s2CJoinClubInfo: S2CJoinClubInfo) {
@@ -116,6 +117,11 @@ export class DeskListMediator extends BaseMediator {
             cc.log("获取预制组件失败 ", this.prefabSource());
             return;
         }
+
+        if (this.view) {
+            return;
+        }
+
         this.view = cc.instantiate(prefab);
         this.viewComponent.addChild(this.view);
 
