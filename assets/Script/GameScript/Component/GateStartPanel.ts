@@ -17,6 +17,14 @@ export default class GateStartPanel extends ViewComponent {
 
     @property(cc.Node)
     settingBtn: cc.Node = null;
+    @property(cc.Node)
+    helpBtn: cc.Node = null;
+    @property(cc.Node)
+    msgBtn: cc.Node = null;
+    @property(cc.Node)
+    shareBtn: cc.Node = null;
+    @property(cc.Node)
+    logBtn: cc.Node = null;
 
     private mahjongEntrance: cc.Node;
     private pdkEntrance: cc.Node;
@@ -52,11 +60,27 @@ export default class GateStartPanel extends ViewComponent {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '游戏开发中，敬请期待...', toastOverlay: true }, '');
         }, this, true);
         this.exchangeEntrance.on(cc.Node.EventType.TOUCH_END, () => {
-            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '充值界面', toastOverlay: true }, '')
+            Facade.Instance.sendNotification(CommandDefine.OpenExchangePanel, null, '')
         }, this, true);
 
         this.settingBtn.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenSetting, null, '')
+        });
+
+        this.helpBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '开发中，敬请期待...', toastOverlay: true }, '');
+        });
+
+        this.msgBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '开发中，敬请期待...', toastOverlay: true }, '');
+        });
+
+        this.shareBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '开发中，敬请期待...', toastOverlay: true }, '');
+        });
+
+        this.logBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '开发中，敬请期待...', toastOverlay: true }, '');
         });
     }
     // onLoad () {

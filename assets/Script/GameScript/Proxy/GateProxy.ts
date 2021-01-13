@@ -10,10 +10,13 @@ import { LoginData } from '../GameData/LoginData';
 import { ClubProxy } from './ClubProxy';
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
+import { UserOfflineData } from '../GameData/UserOfflineData';
 
 
 export class GateProxy extends BaseProxy {
     private repository: GateRepository;
+    /** 用户离线数据 */
+    userOfflineData: UserOfflineData;
     public constructor(proxyName: string = null, data: any = null) {
         super(proxyName, data);
         this.repository = new GateRepository();
@@ -115,12 +118,10 @@ export class GateProxy extends BaseProxy {
         this.getLocalCacheDataProxy().setLoginData(resultData.userData);
         this.getLocalCacheDataProxy().setUserToken(resultData.token);
 
+        this.userOfflineData = resultData.userOfflineData;
+
         // 登录成功之后连接socket
         this.connectWebSocket();
-        // let loginData = this.getLocalCacheDataProxy().getLoginData();
-        this.sendNotification(CommandDefine.CloseLoginPanel)
-        //debugger
-        
     }
 
     /**

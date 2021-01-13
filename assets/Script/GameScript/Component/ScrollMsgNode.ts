@@ -31,11 +31,7 @@ export default class ScrollMsgNode extends cc.Component {
         if (this.contentArr.length == 0) {
             this.node.active = false
         }
-        //this.label.node.position = this.startPos;
         this.label.node.setPosition(this.startPos)
-        // cc.find("Canvas").on(cc.Node.EventType.MOUSE_UP, () => {
-        //     this.startScroll("各位看官，大家好！")
-        // })
     }
 
     start() {
@@ -98,9 +94,13 @@ export default class ScrollMsgNode extends cc.Component {
         }
         scrollFunc.call(this);
     }
+
+
     onDestroy() {
-        if (this.label.node.getActionByTag(0) != null) {
-            this.label.node.stopAction(this.label.node.getActionByTag(0))
+        if (this.label.node) {
+            if (this.label.node.getActionByTag(0) != null) {
+                this.label.node.stopAction(this.label.node.getActionByTag(0))
+            }
         }
     }
     // update (dt) {}

@@ -55,7 +55,7 @@ export default class UserHeader extends ViewComponent {
         const { head, nickname, userName, gold } = loginData;
         this.nickname.string = nickname;
         this.uid.string = userName;
-        this.glod.string = gold;
+        this.updateGold(gold);
 
         let headTexture = cc.loader.getRes(head, cc.Texture2D);
         if (headTexture) {
@@ -66,6 +66,10 @@ export default class UserHeader extends ViewComponent {
             });
         }
         //this.head.spriteFrame=
+    }
+
+    updateGold(gold) {
+        this.glod.string = gold;
     }
     // update (dt) {}
 }

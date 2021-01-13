@@ -21,6 +21,8 @@ export default class NewClass extends cc.Component {
     onLoad() {
         this.node.opacity = 0;
         this.node.setScale(0.9);
+
+        this.node.zIndex = 20;
     }
 
     start() {
