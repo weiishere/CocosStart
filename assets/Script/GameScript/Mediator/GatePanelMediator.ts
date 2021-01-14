@@ -13,6 +13,8 @@ import { GateEventDefine } from '../GameConst/Event/GateEventDefine';
 import { AudioSourceDefine } from '../MahjongConst/AudioSourceDefine';
 import { AudioNotificationTypeDefine } from '../MahjongConst/AudioNotificationTypeDefine';
 import { MusicManager } from '../Other/MusicManager';
+import { UserGold } from '../GameData/UserGold';
+import { WebSockerProxy } from '../Proxy/WebSocketProxy';
 
 export class GatePanelMediator extends BaseMediator {
     //private gatePanelView: GatePanelView = null;
@@ -23,11 +25,17 @@ export class GatePanelMediator extends BaseMediator {
     private gateProxy: GateProxy;
     private gameStartPanel: cc.Node;
 
+    private userHeaderScript;
+
     private musicManager: MusicManager;
 
     public constructor(mediatorName: string = null, viewComponent: any = null) {
         super(mediatorName, viewComponent);
         this.musicManager = new MusicManager();
+    }
+
+    public getWebSockerProxy(): WebSockerProxy {
+        return <WebSockerProxy>this.facade.retrieveProxy(ProxyDefine.WebSocket);
     }
 
     protected prefabSource(): string {
@@ -39,11 +47,13 @@ export class GatePanelMediator extends BaseMediator {
      */
     protected inAdvanceLoadFiles(): string[] {
         return [
+            PrefabDefine.ToastPanel,
             PrefabDefine.PromptWindow,
             PrefabDefine.ScrollMsgNode,
             PrefabDefine.UserInfoPanel,
             PrefabDefine.GameStartPanel,
             PrefabDefine.Setting,
+            PrefabDefine.ExchangePanel,
         ];
     }
 
@@ -76,14 +86,52 @@ export class GatePanelMediator extends BaseMediator {
         this.sendNotification(CommandDefine.GateCommand, event.getUserData(), NotificationTypeDefine.GetVerifyCode);
     }
 
+    /**
+     * 打开设置
+     */
     private openSetting(): void {
         let settingSource = cc.loader.getRes(PrefabDefine.Setting, cc.Prefab);
         let settingPrefab = cc.instantiate(settingSource);
 
-        this.viewComponent.addChild(settingPrefab);
+        this.gameStartPanel.addChild(settingPrefab);
 
         let settingScript = settingPrefab.getComponent("Setting");
-        settingScript.init(this.musicManager);
+        settingScript.init(this.musicManager.isPauseMusic, this.musicManager.isPauseEffect);
+    }
+
+    private musciHandle(notification: INotification): void {
+        switch (notification.getType()) {
+            case AudioNotificationTypeDefine.PlayAudio:
+                this.musicManager.playMusic(notification.getBody());
+                break;
+            case AudioNotificationTypeDefine.PlayEffect:
+                this.musicManager.playMusic(notification.getBody());
+                break;
+            case AudioNotificationTypeDefine.PauseAudio:
+                this.musicManager.updatePauseMusic(notification.getBody());
+                break;
+            case AudioNotificationTypeDefine.PauseEffect:
+                this.musicManager.updatePauseEffect(notification.getBody());
+                break;
+        }
+    }
+
+    private openExchangePanel() {
+        let exchangePanelResource = cc.loader.getRes(PrefabDefine.ExchangePanel, cc.Prefab);
+        let exchangePanelPrefab = cc.instantiate(exchangePanelResource);
+
+        this.viewComponent.addChild(exchangePanelPrefab);
+    }
+
+    private changeUserHandle() {
+        // 暂停音乐
+        this.musicManager.updatePauseMusic(true, false);
+        this.gameStartPanel.destroy();
+
+        this.sendNotification(CommandDefine.OpenLoginPanel);
+
+        this.getWebSockerProxy().disconnect();
+        this.gameStartPanel = null;
     }
 
     private _loginView: cc.Node;
@@ -96,16 +144,25 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.InitGateMainPanel,
             CommandDefine.CloseLoginPanel,
             CommandDefine.OpenSetting,
+            CommandDefine.AudioCommand,
+            CommandDefine.UpdatePlayerGold,
+            CommandDefine.OpenExchangePanel,
+            CommandDefine.ChangeUser,
         ];
     }
 
     public handleNotification(notification: INotification): void {
         switch (notification.getName()) {
             case CommandDefine.InitGatePanel:
-                {
-                    this.init();
-                    break;
-                }
+                this.init();
+                break;
+            case CommandDefine.UpdatePlayerGold:
+                let userGold: UserGold = notification.getBody();
+                this.userHeaderScript.updateGold(userGold.newGold);
+                break;
+            case CommandDefine.AudioCommand:
+                this.musciHandle(notification);
+                break;
             case CommandDefine.OpenLoginPanel:
                 this.gatePanelView = this.view.getComponent('GatePanelView');
                 this._loginView = cc.instantiate(this.gatePanelView.LoginView);
@@ -119,21 +176,11 @@ export class GatePanelMediator extends BaseMediator {
                 break;
             case CommandDefine.CloseLoginPanel:
                 //删除登录框、主app名 
-                //this.viewComponent.getChildByName('Gate_bg').getChildByName("appName").destroy();
-                this.viewComponent.removeChild(this._loginView);
-                this.viewComponent.removeChild(this.scrollMsgNode);
-                this.sendNotification(CommandDefine.InitGateMainPanel, { loginData: this.getLocalCacheDataProxy().getLoginData() });
-
-                //this.viewComponent.removeChildbyTag('loginAlert');
-                //this.viewComponent.getChildByName(this._loginView.name).destroy()
-                //this.gatePanelView.LoginView.destroy()
-                //this.viewComponent.removeComponent(this.gatePanelView);
-                //----this.viewComponent.removeChild(cc.find("Canvas/phoneLoginAlert"));
-                //this.viewComponent.removeChild(this.gatePanelView.LoginView)
-                //this.gatePanelView.removePhoneLoginNode();
-                //removePhoneLoginNode
-                //_scriptComp.removePhoneLoginNode();
-                //this.viewComponent.removeChild(_scriptComp)
+                if (this._loginView) {
+                    this.viewComponent.removeChild(this._loginView);
+                    this.viewComponent.removeChild(this.scrollMsgNode);
+                    this._loginView = null;
+                }
                 break;
             case CommandDefine.OpenToast:
                 const { toastOverlay, content } = notification.getBody();
@@ -141,52 +188,47 @@ export class GatePanelMediator extends BaseMediator {
                     return;
                 }
                 this.toastActive = true;
-                this.createPrefab(PrefabDefine.ToastPanel).then((toastPrefab) => {
-                    const _toastPrefab = cc.instantiate(toastPrefab);
-                    this.viewComponent.addChild(_toastPrefab);
-                    const script = (_toastPrefab as cc.Node).getComponent('Toast');
-                    script.show(content, () => this.toastActive = false);
-                })
+
+                let toastPrefab = cc.loader.getRes(PrefabDefine.ToastPanel, cc.Prefab);
+                const _toastPrefab = cc.instantiate(toastPrefab);
+                this.viewComponent.addChild(_toastPrefab);
+                const script = (_toastPrefab as cc.Node).getComponent('Toast');
+                script.show(content, () => this.toastActive = false);
                 break;
 
             case CommandDefine.OpenSetting:
                 this.openSetting();
                 break;
+            case CommandDefine.OpenExchangePanel:
+                this.openExchangePanel();
+                break;
+            case CommandDefine.ChangeUser:
+                this.changeUserHandle();
+                break;
             case CommandDefine.InitGateMainPanel:
+                if (this.gameStartPanel) {
+                    return;
+                }
                 const userInfoPanel = cc.loader.getRes(PrefabDefine.UserInfoPanel, cc.Prefab);
                 const { loginData } = notification.getBody();
 
                 this.musicManager.playMusic(AudioSourceDefine.BackMusic);
                 this.sendNotification(CommandDefine.OpenToast, { content: "欢迎回来" });
-                // cc.loader.loadRes('textures/gate/gate_bg_2', cc.SpriteFrame, (error, img) => {
-                //     (this.viewComponent.getChildByName("Gate_bg").getComponent(cc.Sprite) as cc.Sprite).spriteFrame = img;
-                // });
-                //加载GameStartPanel
 
-                this.gameStartPanel = cc.loader.getRes(PrefabDefine.GameStartPanel, cc.Prefab);
-                this.viewComponent.addChild(cc.instantiate(this.gameStartPanel));
+                let gameStartResource = cc.loader.getRes(PrefabDefine.GameStartPanel, cc.Prefab);
+                this.gameStartPanel = cc.instantiate(gameStartResource);
+                this.viewComponent.addChild(this.gameStartPanel);
 
                 const _userInfoPanel = cc.instantiate(userInfoPanel) as cc.Node;
-                this.viewComponent.addChild(_userInfoPanel);
-                _userInfoPanel.parent = cc.find("Canvas");
-                const script = (_userInfoPanel as cc.Node).getComponent('UserHeader');
-                script.showAcount(loginData);
+                this.gameStartPanel.addChild(_userInfoPanel);
+                // _userInfoPanel.parent = cc.find("Canvas");
+                this.userHeaderScript = (_userInfoPanel as cc.Node).getComponent('UserHeader');
+                this.userHeaderScript.showAcount(loginData);
 
                 this.scrollMsgNode = cc.instantiate(cc.loader.getRes(PrefabDefine.ScrollMsgNode, cc.Prefab)) as cc.Node;
-                this.viewComponent.addChild(this.scrollMsgNode);
+                this.gameStartPanel.addChild(this.scrollMsgNode);
                 this.scrollMsgNode.setPosition(cc.v2(30, 233));
-                this.scrollMsgNode.getComponent('ScrollMsgNode').createContent('-----抵制不良游戏，拒绝盗版游戏，注意自我保护，谨防受骗上当，适度游戏益脑，沉迷游戏伤身，合理安排时间，享受健康生活', 300);
-
-                // this.createPrefab(PrefabDefine.ScrollMsgNode).then((scrollMsgNode) => {
-                //     //const { loginData } = notification.getBody();
-                //     const _scrollMsgNode = cc.instantiate(scrollMsgNode);
-                //     this.viewComponent.addChild(_scrollMsgNode);
-                //     _scrollMsgNode.parent = cc.find("Canvas");
-                //     const script = (_scrollMsgNode as cc.Node).getComponent('ScrollMsgNode');
-                //     script.createContent('sdadasdsadasdawewaeaweaweaweaweawe');
-                //     // const script = (_toastPrefab as cc.Node).getComponent('Toast');
-                //     // script.show(content, () => this.toastActive = false);
-                // })
+                this.scrollMsgNode.getComponent('ScrollMsgNode').createContent('抵制不良游戏，拒绝盗版游戏，注意自我保护，谨防受骗上当，适度游戏益脑，沉迷游戏伤身，合理安排时间，享受健康生活', 300);
                 break;
 
         }

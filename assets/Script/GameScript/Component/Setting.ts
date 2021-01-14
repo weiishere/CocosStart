@@ -8,6 +8,9 @@
 const { ccclass, property } = cc._decorator;
 import ViewComponent from "../Base/ViewComponent";
 import { MusicManager } from '../Other/MusicManager';
+import Facade from '../../Framework/care/Facade';
+import { CommandDefine } from '../MahjongConst/CommandDefine';
+import { AudioNotificationTypeDefine } from '../MahjongConst/AudioNotificationTypeDefine';
 
 @ccclass
 export default class Setting extends ViewComponent {
@@ -17,8 +20,8 @@ export default class Setting extends ViewComponent {
     effectToggle: cc.Toggle = null;
     @property(cc.Node)
     closeBtn: cc.Node = null;
-
-    musicManager: MusicManager;
+    @property(cc.Node)
+    changeUser: cc.Node = null;
 
     // LIFE-CYCLE CALLBACKS:
 
@@ -28,25 +31,26 @@ export default class Setting extends ViewComponent {
     protected bindEvent(): void {
         this.closeBtn.on(cc.Node.EventType.TOUCH_END, () => {
             this.node.destroy();
-            this.musicManager = null;
+        });
+        this.changeUser.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.ChangeUser, null, "");
         });
     }
 
     start() {
 
     }
-    init(musicManager: MusicManager) {
-        this.musicManager = musicManager;
-        this.musicToggle.isChecked = !musicManager.isPauseMusic;
-        this.effectToggle.isChecked = !musicManager.isPauseEffect;
+    init(isPauseMusic: boolean, isPauseEffect: boolean) {
+        this.musicToggle.isChecked = !isPauseMusic;
+        this.effectToggle.isChecked = !isPauseEffect;
     }
 
     musicOnOff() {
-        this.musicManager.updatePauseMusic(!this.musicToggle.isChecked);
+        Facade.Instance.sendNotification(CommandDefine.AudioCommand, !this.musicToggle.isChecked, AudioNotificationTypeDefine.PauseAudio);
     }
 
     effectOnOff() {
-        this.musicManager.updatePauseEffect(!this.effectToggle.isChecked);
+        Facade.Instance.sendNotification(CommandDefine.AudioCommand, !this.effectToggle.isChecked, AudioNotificationTypeDefine.PauseEffect);
     }
     // update (dt) {}
 }

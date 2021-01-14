@@ -45,11 +45,13 @@ export class MusicManager {
      * 更新暂停音乐
      * @param {*} value 是否暂停
      */
-    updatePauseMusic(value: boolean) {
-        this.isPauseMusic = value;
-        this.localStorage.setItem("isPauseMusic", this.isPauseMusic);
+    updatePauseMusic(value: boolean, isCache: boolean = true) {
+        if (isCache) {
+            this.isPauseMusic = value;
+            this.localStorage.setItem("isPauseMusic", this.isPauseMusic);
+        }
 
-        if (!this.isPauseMusic) {
+        if (!value) {
             this.playMusic();
         } else {
             cc.audioEngine.pauseMusic();

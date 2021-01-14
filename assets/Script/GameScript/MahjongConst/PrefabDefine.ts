@@ -8,4 +8,5 @@ export enum PrefabDefine {
     GameStartPanel = "prefabs/gateStartPanel",
     Setting = "prefabs/setting",
     DeskPanel = "prefabs/deskView",
+    ExchangePanel = "prefabs/exchangePanel",
 }

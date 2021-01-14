@@ -10,6 +10,9 @@ import { GateProxy } from "../Proxy/GateProxy";
 import { BaseCommand } from './BaseCommand';
 import { ConfigProxy } from "../Proxy/ConfigProxy";
 import { PhoneRegisterOrLoginData } from '../GameData/PhoneRegisterOrLoginData';
+import { UserOfflineData } from '../GameData/UserOfflineData';
+import { GameNoDefine } from '../GameConst/GameNoDefine';
+import { OfflineGameData } from '../GameData/OfflineGameData';
 
 export class GateCommand extends BaseCommand {
     public execute(notification: INotification): void {
@@ -36,6 +39,12 @@ export class GateCommand extends BaseCommand {
 
                 // 测试用的
                 //this.getGateProxy().joinClub();
+                this.sendNotification(CommandDefine.CloseLoginPanel);
+
+                let loginData = this.getLocalCacheDataProxy().getLoginData();
+                this.sendNotification(CommandDefine.InitGateMainPanel, { loginData })
+
+                this.handleOfflineData();
                 break;
         }
     }
@@ -55,7 +64,7 @@ export class GateCommand extends BaseCommand {
             this.sendNotification(CommandDefine.OpenLoginPanel);
         } else {
             this.getGateProxy().localCahceLogin(loginData);
-            this.sendNotification(CommandDefine.InitGateMainPanel, { loginData })
+            // this.sendNotification(CommandDefine.InitGateMainPanel, { loginData })
         }
     }
 
@@ -67,5 +76,19 @@ export class GateCommand extends BaseCommand {
 
     private loginOrRegister(body: PhoneRegisterOrLoginData): void {
         this.getGateProxy().loginOrRegiter(body);
+    }
+
+    private handleOfflineData(): void {
+        let userOfflineData = this.getGateProxy().userOfflineData;
+
+        if (!userOfflineData) {
+            return;
+        }
+
+        let clubGameNo = GameNoDefine.CLUB_SERVER;
+        let clubOfflineData = <OfflineGameData>userOfflineData.offlineGameDatas[clubGameNo];
+        if (clubOfflineData) {
+            this.getGateProxy().joinClub();
+        }
     }
 }

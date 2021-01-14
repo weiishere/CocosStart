@@ -20,6 +20,7 @@ import { UserGold } from '../GameData/UserGold';
 
 export class DeskListMediator extends BaseMediator {
 
+    userHeaderScript: any;
     public constructor(mediatorName: string = null, viewComponent: any = null) {
         super(mediatorName, viewComponent);
     }
@@ -67,10 +68,11 @@ export class DeskListMediator extends BaseMediator {
     }
 
     public handleNotification(notification: INotification): void {
-
         if (notification.getName() === CommandDefine.UpdatePlayerGold) {
             let userGold: UserGold = notification.getBody();
-            this.getViewScript().updateGold(userGold.newGold);
+            if (this.userHeaderScript) {
+                this.userHeaderScript.updateGold(userGold.newGold);
+            }
         }
 
         if (notification.getName() !== CommandDefine.OpenDeskList) {
@@ -112,6 +114,7 @@ export class DeskListMediator extends BaseMediator {
 
     destroyView() {
         this.view.destroy();
+        this.userHeaderScript = null;
         this.view = null;
     }
 
@@ -138,8 +141,8 @@ export class DeskListMediator extends BaseMediator {
         let _userInfoPanel = cc.instantiate(userInfoPanel) as cc.Node;
 
         this.view.addChild(_userInfoPanel);
-        const userHeaderScript = (_userInfoPanel as cc.Node).getComponent('UserHeader');
-        userHeaderScript.showAcount(this.getLocalCacheDataProxy().getLoginData());
+        this.userHeaderScript = (_userInfoPanel as cc.Node).getComponent('UserHeader');
+        this.userHeaderScript.showAcount(this.getLocalCacheDataProxy().getLoginData());
     }
 
     private getViewScript(): DeskList {

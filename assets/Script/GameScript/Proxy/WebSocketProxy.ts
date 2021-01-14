@@ -84,8 +84,8 @@ export class WebSockerProxy extends Proxy {
     connect(wsUrl: string) {
         if (this.loginData === null) {
             this.loginData = this.getLocalCacheDataProxy().getLoginData();
-            this.tokenData = this.getLocalCacheDataProxy().getUserToken();
         }
+        this.tokenData = this.getLocalCacheDataProxy().getUserToken();
 
         this.__wsUrl = wsUrl;
         // 如果websocket连接建立了把之前的连接close掉，重新建立连接
@@ -169,8 +169,8 @@ export class WebSockerProxy extends Proxy {
                 let moduleProxy = this.moduleProxyMap.get(shutdownOp);
                 if (moduleProxy) {
                     moduleProxy.serverShutDown();
+                    // this.getGateProxy().toast("服务器开小差了，请稍候再试！");
                 }
-                this.getGateProxy().toast("服务器开小差了，请稍候再试！");
                 break;
             case OperationDefine.Server_Goneaway:
                 cc.log(dt.content + " 服务不存在");
@@ -341,10 +341,12 @@ export class WebSockerProxy extends Proxy {
     onWebSocketClose(event: Event) {
         cc.log("onWebSocketClose", event);
         this.stopHeartbeatHandle();
+        this.loginData = null;
     }
 
     onWebSocketError(event: Event) {
         cc.log("onWebSocketError", event);
+        this.loginData = null;
     }
 
     addModuleProxy(moduleProxy: ModuleProxy) {
@@ -366,6 +368,11 @@ export class WebSockerProxy extends Proxy {
             this.facade.removeProxy(moduleProxy.getProxyName());
         }
         this.moduleProxyMap.delete(op);
+    }
+
+    disconnect() {
+        this.__webSocket.close();
+        this.loginData = null;
     }
 
     onRegister() {
