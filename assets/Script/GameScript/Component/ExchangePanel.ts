@@ -1,10 +1,11 @@
 import ViewComponent from '../Base/ViewComponent';
-// Learn TypeScript:
-//  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
+import { HttpUtil } from '../Util/HttpUtil';
+import Facade from '../../Framework/care/Facade';
+import { ProxyDefine } from '../MahjongConst/ProxyDefine';
+import { ConfigProxy } from '../Proxy/ConfigProxy';
+import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
+import { CommandDefine } from '../MahjongConst/CommandDefine';
+import { LoginAfterHttpUtil } from '../Util/LoginAfterHttpUtil';
 
 const { ccclass, property } = cc._decorator;
 
@@ -30,6 +31,40 @@ export default class ExchangePanel extends ViewComponent {
         this.closeBtn.on(cc.Node.EventType.TOUCH_END, () => {
             this.node.destroy();
         });
+
+        this.buyListClick();
+    }
+
+    private buyListClick() {
+        this.goldBuyList.children.forEach((value: cc.Node) => {
+            value.on(cc.Node.EventType.TOUCH_END, (event) => {
+                let panel = event.target as cc.Node
+                let label = panel.getChildByName("GoldLabel").getComponent(cc.Label);
+                cc.log(label.string);
+
+                this.exchange(label.string);
+            });
+        })
+
+    }
+
+    private exchange(gold) {
+        let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
+        let configProxy: ConfigProxy = <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
+
+        let token = localCacheDataProxy.getUserToken();
+        let url = configProxy.facadeUrl + "exchange/upGold";
+        let param = {
+            userName: localCacheDataProxy.getLoginData().userName,
+            gold: parseFloat(gold),
+        }
+        LoginAfterHttpUtil.send(url, (response) => {
+            if (response.hd === "success") {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '充值成功', toastOverlay: true }, '');
+            }
+        }, (err) => {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '充值失败' + err, toastOverlay: true }, '');
+        }, HttpUtil.METHOD_POST, param);
     }
 
     // LIFE-CYCLE CALLBACKS:
