@@ -7,6 +7,7 @@ import { ApplicationGlobal } from "../MahjongConst/ApplicationGlobal"
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { ProxyDefine } from "../MahjongConst/ProxyDefine";
 import { GateProxy } from "../Proxy/GateProxy";
+import { DeskProxy } from "../Proxy/DeskProxy";
 import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine"
 import { GateCommand } from "../Command/GateCommand"
 import { WebSockerProxy } from '../Proxy/WebSocketProxy';
@@ -14,6 +15,7 @@ import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
 import { ConfigProxy } from "../Proxy/ConfigProxy";
 import { ClubProxy } from '../Proxy/ClubProxy';
 import { DeskListMediator } from '../Mediator/DeskListMediator';
+import { DeskMediator } from '../Mediator/DeskMediator';
 
 export class StartupCommand extends Command {
     public execute(notification: INotification): void {
@@ -21,9 +23,11 @@ export class StartupCommand extends Command {
         Facade.Instance.registerProxy(new WebSockerProxy(ProxyDefine.WebSocket));
         Facade.Instance.registerProxy(new LocalCacheDataProxy(ProxyDefine.LocalCacheData));
         Facade.Instance.registerProxy(new ConfigProxy(ProxyDefine.Config));
+        Facade.Instance.registerProxy(new DeskProxy(ProxyDefine.Desk));
 
         Facade.Instance.registerMediator(new GatePanelMediator(MediatorDefine.GatePanel, ApplicationGlobal.GatePanel));
         Facade.Instance.registerMediator(new DeskListMediator(MediatorDefine.DeskList, ApplicationGlobal.GatePanel));
+        Facade.Instance.registerMediator(new DeskMediator(MediatorDefine.Desk, ApplicationGlobal.GatePanel));
 
         /**放到command的notification命令或逻辑注意一个原则：可能会被其他view重用，不然尽量放到mediator中 */
         Facade.Instance.registerCommand(CommandDefine.GateCommand, GateCommand);
@@ -33,7 +37,9 @@ export class StartupCommand extends Command {
         this.facade.removeCommand(CommandDefine.StartUp);
 
         //初始化Gate
-        this.sendNotification(CommandDefine.InitGatePanel, {});
+        //this.sendNotification(CommandDefine.InitGatePanel, {});
 
+
+        this.sendNotification(CommandDefine.InitDeskPanel, {});
     }
 }

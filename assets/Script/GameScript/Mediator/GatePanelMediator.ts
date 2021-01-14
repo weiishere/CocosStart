@@ -175,7 +175,7 @@ export class GatePanelMediator extends BaseMediator {
                 this.scrollMsgNode = cc.instantiate(cc.loader.getRes(PrefabDefine.ScrollMsgNode, cc.Prefab)) as cc.Node;
                 this.viewComponent.addChild(this.scrollMsgNode);
                 this.scrollMsgNode.setPosition(cc.v2(30, 233));
-                this.scrollMsgNode.getComponent('ScrollMsgNode').createContent('抵制不良游戏，拒绝盗版游戏，注意自我保护，谨防受骗上当，适度游戏益脑，沉迷游戏伤身，合理安排时间，享受健康生活', 300);
+                this.scrollMsgNode.getComponent('ScrollMsgNode').createContent('-----抵制不良游戏，拒绝盗版游戏，注意自我保护，谨防受骗上当，适度游戏益脑，沉迷游戏伤身，合理安排时间，享受健康生活', 300);
 
                 // this.createPrefab(PrefabDefine.ScrollMsgNode).then((scrollMsgNode) => {
                 //     //const { loginData } = notification.getBody();

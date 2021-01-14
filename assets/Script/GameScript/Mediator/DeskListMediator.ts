@@ -100,7 +100,12 @@ export class DeskListMediator extends BaseMediator {
         } else if (notification.getType() === NotificationTypeDefine.ClubJoinRoom) {
             let s2CClubJoinRoom: S2CClubJoinRoom = notification.getBody();
             cc.log("准备进入到 ", s2CClubJoinRoom.roomNo);
+
+            debugger
+            this.sendNotification(CommandDefine.InitGatePanel, {});
+            
         } else if (notification.getType() === NotificationTypeDefine.ClubShutdown) {
+            
             this.destroyView();
         }
     }

@@ -7,4 +7,5 @@ export enum PrefabDefine {
     ScrollMsgNode = "prefabs/scrollMsgNode",
     GameStartPanel = "prefabs/gateStartPanel",
     Setting = "prefabs/setting",
+    DeskPanel = "prefabs/deskView",
 }

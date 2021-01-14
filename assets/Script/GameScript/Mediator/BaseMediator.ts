@@ -22,11 +22,15 @@ export default class BaseMediator extends Mediator {
         }
 
         if (this.isLoadAfterShowPrefavSource()) {
-            this.createPrefab(this.prefabSource()).then((prefab) => {
-                this.viewComponent.addChild(prefab);
-                this.view = prefab;
-                this.initSucceed();
-            });
+            const prefab = await this.createPrefab(this.prefabSource());
+            this.viewComponent.addChild(prefab);
+            this.view = prefab;
+            this.initSucceed();
+            // this.createPrefab(this.prefabSource()).then((prefab) => {
+            //     this.viewComponent.addChild(prefab);
+            //     this.view = prefab;
+            //     this.initSucceed();
+            // });
         } else {
             await this.createPrefab(this.prefabSource(), true);
         }

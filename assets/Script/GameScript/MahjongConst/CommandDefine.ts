@@ -16,4 +16,5 @@ export enum CommandDefine {
     InitGateMainPanel = "InitGateMainPanel",
     CloseLoginPanel = "CloseLoginPanel",
     OpenSetting = "OpenSetting",
+    InitDeskPanel = "InitDeskPanel"
 }
