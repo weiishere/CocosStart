@@ -5,5 +5,8 @@ import { DymjNextStep } from './DymjNextStep';
  */
 export class DymjS2CPlayerGet extends DymjAzimuth {
     getMjValue: number;
+    /** 摸牌后的下一步操作 */
     nextStep: DymjNextStep;
+    /** 剩余牌 */
+    cardRemainCount: number;
 }

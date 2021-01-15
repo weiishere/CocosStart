@@ -1,4 +1,5 @@
 import { DymjBaseRoomData } from '../DymjBaseRoomData';
+import { DymjPlayerInfo } from './DymjPlayerInfo';
 /**
  * 进入房间返回
  */
@@ -25,4 +26,5 @@ export class DymjS2CEnterRoom extends DymjBaseRoomData {
     preventCheatin: boolean;
     /** gps距离 */
     gpsDistance: number;
+    players: Array<DymjPlayerInfo>;
 }

@@ -8,7 +8,8 @@ export class DymjPlayerDealData {
     vip: boolean; //是否是VIP
     vipLevel: number; //等级
     azimuth: number; //方位。目前可能值：1、2、3、4 分别对应 东、南、西、北。
-    isBank: boolean; //是否为庄。
+    /** 是否为庄。 */
+    isBank: boolean;
     credit: number; //可用点数。系统结算时，为预扣后的可用点数。
 
     initSpValuesUnsorted: number[];//未排序的手牌。当前玩家为有效的牌值，其他玩家为牌值均为0的数组。

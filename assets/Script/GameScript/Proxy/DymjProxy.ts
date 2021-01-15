@@ -50,23 +50,29 @@ export class DymjProxy extends ModuleProxy {
             this.sendNotification(CommandDefine.InitDeskPanel, { dymjS2CEnterRoom });
         } else if (msgType === DymjProtocol.S_PUSH_DESK_PLAYER_LIST) {// 推送玩家信息
             let dymjEnterDeskPushPlyaerList: DymjEnterDeskPushPlyaerList = <DymjEnterDeskPushPlyaerList>content;
-            this.getDeskProxy().updateUserInfo(dymjEnterDeskPushPlyaerList)
+            this.getDeskProxy().updateUserInfo(dymjEnterDeskPushPlyaerList.players)
         } else if (msgType === DymjProtocol.S_GO_ON) {
         } else if (msgType === DymjProtocol.S_Game_BeginDeal_BroadCast) {   //开始游戏发牌数据
             let dymjS2CBeginDealData: DymjS2CBeginDealData = <DymjS2CBeginDealData>content;
-
+            this.getDeskProxy().beginGame(dymjS2CBeginDealData);
         } else if (msgType === DymjProtocol.S_Game_Get) {   //推送玩家摸牌消息
             let dymjS2CPlayerGet: DymjS2CPlayerGet = <DymjS2CPlayerGet>content;
+            this.getDeskProxy().updateFirstCard(dymjS2CPlayerGet);
         } else if (msgType === DymjProtocol.S_Game_DoNextOperation_BroadCast) {   //推送玩家下一步的操作
             let dymjS2CDoNextOperation: DymjS2CDoNextOperation = <DymjS2CDoNextOperation>content;
+            this.getDeskProxy().updateNextOperationEvent(dymjS2CDoNextOperation);
         } else if (msgType === DymjProtocol.S_Game_Result_BroadCast) {   //推送游戏结束消息
             let dymjGameResult: DymjGameResult = <DymjGameResult>content;
+            this.getDeskProxy().gameOver(dymjGameResult);
         } else if (msgType === DymjProtocol.S_Game_ShowOperation) {   //推送提示玩家操作消息
             let dymjS2CShowOperation: DymjS2CShowOperation = <DymjS2CShowOperation>content;
+            this.getDeskProxy().updateOperationEvent(dymjS2CShowOperation);
         } else if (msgType === DymjProtocol.S_Game_PutRsp_BroadCast) {   //推送玩家出牌消息
             let dymjS2COpPutRsp: DymjS2COpPutRsp = <DymjS2COpPutRsp>content;
+            this.getDeskProxy().updateOutCard(dymjS2COpPutRsp);
         } else if (msgType === DymjProtocol.S_Game_OperationRsp_BroadCast) {   //推送玩家操作之后的消息
             let dymjGameOperation: DymjGameOperation = <DymjGameOperation>content;
+            this.getDeskProxy().updateDeskEvent(dymjGameOperation);
         } else if (msgType === DymjProtocol.S_UPDATE_PLAYERS_CREDIT) {   //推送玩家分数变化
             let dymjUpdateUserCredit: DymjUpdateUserCredit = <DymjUpdateUserCredit>content;
         } else if (msgType === DymjProtocol.S_Game_Reconn) {   //推送玩家重连的数据
@@ -75,12 +81,18 @@ export class DymjProxy extends ModuleProxy {
         }
     }
 
-    errorCodeHandle(erroCode: number) {
-        if (erroCode === DymjErrorCode.SUCCEED) {
+    errorCodeHandle(errorCode: number) {
+        if (errorCode === DymjErrorCode.SUCCEED) {
             return false;
         }
 
-        cc.log("DYMJ错误码: ", erroCode);
+        let errorMsg = "";
+        if (errorCode === DymjErrorCode.ROOM_NOT_EXIST) {
+            errorMsg = "房间不存在";
+        }
+
+        this.getGateProxy().toast(errorMsg);
+        cc.log("DYMJ错误码: ", errorMsg);
         return true;
     }
 
@@ -112,13 +124,35 @@ export class DymjProxy extends ModuleProxy {
         this.sendGameData(DymjProtocol.C_ENTER_ROOM, data, (op: number, msgType: number) => {
         });
     }
+    /**
+     * 发牌动画结束
+     */
+    dealOver() {
+        let dymjC2SEnterUserInfo: DymjC2SEnterUserInfo = new DymjC2SEnterUserInfo();
+        dymjC2SEnterUserInfo.acctName = this.getUserName();
+        this.sendGameData(DymjProtocol.C_Game_DealOver, DymjC2SEnterUserInfo);
+    }
 
+    /**
+     * 准备
+     */
     ready() {
         let dymjC2SEnterUserInfo: DymjC2SEnterUserInfo = new DymjC2SEnterUserInfo();
         dymjC2SEnterUserInfo.acctName = this.getUserName();
         this.sendGameData(DymjProtocol.C_READY, DymjC2SEnterUserInfo);
     }
 
+    /** 下一局 */
+    goOn() {
+        let dymjC2SEnterUserInfo: DymjC2SEnterUserInfo = new DymjC2SEnterUserInfo();
+        dymjC2SEnterUserInfo.acctName = this.getUserName();
+        this.sendGameData(DymjProtocol.C_GO_ON, DymjC2SEnterUserInfo);
+    }
+
+    /**
+     * 出牌
+     * @param mahjongValue 牌值
+     */
     putMahkjong(mahjongValue: number) {
         let dymjC2SPutMahjong: DymjC2SPutMahjong = new DymjC2SPutMahjong();
         dymjC2SPutMahjong.acctName = this.getUserName();
@@ -127,11 +161,16 @@ export class DymjProxy extends ModuleProxy {
         this.sendGameData(DymjProtocol.C_Game_Put, dymjC2SPutMahjong);
     }
 
-    operation(opType: DymjOperationType, huValue: number) {
+    /**
+     * 碰，杠，胡操作
+     * @param opType 碰，杠，听，胡
+     * @param mjValue 牌值
+     */
+    operation(opType: DymjOperationType, mjValue: number) {
         let dymjC2SOperatioinData: DymjC2SOperatioinData = new DymjC2SOperatioinData();
         dymjC2SOperatioinData.acctName = this.getUserName();
         dymjC2SOperatioinData.oprtType = opType;
-        dymjC2SOperatioinData.mjValues = [huValue];
+        dymjC2SOperatioinData.mjValues = [mjValue];
 
         this.sendGameData(DymjProtocol.C_Game_Operation, dymjC2SOperatioinData);
     }
@@ -143,7 +182,7 @@ export class DymjProxy extends ModuleProxy {
 
     }
 
-    getDeskProxy(){
+    getDeskProxy() {
         return <DeskProxy>this.facade.retrieveProxy(ProxyDefine.Desk);
     }
 

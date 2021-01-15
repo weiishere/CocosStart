@@ -6,6 +6,7 @@ import BaseMediator from "../Mediator/BaseMediator"
 import { ProxyDefine } from "../MahjongConst/ProxyDefine"
 import { DeskProxy } from "../Proxy/DeskProxy"
 import { LocalCacheDataProxy } from "../Proxy/LocalCacheDataProxy"
+import { DymjProxy } from '../Proxy/DymjProxy';
 
 export class DeskMediator extends BaseMediator {
 
@@ -27,6 +28,10 @@ export class DeskMediator extends BaseMediator {
     public getDeskProxy(): DeskProxy {
         return <DeskProxy>this.facade.retrieveProxy(ProxyDefine.Desk);
     }
+
+    public getDymjProxy(): DymjProxy {
+        return <DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj);
+    }
     public listNotificationInterests(): string[] {
         return [
             CommandDefine.InitDeskPanel
@@ -37,8 +42,9 @@ export class DeskMediator extends BaseMediator {
         switch (notification.getName()) {
             case CommandDefine.InitDeskPanel:
                 {
-
+                    this.getDeskProxy().updateDeskInfo(notification.getBody());
                     await this.init();
+
                     const deskPanel = this.viewComponent.getChildByName('deskView');
                     const script = deskPanel.getComponent('DeskPanelView');
                     const gameData = this.getDeskProxy().getGameData();
@@ -46,14 +52,17 @@ export class DeskMediator extends BaseMediator {
                     script.initMyJobPanel(gameData, deskData);
                     script.initFrontjobPanel(gameData, deskData);
 
-                    script.initMyOpreationBtuShow(gameData);
+                    // 发送准备
+                    this.getDymjProxy().ready();
 
-                    const loginData = (<LocalCacheDataProxy>this.facade.retrieveProxy(ProxyDefine.LocalCacheData)).getLoginData();
-                    script.updatedDeskAiming(gameData, deskData, loginData);
-                    break;
-                    // const deskPanel = cc.loader.getRes(PrefabDefine.DeskPanel, cc.Prefab);
-                    // this.viewComponent.addChild(cc.instantiate(deskPanel));
+                    // script.initMyOpreationBtuShow(gameData);
+
+                    // const loginData = (<LocalCacheDataProxy>this.facade.retrieveProxy(ProxyDefine.LocalCacheData)).getLoginData();
+                    // script.updatedDeskAiming(gameData, deskData, loginData);
                     // break;
+                    // // const deskPanel = cc.loader.getRes(PrefabDefine.DeskPanel, cc.Prefab);
+                    // // this.viewComponent.addChild(cc.instantiate(deskPanel));
+                    // // break;
                 }
         }
     }
