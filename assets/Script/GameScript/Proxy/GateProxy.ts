@@ -67,6 +67,7 @@ export class GateProxy extends BaseProxy {
             } else {
                 // 返回错误码，提示用户
                 let errorCode = parseInt(response.bd);
+                
                 cc.log("注册失败，错误码: ", errorCode);
                 if (errorCode === ServerCode.USER_NOT_EXIST) {
                     this.toast("用户名或者密码错误！");
@@ -95,7 +96,7 @@ export class GateProxy extends BaseProxy {
                 this.loginAfterHandle(response.bd);
             } else {
                 // 返回错误码，提示用户
-                let errorCode = parseInt(response.bd);
+                let errorCode = parseInt(response.bd.code);
                 cc.log("注册失败，错误码: ", errorCode);
                 if (errorCode === ServerCode.USER_NOT_EXIST) {
                     this.toast("用户名或者密码错误！");
