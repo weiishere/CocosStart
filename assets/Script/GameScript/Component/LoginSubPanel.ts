@@ -10,10 +10,12 @@ import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
 @ccclass
 export class LoginSubPanel extends ViewComponent {
 
+    @property(cc.Node)
+    verButton: cc.Node = null;
+
     private phoneInput: cc.EditBox = null;
     private verificationInput: cc.EditBox = null;
     private inviteInput: cc.EditBox = null;
-    private verButton: cc.Button = null;
     private loginButton: cc.Button = null;
     private cancleButton: cc.Button = null;
 
@@ -22,28 +24,61 @@ export class LoginSubPanel extends ViewComponent {
         this.verificationInput = this.root.getChildByName("VerificationInput").getComponent(cc.EditBox);
         this.inviteInput = this.root.getChildByName("InviteInput").getComponent(cc.EditBox);
 
-        this.verButton = this.root.getChildByName("VerButton").getComponent(cc.Button);
         this.loginButton = this.root.getChildByName("LoginSubmit").getComponent(cc.Button);
         this.cancleButton = this.root.getChildByName("Cancle").getComponent(cc.Button);
     }
     protected bindEvent() {
         this.loginButton.node.on(cc.Node.EventType.TOUCH_END, this.loginBtnEvent.bind(this))
-        this.verButton.node.on(cc.Node.EventType.TOUCH_END, this.getVerifyCodeEvent.bind(this))
 
+        this.verifyClick();
     }
+
+    private verifyClick() {
+        //验证码倒计时
+        this.verButton.on(cc.Node.EventType.TOUCH_END, () => {
+            let phoneNo = this.phoneInput.string;
+            if (phoneNo.length != 11) {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '请输入正确的手机号码', toastOverlay: true }, '');
+                return;
+            }
+
+            let normalNode = this.verButton.getChildByName("NormalBtn");
+            if (normalNode.active) {
+                this.dispatchCustomEvent(GateEventDefine.GET_VERIFY_CODE, new PhoneRegisterOrLoginData(phoneNo, "", ""));
+            }
+        });
+    }
+
+    /**
+     * 开始验证码倒计时
+     */
+    public startVerifyCountdown() {
+        let normalNode = this.verButton.getChildByName("NormalBtn");
+
+        let disableNode = this.verButton.getChildByName("DisableBtn");
+        let label = this.verButton.getChildByName("Label").getComponent(cc.Label);
+        normalNode.active = false;
+        disableNode.active = true;
+        let count = 60;
+        label.string = count + "s";
+        this.schedule(() => {
+            if (normalNode.active) {
+                return;
+            }
+            count--;
+
+            if (count < 0) {
+                normalNode.active = true;
+                disableNode.active = false;
+                label.string = "获取验证码";
+            } else {
+                label.string = count + "s";
+            }
+        }, 1, count);
+    }
+
     public bindCancleEvent(callback: Function) {
-
         this.node.getChildByName("Cancle").getComponent(cc.Button).node.on(cc.Node.EventType.TOUCH_END, callback, this, true);
-    }
-
-    public getVerifyCodeEvent(): void {
-
-        let phoneNo = this.phoneInput.string;
-        if (phoneNo.length != 11) {
-            return;
-        }
-
-        this.dispatchCustomEvent(GateEventDefine.GET_VERIFY_CODE, new PhoneRegisterOrLoginData(phoneNo, "", ""));
     }
 
     public loginBtnEvent(): void {

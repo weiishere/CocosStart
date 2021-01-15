@@ -49,6 +49,10 @@ export class GateCommand extends BaseCommand {
         }
     }
 
+    private getGatePanelMediator(): GatePanelMediator {
+        return <GatePanelMediator>this.facade.retrieveMediator(MediatorDefine.GatePanel);
+    }
+
     private loadConfig(): void {
         let configProxy = <ConfigProxy>this.facade.retrieveProxy(ProxyDefine.Config);
         configProxy.loadConfig();
@@ -70,7 +74,7 @@ export class GateCommand extends BaseCommand {
 
     public getGetVerifyCode(body: PhoneRegisterOrLoginData): void {
         this.getGateProxy().getVerifyCode(body.phoneNo, () => {
-
+            this.getGatePanelMediator().startLoginVerifyCountdown();
         });
     }
 

@@ -24,6 +24,8 @@ export default class ExchangePanel extends ViewComponent {
     logContentContainer: cc.Node = null;
     @property(cc.Node)
     closeBtn: cc.Node = null;
+    @property(cc.Node)
+    getVerifyBtn: cc.Node = null;
 
     protected bindUI(): void {
     }
@@ -33,6 +35,36 @@ export default class ExchangePanel extends ViewComponent {
         });
 
         this.buyListClick();
+        this.verifyClick();
+    }
+
+    private verifyClick() {
+        //验证码倒计时
+        this.getVerifyBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            let normalNode = this.getVerifyBtn.getChildByName("NormalBtn");
+            let disableNode = this.getVerifyBtn.getChildByName("DisableBtn");
+            if (normalNode.active) {
+                let label = this.getVerifyBtn.getChildByName("Label").getComponent(cc.Label);
+                normalNode.active = false;
+                disableNode.active = true;
+                let count = 60;
+                label.string = count + "s";
+                this.schedule(() => {
+                    if (normalNode.active) {
+                        return;
+                    }
+                    count--;
+
+                    if (count < 0) {
+                        normalNode.active = true;
+                        disableNode.active = false;
+                        label.string = "获取验证码";
+                    } else {
+                        label.string = count + "s";
+                    }
+                }, 1, count);
+            }
+        });
     }
 
     private buyListClick() {
@@ -45,7 +77,6 @@ export default class ExchangePanel extends ViewComponent {
                 this.exchange(label.string);
             });
         })
-
     }
 
     private exchange(gold) {

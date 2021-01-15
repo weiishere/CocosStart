@@ -27,7 +27,7 @@ export class LoginPanel extends ViewComponent {
         this.phoneLoginNode.opacity = 0;
         this.phoneLoginNode.active = false;
 
-        
+
     }
     protected async bindEvent() {
         this.phoneButton.node.on(cc.Node.EventType.TOUCH_START, () => {
@@ -51,6 +51,15 @@ export class LoginPanel extends ViewComponent {
         this.buttonWrap.active = false;
         this.phoneLoginNode.active = true;
         cc.tween(this.phoneLoginNode).to(0.2, { scale: 1.0, opacity: 255 }, { easing: 'sineOut' }).start()
+    }
+
+
+    /**
+     * 开始验证码倒计时
+     */
+    public startVerifyCountdown() {
+        let script = this.phoneLoginNode.getComponent("LoginSubPanel");
+        script.startVerifyCountdown();
     }
 
     start() {
