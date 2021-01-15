@@ -188,7 +188,14 @@ export default class DeskPanelView extends ViewComponent {
         });
         //摸牌
         if (gameData.myCards.handCard !== -1) {
-            this.handCard = this.addCardToNode(this.huCard, gameData.myCards.handCard, "mine", 'setUp', { active: true });
+            this.handCard = this.addCardToNode(this.huCard, gameData.myCards.handCard, "mine", 'setUp', {
+                active: true, touchEndCallback: function () {
+                    self.mainCardList.map(item => {
+                        const _view = (item.getComponent("CardItemView") as CardItemView);
+                        _view.reSetChooseFalse();
+                    });
+                }
+            });
             (this.handCard.getComponent("CardItemView") as CardItemView).bindLaunch((node) => {
                 console.log(node);
             });

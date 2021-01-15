@@ -17,6 +17,8 @@ import { ClubProtocol } from '../Protocol/ClubProtocol';
 import { ClubC2SJoinRoom } from '../GameData/Club/c2s/ClubC2SJoinRoom';
 import { S2CClubJoinRoom } from '../GameData/Club/s2c/S2CClubJoinRoom';
 import { UserGold } from '../GameData/UserGold';
+import { GameNoDefine } from "../GameConst/GameNoDefine";
+import { DymjProxy } from "../Proxy/DymjProxy";
 
 export class DeskListMediator extends BaseMediator {
 
@@ -50,6 +52,10 @@ export class DeskListMediator extends BaseMediator {
 
     public getClubProxy(): ClubProxy {
         return <ClubProxy>this.facade.retrieveProxy(ProxyDefine.Club);
+    }
+
+    public getDymjProxy(): DymjProxy {
+        return <DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj);
     }
 
     protected isLoadAfterShowPrefavSource(): boolean {
@@ -101,11 +107,9 @@ export class DeskListMediator extends BaseMediator {
             this.destroyView();
         } else if (notification.getType() === NotificationTypeDefine.ClubJoinRoom) {
             let s2CClubJoinRoom: S2CClubJoinRoom = notification.getBody();
-            cc.log("准备进入到 ", s2CClubJoinRoom.roomNo);
+            console.log("准备进入到 ", s2CClubJoinRoom.roomNo);
 
-            debugger
-            this.sendNotification(CommandDefine.InitGatePanel, {});
-            
+                this.getDymjProxy().loginGame(s2CClubJoinRoom.roomNo);
         } else if (notification.getType() === NotificationTypeDefine.ClubShutdown) {
             
             this.destroyView();

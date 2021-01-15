@@ -166,7 +166,7 @@ export default class CardItemView extends cc.Component {
     private onTouchDoneCallBack(touchEndCallback, touchEvent) {
         touchEndCallback && touchEndCallback.call(this);
         if (!this.isChoose) {
-            cc.tween(this.node).to(0.1, { position: cc.v3(0, 10) }).start();
+            cc.tween(this.node).to(0.1, { position: cc.v3(0, 15) }).start();
         } else {
             if (this.isAvtive) {
                 this.isAvtive && this.launch && this.launch.call(this, this.node);

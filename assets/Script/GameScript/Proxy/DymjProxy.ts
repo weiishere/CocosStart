@@ -18,6 +18,7 @@ import { DymjC2SEnterUserInfo } from '../GameData/Dymj/c2s/DymjC2SEnterUserInfo'
 import { DymjC2SPutMahjong } from '../GameData/Dymj/c2s/DymjC2SPutMahjong';
 import { DymjC2SOperatioinData } from '../GameData/Dymj/c2s/DymjC2SOperatioinData';
 import { DymjOperationType } from '../GameData/Dymj/DymjOperationType';
+import { CommandDefine } from '../MahjongConst/CommandDefine';
 
 /**
  * 大邑麻将消息数据代理类
@@ -43,6 +44,8 @@ export class DymjProxy extends ModuleProxy {
         } else if (msgType === DymjProtocol.S_ENTER_ROOM) {
             let dymjS2CEnterRoom: DymjS2CEnterRoom = <DymjS2CEnterRoom>content;
             // 这里构建麻将界面
+            //console.log("loader ========");
+            this.sendNotification(CommandDefine.InitDeskPanel, { data: dymjS2CEnterRoom });
         } else if (msgType === DymjProtocol.S_GO_ON) {
         } else if (msgType === DymjProtocol.S_Game_BeginDeal_BroadCast) {   //开始游戏发牌数据
             let dymjS2CBeginDealData: DymjS2CBeginDealData = <DymjS2CBeginDealData>content;

@@ -37,9 +37,9 @@ export class StartupCommand extends Command {
         this.facade.removeCommand(CommandDefine.StartUp);
 
         //初始化Gate
-        //this.sendNotification(CommandDefine.InitGatePanel, {});
+        this.sendNotification(CommandDefine.InitGatePanel, {});
 
 
-        this.sendNotification(CommandDefine.InitDeskPanel, {});
+        
     }
 }
