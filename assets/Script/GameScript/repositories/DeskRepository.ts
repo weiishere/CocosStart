@@ -10,13 +10,13 @@ export type GameData = {
     },
     partnerCardsList: Array<{
         playerId: string,
-        gameIndex: number,
+        //gameIndex: number,
         partnerCards: {
             curCardCount: number,
             curCardList?: Array<number>,
             isHandCard: boolean,
             handCard?: Array<number>,
-            touchCard: number,
+            touchCard: Array<number>,
             barCard: Array<number>,
             hadHuCard: number,
             outCardList: Array<number>,
@@ -28,6 +28,7 @@ export type GameData = {
 
     }>,
     countDownTime: number,
+    positionIndex: number,
     remainCard: number,
     eventData: {
         deskEventData: {
@@ -36,7 +37,7 @@ export type GameData = {
         },
         gameEventData: {
             myGameEvent: {
-                eventName: '' | 'show' | 'touch' | 'bar' | 'hu' | 'setFace',
+                eventName: Array<'' | 'show' | 'touch' | 'bar' | 'hu' | 'ready' | 'setFace'>,
                 correlationInfoData?: Object
             },
             /**其他玩家的事件 */
@@ -52,6 +53,7 @@ export type DeskData = {
     /**玩家状态 */
     playerList: Array<{
         playerId: string,
+        gameIndex: number,
         playerGold: number,
         playerGender: number,
         playerHeadImg: string,
@@ -89,27 +91,27 @@ export class DeskRepository {
     public gameData: GameData = {
         /**玩家自己的牌列 */
         myCards: {
-            curCardList: [6,7,8,16],//[2, 5, 6, 7, 7, 9, 10, 11, 14, 15],
+            curCardList: [6, 7, 8, 16],//[2, 5, 6, 7, 7, 9, 10, 11, 14, 15],
             handCard: 2,
             touchCard: [1],
             barCard: [18],
             hadHuCard: -1,
-            outCardList: [5,6,7,2,10,11,17,16,2,4,1,7,6,4,3,14,12,19,10,11,17,16,2,4,1,7,6,4,3,14,12,19,4,1,7,6,4,3,14,12,19,10],
+            outCardList: [5, 6, 7, 2, 10, 11, 17, 16, 2, 4, 1, 7, 6, 4, 3, 4, 1, 7, 6, 4, 3, 14, 12, 19, 10],
             setFace: 3
         },
         /**对手方牌列数据 */
         partnerCardsList: [{
             playerId: '',
-            gameIndex: 0,
+
             partnerCards: {
-                curCardCount: 0,
+                curCardCount: 4,
                 //curCardList: [],
-                isHandCard: false,
+                isHandCard: true,
                 //handCard: [],
-                touchCard: 0,
-                barCard: [],
-                hadHuCard: 0,
-                outCardList: [],
+                touchCard: [8, 10],
+                barCard: [4],
+                hadHuCard: 9,
+                outCardList: [4, 5, 8, 10, 12, 16, 13, 1, 7, 6, 4, 3, 14, 12, 19, 10, 11, 17, 18],
                 setFace: 0,
                 status: {
                     isHadHu: false
@@ -117,6 +119,7 @@ export class DeskRepository {
             },
         }],
         countDownTime: 0,
+        positionIndex: 0,
         remainCard: 0,
         eventData: {
             deskEventData: {
@@ -125,7 +128,7 @@ export class DeskRepository {
             },
             gameEventData: {
                 myGameEvent: {
-                    eventName: '',
+                    eventName: ['show'],
                     correlationInfoData: {}
                 },
                 /**其他玩家的事件 */
@@ -140,7 +143,17 @@ export class DeskRepository {
     public deskData: DeskData = {
         /**玩家状态 */
         playerList: [{
-            playerId: '',
+            playerId: '4047487',
+            gameIndex: 0,//2
+            playerGold: 0,
+            playerGender: 0,
+            playerHeadImg: '',
+            playerName: '',
+            gameReadyStatus: false,
+            master: false,
+        }, {
+            playerId: '222',
+            gameIndex: 2,//2
             playerGold: 0,
             playerGender: 0,
             playerHeadImg: '',

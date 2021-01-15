@@ -5,6 +5,7 @@ import { PrefabDefine } from "../MahjongConst/PrefabDefine";
 import BaseMediator from "../Mediator/BaseMediator"
 import { ProxyDefine } from "../MahjongConst/ProxyDefine"
 import { DeskProxy } from "../Proxy/DeskProxy"
+import { LocalCacheDataProxy } from "../Proxy/LocalCacheDataProxy"
 
 export class DeskMediator extends BaseMediator {
 
@@ -43,6 +44,12 @@ export class DeskMediator extends BaseMediator {
                     const gameData = this.getDeskProxy().getGameData();
                     const deskData = this.getDeskProxy().getDeskData();
                     script.initMyJobPanel(gameData, deskData);
+                    script.initFrontjobPanel(gameData, deskData);
+
+                    script.initMyOpreationBtuShow(gameData);
+
+                    const loginData = (<LocalCacheDataProxy>this.facade.retrieveProxy(ProxyDefine.LocalCacheData)).getLoginData();
+                    script.updatedDeskAiming(gameData, deskData, loginData);
                     break;
                     // const deskPanel = cc.loader.getRes(PrefabDefine.DeskPanel, cc.Prefab);
                     // this.viewComponent.addChild(cc.instantiate(deskPanel));
