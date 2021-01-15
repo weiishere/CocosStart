@@ -134,6 +134,17 @@ export class GatePanelMediator extends BaseMediator {
         this.gameStartPanel = null;
     }
 
+
+    /**
+     * 开始登录验证码倒计时
+     */
+    public startLoginVerifyCountdown() {
+        if (this._loginView) {
+            let script = this._loginView.getComponent("LoginPanel");
+            script.startVerifyCountdown();
+        }
+    }
+
     private _loginView: cc.Node;
     public listNotificationInterests(): string[] {
         return [

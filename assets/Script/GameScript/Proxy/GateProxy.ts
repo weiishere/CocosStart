@@ -46,6 +46,7 @@ export class GateProxy extends BaseProxy {
         HttpUtil.send(url, (response) => {
             if (response.hd === "success") {
                 // 验证码获取成功
+                callBack();
             } else {
                 // 返回错误码，提示用户
                 this.toast("验证码获取失败！");
@@ -67,7 +68,7 @@ export class GateProxy extends BaseProxy {
             } else {
                 // 返回错误码，提示用户
                 let errorCode = parseInt(response.bd);
-                
+
                 cc.log("注册失败，错误码: ", errorCode);
                 if (errorCode === ServerCode.USER_NOT_EXIST) {
                     this.toast("用户名或者密码错误！");
