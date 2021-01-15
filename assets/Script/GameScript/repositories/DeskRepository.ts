@@ -1,48 +1,79 @@
 export type GameData = {
     myCards: {
+        /**可操作牌列 */
         curCardList: Array<number>,
+        /**手牌（摸到的牌） */
         handCard: number,
+        /**碰牌 */
         touchCard: Array<number>,
+        /**杠牌 */
         barCard: Array<number>,
+        /**已经胡的牌 */
         hadHuCard: number,
+        /**出牌牌列 */
         outCardList: Array<number>,
+        /**定章 */
         setFace: number
     },
     partnerCardsList: Array<{
+        /**对家ID */
         playerId: string,
         //gameIndex: number,
+        /**对家牌组 */
         partnerCards: {
+            /**对家可操作牌列数 */
             curCardCount: number,
+            /**对家可操作牌列数（可不传） */
             curCardList?: Array<number>,
+            /**是否收到新摸牌 */
             isHandCard: boolean,
+            /**新摸到的牌 */
             handCard?: Array<number>,
+            /**对家碰牌 */
             touchCard: Array<number>,
+            /**对家杠牌 */
             barCard: Array<number>,
+            /**对家已经胡的牌 */
             hadHuCard: number,
+            /**对家已经出的牌 */
             outCardList: Array<number>,
+            /**对家定章 */
             setFace: number,
+            /**对家的状态 */
             status: {
+                /**对家是否已经胡牌 */
                 isHadHu: boolean
             }
         },
 
     }>,
+    /**倒计时 */
     countDownTime: number,
+    /**当前应出牌的方向序列号 */
     positionIndex: number,
+    /**剩余牌数量 */
     remainCard: number,
+    /**事件信息 */
     eventData: {
+        /**桌面事件 */
         deskEventData: {
-            eventName: '' | 'playerIn' | 'playerOut' | 'playerOffline' | 'playerOnline' | 'chat' | 'roundGameBegin' | 'roundGameEnd'
+            /**桌面事件名称 */
+            eventName: '' | 'gameBegin' | 'gameEnd' | 'faceAction' | 'playerIn' | 'playerOut' | 'playerReady' | 'playerOffline' | 'playerOnline' | 'notice' | 'roundGameBegin' | 'roundGameEnd'
+            /**桌面事件相关信息 */
             correlationInfoData?: Object
         },
+        /**游戏事件 */
         gameEventData: {
+            /**玩家（本方）游戏事件名称（杠、碰、胡等） */
             myGameEvent: {
+                /**游戏事件队列（杠和胡一般一起传） */
                 eventName: Array<'' | 'show' | 'touch' | 'bar' | 'hu' | 'ready' | 'setFace'>,
+                /**游戏事件相关信息 */
                 correlationInfoData?: Object
             },
-            /**其他玩家的事件 */
+            /**对家的事件（show：出牌） */
             deskGameEvent: {
-                eventName: '' | 'gameBegin' | 'gameEnd' | 'chat' | 'faceAction' | 'show' | 'touch' | 'bar' | 'hu' | 'setFace',
+                eventName: '' | 'show' | 'touch' | 'bar' | 'hu' | 'setFace',
                 correlationInfoData?: Object
             }
         }
@@ -52,34 +83,54 @@ export type GameData = {
 export type DeskData = {
     /**玩家状态 */
     playerList: Array<{
+        /**玩家ID */
         playerId: string,
+        /**玩家的座位方向序号 */
         gameIndex: number,
+        /**玩家金币 */
         playerGold: number,
+        /**玩家性别 */
         playerGender: number,
+        /**玩家头像 */
         playerHeadImg: string,
+        /**玩家昵称 */
         playerName: string,
+        /**游戏是否进行中（可不用） */
         gameReadyStatus: boolean,
+        /**是否是庄家 */
         master: boolean,
     }>,
     /**配置 */
     gameSetting: {
-        playerSetNum: number,
+        /**音效 */
+        sound: {
+            musicInfo: string,
+            isPlay: boolean
+        },
+        /*背景音 */
         bgmusic: {
             musicInfo: string,
-            isPlayMusic: boolean
+            isPlay: boolean
         },
         /**局数 */
         gameRoundNum: number,
+        /**底分 */
         baseScore: number,
+        /**翻数 */
         fanTime: number
     },
     /**牌局记录 */
     roundRecordArr: Array<{
+        /**牌局第几局 */
         roundIndex: number,
         gameRoundArr: {
+            /**玩家ID */
             playerId: string,
+            /**胡牌类型 */
             winType: string,
+            /**描述 */
             desc: string,
+            /**输赢分数 */
             score: number
         }
     }>
@@ -163,10 +214,13 @@ export class DeskRepository {
         }],
         /**配置 */
         gameSetting: {
-            playerSetNum: 2,
+            sound: {
+                musicInfo: '',
+                isPlay: true
+            },
             bgmusic: {
                 musicInfo: '',
-                isPlayMusic: true
+                isPlay: true
             },
             /**局数 */
             gameRoundNum: 10,
