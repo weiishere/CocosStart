@@ -19,6 +19,9 @@ import { DymjC2SPutMahjong } from '../GameData/Dymj/c2s/DymjC2SPutMahjong';
 import { DymjC2SOperatioinData } from '../GameData/Dymj/c2s/DymjC2SOperatioinData';
 import { DymjOperationType } from '../GameData/Dymj/DymjOperationType';
 import { CommandDefine } from '../MahjongConst/CommandDefine';
+import { DymjEnterDeskPushPlyaerList } from '../GameData/Dymj/s2c/DymjEnterDeskPushPlyaerList';
+import { ProxyDefine } from '../MahjongConst/ProxyDefine';
+import { DeskProxy } from './DeskProxy';
 
 /**
  * 大邑麻将消息数据代理类
@@ -44,8 +47,10 @@ export class DymjProxy extends ModuleProxy {
         } else if (msgType === DymjProtocol.S_ENTER_ROOM) {
             let dymjS2CEnterRoom: DymjS2CEnterRoom = <DymjS2CEnterRoom>content;
             // 这里构建麻将界面
-            //console.log("loader ========");
-            this.sendNotification(CommandDefine.InitDeskPanel, { data: dymjS2CEnterRoom });
+            this.sendNotification(CommandDefine.InitDeskPanel, { dymjS2CEnterRoom });
+        } else if (msgType === DymjProtocol.S_PUSH_DESK_PLAYER_LIST) {// 推送玩家信息
+            let dymjEnterDeskPushPlyaerList: DymjEnterDeskPushPlyaerList = <DymjEnterDeskPushPlyaerList>content;
+            this.getDeskProxy().updateUserInfo(dymjEnterDeskPushPlyaerList)
         } else if (msgType === DymjProtocol.S_GO_ON) {
         } else if (msgType === DymjProtocol.S_Game_BeginDeal_BroadCast) {   //开始游戏发牌数据
             let dymjS2CBeginDealData: DymjS2CBeginDealData = <DymjS2CBeginDealData>content;
@@ -136,6 +141,10 @@ export class DymjProxy extends ModuleProxy {
 
     onRegister() {
 
+    }
+
+    getDeskProxy(){
+        return <DeskProxy>this.facade.retrieveProxy(ProxyDefine.Desk);
     }
 
 }

@@ -10,6 +10,8 @@ import { LoginData } from '../GameData/LoginData';
 import { ClubProxy } from './ClubProxy';
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
+import { DymjS2CEnterRoom } from "../GameData/Dymj/s2c/DymjS2CEnterRoom";
+import { DymjEnterDeskPushPlyaerList } from "../GameData/Dymj/s2c/DymjEnterDeskPushPlyaerList";
 
 
 export class DeskProxy extends BaseProxy {
@@ -18,7 +20,15 @@ export class DeskProxy extends BaseProxy {
         super(proxyName, data);
         this.repository = new DeskRepository();
     }
-    
+
+    /**更新用户信息 */
+    updateUserInfo(dymjEnterDeskPushPlyaerList: DymjEnterDeskPushPlyaerList) {
+
+    }
+    /**更新桌子信息 */
+    updateDeskInfo(dymjS2CEnterRoom: DymjS2CEnterRoom) {
+
+    }
     getGameData() {
         return this.repository.gameData;
     }
