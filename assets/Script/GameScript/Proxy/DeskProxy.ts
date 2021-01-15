@@ -26,7 +26,7 @@ import { DymjS2CDoNextOperation } from '../GameData/Dymj/s2c/DymjS2CDoNextOperat
 
 
 export class DeskProxy extends BaseProxy {
-    private repository: DeskRepository;
+    public repository: DeskRepository;
     public constructor(proxyName: string = null, data: any = null) {
         super(proxyName, data);
         this.repository = new DeskRepository();
