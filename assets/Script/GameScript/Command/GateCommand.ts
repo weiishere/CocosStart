@@ -13,6 +13,7 @@ import { PhoneRegisterOrLoginData } from '../GameData/PhoneRegisterOrLoginData';
 import { UserOfflineData } from '../GameData/UserOfflineData';
 import { GameNoDefine } from '../GameConst/GameNoDefine';
 import { OfflineGameData } from '../GameData/OfflineGameData';
+import { DymjProxy } from '../Proxy/DymjProxy';
 
 export class GateCommand extends BaseCommand {
     public execute(notification: INotification): void {
@@ -94,5 +95,15 @@ export class GateCommand extends BaseCommand {
         if (clubOfflineData) {
             this.getGateProxy().joinClub();
         }
+
+        let dymjOfflineData = <OfflineGameData>userOfflineData.offlineGameDatas[GameNoDefine.DA_YI_ER_REN_MAHJONG];
+        if (dymjOfflineData) {
+            this.getDymjProxy().loginGame(dymjOfflineData.level2);
+        }
     }
+
+    public getDymjProxy(): DymjProxy {
+        return <DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj);
+    }
+
 }
