@@ -26,5 +26,5 @@ export class DymjS2CEnterRoom extends DymjBaseRoomData {
     preventCheatin: boolean;
     /** gps距离 */
     gpsDistance: number;
-    players: Array<DymjPlayerInfo>;
+    players: any;
 }

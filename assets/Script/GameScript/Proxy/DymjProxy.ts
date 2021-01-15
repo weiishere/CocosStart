@@ -130,7 +130,7 @@ export class DymjProxy extends ModuleProxy {
     dealOver() {
         let dymjC2SEnterUserInfo: DymjC2SEnterUserInfo = new DymjC2SEnterUserInfo();
         dymjC2SEnterUserInfo.acctName = this.getUserName();
-        this.sendGameData(DymjProtocol.C_Game_DealOver, DymjC2SEnterUserInfo);
+        this.sendGameData(DymjProtocol.C_Game_DealOver, dymjC2SEnterUserInfo);
     }
 
     /**
@@ -139,14 +139,14 @@ export class DymjProxy extends ModuleProxy {
     ready() {
         let dymjC2SEnterUserInfo: DymjC2SEnterUserInfo = new DymjC2SEnterUserInfo();
         dymjC2SEnterUserInfo.acctName = this.getUserName();
-        this.sendGameData(DymjProtocol.C_READY, DymjC2SEnterUserInfo);
+        this.sendGameData(DymjProtocol.C_READY, dymjC2SEnterUserInfo);
     }
 
     /** 下一局 */
     goOn() {
         let dymjC2SEnterUserInfo: DymjC2SEnterUserInfo = new DymjC2SEnterUserInfo();
         dymjC2SEnterUserInfo.acctName = this.getUserName();
-        this.sendGameData(DymjProtocol.C_GO_ON, DymjC2SEnterUserInfo);
+        this.sendGameData(DymjProtocol.C_GO_ON, dymjC2SEnterUserInfo);
     }
 
     /**
