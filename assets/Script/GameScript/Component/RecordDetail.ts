@@ -11,8 +11,20 @@ import { RoomPlayerCredit } from '../GameData/RoomPlayerCredit';
 import CardItemView from './CardItemView';
 const { ccclass, property } = cc._decorator;
 
+export type PlayerRecordData = {
+    userName: string,
+    head: string,
+    nickname: string,
+    huPaiName: string,
+    winloss: number,
+    pengValues: number[],
+    gangValues: number[],
+    shouValues: number[],
+    huValues: number[]
+}
+
 @ccclass
-export default class RecordPanel extends ViewComponent {
+export default class RecordDetail extends ViewComponent {
 
     @property(cc.Node)
     bg: cc.Node = null;
@@ -24,7 +36,6 @@ export default class RecordPanel extends ViewComponent {
     roundLabel: cc.Label = null;
     @property(cc.Prefab)
     cardItemPrefab: cc.Prefab = null;
-
 
     protected bindUI(): void {
 
@@ -55,10 +66,7 @@ export default class RecordPanel extends ViewComponent {
     }
 
     loadData(hideBG: boolean, userName: string, roomNo: number, currentGameCount: number, totalGameCount: number,
-        playerData: Array<{
-            userName: string, head: string, nickname: string, huPaiName: string, winloss: number, pengValues: number[],
-            gangValues: number[], shouValues: number[], huValues: number[]
-        }>) {
+        playerData: Array<PlayerRecordData>) {
         this.bg.active = !hideBG;
         this.roomNoLabel.string = "房间号：" + roomNo;
         this.roundLabel.string = "局数：" + currentGameCount + "/" + totalGameCount;
