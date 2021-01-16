@@ -54,6 +54,7 @@ export class GatePanelMediator extends BaseMediator {
             PrefabDefine.GameStartPanel,
             PrefabDefine.Setting,
             PrefabDefine.ExchangePanel,
+            PrefabDefine.RecordPanel,
         ];
     }
 
@@ -120,7 +121,14 @@ export class GatePanelMediator extends BaseMediator {
         let exchangePanelResource = cc.loader.getRes(PrefabDefine.ExchangePanel, cc.Prefab);
         let exchangePanelPrefab = cc.instantiate(exchangePanelResource);
 
-        this.viewComponent.addChild(exchangePanelPrefab);
+        this.gameStartPanel.addChild(exchangePanelPrefab);
+    }
+
+    private openRecordPanel() {
+        let recordPanelResource = cc.loader.getRes(PrefabDefine.RecordPanel, cc.Prefab);
+        let recordPanelPrefab = cc.instantiate(recordPanelResource);
+
+        this.gameStartPanel.addChild(recordPanelPrefab);
     }
 
     private changeUserHandle() {
@@ -159,6 +167,7 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.UpdatePlayerGold,
             CommandDefine.OpenExchangePanel,
             CommandDefine.ChangeUser,
+            CommandDefine.OpenRecordPanel,
         ];
     }
 
@@ -212,6 +221,9 @@ export class GatePanelMediator extends BaseMediator {
                 break;
             case CommandDefine.OpenExchangePanel:
                 this.openExchangePanel();
+                break;
+            case CommandDefine.OpenRecordPanel:
+                this.openRecordPanel();
                 break;
             case CommandDefine.ChangeUser:
                 this.changeUserHandle();

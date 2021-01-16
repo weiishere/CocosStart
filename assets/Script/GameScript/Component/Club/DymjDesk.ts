@@ -1,6 +1,7 @@
 import ViewComponent from '../../Base/ViewComponent';
 import { S2CClubRoomInfoBase } from '../../GameData/Club/s2c/S2CClubRoomInfoBase';
 import { DeskListEventDefine } from '../../GameConst/Event/DeskListEventDefine';
+import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
 // Learn TypeScript:
 //  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
 // Learn Attribute:
@@ -65,18 +66,8 @@ export default class DymjDesk extends ViewComponent {
         headSprite.node.active = true;
         let nicknameLabel = headSprite.node.getChildByName("Nickname").getComponent(cc.Label);
         nicknameLabel.string = nickname;
-        // cc.loader.load(head, (err, texture) => {
-        //     headSprite.spriteFrame = new cc.SpriteFrame(texture);
-        // });
 
-        let headTexture = cc.loader.getRes(head, cc.Texture2D);
-        if (headTexture) {
-            headSprite.spriteFrame = new cc.SpriteFrame(headTexture);
-        } else {
-            cc.loader.load(head, (error, item) => {
-                headSprite.spriteFrame = new cc.SpriteFrame(item)
-            });
-        }
+        SpriteLoadUtil.loadSprite(headSprite, head);
     }
 
     standUp(seatNo: number) {

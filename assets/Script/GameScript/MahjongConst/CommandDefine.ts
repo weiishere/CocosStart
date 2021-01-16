@@ -17,6 +17,7 @@ export enum CommandDefine {
     CloseLoginPanel = "CloseLoginPanel",
     OpenSetting = "OpenSetting",
     OpenExchangePanel = "OpenExchangePanel",
+    OpenRecordPanel = "OpenRecordPanel",
     ChangeUser = "ChangeUser",
     //牌桌
     /**更新玩家信息 */

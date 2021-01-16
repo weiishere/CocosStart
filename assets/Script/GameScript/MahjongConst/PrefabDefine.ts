@@ -9,4 +9,5 @@ export enum PrefabDefine {
     Setting = "prefabs/setting",
     DeskPanel = "prefabs/deskView",
     ExchangePanel = "prefabs/exchangePanel",
+    RecordPanel = "prefabs/recordPanel",
 }
