@@ -17,4 +17,6 @@ export class S2CClubRoomInfoBase {
     consumptionType: string;
     /** 用户信息 */
     userInfos: Array<S2CClubRoomPlayerInfo>;
+    /** 准入 */
+    enterLimit: number
 }

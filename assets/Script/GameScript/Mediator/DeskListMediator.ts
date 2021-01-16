@@ -32,6 +32,7 @@ export class DeskListMediator extends BaseMediator {
         // 监听登录按钮请求方法
         this.viewComponent.on(DeskListEventDefine.ClubQuitEvent, this.quitClubBtnEvent.bind(this));
         this.viewComponent.on(DeskListEventDefine.JoinDeskEvent, this.joinDeskEvent.bind(this));
+        this.viewComponent.on(DeskListEventDefine.SpeedJoinDeskEvent, this.speedJoinDeskEvent.bind(this));
     }
 
     private quitClubBtnEvent(event: cc.Event.EventCustom) {
@@ -48,6 +49,10 @@ export class DeskListMediator extends BaseMediator {
         data.roomNo = event.getUserData();
         this.getClubProxy().sendGameData(ClubProtocol.C2S_JOIN_ROOM, data, (op: number, msgType: number) => {
         });
+    }
+
+    private speedJoinDeskEvent(event: cc.Event.EventCustom) {
+
     }
 
     public getClubProxy(): ClubProxy {
@@ -164,11 +169,21 @@ export class DeskListMediator extends BaseMediator {
     }
 
     private addDesk(roomInfo: S2CClubRoomInfoBase) {
+        // 如果界面没有加载，收到消息不处理
+        if (!this.view) {
+            return;
+        }
+
         const script = this.getViewScript();
         script.addDesk(roomInfo);
     }
 
     private deleteDesk(s2CClubDeleteRoom: S2CClubDeleteRoom) {
+        // 如果界面没有加载，收到消息不处理
+        if (!this.view) {
+            return;
+        }
+
         const script = this.getViewScript();
         script.deteleDesk(s2CClubDeleteRoom.roomNo);
     }

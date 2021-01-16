@@ -8,6 +8,7 @@ import { ConfigProxy } from '../Proxy/ConfigProxy';
 import { HttpUtil } from '../Util/HttpUtil';
 import { GameRecordInfo } from '../GameData/GameRecordInfo';
 import { RoomPlayerCredit } from '../GameData/RoomPlayerCredit';
+import RecordDetailList from './RecordDetailList';
 // Learn TypeScript:
 //  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
 // Learn Attribute:
@@ -28,6 +29,10 @@ export default class RecordPanel extends ViewComponent {
     playerItem: cc.Node = null;
     @property(cc.Node)
     closeBtn: cc.Node = null;
+    @property(cc.Node)
+    recordTipsLabel: cc.Node = null;
+    @property(cc.Prefab)
+    recordDetailList: cc.Prefab = null;
 
 
     protected bindUI(): void {
@@ -60,9 +65,14 @@ export default class RecordPanel extends ViewComponent {
         }
         LoginAfterHttpUtil.send(url, (response) => {
             let data: GameRecordInfo[] = <GameRecordInfo[]>response;
-            data.forEach(v => {
-                this.createRecordItem(v);
-            })
+            if (data && data.length > 0) {
+                this.recordTipsLabel.active = false;
+                data.forEach(v => {
+                    this.createRecordItem(v);
+                })
+            } else {
+                this.recordTipsLabel.active = true;
+            }
         }, (err) => {
         }, HttpUtil.METHOD_POST, param);
     }
@@ -78,6 +88,7 @@ export default class RecordPanel extends ViewComponent {
         let timeLabel = recordItemObj.getChildByName("timeLabel").getComponent(cc.Label);
         // 详情按钮事件
         recordItemObj.getChildByName("detailBtn").on(cc.Node.EventType.TOUCH_END, () => {
+            this.openRecordDetailList(data.roomRoundNo);
         });
 
         let playerInfoNode = recordItemObj.getChildByName("playerInfo");
@@ -87,6 +98,13 @@ export default class RecordPanel extends ViewComponent {
         });
 
         this.recordContent.addChild(recordItemObj);
+    }
+
+    private openRecordDetailList(roomRoundNo: string) {
+        let recordDetailList = cc.instantiate(this.recordDetailList);
+        this.root.addChild(recordDetailList);
+        let recordRetailList = <RecordDetailList>recordDetailList.getComponent("RecordDetailList");
+        recordRetailList.loadData(roomRoundNo);
     }
 
     /**

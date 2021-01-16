@@ -92,6 +92,8 @@ export class DymjProxy extends ModuleProxy {
         } else if (msgType === DymjProtocol.S_Game_Reconn) {   //推送玩家重连的数据
             let dymjGameReconnData: DymjGameReconnData = <DymjGameReconnData>content;
         } else if (msgType === DymjProtocol.S_PUSH_EXIT_ROOM) {   //推送玩家退出游戏消息
+        } else if (msgType === DymjProtocol.S_HEARTBEAT) {   //推送玩家退出游戏消息
+            this.sendHeartbeat();
         }
     }
 
@@ -111,7 +113,7 @@ export class DymjProxy extends ModuleProxy {
     }
 
     sendHeartbeat() {
-        // this.sendGameData(ClubProtocol.C2S_LOGIN_CLUB, '');
+        this.sendGameData(DymjProtocol.C_HEARTBEAT, null);
     }
 
     getUserName() {
