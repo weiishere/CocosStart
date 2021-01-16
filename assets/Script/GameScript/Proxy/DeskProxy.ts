@@ -50,6 +50,7 @@ export class DeskProxy extends BaseProxy {
         })
 
         this.getDeskData().playerList = playerInfos;
+        this.facade.sendNotification(CommandDefine.RefreshPlayer, {}, '');
     }
 
     /**
@@ -57,15 +58,16 @@ export class DeskProxy extends BaseProxy {
      */
     beginGame(dymjS2CBeginDealData: DymjS2CBeginDealData) {
         let loginData = this.getLocalCacheDataProxy().getLoginData();
+        const self = this;
         dymjS2CBeginDealData.players.forEach(user => {
-
-            this.getPlayerInfo(user.name).master = user.isBank;
+            debugger
+            self.getPlayerInfo(user.name).master = user.isBank;
 
             if (user.name === loginData.userName) {
                 user.initSpValuesSorted;
-                this.getGameData().myCards.curCardList = user.initSpValuesSorted;
+                self.getGameData().myCards.curCardList = user.initSpValuesSorted;
             } else {
-                let partnerCard = this.getGameData().partnerCardsList.find(partner => partner.playerId === user.name);
+                let partnerCard = self.getGameData().partnerCardsList.find(partner => partner.playerId === user.name);
                 partnerCard.partnerCards.curCardCount = user.initSpValuesSorted.length;
                 partnerCard.partnerCards.curCardList = user.initSpValuesSorted;
             }
@@ -75,10 +77,10 @@ export class DeskProxy extends BaseProxy {
     }
 
     /**
-     * 摸牌
+     * 玩家自己摸牌
      * @param dymjS2CPlayerGet 
      */
-    updateFirstCard(dymjS2CPlayerGet: DymjS2CPlayerGet) {
+    drawCard(dymjS2CPlayerGet: DymjS2CPlayerGet) {
         // 设置剩余牌
         this.getGameData().remainCard = dymjS2CPlayerGet.cardRemainCount;
         let playerInfo = this.getPlayerByGameIndex(dymjS2CPlayerGet.playerAzimuth);

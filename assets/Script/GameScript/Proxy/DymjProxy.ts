@@ -57,7 +57,7 @@ export class DymjProxy extends ModuleProxy {
             this.getDeskProxy().beginGame(dymjS2CBeginDealData);
         } else if (msgType === DymjProtocol.S_Game_Get) {   //推送玩家摸牌消息
             let dymjS2CPlayerGet: DymjS2CPlayerGet = <DymjS2CPlayerGet>content;
-            this.getDeskProxy().updateFirstCard(dymjS2CPlayerGet);
+            this.getDeskProxy().drawCard(dymjS2CPlayerGet);
         } else if (msgType === DymjProtocol.S_Game_DoNextOperation_BroadCast) {   //推送玩家下一步的操作
             let dymjS2CDoNextOperation: DymjS2CDoNextOperation = <DymjS2CDoNextOperation>content;
             this.getDeskProxy().updateNextOperationEvent(dymjS2CDoNextOperation);
