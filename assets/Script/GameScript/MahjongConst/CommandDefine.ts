@@ -16,7 +16,13 @@ export enum CommandDefine {
     InitGateMainPanel = "InitGateMainPanel",
     CloseLoginPanel = "CloseLoginPanel",
     OpenSetting = "OpenSetting",
-    InitDeskPanel = "InitDeskPanel",
     OpenExchangePanel = "OpenExchangePanel",
     ChangeUser = "ChangeUser",
+    //牌桌
+    /**更新玩家信息 */
+    RefreshPlayer = "RefreshPlayer",
+    /**初始化牌桌 */
+    InitDeskPanel = "InitDeskPanel",
+    /**发牌 */
+    LicensingCard = "LicensingCard"
 }

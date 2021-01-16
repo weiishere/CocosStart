@@ -7,6 +7,7 @@ import { ProxyDefine } from "../MahjongConst/ProxyDefine"
 import { DeskProxy } from "../Proxy/DeskProxy"
 import { LocalCacheDataProxy } from "../Proxy/LocalCacheDataProxy"
 import { DymjProxy } from '../Proxy/DymjProxy';
+import DeskPanelView from "../Component/DeskPanelView";
 
 export class DeskMediator extends BaseMediator {
 
@@ -34,36 +35,40 @@ export class DeskMediator extends BaseMediator {
     }
     public listNotificationInterests(): string[] {
         return [
-            CommandDefine.InitDeskPanel
+            CommandDefine.InitDeskPanel,
+            CommandDefine.RefreshPlayer,
         ];
     }
 
     public async handleNotification(notification: INotification) {
+        const deskPanel = this.viewComponent.getChildByName('deskView');
+        const script = deskPanel.getComponent('DeskPanelView') as DeskPanelView;
+        const gameData = this.getDeskProxy().getGameData();
+        const deskData = this.getDeskProxy().getDeskData();
         switch (notification.getName()) {
             case CommandDefine.InitDeskPanel:
-                {
-                    this.getDeskProxy().updateDeskInfo(notification.getBody());
-                    await this.init();
+                this.getDeskProxy().updateDeskInfo(notification.getBody().dymjS2CEnterRoom);
+                await this.init();
+                script.initMyJobPanel(gameData, deskData);
+                script.initFrontjobPanel(gameData, deskData);
+                // 发送准备
+                this.getDymjProxy().ready();
 
-                    const deskPanel = this.viewComponent.getChildByName('deskView');
-                    const script = deskPanel.getComponent('DeskPanelView');
-                    const gameData = this.getDeskProxy().getGameData();
-                    const deskData = this.getDeskProxy().getDeskData();
-                    script.initMyJobPanel(gameData, deskData);
-                    script.initFrontjobPanel(gameData, deskData);
+                // script.initMyOpreationBtuShow(gameData);
 
-                    // 发送准备
-                    this.getDymjProxy().ready();
-
-                    // script.initMyOpreationBtuShow(gameData);
-
-                    // const loginData = (<LocalCacheDataProxy>this.facade.retrieveProxy(ProxyDefine.LocalCacheData)).getLoginData();
-                    // script.updatedDeskAiming(gameData, deskData, loginData);
-                    // break;
-                    // // const deskPanel = cc.loader.getRes(PrefabDefine.DeskPanel, cc.Prefab);
-                    // // this.viewComponent.addChild(cc.instantiate(deskPanel));
-                    // // break;
-                }
+                // const loginData = (<LocalCacheDataProxy>this.facade.retrieveProxy(ProxyDefine.LocalCacheData)).getLoginData();
+                // script.updatedDeskAiming(gameData, deskData, loginData);
+                // break;
+                // // const deskPanel = cc.loader.getRes(PrefabDefine.DeskPanel, cc.Prefab);
+                // // this.viewComponent.addChild(cc.instantiate(deskPanel));
+                // // break;
+                break;
+            case CommandDefine.RefreshPlayer:
+                script.updatePlayerHeadView();
+                break;
+            case CommandDefine.LicensingCard://发牌
+                //script.licensingCard();
+                break;
         }
     }
 }
