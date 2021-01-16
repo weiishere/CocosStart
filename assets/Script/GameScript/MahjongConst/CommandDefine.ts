@@ -21,12 +21,17 @@ export enum CommandDefine {
     ChangeUser = "ChangeUser",
     //牌桌
     /**更新玩家信息 */
-    RefreshPlayer = "RefreshPlayer",
+    RefreshPlayerPush = "RefreshPlayer",
     /**初始化牌桌 */
     InitDeskPanel = "InitDeskPanel",
     /**发牌 */
-    LicensingCard = "LicensingCard",
+    LicensingCardPush = "LicensingCardPush",
     /**摸牌 */
-    getGameCard = "getGameCard",
+    GetGameCardPush = "GetGameCardPush",
     ExitDeskPanel = "ExitDeskPanel",
+    ShowCardPush = "ShowCardPush",
+    ShowCard = "ShowCard",
+    ShowCardNotificationPush = "ShowCardNotificationPush",
+    ShowMyEventPush = "ShowMyEventPush",
+    EventDonePush = "EventDonePush"
 }

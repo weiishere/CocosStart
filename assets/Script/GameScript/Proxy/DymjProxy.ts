@@ -46,6 +46,9 @@ export class DymjProxy extends ModuleProxy {
             this.joinRoom(this.joinRoomNo);
         } else if (msgType === DymjProtocol.S_ENTER_ROOM) {
             let dymjS2CEnterRoom: DymjS2CEnterRoom = <DymjS2CEnterRoom>content;
+            dymjS2CEnterRoom.players.forEach(v => {
+                v.azimuth -= 1;
+            })
             // 这里构建麻将界面
             this.sendNotification(CommandDefine.InitDeskPanel, { dymjS2CEnterRoom });
         } else if (msgType === DymjProtocol.S_PUSH_DESK_PLAYER_LIST) {// 推送玩家信息

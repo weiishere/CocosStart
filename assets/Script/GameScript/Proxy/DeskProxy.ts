@@ -35,6 +35,7 @@ export class DeskProxy extends BaseProxy {
     /**更新用户信息 */
     updateUserInfo(players: Array<DymjPlayerInfo>) {
         let playerInfos = [];
+        this.repository.gameData.partnerCardsList = [];
         players.forEach(p => {
             let playerInfo: PlayerInfo = {
                 playerId: p.username,
@@ -45,12 +46,31 @@ export class DeskProxy extends BaseProxy {
                 playerGender: 0,
                 gameIndex: p.azimuth,
             }
-
             playerInfos.push(playerInfo);
+            if (!this.isMy(p.username)) {
+                this.repository.gameData.partnerCardsList.push({
+                    "playerId": playerInfo.playerId,
+                    "partnerCards":
+                    {
+                        "curCardList": [],
+                        "curCardCount": 0,
+                        "isHandCard": false,
+                        "touchCard": [],
+                        "barCard": [],
+                        "hadHuCard": 0,
+                        "outCardList": [],
+                        "setFace": 0,
+                        "status": {
+                            "isHadHu": false,
+                            "isBaoHu": false
+                        }
+                    }
+                });
+            }
         })
 
         this.getDeskData().playerList = playerInfos;
-        this.facade.sendNotification(CommandDefine.RefreshPlayer, {}, '');
+        this.facade.sendNotification(CommandDefine.RefreshPlayerPush, {}, '');
     }
 
     /**
@@ -60,20 +80,29 @@ export class DeskProxy extends BaseProxy {
         let loginData = this.getLocalCacheDataProxy().getLoginData();
         const self = this;
         dymjS2CBeginDealData.players.forEach(user => {
-            debugger
             self.getPlayerInfo(user.name).master = user.isBank;
-
-            if (user.name === loginData.userName) {
-                user.initSpValuesSorted;
+            if (this.isMy(user.name)) {
                 self.getGameData().myCards.curCardList = user.initSpValuesSorted;
+                if (user.isBank) {
+                    const lastCard = self.getGameData().myCards.curCardList.pop();
+                    self.getGameData().myCards.handCard = lastCard;
+                }
             } else {
                 let partnerCard = self.getGameData().partnerCardsList.find(partner => partner.playerId === user.name);
+
                 partnerCard.partnerCards.curCardCount = user.initSpValuesSorted.length;
                 partnerCard.partnerCards.curCardList = user.initSpValuesSorted;
+                if (user.isBank) {
+                    partnerCard.partnerCards.curCardCount--;
+                    partnerCard.partnerCards.isHandCard = true;
+                    //toushi
+                    if (user.initSpValuesSorted[0] !== 0) partnerCard.partnerCards.handCard = partnerCard.partnerCards.curCardList.pop();
+                }
             }
-        })
 
+        })
         this.getDeskData().gameSetting.gameRoundNum = dymjS2CBeginDealData.currentGameCount;
+        this.sendNotification(CommandDefine.LicensingCardPush)
     }
 
     /**
@@ -102,7 +131,11 @@ export class DeskProxy extends BaseProxy {
                     }
                 });
             }
+        } else {
+            let { partnerCards } = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
+            partnerCards.isHandCard = true;
         }
+        this.sendNotification(CommandDefine.GetGameCardPush);
     }
 
     /**
@@ -128,30 +161,32 @@ export class DeskProxy extends BaseProxy {
                     }
                 });
             }
+            this.sendNotification(CommandDefine.ShowMyEventPush);
         }
     }
 
     /**
-     * 通知下一步的操作动作
+     * 通知下一步的操作动作(广播有事件处理完成)
      * @param dymjS2CDoNextOperation 
      */
     updateNextOperationEvent(dymjS2CDoNextOperation: DymjS2CDoNextOperation) {
         let playerInfo = this.getPlayerByGameIndex(dymjS2CDoNextOperation.playerAzimuth);
+        
         // 如果是自己
         if (this.isMy(playerInfo.playerId)) {
-            if (dymjS2CDoNextOperation.nextStep.oprts) {
-                this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
-                dymjS2CDoNextOperation.nextStep.oprts.forEach(op => {
-                    if (op.oprtType === DymjOperationType.PUT) {
-                        this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("show");
-                        this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;
-                    }
-                });
+            if (dymjS2CDoNextOperation.nextStep.type === 1) {
+                //出牌
+                this.getGameData().eventData.gameEventData.myGameEvent.eventName = ["show"];
+                this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = null;
+            } else if (dymjS2CDoNextOperation.nextStep.type === 2) {
+                //碰杠胡
+
             }
+            this.sendNotification(CommandDefine.ShowCardNotificationPush);
         }
     }
 
-    /** 碰，杠，胡，报胡 游戏事件(对家和自己处理后才接受的数据。给自己的提示) */
+    /** 碰，杠，胡，报胡 游戏事件(对家和自己处理后才接受的数) */
     updateDeskEvent(dymjGameOperation: DymjGameOperation) {
         let playerInfo = this.getPlayerByGameIndex(dymjGameOperation.playerAzimuth);
         // 如果是自己
@@ -182,6 +217,7 @@ export class DeskProxy extends BaseProxy {
                 partnerCard.partnerCards.status.isBaoHu = true;
             }
         }
+        this.sendNotification(CommandDefine.EventDonePush);
     }
 
     /** 自己和对家出牌 */
@@ -195,9 +231,11 @@ export class DeskProxy extends BaseProxy {
         } else {
             let partnerCard = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
             partnerCard.partnerCards.outCardList.push(dymjS2COpPutRsp.putMjValue);
-            partnerCard.partnerCards.curCardCount--;
+            //partnerCard.partnerCards.curCardCount--;
+            partnerCard.partnerCards.isHandCard = false;
             partnerCard.partnerCards.curCardList = dymjS2COpPutRsp.spValuesSorted;
         }
+        this.sendNotification(CommandDefine.ShowCardPush, { playerInfo, showCard: dymjS2COpPutRsp.putMjValue });
     }
 
     /** 更新玩家金币 */

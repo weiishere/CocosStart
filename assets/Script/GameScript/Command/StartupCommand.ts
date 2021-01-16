@@ -39,7 +39,7 @@ export class StartupCommand extends Command {
         //初始化Gate
         this.sendNotification(CommandDefine.InitGatePanel, {});
 
-
+        //this.sendNotification(CommandDefine.InitDeskPanel, {});
         
     }
 }

@@ -8,6 +8,11 @@ import { DeskProxy } from "../Proxy/DeskProxy"
 import { LocalCacheDataProxy } from "../Proxy/LocalCacheDataProxy"
 import { DymjProxy } from '../Proxy/DymjProxy';
 import DeskPanelView from "../Component/DeskPanelView";
+import { PlayerInfo } from "../repositories/DeskRepository";
+import { DymjOperationType } from "../GameData/Dymj/DymjOperationType";
+import { DymjGang } from "../GameData/Dymj/s2c/DymjGang";
+import { DymjPeng } from "../GameData/Dymj/s2c/DymjPeng";
+import { DymjHu } from "../GameData/Dymj/s2c/DymjHu";
 
 export class DeskMediator extends BaseMediator {
 
@@ -38,10 +43,15 @@ export class DeskMediator extends BaseMediator {
     public listNotificationInterests(): string[] {
         return [
             CommandDefine.InitDeskPanel,
-            CommandDefine.RefreshPlayer,
-            CommandDefine.LicensingCard,
+            CommandDefine.RefreshPlayerPush,
+            CommandDefine.LicensingCardPush,
             CommandDefine.ExitDeskPanel,
-            CommandDefine.getGameCard
+            CommandDefine.GetGameCardPush,
+            CommandDefine.ShowCard,
+            CommandDefine.ShowCardPush,
+            CommandDefine.ShowCardNotificationPush,
+            CommandDefine.ShowMyEventPush,
+            CommandDefine.EventDonePush
         ];
     }
 
@@ -49,25 +59,42 @@ export class DeskMediator extends BaseMediator {
 
         const gameData = this.getDeskProxy().getGameData();
         const deskData = this.getDeskProxy().getDeskData();
+        console.log('gameData', gameData);
+        console.log('deskData', deskData);
         switch (notification.getName()) {
             case CommandDefine.InitDeskPanel:
                 await this.init();
                 this.deskPanel = this.viewComponent.getChildByName('deskView');
                 this.DeskPanelViewScript = this.deskPanel.getComponent('DeskPanelView') as DeskPanelView;
                 this.getDeskProxy().updateDeskInfo(notification.getBody().dymjS2CEnterRoom);
-                this.DeskPanelViewScript.initMyJobPanel(gameData, deskData);
-                this.DeskPanelViewScript.initFrontjobPanel(gameData, deskData);
+
+
                 this.DeskPanelViewScript.bindDskOpreationEvent(node => {
                     if (node.name === 'exitIcon') {
                         //退出房间
                         this.getDymjProxy().logout();
                         this.facade.sendNotification(CommandDefine.ExitDeskPanel, {}, '');
                     }
-                })
+                });
+                this.DeskPanelViewScript.bindShowCardEvent(cardNumber => {
+                    this.sendNotification(CommandDefine.ShowCard, { cardNumber })
+                });
+                this.DeskPanelViewScript.bindGameOpreationEvent((node, correlationInfoData) => {
+                    if (node.name === "bar") {
+                        //杠
+                        this.getDymjProxy().operation(DymjOperationType.GANG, (correlationInfoData as DymjGang).mjValues[0]);//---------------------注意这里是个数组
+                    } else if (node.name === "touch") {
+                        //碰
+                        this.getDymjProxy().operation(DymjOperationType.PENG, (correlationInfoData as DymjPeng).mjValue);
+                    } else if (node.name === 'hu') {
+                        //胡
+                        this.getDymjProxy().operation(DymjOperationType.HU, (correlationInfoData as DymjHu).mjValue);
+                    }
+                });
                 // 发送准备
                 this.getDymjProxy().ready();
 
-                // script.initMyOpreationBtuShow(gameData);
+                //this.DeskPanelViewScript.initMyJobPanel(gameData, deskData);
 
                 // const loginData = (<LocalCacheDataProxy>this.facade.retrieveProxy(ProxyDefine.LocalCacheData)).getLoginData();
                 // script.updatedDeskAiming(gameData, deskData, loginData);
@@ -76,20 +103,48 @@ export class DeskMediator extends BaseMediator {
                 // // this.viewComponent.addChild(cc.instantiate(this.DeskPanelViewScript));
                 // // break;
                 break;
-            case CommandDefine.RefreshPlayer:
+            case CommandDefine.RefreshPlayerPush:
                 this.DeskPanelViewScript.updatePlayerHeadView();
                 break;
             case CommandDefine.ExitDeskPanel:
                 this.deskPanel.destroy();
                 break;
-            case CommandDefine.LicensingCard://发牌
+            case CommandDefine.LicensingCardPush://发牌
                 this.DeskPanelViewScript.updateMyCurCardList();
-                deskData.playerList.forEach(player => {
-                    if (!this.deskProxy.isMy(player.playerId)) this.DeskPanelViewScript.updateOtherCurCardList(player.gameIndex);
-                });
-                break;
-            case CommandDefine.getGameCard:
+                this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
+                //在这里加入发牌动画
+
+
+                this.getDymjProxy().dealOver();
+                break;
+            case CommandDefine.GetGameCardPush://摸牌
+                this.DeskPanelViewScript.updateHandCardAndHuCard();//更新手牌
+                break;
+            case CommandDefine.ShowCardPush://玩家出牌推送
+                const { playerInfo, showCard } = notification.getBody();
+                this.DeskPanelViewScript.updateOutCard((playerInfo as PlayerInfo).gameIndex);
+                this.DeskPanelViewScript.updateMyCurCardList();
+                this.DeskPanelViewScript.updateOtherCurCardList();
+                this.DeskPanelViewScript.updateHandCardAndHuCard();
+                break;
+            case CommandDefine.EventDonePush://玩家处理操作之后的推送
+                this.DeskPanelViewScript.updateMyCurCardList();
+                this.DeskPanelViewScript.updateOtherCurCardList();
+                this.DeskPanelViewScript.updateHandCardAndHuCard();
+                this.DeskPanelViewScript.updateMyBarAndTouchCard();
+                this.DeskPanelViewScript.initMyOpreationBtuShow();
+                break;
+            case CommandDefine.ShowCardNotificationPush://通知出牌
+                this.DeskPanelViewScript.initMyOpreationBtuShow();
+                this.DeskPanelViewScript.updateHandCardAndHuCard();
+                break;
+            case CommandDefine.ShowMyEventPush://通知本方有事件
+                this.DeskPanelViewScript.updateMyOperationBtu();
+                break;
+            case CommandDefine.ShowCard://本方出牌
+                const { cardNumber } = notification.getBody();
+                this.getDymjProxy().putMahkjong(cardNumber);
                 break;
         }
     }

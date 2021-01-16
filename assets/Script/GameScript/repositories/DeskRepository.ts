@@ -58,7 +58,7 @@ export type PartnerCard = {
         /**是否收到新摸牌 */
         isHandCard: boolean,
         /**新摸到的牌 */
-        handCard?: Array<number>,
+        handCard?: number,
         /**对家碰牌 */
         touchCard: Array<number>,
         /**对家杠牌 */
@@ -172,12 +172,12 @@ export class DeskRepository {
     public gameData: GameData = {
         /**玩家自己的牌列 */
         myCards: {
-            curCardList: [6, 7, 8, 16],//[2, 5, 6, 7, 7, 9, 10, 11, 14, 15],
-            handCard: 2,
-            touchCard: [1],
+            curCardList: [],
+            handCard: 0,
+            touchCard: [],
             barCard: [],
-            hadHuCard: -1,
-            outCardList: [5, 6, 7, 2, 10, 11, 17, 16, 2, 4, 1, 7, 6, 4, 3, 4, 1, 7, 6, 4, 3, 14, 12, 19, 10],
+            hadHuCard: 0,
+            outCardList: [],
             setFace: 3,
             status: {
                 isHadHu: false,
@@ -187,16 +187,15 @@ export class DeskRepository {
         /**对手方牌列数据 */
         partnerCardsList: [{
             playerId: '',
-
             partnerCards: {
-                curCardCount: 4,
+                curCardCount: 0,
                 //curCardList: [],
                 isHandCard: true,
                 //handCard: [],
-                touchCard: [8, 10],
+                touchCard: [],
                 barCard: [],
-                hadHuCard: 9,
-                outCardList: [4, 5, 8, 10, 12, 16, 13, 1, 7, 6, 4, 3, 14, 12, 19, 10, 11, 17, 18],
+                hadHuCard: 0,
+                outCardList: [],
                 setFace: 0,
                 status: {
                     isHadHu: false,
