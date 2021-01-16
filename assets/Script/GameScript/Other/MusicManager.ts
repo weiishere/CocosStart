@@ -139,15 +139,15 @@ export class MusicManager {
         let path = cc.path.mainFileName(this.effectUrl);
         let clip = cc.loader.getRes(path, cc.AudioClip);
         if (clip) {
-            var audioID = cc.audioEngine.playEffect(clip, true);
+            var audioID = cc.audioEngine.playEffect(clip, false);
             this.updateEffectVolume(this.effectVolume);
         } else {
-            cc.loader.loadRes(path, cc.AudioClip, (err, clip) => {
+            cc.loader.loadRes(path, cc.AudioClip, (err, clip1) => {
                 if (err) {
                     cc.log("加载音效失败: ", err);
                     return;
                 }
-                var audioID = cc.audioEngine.playEffect(clip, true);
+                var audioID = cc.audioEngine.playEffect(clip1, false);
                 this.updateEffectVolume(this.effectVolume);
             });
         }

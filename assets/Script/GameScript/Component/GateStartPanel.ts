@@ -11,6 +11,7 @@ import Facade from "../../Framework/care/Facade";
 import { ProxyDefine } from "../MahjongConst/ProxyDefine"
 import { CommandDefine } from "../MahjongConst/CommandDefine"
 import { GateProxy } from "../Proxy/GateProxy";
+import { DymjMusicManager } from '../Other/DymjMusicManager';
 
 @ccclass
 export default class GateStartPanel extends ViewComponent {
@@ -81,6 +82,8 @@ export default class GateStartPanel extends ViewComponent {
 
         this.logBtn.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '开发中，敬请期待...', toastOverlay: true }, '');
+
+            DymjMusicManager.baoHu(0)
         });
     }
     // onLoad () {
