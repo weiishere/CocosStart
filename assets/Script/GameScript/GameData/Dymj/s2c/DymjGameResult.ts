@@ -14,4 +14,6 @@ export class DymjGameResult {
     isLiuJu: boolean = false;
     /** 当前游戏局数 */
     currentGameCount;
+    /** 房间号 */
+    roomNo: number
 }

@@ -9,6 +9,7 @@ const { ccclass, property } = cc._decorator;
 import ViewComponent from "../Base/ViewComponent";
 import Facade from '../../Framework/care/Facade';
 import { CommandDefine } from '../MahjongConst/CommandDefine';
+import { SpriteLoadUtil } from '../Other/SpriteLoadUtil';
 
 @ccclass
 export default class UserHeader extends ViewComponent {
@@ -45,14 +46,7 @@ export default class UserHeader extends ViewComponent {
         this.uid.string = userName;
         this.updateGold(gold);
 
-        let headTexture = cc.loader.getRes(head, cc.Texture2D);
-        if (headTexture) {
-            this.head.spriteFrame = new cc.SpriteFrame(headTexture);
-        } else {
-            cc.loader.load(head, (error, item) => {
-                this.head.spriteFrame = new cc.SpriteFrame(item)
-            });
-        }
+        SpriteLoadUtil.loadSprite(this.head, head);
     }
 
     updateGold(gold) {

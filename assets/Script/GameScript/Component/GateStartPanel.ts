@@ -81,14 +81,10 @@ export default class GateStartPanel extends ViewComponent {
         });
 
         this.logBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '开发中，敬请期待...', toastOverlay: true }, '');
-
-            DymjMusicManager.baoHu(0)
+            Facade.Instance.sendNotification(CommandDefine.OpenRecordPanel, null, '');
         });
     }
     // onLoad () {
-
-
     // }
 
     start() {
