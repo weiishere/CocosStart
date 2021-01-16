@@ -98,7 +98,9 @@ export class GateCommand extends BaseCommand {
 
         let dymjOfflineData = <OfflineGameData>userOfflineData.offlineGameDatas[GameNoDefine.DA_YI_ER_REN_MAHJONG];
         if (dymjOfflineData) {
-            this.getDymjProxy().loginGame(dymjOfflineData.level2);
+            if (dymjOfflineData.level2 > 0) {
+                this.getDymjProxy().loginGame(dymjOfflineData.level2);
+            }
         }
     }
 

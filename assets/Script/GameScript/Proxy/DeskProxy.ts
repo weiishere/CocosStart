@@ -234,6 +234,7 @@ export class DeskProxy extends BaseProxy {
                 huCardList.push(v.value);
             });
 
+            let desc = this.getResultDesc(dymjGameResult.list);
             let gameRound = {
                 /**玩家ID */
                 playerId: playerInfo.playerId,
@@ -273,6 +274,16 @@ export class DeskProxy extends BaseProxy {
         }
 
         return 0;
+    }
+
+    getResultDesc(list: DymjGameUIResultItem[]) {
+        for (const value of list) {
+            if (value.itemType === 6 || value.itemType === 7) {
+                return value.name;
+            }
+        }
+
+        return "";
     }
 
     isMy(playerId: string) {

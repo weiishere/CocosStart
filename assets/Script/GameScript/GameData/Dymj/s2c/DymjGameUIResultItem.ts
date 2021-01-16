@@ -9,4 +9,6 @@ export class DymjGameUIResultItem {
     azimuth2: number;
     azimuth3: number;
     azimuth4: number;
+    /** 项类型  */
+	itemType:number;
 }

@@ -175,6 +175,13 @@ export class DymjProxy extends ModuleProxy {
         this.sendGameData(DymjProtocol.C_Game_Operation, dymjC2SOperatioinData);
     }
 
+    /**
+     * 登出
+     */
+    logout() {
+        this.sendGameData(DymjProtocol.LOGOUT, this.getLocalCacheDataProxy().getLoginData().userName);
+    }
+
     serverShutDown(): void {
     }
 

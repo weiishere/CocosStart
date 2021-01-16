@@ -105,7 +105,7 @@ export class GatePanelMediator extends BaseMediator {
                 this.musicManager.playMusic(notification.getBody());
                 break;
             case AudioNotificationTypeDefine.PlayEffect:
-                this.musicManager.playMusic(notification.getBody());
+                this.musicManager.playEffect(notification.getBody());
                 break;
             case AudioNotificationTypeDefine.PauseAudio:
                 this.musicManager.updatePauseMusic(notification.getBody());
