@@ -17,6 +17,8 @@ export class DeskMediator extends BaseMediator {
     protected prefabSource(): string {
         return PrefabDefine.DeskPanel;
     }
+    private DeskPanelViewScript: DeskPanelView = null;
+    private deskPanel: cc.Node = null;
     private deskProxy: DeskProxy;
     /**
      * 需要预先加载的文件
@@ -37,20 +39,31 @@ export class DeskMediator extends BaseMediator {
         return [
             CommandDefine.InitDeskPanel,
             CommandDefine.RefreshPlayer,
+            CommandDefine.LicensingCard,
+            CommandDefine.ExitDeskPanel,
+            CommandDefine.getGameCard
         ];
     }
 
     public async handleNotification(notification: INotification) {
-        const deskPanel = this.viewComponent.getChildByName('deskView');
-        const script = deskPanel.getComponent('DeskPanelView') as DeskPanelView;
+
         const gameData = this.getDeskProxy().getGameData();
         const deskData = this.getDeskProxy().getDeskData();
         switch (notification.getName()) {
             case CommandDefine.InitDeskPanel:
-                this.getDeskProxy().updateDeskInfo(notification.getBody().dymjS2CEnterRoom);
                 await this.init();
-                script.initMyJobPanel(gameData, deskData);
-                script.initFrontjobPanel(gameData, deskData);
+                this.deskPanel = this.viewComponent.getChildByName('deskView');
+                this.DeskPanelViewScript = this.deskPanel.getComponent('DeskPanelView') as DeskPanelView;
+                this.getDeskProxy().updateDeskInfo(notification.getBody().dymjS2CEnterRoom);
+                this.DeskPanelViewScript.initMyJobPanel(gameData, deskData);
+                this.DeskPanelViewScript.initFrontjobPanel(gameData, deskData);
+                this.DeskPanelViewScript.bindDskOpreationEvent(node => {
+                    if (node.name === 'exitIcon') {
+                        //退出房间
+                        this.getDymjProxy().logout();
+                        this.facade.sendNotification(CommandDefine.ExitDeskPanel, {}, '');
+                    }
+                })
                 // 发送准备
                 this.getDymjProxy().ready();
 
@@ -59,15 +72,24 @@ export class DeskMediator extends BaseMediator {
                 // const loginData = (<LocalCacheDataProxy>this.facade.retrieveProxy(ProxyDefine.LocalCacheData)).getLoginData();
                 // script.updatedDeskAiming(gameData, deskData, loginData);
                 // break;
-                // // const deskPanel = cc.loader.getRes(PrefabDefine.DeskPanel, cc.Prefab);
-                // // this.viewComponent.addChild(cc.instantiate(deskPanel));
+                // // this.DeskPanelViewScript = cc.loader.getRes(PrefabDefine.DeskPanel, cc.Prefab);
+                // // this.viewComponent.addChild(cc.instantiate(this.DeskPanelViewScript));
                 // // break;
                 break;
             case CommandDefine.RefreshPlayer:
-                script.updatePlayerHeadView();
+                this.DeskPanelViewScript.updatePlayerHeadView();
+                break;
+            case CommandDefine.ExitDeskPanel:
+                this.deskPanel.destroy();
                 break;
             case CommandDefine.LicensingCard://发牌
-                //script.licensingCard();
+                this.DeskPanelViewScript.updateMyCurCardList();
+                deskData.playerList.forEach(player => {
+                    if (!this.deskProxy.isMy(player.playerId)) this.DeskPanelViewScript.updateOtherCurCardList(player.gameIndex);
+                });
+                break;
+            case CommandDefine.getGameCard:
+                this.DeskPanelViewScript.updateHandCardAndHuCard();
                 break;
         }
     }

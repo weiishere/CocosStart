@@ -37,7 +37,7 @@ export class DeskProxy extends BaseProxy {
         let playerInfos = [];
         players.forEach(p => {
             let playerInfo: PlayerInfo = {
-                playerId: p.acctName,
+                playerId: p.username,
                 playerGold: p.credit,
                 playerHeadImg: p.head,
                 playerName: p.nickname,

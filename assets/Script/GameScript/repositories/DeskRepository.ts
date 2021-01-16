@@ -125,13 +125,13 @@ export type GameData = {
             /**玩家（本方）游戏事件名称（杠、碰、胡等） */
             myGameEvent: {
                 /**游戏事件队列（杠和胡一般一起传） */
-                eventName: Array<'' | 'show' | 'touch' | 'bar' | 'hu' | 'ready' | 'setFace' | 'ting'>,
+                eventName: Array<'' | 'show' | 'touch' | 'bar' | 'hu' | 'qingHu' | 'ready' | 'setFace' | 'ting'>,
                 /**游戏事件相关信息 */
                 correlationInfoData?: any
             },
             /**对家的事件（show：出牌） */
             deskGameEvent: {
-                eventName: '' | 'show' | 'touch' | 'bar' | 'hu' | 'setFace' | 'ting',
+                eventName: '' | 'show' | 'touch' | 'bar' | 'hu' | 'setFace' | 'ting' | 'gameBegin' | 'gameEnd' | 'xiayu' | 'guafeng' | 'zimo',
                 correlationInfoData?: any
             }
         }

@@ -24,5 +24,8 @@ export enum CommandDefine {
     /**初始化牌桌 */
     InitDeskPanel = "InitDeskPanel",
     /**发牌 */
-    LicensingCard = "LicensingCard"
+    LicensingCard = "LicensingCard",
+    /**摸牌 */
+    getGameCard = "getGameCard",
+    ExitDeskPanel = "ExitDeskPanel",
 }
