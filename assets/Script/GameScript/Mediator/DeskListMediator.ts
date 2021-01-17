@@ -159,11 +159,21 @@ export class DeskListMediator extends BaseMediator {
     }
 
     private sitDown(s2CClubRoomSitDown: S2CClubRoomSitDown) {
+        // 如果界面没有加载，收到消息不处理
+        if (!this.view) {
+            return;
+        }
+
         const script = this.getViewScript();
         script.sitDown(s2CClubRoomSitDown);
     }
 
     private standUp(s2CClubRoomStandUp: S2CClubRoomStandUp) {
+        // 如果界面没有加载，收到消息不处理
+        if (!this.view) {
+            return;
+        }
+
         const script = this.getViewScript();
         script.standUp(s2CClubRoomStandUp);
     }
@@ -189,6 +199,11 @@ export class DeskListMediator extends BaseMediator {
     }
 
     private updateRoundCount(s2CClubPushRoomRound: S2CClubPushRoomRound) {
+        // 如果界面没有加载，收到消息不处理
+        if (!this.view) {
+            return;
+        }
+
         const script = this.getViewScript();
         script.setRoundCount(s2CClubPushRoomRound);
     }

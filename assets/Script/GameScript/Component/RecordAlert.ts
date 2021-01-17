@@ -132,7 +132,7 @@ export default class RecordAlert extends ViewComponent {
                 huValues: huValues,
                 pengValues: pengValues,
                 gangValues: gangValues,
-                huPaiName: huPaiName,
+                huPaiName: huValues.length != 0 ? huPaiName : null,
                 userName: v.userName,
                 nickname: v.nickname,
                 head: v.head,
