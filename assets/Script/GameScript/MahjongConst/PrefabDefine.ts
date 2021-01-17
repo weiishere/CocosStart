@@ -11,5 +11,5 @@ export enum PrefabDefine {
     ExchangePanel = "prefabs/exchangePanel",
     RecordPanel = "prefabs/recordPanel",
     /** 结算面板 */
-    RecordAlter = "prefabs/RecordAlter",
+    RecordAlert = "prefabs/recordAlert",
 }

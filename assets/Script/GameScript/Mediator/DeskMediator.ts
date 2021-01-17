@@ -33,7 +33,7 @@ export class DeskMediator extends BaseMediator {
     protected inAdvanceLoadFiles(): string[] {
         return [
             //PrefabDefine.DeskPanel,
-            PrefabDefine.RecordAlter
+            PrefabDefine.RecordAlert
         ];
     }
     public getDeskProxy(): DeskProxy {
@@ -59,7 +59,7 @@ export class DeskMediator extends BaseMediator {
     }
 
     public openRecordAlter(data) {
-        let recordAlterResource = cc.loader.getRes(PrefabDefine.RecordAlter, cc.Prefab);
+        let recordAlterResource = cc.loader.getRes(PrefabDefine.RecordAlert, cc.Prefab);
         this.recordAlterNode = <cc.Node>cc.instantiate(recordAlterResource);
         this.view.addChild(this.recordAlterNode);
         let script = this.recordAlterNode.getComponent("RecordAlter");
