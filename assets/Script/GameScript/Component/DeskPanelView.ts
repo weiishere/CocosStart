@@ -127,10 +127,13 @@ export default class DeskPanelView extends ViewComponent {
     addCardToNode(parentNode: cc.Node, num: number, position: PositionType, mod: ModType, option?: {
         scale?: number,
         active?: boolean,
+        position?: cc.Vec2,
+        puraAddNode?: (node: cc.Node) => void
         touchEndCallback?: (node: cc.Node) => void
     }): cc.Node {
         const card = cc.instantiate(this.cardItem);
-        card.setPosition(cc.v2(0, 0));
+        card.setPosition((option && option.position && option.position) || cc.v2(0, 0));
+        option && option.puraAddNode && option.puraAddNode(card);
         parentNode.addChild(card);
         (card.getComponent("CardItemView") as CardItemView).show(position, mod, num, option);
         return card;
@@ -341,16 +344,16 @@ export default class DeskPanelView extends ViewComponent {
             const layoutCom = touchItem.addComponent(cc.Layout);
             layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
             if (item.barType === 0 || item.barType === 1) {
-                this.addCardToNode(touchItem, item.barCard, "mine", "fall").setPosition(cc.v2(0, 0));
-                this.addCardToNode(touchItem, item.barCard, "mine", "fall").setPosition(cc.v2(-72, 0));
-                this.addCardToNode(touchItem, item.barCard, "mine", "fall").setPosition(cc.v2(-144, 0));
-                this.addCardToNode(touchItem, item.barCard, "mine", "fall").setPosition(cc.v2(-72, 28));
+                this.addCardToNode(touchItem, item.barCard, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 0));
+                this.addCardToNode(touchItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-72, 0));
+                this.addCardToNode(touchItem, item.barCard, "mine", "fall", { position: cc.v2(-144, 0) });//.setPosition(cc.v2(-144, 0));
+                this.addCardToNode(touchItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 28) });//.setPosition(cc.v2(-72, 28));
             } else if (item.barType === 2) {
                 //----------------------------------------暗杠,最上面一张需要盖住
-                this.addCardToNode(touchItem, item.barCard, "mine", "fall").setPosition(cc.v2(0, 0));
-                this.addCardToNode(touchItem, item.barCard, "mine", "fall").setPosition(cc.v2(-72, 0));
-                this.addCardToNode(touchItem, item.barCard, "mine", "fall").setPosition(cc.v2(-144, 0));
-                this.addCardToNode(touchItem, item.barCard, "mine", "fall").setPosition(cc.v2(-72, 28));
+                this.addCardToNode(touchItem, item.barCard, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 0));
+                this.addCardToNode(touchItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-72, 0));
+                this.addCardToNode(touchItem, item.barCard, "mine", "fall", { position: cc.v2(-144, 0) });//.setPosition(cc.v2(-144, 0));
+                this.addCardToNode(touchItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 28) });//.setPosition(cc.v2(-72, 28));
             }
             this.barCard.addChild(touchItem);
         });
@@ -359,9 +362,9 @@ export default class DeskPanelView extends ViewComponent {
             const touchItem = new cc.Node('touchItem');
             const layoutCom = touchItem.addComponent(cc.Layout);
             layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
-            this.addCardToNode(touchItem, item, "mine", "fall").setPosition(cc.v2(-36, 0));
-            this.addCardToNode(touchItem, item, "mine", "fall").setPosition(cc.v2(36, 0));
-            this.addCardToNode(touchItem, item, "mine", "fall").setPosition(cc.v2(0, 28));
+            this.addCardToNode(touchItem, item, "mine", "fall", { position: cc.v2(-36, 0) });//.setPosition(cc.v2(-36, 0));
+            this.addCardToNode(touchItem, item, "mine", "fall", { position: cc.v2(36, 0) });//.setPosition(cc.v2(36, 0));
+            this.addCardToNode(touchItem, item, "mine", "fall", { position: cc.v2(0, 28) });//.setPosition(cc.v2(0, 28));
             this.touchCard.addChild(touchItem);
         });
 
@@ -394,9 +397,9 @@ export default class DeskPanelView extends ViewComponent {
                     const touchItem = new cc.Node('touchItem');
                     const layoutCom = touchItem.addComponent(cc.Layout);
                     layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
-                    this.addCardToNode(touchItem, item, "front", "fall").setPosition(cc.v2(-36, 0));
-                    this.addCardToNode(touchItem, item, "front", "fall").setPosition(cc.v2(36, 0));
-                    this.addCardToNode(touchItem, item, "front", "fall").setPosition(cc.v2(0, 28));
+                    this.addCardToNode(touchItem, item, "front", "fall", { position: cc.v2(-36, 0) });//.setPosition(cc.v2(-36, 0));
+                    this.addCardToNode(touchItem, item, "front", "fall", { position: cc.v2(36, 0) });//.setPosition(cc.v2(36, 0));
+                    this.addCardToNode(touchItem, item, "front", "fall", { position: cc.v2(0, 28) });//.setPosition(cc.v2(0, 28));
                     this.frontTouchCard.addChild(touchItem);
                 });
             } else if (this.positionNode[_gameIndex].name === 'p-left') {
