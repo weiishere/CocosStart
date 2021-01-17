@@ -31,4 +31,6 @@ export enum DymjOperationType {
     HUAN3ZHANG,
     /** 游戏结束 */
     GAMEOVER,
+	/** 请胡 */
+	QING_HU,
 }
