@@ -319,7 +319,7 @@ export class WebSockerProxy extends Proxy {
      * 超时消息定时任务
      */
     timeoutMsgTimedTask() {
-        for (const key in this.waitResultData.keys()) {
+        for (const key of this.waitResultData.keys()) {
             let sendMsgData: SendMsgData = this.waitResultData.get(key);
             if (sendMsgData.time <= 0) {
                 this.waitResultData.delete(key);
