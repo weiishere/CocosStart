@@ -62,7 +62,7 @@ export class DeskMediator extends BaseMediator {
         let recordAlterResource = cc.loader.getRes(PrefabDefine.RecordAlert, cc.Prefab);
         this.recordAlterNode = <cc.Node>cc.instantiate(recordAlterResource);
         this.view.addChild(this.recordAlterNode);
-        let script = this.recordAlterNode.getComponent("RecordAlter");
+        let script = this.recordAlterNode.getComponent("RecordAlert");
         script.buildData(data);
     }
 

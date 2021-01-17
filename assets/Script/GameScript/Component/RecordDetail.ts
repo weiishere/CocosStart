@@ -95,11 +95,6 @@ export default class RecordDetail extends ViewComponent {
         }
         let winlossLabel = recordInfo.getChildByName("winloss").getComponent(cc.Label);
         let userInfoLabel = recordInfo.getChildByName("radiusRect").getChildByName("user").getComponent(cc.Label);
-        if (isMy) {
-            userInfoLabel.string = "自己";
-        } else {
-            userInfoLabel.string = "对家";
-        }
 
         if (playerData.winloss >= 0) {
             recordInfo.getChildByName("win").active = true;
@@ -115,6 +110,13 @@ export default class RecordDetail extends ViewComponent {
             let color = cc.color().fromHEX("#008567")
             winlossLabel.node.color = color;
             winlossLabel.string = playerData.winloss + "";
+        }
+        if (isMy) {
+            userInfoLabel.string = "自己";
+        } else {
+            userInfoLabel.string = "对家";
+            recordInfo.getChildByName("win").active = false;
+            recordInfo.getChildByName("lose").active = false;
         }
 
         let pengValue = playerData.pengValues;
