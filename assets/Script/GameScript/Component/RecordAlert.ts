@@ -148,7 +148,7 @@ export default class RecordPanel extends ViewComponent {
     createRecordDetailItem(recorDetailData: RecorDetailData, totalLength: number) {
         let recordDetailNode = cc.instantiate(this.recordDetail);
         let script = <RecordDetail>recordDetailNode.getComponent("RecordDetail");
-        recordDetailNode.y = 20;
+        recordDetailNode.y = 66;
         script.loadData(false, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount, totalLength, recorDetailData.playerData);
         this.node.addChild(recordDetailNode);
     }
