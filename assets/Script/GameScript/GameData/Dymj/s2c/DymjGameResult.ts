@@ -13,7 +13,9 @@ export class DymjGameResult {
     /** 是否留局 */
     isLiuJu: boolean = false;
     /** 当前游戏局数 */
-    currentGameCount;
+    currentGameCount: number;
+    /** 总的局数 */
+    totalGameCount: number;
     /** 房间号 */
     roomNo: number
 }

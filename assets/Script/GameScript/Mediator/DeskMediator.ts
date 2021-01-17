@@ -25,12 +25,15 @@ export class DeskMediator extends BaseMediator {
     private DeskPanelViewScript: DeskPanelView = null;
     private deskPanel: cc.Node = null;
     private deskProxy: DeskProxy;
+    /** 结算面板 */
+    private recordAlterNode: cc.Node = null;
     /**
      * 需要预先加载的文件
      */
     protected inAdvanceLoadFiles(): string[] {
         return [
             //PrefabDefine.DeskPanel,
+            PrefabDefine.RecordAlter
         ];
     }
     public getDeskProxy(): DeskProxy {
@@ -53,6 +56,14 @@ export class DeskMediator extends BaseMediator {
             CommandDefine.ShowMyEventPush,
             CommandDefine.EventDonePush
         ];
+    }
+
+    public openRecordAlter(data) {
+        let recordAlterResource = cc.loader.getRes(PrefabDefine.RecordAlter, cc.Prefab);
+        this.recordAlterNode = <cc.Node>cc.instantiate(recordAlterResource);
+        this.view.addChild(this.recordAlterNode);
+        let script = this.recordAlterNode.getComponent("RecordAlter");
+        script.buildData(data);
     }
 
     public async handleNotification(notification: INotification) {
@@ -102,6 +113,9 @@ export class DeskMediator extends BaseMediator {
                 // // this.DeskPanelViewScript = cc.loader.getRes(PrefabDefine.DeskPanel, cc.Prefab);
                 // // this.viewComponent.addChild(cc.instantiate(this.DeskPanelViewScript));
                 // // break;
+                break;
+            case CommandDefine.OpenRecordAlter:
+                this.openRecordAlter(notification.getBody());
                 break;
             case CommandDefine.RefreshPlayerPush:
                 this.DeskPanelViewScript.updatePlayerHeadView();

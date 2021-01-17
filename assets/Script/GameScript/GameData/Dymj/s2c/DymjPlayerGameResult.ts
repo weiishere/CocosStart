@@ -44,4 +44,5 @@ export class DymjPlayerGameResult {
     vipLevel: number;
     /** VIP是否有效 */
     isVipActive: boolean;
+    userName: string;
 }
