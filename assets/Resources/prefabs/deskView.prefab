@@ -52,13 +52,10 @@
     "_components": [
       {
         "__id__": 483
-      },
-      {
-        "__id__": 484
       }
     ],
     "_prefab": {
-      "__id__": 485
+      "__id__": 484
     },
     "_opacity": 255,
     "_color": {
@@ -19722,16 +19719,6 @@
     "cardItem": {
       "__uuid__": "7b8ee160-f215-490c-8b26-9d84db23caeb"
     },
-    "_id": ""
-  },
-  {
-    "__type__": "cc.BlockInputEvents",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
     "_id": ""
   },
   {

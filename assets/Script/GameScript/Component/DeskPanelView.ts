@@ -193,10 +193,10 @@ export default class DeskPanelView extends ViewComponent {
         this.opreationBtus.qingHu_btu = this.opreationArea.getChildByName("qingHu");
         this.opreationBtus.baoHu_btu = this.opreationArea.getChildByName("baoHu");
         this.reSetOpreationBtu();
-        this.deskBtus.exit = this.node.getChildByName('exitIcon');
-        this.deskBtus.help = this.node.getChildByName('helpIcon');
-        this.deskBtus.record = this.node.getChildByName('recordIcon');
-        this.deskBtus.set = this.node.getChildByName('setIcon');
+        this.deskBtus.exit = this.node.getChildByName('deskOpreationIcon').getChildByName('exitIcon');
+        this.deskBtus.help = this.node.getChildByName('deskOpreationIcon').getChildByName('helpIcon');
+        this.deskBtus.record = this.node.getChildByName('deskOpreationIcon').getChildByName('recordIcon');
+        this.deskBtus.set = this.node.getChildByName('deskOpreationIcon').getChildByName('setIcon');
         //#endregion
 
         this.cardChooseAlert = this.node.getChildByName('cardChooseAlert');
