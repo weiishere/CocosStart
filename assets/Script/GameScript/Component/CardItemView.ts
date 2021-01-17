@@ -103,6 +103,7 @@ export default class CardItemView extends cc.Component {
     public isDrag = false;
     public isAvtive = false;//是否允许出牌
     public isChoose = false;
+    public isStress = false;
     private launch: () => void;
     private cardDir: Array<String> = ['', 'wan1', 'wan2', 'wan3', 'wan4', 'wan5', 'wan6', 'wan7', 'wan8', 'wan9', 'tong1', 'tong2', 'tong3', 'tong4', 'tong5', 'tong6', 'tong7', 'tong8', 'tong9', 'tiao1', 'tiao2', 'tiao3', 'tiao4', 'tiao5', 'tiao6', 'tiao7', 'tiao8', 'tiao9']
 
@@ -126,6 +127,23 @@ export default class CardItemView extends cc.Component {
         } else {
             //arrows.stopAllActions();
             arrows && (arrows.active = false);
+        }
+
+    }
+    /**设置是否选中 */
+    public setStress(stress?: boolean) {
+        const cardChoose = this.node.getChildByName('cardChoose');
+        const _action1 = cc.repeatForever(
+            cc.sequence(
+                cc.scaleTo(0.3,50),
+                cc.scaleTo(0.3, 255),
+                cc.callFunc(() => { })));
+
+        if (stress) {
+            cardChoose.active = true;
+            cardChoose.runAction(_action1);
+        } else {
+            stress && (cardChoose.active = false);
         }
 
     }

@@ -9,6 +9,7 @@ import { PlayerRecordData } from './RecordDetail';
 import { RecorDetailData } from './RecordDetailList';
 import { DymjGameResult } from '../GameData/Dymj/s2c/DymjGameResult';
 import { DymjGameUIResultItem } from '../GameData/Dymj/s2c/DymjGameUIResultItem';
+import { CommandDefine } from '../MahjongConst/CommandDefine';
 
 const { ccclass, property } = cc._decorator;
 
@@ -37,7 +38,7 @@ export default class RecordAlert extends ViewComponent {
 
         });
         this.goOnBtn.on(cc.Node.EventType.TOUCH_END, () => {
-
+            Facade.Instance.sendNotification(CommandDefine.LicensingCardPush, {}, '');
         });
     }
 

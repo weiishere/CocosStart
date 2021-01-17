@@ -103,6 +103,7 @@ export type GameData = {
             /** 是否报胡 */
             isBaoHu: boolean
         }
+        cardsChoose: Array<number>,
     },
     partnerCardsList: Array<PartnerCard>,
     /**倒计时 */
@@ -182,7 +183,8 @@ export class DeskRepository {
             status: {
                 isHadHu: false,
                 isBaoHu: false
-            }
+            },
+            cardsChoose: []
         },
         /**对手方牌列数据 */
         partnerCardsList: [{
@@ -228,7 +230,7 @@ export class DeskRepository {
     public deskData: DeskData = {
         /**玩家状态 */
         playerList: [{
-            playerId: '4047487',
+            playerId: '',
             gameIndex: 0,//2
             playerGold: 0,
             playerGender: 0,
@@ -237,7 +239,7 @@ export class DeskRepository {
             gameReadyStatus: false,
             master: false,
         }, {
-            playerId: '222',
+            playerId: '',
             gameIndex: 2,//2
             playerGold: 0,
             playerGender: 0,
