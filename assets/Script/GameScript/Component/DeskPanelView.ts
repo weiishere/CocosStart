@@ -539,7 +539,7 @@ export default class DeskPanelView extends ViewComponent {
         }
     }
     /**更新其他玩家事件提醒 */
-    updateEventWeak() {
+    updateEventWran(effectDone: () => void) {
         this.reSetDeskEventEffect();
         switch (this.getData().gameData.eventData.gameEventData.deskGameEvent.eventName) {
             case 'bar': this.gameEventWarn.burWarn.active = true; break;
@@ -553,6 +553,10 @@ export default class DeskPanelView extends ViewComponent {
             case 'ting': break;
             //case 'gameEnd'://游戏结束
         }
+        this.scheduleOnce(() => {
+            this.reSetDeskEventEffect();
+            effectDone();
+        }, 2);
     }
     /**更新outCard */
     updateOutCard(playerIndex) {

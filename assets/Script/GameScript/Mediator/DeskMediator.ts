@@ -55,7 +55,8 @@ export class DeskMediator extends BaseMediator {
             CommandDefine.ShowCardNotificationPush,
             CommandDefine.ShowMyEventPush,
             CommandDefine.EventDonePush,
-            CommandDefine.OpenRecordAlter
+            CommandDefine.OpenRecordAlter,
+            CommandDefine.ShowCenterEffect
         ];
     }
 
@@ -94,16 +95,22 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.bindGameOpreationEvent((node, correlationInfoData) => {
                     if (node.name === "bar") {
                         //杠
-                        this.DeskPanelViewScript.updateChooseCardsAndHandler(card => {
-                            this.getDymjProxy().operation(DymjOperationType.GANG, card);
-                        });
+                        this.DeskPanelViewScript.updateChooseCardsAndHandler(card => { this.getDymjProxy().operation(DymjOperationType.GANG, card); });
                     } else if (node.name === "touch") {
                         //碰
                         this.getDymjProxy().operation(DymjOperationType.PENG, (correlationInfoData as DymjPeng).mjValue);
                     } else if (node.name === 'hu') {
                         //胡
                         this.getDymjProxy().operation(DymjOperationType.HU, (correlationInfoData as DymjHu).mjValue);
+                    } else if (node.name === 'baoHu') {
+                        //报胡
+                        this.getDymjProxy().operation(DymjOperationType.TING, 0);
+                    } else if (node.name === 'qingHu') {
+                        //报胡
+                        this.getDymjProxy().operation(DymjOperationType.QING_HU, 0);
                     }
+
+
                 });
                 // 发送准备
                 this.getDymjProxy().ready();
@@ -121,14 +128,17 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateMyCurCardList();
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
+                this.sendNotification(CommandDefine.ShowCenterEffect);
                 //在这里加入发牌动画
 
 
                 this.getDymjProxy().dealOver();
+                this.DeskPanelViewScript.updatedDeskAiming();
                 break;
             case CommandDefine.GetGameCardPush://摸牌
                 this.DeskPanelViewScript.updateHandCardAndHuCard();//更新手牌
                 this.DeskPanelViewScript.updateMyOperationBtu();//可能有杠/胡
+                this.DeskPanelViewScript.updatedDeskAiming();
                 break;
             case CommandDefine.ShowCardPush://玩家出牌推送
                 const { playerInfo, showCard } = notification.getBody();
@@ -143,7 +153,7 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
                 this.DeskPanelViewScript.updateMyBarAndTouchCard();
                 this.DeskPanelViewScript.initMyOpreationBtuShow();
-                this.DeskPanelViewScript.updateEventWeak;
+                this.sendNotification(CommandDefine.ShowCenterEffect);
                 break;
             case CommandDefine.ShowCardNotificationPush://通知出牌
                 this.DeskPanelViewScript.initMyOpreationBtuShow();
@@ -155,6 +165,11 @@ export class DeskMediator extends BaseMediator {
             case CommandDefine.ShowCard://本方出牌
                 const { cardNumber } = notification.getBody();
                 this.getDymjProxy().putMahkjong(cardNumber);
+                break;
+            case CommandDefine.ShowCenterEffect://显示中间大字
+                this.DeskPanelViewScript.updateEventWran(() => {
+                    this.getDeskProxy().clearDeskGameEvent();
+                });
                 break;
         }
     }

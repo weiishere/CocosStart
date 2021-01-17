@@ -28,11 +28,17 @@ import { DymjOperation } from "../GameData/Dymj/s2c/DymjOperation";
 
 export class DeskProxy extends BaseProxy {
     public repository: DeskRepository;
+    private dataBackup: { gameData: GameData, deskData: DeskData } = null;
     public constructor(proxyName: string = null, data: any = null) {
         super(proxyName, data);
         this.repository = new DeskRepository();
+        this.dataBackup = Object.assign({}, { gameData: this.repository.gameData, deskData: this.repository.deskData });
     }
-
+    /**清除桌面事件数据，主要用于展示几秒钟之后需要清除 */
+    clearDeskGameEvent() {
+        this.getGameData().eventData.deskEventData.eventName = '';
+        //this.sendNotification(CommandDefine.ShowCenterEffect);
+    }
     /**更新用户信息 */
     updateUserInfo(players: Array<DymjPlayerInfo>) {
         let playerInfos = [];
@@ -124,7 +130,12 @@ export class DeskProxy extends BaseProxy {
                 this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.hu;
             } else if (op.oprtType === DymjOperationType.PUT) {
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("show");
-                this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;
+                //this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;
+            } else if (op.oprtType === DymjOperationType.TING) {
+                this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("ting");
+                this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.ting;
+            } else if (op.oprtType === DymjOperationType.QING_HU) {
+                this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("qingHu");
             }
         });
     }
@@ -136,11 +147,13 @@ export class DeskProxy extends BaseProxy {
         // 设置剩余牌
         this.getGameData().remainCard = dymjS2CPlayerGet.cardRemainCount;
         let playerInfo = this.getPlayerByGameIndex(dymjS2CPlayerGet.playerAzimuth);
+        this.getGameData().positionIndex = dymjS2CPlayerGet.playerAzimuth;
         // 如果是自己
         if (this.isMy(playerInfo.playerId)) {
             this.getGameData().myCards.handCard = dymjS2CPlayerGet.getMjValue;
             if (dymjS2CPlayerGet.nextStep.oprts) {
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
+
                 this.doEventData(dymjS2CPlayerGet.nextStep.oprts);
                 // dymjS2CPlayerGet.nextStep.oprts.forEach(op => {
                 //     if (op.oprtType === DymjOperationType.GANG) {
@@ -166,11 +179,12 @@ export class DeskProxy extends BaseProxy {
             let { partnerCards } = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
             partnerCards.isHandCard = true;
         }
+
         this.sendNotification(CommandDefine.GetGameCardPush);
     }
 
     /**
-     * 有人出牌之后，提示自己的碰、杠、胡
+     * 有人出牌或者发牌之后，提示自己的碰、杠、胡等
      * @param dymjS2CShowOperation 
      */
     updateOperationEvent(dymjS2CShowOperation: DymjS2CShowOperation) {
@@ -179,18 +193,19 @@ export class DeskProxy extends BaseProxy {
         if (this.isMy(playerInfo.playerId)) {
             if (dymjS2CShowOperation.oprts) {
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
-                dymjS2CShowOperation.oprts.forEach(op => {
-                    if (op.oprtType === DymjOperationType.GANG) {
-                        this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("bar");
-                        this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.gang;
-                    } else if (op.oprtType === DymjOperationType.HU) {
-                        this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("hu");
-                        this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.hu;
-                    } else if (op.oprtType === DymjOperationType.PENG) {
-                        this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("touch");
-                        this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.peng;
-                    }
-                });
+                this.doEventData(dymjS2CShowOperation.oprts);
+                // dymjS2CShowOperation.oprts.forEach(op => {
+                //     if (op.oprtType === DymjOperationType.GANG) {
+                //         this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("bar");
+                //         this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.gang;
+                //     } else if (op.oprtType === DymjOperationType.HU) {
+                //         this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("hu");
+                //         this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.hu;
+                //     } else if (op.oprtType === DymjOperationType.PENG) {
+                //         this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("touch");
+                //         this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.peng;
+                //     }
+                // });
             }
             this.sendNotification(CommandDefine.ShowMyEventPush);
         }
@@ -222,6 +237,7 @@ export class DeskProxy extends BaseProxy {
         let playerInfo = this.getPlayerByGameIndex(dymjGameOperation.playerAzimuth);
         // 如果是自己
         if (this.isMy(playerInfo.playerId)) {
+            debugger
             this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
             this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = [];//清空可能的杠选牌
             if (dymjGameOperation.oprtType === DymjOperationType.PENG) {
@@ -329,10 +345,8 @@ export class DeskProxy extends BaseProxy {
     gameOver(dymjGameResult: DymjGameResult) {
         this.getGameData().eventData.gameEventData.deskGameEvent.eventName = 'gameEnd';
         //清空数据
+        this.repository.gameData = Object.assign({}, this.dataBackup.gameData);
 
-
-
-        
 
         this.sendNotification(CommandDefine.OpenRecordAlter, dymjGameResult);
         // let recordType: RecordType = {
