@@ -85,7 +85,9 @@ export default class RecordPanel extends ViewComponent {
         recordItemObj.active = true;
 
         let roomNoLabel = recordItemObj.getChildByName("roomNoLabel").getComponent(cc.Label);
+        roomNoLabel.string = "房间号：" + data.roomNo;
         let timeLabel = recordItemObj.getChildByName("timeLabel").getComponent(cc.Label);
+        timeLabel.string = data.endTime;
         // 详情按钮事件
         recordItemObj.getChildByName("detailBtn").on(cc.Node.EventType.TOUCH_END, () => {
             this.openRecordDetailList(data.roomRoundNo);
@@ -101,10 +103,10 @@ export default class RecordPanel extends ViewComponent {
     }
 
     private openRecordDetailList(roomRoundNo: string) {
-        let recordDetailList = cc.instantiate(this.recordDetailList);
-        this.root.addChild(recordDetailList);
-        let recordRetailList = <RecordDetailList>recordDetailList.getComponent("RecordDetailList");
-        recordRetailList.loadData(roomRoundNo);
+        let recordDetailListNode = cc.instantiate(this.recordDetailList);
+        this.root.addChild(recordDetailListNode);
+        let recordRetailListScript = <RecordDetailList>recordDetailListNode.getComponent("RecordDetailList");
+        recordRetailListScript.loadData(roomRoundNo);
     }
 
     /**

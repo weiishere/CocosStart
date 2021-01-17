@@ -34,6 +34,8 @@ export default class RecordDetail extends ViewComponent {
     roomNoLabel: cc.Label = null;
     @property(cc.Label)
     roundLabel: cc.Label = null;
+    @property(cc.Label)
+    timeLabel: cc.Label = null;
     @property(cc.Prefab)
     cardItemPrefab: cc.Prefab = null;
 
@@ -52,24 +54,18 @@ export default class RecordDetail extends ViewComponent {
     }
 
     start() {
-        // this.loadData(n);
-        this.loadData(false, "123", 123123, 1, 10, [
-            {
-                userName: "123", head: "", nickname: "123", huPaiName: "12321", winloss: -10,
-                pengValues: [1], gangValues: [1], shouValues: [2], huValues: [2]
-            },
-            {
-                userName: "321", head: "", nickname: "123", huPaiName: "12321", winloss: 10,
-                pengValues: [1], gangValues: [1], shouValues: [2], huValues: [2]
-            }
-        ]);
     }
 
-    loadData(hideBG: boolean, userName: string, roomNo: number, currentGameCount: number, totalGameCount: number,
-        playerData: Array<PlayerRecordData>) {
-        this.bg.active = !hideBG;
+    loadData(showBG: boolean, userName: string, roomNo: number, currentGameCount: number, totalGameCount: number,
+        playerData: Array<PlayerRecordData>, timer?: string) {
+        this.bg.active = showBG;
         this.roomNoLabel.string = "房间号：" + roomNo;
         this.roundLabel.string = "局数：" + currentGameCount + "/" + totalGameCount;
+        if (timer) {
+            this.timeLabel.string = timer;
+        } else {
+            this.timeLabel.string = "";
+        }
 
         playerData.forEach(v => {
             if (v.userName === userName) {
@@ -90,8 +86,13 @@ export default class RecordDetail extends ViewComponent {
         }
         let nicknameLabel = recordInfo.getChildByName("nickname").getComponent(cc.Label);
         nicknameLabel.string = playerData.nickname;
+
         let huPaiNameLabel = recordInfo.getChildByName("huPaiName").getComponent(cc.Label);
-        huPaiNameLabel.string = playerData.huPaiName;
+        if (playerData.huPaiName) {
+            huPaiNameLabel.string = playerData.huPaiName;
+        } else {
+            huPaiNameLabel.string = "未胡牌";
+        }
         let winlossLabel = recordInfo.getChildByName("winloss").getComponent(cc.Label);
         let userInfoLabel = recordInfo.getChildByName("radiusRect").getChildByName("user").getComponent(cc.Label);
         if (isMy) {
@@ -140,9 +141,6 @@ export default class RecordDetail extends ViewComponent {
         if (huValue.length > 0) {
             pokerNode.addChild(this.buildHuCard(huValue));
         }
-
-        pokerNode.scale = 0.5;
-        pokerNode.x = -70;
     }
 
     buildPengCard(mjValue: number) {

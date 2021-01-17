@@ -10,4 +10,6 @@ export enum PrefabDefine {
     DeskPanel = "prefabs/deskView",
     ExchangePanel = "prefabs/exchangePanel",
     RecordPanel = "prefabs/recordPanel",
+    /** 结算面板 */
+    RecordAlter = "prefabs/RecordAlter",
 }

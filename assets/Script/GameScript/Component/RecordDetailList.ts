@@ -11,6 +11,7 @@ import { RoomPlayerCredit } from '../GameData/RoomPlayerCredit';
 import { RoomPlayLog } from '../GameData/RoomPlayLog';
 import RecordDetail from './RecordDetail';
 import { PlayerRecordData } from './RecordDetail';
+import { DateUtil } from '../Util/DateUtil';
 
 const { ccclass, property } = cc._decorator;
 
@@ -18,6 +19,7 @@ export type RecorDetailData = {
     roomNo: number;
     currentGameCount: number;
     playerData: Array<PlayerRecordData>;
+    gameTime?: string;
 }
 
 @ccclass
@@ -67,11 +69,13 @@ export default class RecordDetailList extends ViewComponent {
         let playLog: Map<string, RecorDetailData> = new Map();
 
         data.forEach(v => {
+            let date = new Date(parseInt(v.gameTime));
             let recorDetailData: RecorDetailData = playLog.get(v.roomRoundNo);
             if (!recorDetailData) {
                 recorDetailData = {
                     currentGameCount: v.gameNum,
                     roomNo: v.roomNo,
+                    gameTime: DateUtil.dateFormat("YYYY-mm-dd HH:MM:SS", date),
                     playerData: [],
                 };
                 playLog.set(v.roomRoundNo, recorDetailData);
@@ -93,17 +97,19 @@ export default class RecordDetailList extends ViewComponent {
             recorDetailData.playerData.push(playerRecordData);
         });
 
+        let totalLength = playLog.size;
         for (const value of playLog.values()) {
-            this.createRecordDetailItem(value, data.length);
+            this.createRecordDetailItem(value, totalLength);
         }
     }
 
     createRecordDetailItem(recorDetailData: RecorDetailData, totalLength: number) {
         let recordDetailNode = cc.instantiate(this.recordDetail);
         let script = <RecordDetail>recordDetailNode.getComponent("RecordDetail");
-
-        script.loadData(true, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount, totalLength, recorDetailData.playerData);
         this.recordContent.addChild(recordDetailNode);
+
+        script.loadData(true, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount,
+            totalLength, recorDetailData.playerData, recorDetailData.gameTime);
     }
 
     // update (dt) {}

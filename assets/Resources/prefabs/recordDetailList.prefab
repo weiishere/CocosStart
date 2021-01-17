@@ -431,7 +431,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 160,
+      "width": 80,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -483,8 +483,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "战绩详情",
-    "_N$string": "战绩详情",
+    "_string": "详情",
+    "_N$string": "详情",
     "_fontSize": 40,
     "_lineHeight": 40,
     "_enableWrapText": true,
@@ -599,8 +599,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        585.775,
-        243.493,
+        585,
+        254,
         0,
         0,
         0,
@@ -1144,7 +1144,9 @@
     "closeBtn": {
       "__id__": 15
     },
-    "recordDetail": null,
+    "recordDetail": {
+      "__uuid__": "73a4317a-db1f-4d32-a63a-16162337c3c6"
+    },
     "_id": ""
   },
   {
