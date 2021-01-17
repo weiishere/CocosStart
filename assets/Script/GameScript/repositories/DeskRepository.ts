@@ -187,24 +187,26 @@ export class DeskRepository {
             cardsChoose: []
         },
         /**对手方牌列数据 */
-        partnerCardsList: [{
-            playerId: '',
-            partnerCards: {
-                curCardCount: 0,
-                //curCardList: [],
-                isHandCard: true,
-                //handCard: [],
-                touchCard: [],
-                barCard: [],
-                hadHuCard: 0,
-                outCardList: [],
-                setFace: 0,
-                status: {
-                    isHadHu: false,
-                    isBaoHu: false
-                }
-            },
-        }],
+        partnerCardsList: [
+            {
+                playerId: '',
+                partnerCards: {
+                    curCardCount: 0,
+                    //curCardList: [],
+                    isHandCard: true,
+                    //handCard: [],
+                    touchCard: [],
+                    barCard: [],
+                    hadHuCard: 0,
+                    outCardList: [],
+                    setFace: 0,
+                    status: {
+                        isHadHu: false,
+                        isBaoHu: false
+                    }
+                },
+            }
+        ],
         countDownTime: 0,
         positionIndex: 0,
         remainCard: 0,
@@ -215,7 +217,7 @@ export class DeskRepository {
             },
             gameEventData: {
                 myGameEvent: {
-                    eventName: ['show'],
+                    eventName: [],
                     correlationInfoData: {}
                 },
                 /**其他玩家的事件 */
@@ -229,25 +231,27 @@ export class DeskRepository {
 
     public deskData: DeskData = {
         /**玩家状态 */
-        playerList: [{
-            playerId: '',
-            gameIndex: 0,//2
-            playerGold: 0,
-            playerGender: 0,
-            playerHeadImg: '',
-            playerName: '',
-            gameReadyStatus: false,
-            master: false,
-        }, {
-            playerId: '',
-            gameIndex: 2,//2
-            playerGold: 0,
-            playerGender: 0,
-            playerHeadImg: '',
-            playerName: '',
-            gameReadyStatus: false,
-            master: false,
-        }],
+        playerList: [
+            //     {
+            //     playerId: '',
+            //     gameIndex: 0,//2
+            //     playerGold: 0,
+            //     playerGender: 0,
+            //     playerHeadImg: '',
+            //     playerName: '',
+            //     gameReadyStatus: false,
+            //     master: false,
+            // }, {
+            //     playerId: '',
+            //     gameIndex: 2,//2
+            //     playerGold: 0,
+            //     playerGender: 0,
+            //     playerHeadImg: '',
+            //     playerName: '',
+            //     gameReadyStatus: false,
+            //     master: false,
+            // }
+        ],
         /**配置 */
         gameSetting: {
             sound: {

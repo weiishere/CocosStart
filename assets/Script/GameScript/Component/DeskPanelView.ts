@@ -492,8 +492,9 @@ export default class DeskPanelView extends ViewComponent {
         });
         //} else if (type === 'hu') {
         //先检测本家胡牌
+        
         if (this.getData().gameData.myCards.hadHuCard !== 0) {
-            this.huCard = this.addCardToNode(this.huCard, this.getData().gameData.myCards.hadHuCard, "mine", 'fall');
+            this.addCardToNode(this.huCard, this.getData().gameData.myCards.hadHuCard, "mine", 'fall');
         } else {
             this.huCard.removeAllChildren();
         }
@@ -532,7 +533,7 @@ export default class DeskPanelView extends ViewComponent {
                 case 'hu': this.opreationBtus.hu_btu.active = true; break;
                 case 'qingHu': this.opreationBtus.qingHu_btu.active = true; break;
                 case 'ting': this.opreationBtus.baoHu_btu.active = true; break;
-                case 'show': this.opreationBtus.show_btu.active = true; break;
+                case 'show': /*this.opreationBtus.show_btu.active = true;*/ break;
                 case 'ready': this.opreationBtus.ready_btu.active = true; break;
             }
         });
@@ -593,7 +594,7 @@ export default class DeskPanelView extends ViewComponent {
         let _card: cc.Node;
         if (this.isMe(playerIndex)) {
             const lastCardNode = this.outCardList.children[this.outCardList.childrenCount - 1];
-            if ((lastCardNode.getComponent('CardItemView') as CardItemView).cardNumber === card) {
+            if (lastCardNode && (lastCardNode.getComponent('CardItemView') as CardItemView).cardNumber === card) {
                 lastCardNode.destroy();
             }
             // this.outCardList.children.forEach(node => {
@@ -603,10 +604,11 @@ export default class DeskPanelView extends ViewComponent {
             // });
         } else {
             const self = this;
+
             this.getData().gameData.partnerCardsList.forEach(partner => {
                 if (self.positionNode[playerIndex].name === 'p-top') {
-                    const lastCardNode = self.frontOutCardList.children[self.outCardList.childrenCount - 1];
-                    if ((lastCardNode.getComponent('CardItemView') as CardItemView).cardNumber === card) {
+                    const lastCardNode = self.frontOutCardList.children[self.frontOutCardList.childrenCount - 1];
+                    if (lastCardNode && (lastCardNode.getComponent('CardItemView') as CardItemView).cardNumber === card) {
                         lastCardNode.destroy();
                     }
                     // this.frontOutCardList.children.forEach(node => {
@@ -620,6 +622,35 @@ export default class DeskPanelView extends ViewComponent {
             });
         }
         //this.arrowCard && (this.arrowCard.getComponent('CardItemView') as CardItemView).setArrows(false);
+    }
+    /**更新outcard */
+    updateOutCard() {
+        //先更新自己
+        this.outCardList.removeAllChildren();
+        this.getData().gameData.myCards.outCardList.map((item, index) => {
+            const card = this.addCardToNode(this.outCardList, item, "mine", "fall")
+            card.setPosition(cc.v2(0, 0));
+            card.setScale(0.6, 0.6);
+            if (index === 0) {
+                (card.getComponent("CardItemView") as CardItemView).setArrows(true);
+            }
+        });
+        this.getData().gameData.partnerCardsList.forEach(partner => {
+            this.frontOutCardList.removeAllChildren();
+            const _gameIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;
+            if (this.positionNode[_gameIndex].name === 'p-top') {
+                //更新对家出牌
+                partner.partnerCards.outCardList.map((item, index) => {
+                    const card = this.addCardToNode(this.frontOutCardList, item, "front", "fall")
+                    card.setPosition(cc.v2(0, 0));
+                    card.setScale(0.6, 0.6);
+                });
+            } else if (this.positionNode[_gameIndex].name === 'p-left') {
+                //更新左方出牌
+            } else if (this.positionNode[_gameIndex].name === 'p-right') {
+                //更新右方出牌
+            }
+        })
     }
     /**更新待选牌组框且执行事件 */
     updateChooseCardsAndHandler(launch: (card: number) => void) {
@@ -650,7 +681,7 @@ export default class DeskPanelView extends ViewComponent {
         this.getData().gameData.eventData.gameEventData.myGameEvent.eventName.forEach(item => {
             switch (item) {
                 case 'show':
-                    this.opreationBtus.show_btu.active = true;
+                    //this.opreationBtus.show_btu.active = true;
                     break;
                 case 'touch':
                     this.opreationBtus.touch_btu.active = true;

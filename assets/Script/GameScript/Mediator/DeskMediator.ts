@@ -99,16 +99,19 @@ export class DeskMediator extends BaseMediator {
                         this.DeskPanelViewScript.updateChooseCardsAndHandler(card => { this.getDymjProxy().operation(DymjOperationType.GANG, card); });
                     } else if (node.name === "touch") {
                         //碰
-                        this.getDymjProxy().operation(DymjOperationType.PENG, (correlationInfoData as DymjPeng).mjValue);
+                        this.getDymjProxy().operation(DymjOperationType.PENG, (correlationInfoData.peng as DymjPeng).mjValue);
                     } else if (node.name === 'hu') {
                         //胡
-                        this.getDymjProxy().operation(DymjOperationType.HU, (correlationInfoData as DymjHu).mjValue);
+                        this.getDymjProxy().operation(DymjOperationType.HU, (correlationInfoData.hu as DymjHu).mjValue);
                     } else if (node.name === 'baoHu') {
                         //报胡
                         this.getDymjProxy().operation(DymjOperationType.TING, 0);
                     } else if (node.name === 'qingHu') {
-                        //报胡
+                        //请胡
                         this.getDymjProxy().operation(DymjOperationType.QING_HU, 0);
+                    } else if (node.name === 'pass') {
+                        //过
+                        this.getDymjProxy().operation(DymjOperationType.XIAO, 0);
                     }
 
 
@@ -126,24 +129,27 @@ export class DeskMediator extends BaseMediator {
                 this.deskPanel.destroy();
                 break;
             case CommandDefine.LicensingCardPush://发牌
-                
 
                 this.DeskPanelViewScript.updateMyCurCardList();
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
+                this.DeskPanelViewScript.updateOutCard();
                 this.sendNotification(CommandDefine.ShowCenterEffect);
                 //在这里加入发牌动画
-                
-                
                 this.getDymjProxy().dealOver();
                 this.DeskPanelViewScript.updatedDeskAiming();
                 break;
             case CommandDefine.ReStartGamePush://下一局
                 // 开始游戏前关掉结算信息界面
-                if(this.recordAlterNode){
+                if (this.recordAlterNode) {
                     this.recordAlterNode.destroy();
                     this.recordAlterNode = null;
                 }
+                this.DeskPanelViewScript.updateMyCurCardList();
+                this.DeskPanelViewScript.updateOtherCurCardList();
+                this.DeskPanelViewScript.updateHandCardAndHuCard();
+                this.DeskPanelViewScript.updateMyBarAndTouchCard();
+                this.DeskPanelViewScript.updateOutCard();
                 break;
             case CommandDefine.GetGameCardPush://摸牌
                 this.DeskPanelViewScript.updateHandCardAndHuCard();//更新手牌
