@@ -62,7 +62,7 @@ export default class RecordAlert extends ViewComponent {
         this.schedule(() => {
             time--;
             this.countdownLabel.string = time + "";
-        }, 1, time);
+        }, 1, time - 1);
     }
 
     getResultDesc(list: DymjGameUIResultItem[]) {
