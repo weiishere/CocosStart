@@ -488,6 +488,7 @@ export class DeskProxy extends BaseProxy {
         this.getGameData().remainCard = dymjGameReconnData.lastCount;
 
         // this.getGameData().myCards.hadHuCard
+        this.getGameData().partnerCardsList = [];
         dymjGameReconnData.players.forEach(player => {
             let playerInfo: PlayerInfo = {
                 playerId: player.playerInfo.username,
@@ -503,9 +504,9 @@ export class DeskProxy extends BaseProxy {
             let outCard: Array<number> = [];
             let pengCard: Array<number> = [];
             let curCardList: Array<number> = [];
-            let handCard: number;
-            let huCard: number;
-            let isBaoHu: boolean;
+            let handCard: number = 0;
+            let huCard: number = 0;
+            let isBaoHu: boolean = false;
 
             if (player.gangValues) {
                 player.gangValues.forEach(v => {
@@ -555,7 +556,7 @@ export class DeskProxy extends BaseProxy {
                     }
                 }
 
-                playerList.push(playerInfo);
+
             } else {
                 let partnerCard: PartnerCard = {
                     /**对家ID */
@@ -564,9 +565,9 @@ export class DeskProxy extends BaseProxy {
                     /**对家牌组 */
                     partnerCards: {
                         /**对家可操作牌列数 */
-                        curCardCount: player.chuValues.length,
+                        curCardCount: player.shouValues.length,
                         /**对家可操作牌列数（可不传） */
-                        curCardList: player.chuValues,
+                        curCardList: player.shouValues,
                         /**是否收到新摸牌 */
                         isHandCard: handCard > 0,
                         /**新摸到的牌 */
@@ -592,6 +593,7 @@ export class DeskProxy extends BaseProxy {
                 }
                 this.getGameData().partnerCardsList.push(partnerCard);
             }
+            playerList.push(playerInfo);
         });
 
         this.getDeskData().playerList = playerList;

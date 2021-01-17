@@ -263,7 +263,7 @@ export class DeskRepository {
                 isPlay: true
             },
             /**局数 */
-            gameRoundNum: 8,
+            gameRoundNum: 8, 
             totalRound: 8,
             baseScore: 1,
             fanTime: 2
