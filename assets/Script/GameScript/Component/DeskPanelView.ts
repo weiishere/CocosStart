@@ -44,7 +44,9 @@ export default class DeskPanelView extends ViewComponent {
     private positionNode: Array<cc.Node>;
     private opreationArea: cc.Node;
     private gameEventView: cc.Node;
+    private deskOpreationIconWrap: cc.Node;
 
+    private cardChooseAlert: cc.Node;
     private gameEventWarn: { touchWarn: cc.Node, huWarn: cc.Node, burWarn: cc.Node, xiayuWarn: cc.Node, zimoWarn: cc.Node, gameBeginWarn: cc.Node } = {
         touchWarn: null,
         huWarn: null,
@@ -107,15 +109,28 @@ export default class DeskPanelView extends ViewComponent {
     }
     /**重置游戏操作区按钮 */
     reSetOpreationBtu() {
-        this.opreationBtus.ready_btu.active = false;
-        this.opreationBtus.show_btu.active = false;
-        this.opreationBtus.bar_btu.active = false;
-        this.opreationBtus.touch_btu.active = false;
-        this.opreationBtus.hu_btu.active = false;
-        this.opreationBtus.selfHu_btu.active = false;
-        this.opreationBtus.pass_btu.active = false;
-        this.opreationBtus.qingHu_btu.active = false;
-        this.opreationBtus.baoHu_btu.active = false;
+        // this.opreationBtus.ready_btu.active = false;
+        // this.opreationBtus.show_btu.active = false;
+        // this.opreationBtus.bar_btu.active = false;
+        // this.opreationBtus.touch_btu.active = false;
+        // this.opreationBtus.hu_btu.active = false;
+        // this.opreationBtus.selfHu_btu.active = false;
+        // this.opreationBtus.pass_btu.active = false;
+        // this.opreationBtus.qingHu_btu.active = false;
+        // this.opreationBtus.baoHu_btu.active = false;
+        for (let i in this.opreationBtus) {
+            if (this.opreationBtus[i] instanceof cc.Node) {
+                (this.opreationBtus[i] as cc.Node).active = false;
+            }
+        }
+    }
+    /**重置桌面事件展示区 */
+    reSetDeskEventEffect() {
+        for (let i in this.gameEventWarn) {
+            if (this.gameEventWarn[i] instanceof cc.Node) {
+                (this.gameEventWarn[i] as cc.Node).active = false;
+            }
+        }
     }
     /**
      * 添加牌
@@ -124,18 +139,19 @@ export default class DeskPanelView extends ViewComponent {
      * @param position 玩家方向
      * @param mod 倒还是立
      */
-    addCardToNode(parentNode: cc.Node, num: number, position: PositionType, mod: ModType, option?: {
+    addCardToNode(parentNode: cc.Node, num: number, position: PositionType, mod: ModType, option: {
         scale?: number,
         active?: boolean,
         position?: cc.Vec2,
-        puraAddNode?: (node: cc.Node) => void
+        purAddNode?: (node: cc.Node) => void
         touchEndCallback?: (node: cc.Node) => void
-    }): cc.Node {
+    } = {}): cc.Node {
         const card = cc.instantiate(this.cardItem);
-        card.setPosition((option && option.position && option.position) || cc.v2(0, 0));
-        option && option.puraAddNode && option.puraAddNode(card);
-        parentNode.addChild(card);
+        const _position = option.position || cc.v2(0, 0);
+        card.setPosition(_position);
+        option.purAddNode && option.purAddNode(card);
         (card.getComponent("CardItemView") as CardItemView).show(position, mod, num, option);
+        parentNode.addChild(card);
         return card;
     }
     bindUI(): void {
@@ -180,6 +196,8 @@ export default class DeskPanelView extends ViewComponent {
         this.deskBtus.set = this.node.getChildByName('setIcon');
         //#endregion
 
+        this.cardChooseAlert = this.node.getChildByName('cardChooseAlert');
+        this.deskOpreationIconWrap = this.node.getChildByName("deskOpreationIcon");
         //#region 其他玩家事件提醒
         this.gameEventWarn.touchWarn = this.gameEventView.getChildByName("peng_2x");
         this.gameEventWarn.huWarn = this.gameEventView.getChildByName("hu_2x");
@@ -222,7 +240,7 @@ export default class DeskPanelView extends ViewComponent {
     }
     /**绑定桌面操作事件（设置、记录按钮等） */
     bindDskOpreationEvent(callBack: (node: cc.Node) => void): void {
-        this.node.on('deskOpreation', (eventData) => {
+        this.deskOpreationIconWrap.on('deskOpreation', (eventData) => {
             cc.tween(eventData.target).to(0.1, { scale: 0.9 }).call(() => {
                 console.log(`按下${eventData.target.name}`, eventData.target);
                 callBack(eventData.target as cc.Node);
@@ -513,6 +531,7 @@ export default class DeskPanelView extends ViewComponent {
     }
     /**更新其他玩家事件提醒 */
     updateEventWeak() {
+        this.reSetDeskEventEffect();
         switch (this.getData().gameData.eventData.gameEventData.deskGameEvent.eventName) {
             case 'bar': this.gameEventWarn.burWarn.active = true;
             case 'touch': this.gameEventWarn.touchWarn.active = true;
@@ -549,6 +568,28 @@ export default class DeskPanelView extends ViewComponent {
         }
         this.arrowCard = _card;
         (_card.getComponent("CardItemView") as CardItemView).setArrows(true);
+    }
+    /**更新牌组且执行事件 */
+    updateChooseCardsAndHandler(launch: (card: number) => void) {
+        const cardsChoose = this.getData().gameData.myCards.cardsChoose;
+        if (cardsChoose.length > 1) {
+            this.cardChooseAlert.active = true;
+            this.cardChooseAlert.removeAllChildren();
+            const self = this;
+            cardsChoose.map(item => {
+                const card = this.addCardToNode(this.cardChooseAlert, item, "mine", 'setUp', {
+                    purAddNode: node => { node.setScale(0.7, 0.7) },
+                    touchEndCallback: function () {
+                        //const script = this.node.getComponent("CardItemView") as CardItemView;
+                        launch(item);
+                        this.cardChooseAlert.active = false;
+                    }
+                });
+                this.mainCardList.push(card);
+            });
+        } else {
+            launch(cardsChoose[0]);
+        }
     }
     /**控制自己的操作按钮显示 */
     initMyOpreationBtuShow(): void {

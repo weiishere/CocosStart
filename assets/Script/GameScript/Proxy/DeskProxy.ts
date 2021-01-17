@@ -122,6 +122,13 @@ export class DeskProxy extends BaseProxy {
                     if (op.oprtType === DymjOperationType.GANG) {
                         this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("bar");
                         this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.gang;
+                        if (op.gang.gangType === 1 || op.gang.gangType === 2) {
+                            //弯钢、暗杠
+                            this.getGameData().myCards.cardsChoose = op.gang.mjValues;
+                            this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.gang
+                            // this.getGameData().myCards.touchCard = this.getGameData().myCards.touchCard.filter(card => card !== op.gang.mjValues[0]);//暂时处理为一个=======================================
+                            // this.getGameData().myCards.barCard.push({ barCard: op.gang.mjValues[0], barType: op.gang.gangType });
+                        }
                     } else if (op.oprtType === DymjOperationType.HU) {
                         this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("hu");
                         this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.hu;
@@ -171,7 +178,7 @@ export class DeskProxy extends BaseProxy {
      */
     updateNextOperationEvent(dymjS2CDoNextOperation: DymjS2CDoNextOperation) {
         let playerInfo = this.getPlayerByGameIndex(dymjS2CDoNextOperation.playerAzimuth);
-        
+
         // 如果是自己
         if (this.isMy(playerInfo.playerId)) {
             if (dymjS2CDoNextOperation.nextStep.type === 1) {
@@ -191,6 +198,8 @@ export class DeskProxy extends BaseProxy {
         let playerInfo = this.getPlayerByGameIndex(dymjGameOperation.playerAzimuth);
         // 如果是自己
         if (this.isMy(playerInfo.playerId)) {
+            this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
+            this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = [];//清空可能的杠选牌
             if (dymjGameOperation.oprtType === DymjOperationType.PENG) {
                 this.getGameData().myCards.touchCard.push(dymjGameOperation.peng.mjValue);
             } else if (dymjGameOperation.oprtType === DymjOperationType.GANG) {
@@ -198,6 +207,16 @@ export class DeskProxy extends BaseProxy {
                 this.getGameData().myCards.barCard.push(batType);
             } else if (dymjGameOperation.oprtType === DymjOperationType.HU) {
                 this.getGameData().myCards.hadHuCard = dymjGameOperation.hu.mjValue;
+                if (dymjGameOperation.hu.huType === 1) {
+                    //自摸（去掉摸牌，因为已经转移到了胡牌）
+                    this.getGameData().myCards.handCard = 0;
+                } else if (dymjGameOperation.hu.huType === 2) {
+                    //抢杠（抢胡）======================================================
+                    const _player = this.getPlayerByGameIndex(dymjGameOperation.hu.playerAzimuth);
+                    const partnerCards = this.getGameData().partnerCardsList.find(item => item.playerId === _player.playerId).partnerCards;
+                    partnerCards.barCard = partnerCards.barCard.filter(card => card.barCard !== dymjGameOperation.hu.mjValue);
+                    partnerCards.touchCard.push(dymjGameOperation.hu.mjValue);
+                }
             } else if (dymjGameOperation.oprtType === DymjOperationType.TING) {
                 this.getGameData().myCards.status.isBaoHu = true;
             }
@@ -206,11 +225,38 @@ export class DeskProxy extends BaseProxy {
             this.getGameData().myCards.curCardList = dymjGameOperation.spValuesSorted;
         } else {
             let partnerCard = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
+            this.getGameData().eventData.gameEventData.deskGameEvent.eventName = '';
             if (dymjGameOperation.oprtType === DymjOperationType.PENG) {
                 partnerCard.partnerCards.touchCard.push(dymjGameOperation.peng.mjValue);
+                partnerCard.partnerCards.curCardCount -= 2;
+
+                const _player = this.getPlayerByGameIndex(dymjGameOperation.peng.playerAzimuth);//引碰者
+                if (this.isMy(_player.playerId)) {
+                    this.getGameData().myCards.outCardList.pop();
+                } else {
+                    this.getGameData().partnerCardsList.find(item => item.playerId === _player.playerId).partnerCards.outCardList.pop();
+                }
             } else if (dymjGameOperation.oprtType === DymjOperationType.GANG) {
-                const batType: BarType = { barCard: dymjGameOperation.gang.mjValues[0], barType: dymjGameOperation.gang.gangType as 0 | 1 | 2 };
-                partnerCard.partnerCards.barCard.push(batType);
+                const burObj: BarType = { barCard: dymjGameOperation.gang.mjValues[0], barType: dymjGameOperation.gang.gangType as 0 | 1 | 2 };
+                if (dymjGameOperation.gang.gangType === 0) {
+                    //点杠
+                    partnerCard.partnerCards.curCardCount -= 2;
+                    const _player = this.getPlayerByGameIndex(dymjGameOperation.gang.playerAzimuth);//引杠者
+                    if (this.isMy(_player.playerId)) {
+                        this.getGameData().myCards.outCardList.pop();
+                    } else {
+                        this.getGameData().partnerCardsList.find(item => item.playerId === _player.playerId).partnerCards.outCardList.pop();
+                    }
+                } else if (dymjGameOperation.gang.gangType === 1) {
+                    //抢杠
+                    partnerCard.partnerCards.isHandCard = false;
+                } else if (dymjGameOperation.gang.gangType === 2) {
+                    //暗杠
+                    partnerCard.partnerCards.curCardCount -= 3;
+                    partnerCard.partnerCards.isHandCard = false;
+                }
+
+                partnerCard.partnerCards.barCard.push(burObj);
             } else if (dymjGameOperation.oprtType === DymjOperationType.HU) {
                 partnerCard.partnerCards.hadHuCard = dymjGameOperation.hu.mjValue;
             } else if (dymjGameOperation.oprtType === DymjOperationType.TING) {
@@ -232,6 +278,9 @@ export class DeskProxy extends BaseProxy {
             let partnerCard = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
             partnerCard.partnerCards.outCardList.push(dymjS2COpPutRsp.putMjValue);
             //partnerCard.partnerCards.curCardCount--;
+            if (!partnerCard.partnerCards.isHandCard) {
+                partnerCard.partnerCards.curCardCount--;
+            }
             partnerCard.partnerCards.isHandCard = false;
             partnerCard.partnerCards.curCardList = dymjS2COpPutRsp.spValuesSorted;
         }

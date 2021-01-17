@@ -103,6 +103,7 @@ export type GameData = {
             /** 是否报胡 */
             isBaoHu: boolean
         }
+        cardsChoose: Array<number>,
     },
     partnerCardsList: Array<PartnerCard>,
     /**倒计时 */
@@ -182,7 +183,8 @@ export class DeskRepository {
             status: {
                 isHadHu: false,
                 isBaoHu: false
-            }
+            },
+            cardsChoose: []
         },
         /**对手方牌列数据 */
         partnerCardsList: [{

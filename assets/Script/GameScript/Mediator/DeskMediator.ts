@@ -82,7 +82,9 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.bindGameOpreationEvent((node, correlationInfoData) => {
                     if (node.name === "bar") {
                         //杠
-                        this.getDymjProxy().operation(DymjOperationType.GANG, (correlationInfoData as DymjGang).mjValues[0]);//---------------------注意这里是个数组
+                        this.DeskPanelViewScript.updateChooseCardsAndHandler(card => {
+                            this.getDymjProxy().operation(DymjOperationType.GANG, card);
+                        });
                     } else if (node.name === "touch") {
                         //碰
                         this.getDymjProxy().operation(DymjOperationType.PENG, (correlationInfoData as DymjPeng).mjValue);
@@ -93,15 +95,6 @@ export class DeskMediator extends BaseMediator {
                 });
                 // 发送准备
                 this.getDymjProxy().ready();
-
-                //this.DeskPanelViewScript.initMyJobPanel(gameData, deskData);
-
-                // const loginData = (<LocalCacheDataProxy>this.facade.retrieveProxy(ProxyDefine.LocalCacheData)).getLoginData();
-                // script.updatedDeskAiming(gameData, deskData, loginData);
-                // break;
-                // // this.DeskPanelViewScript = cc.loader.getRes(PrefabDefine.DeskPanel, cc.Prefab);
-                // // this.viewComponent.addChild(cc.instantiate(this.DeskPanelViewScript));
-                // // break;
                 break;
             case CommandDefine.RefreshPlayerPush:
                 this.DeskPanelViewScript.updatePlayerHeadView();
@@ -120,6 +113,7 @@ export class DeskMediator extends BaseMediator {
                 break;
             case CommandDefine.GetGameCardPush://摸牌
                 this.DeskPanelViewScript.updateHandCardAndHuCard();//更新手牌
+                this.DeskPanelViewScript.updateMyOperationBtu();//可能有杠/胡
                 break;
             case CommandDefine.ShowCardPush://玩家出牌推送
                 const { playerInfo, showCard } = notification.getBody();
@@ -134,6 +128,7 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
                 this.DeskPanelViewScript.updateMyBarAndTouchCard();
                 this.DeskPanelViewScript.initMyOpreationBtuShow();
+                this.DeskPanelViewScript.updateEventWeak;
                 break;
             case CommandDefine.ShowCardNotificationPush://通知出牌
                 this.DeskPanelViewScript.initMyOpreationBtuShow();
