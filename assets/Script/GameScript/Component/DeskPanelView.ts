@@ -89,6 +89,9 @@ export default class DeskPanelView extends ViewComponent {
     getIndexByPlayerId(playerId: string): PlayerInfo {
         return this.getData().deskData.playerList.find(player => player.playerId === playerId);
     }
+    getPlayerByPosition(playerIndex: number): PlayerInfo {
+        return this.getData().deskData.playerList.find(player => player.gameIndex === playerIndex);
+    }
     getData(): DeskRepository {
         return (Facade.Instance.retrieveProxy(ProxyDefine.Desk) as DeskProxy).repository;
     }
@@ -558,9 +561,9 @@ export default class DeskPanelView extends ViewComponent {
             effectDone();
         }, 2);
     }
-    /**更新outCard */
-    updateOutCard(playerIndex) {
-        if (this.arrowCard) (this.arrowCard.getComponent("CardItemView") as CardItemView).setArrows(false);
+    /**获取outCard数据最后一个添加（考虑到性能没有做重刷） */
+    createOutCard(playerIndex) {
+        if (this.arrowCard && this.arrowCard.isValid) (this.arrowCard.getComponent("CardItemView") as CardItemView).setArrows(false);
         let _card: cc.Node;
         if (this.isMe(playerIndex)) {
             _card = this.addCardToNode(this.outCardList, this.getData().gameData.myCards.outCardList[this.getData().gameData.myCards.outCardList.length - 1], "mine", "fall")
@@ -568,21 +571,55 @@ export default class DeskPanelView extends ViewComponent {
             _card.setScale(0.6, 0.6);
 
         } else {
+            const self = this;
             this.getData().gameData.partnerCardsList.forEach(partner => {
-                if (this.positionNode[playerIndex].name === 'p-top') {
+                if (self.positionNode[playerIndex].name === 'p-top') {
                     //更新对家打出牌
                     _card = this.addCardToNode(this.frontOutCardList, partner.partnerCards.outCardList[partner.partnerCards.outCardList.length - 1], "front", "fall")
                     _card.setPosition(cc.v2(0, 0));
                     _card.setScale(0.6, 0.6);
-                } else if (this.positionNode[playerIndex].name === 'p-left') {
+                } else if (self.positionNode[playerIndex].name === 'p-left') {
                     //更新左方打出牌
-                } else if (this.positionNode[playerIndex].name === 'p-right') {
+                } else if (self.positionNode[playerIndex].name === 'p-right') {
                     //更新右方打出牌
                 }
             });
         }
         this.arrowCard = _card;
         (_card.getComponent("CardItemView") as CardItemView).setArrows(true);
+    }
+    /**获取outCard数据最后一个删除（考虑到性能没有做重刷） */
+    deleteOutCard(playerIndex, card) {
+        let _card: cc.Node;
+        if (this.isMe(playerIndex)) {
+            const lastCardNode = this.outCardList.children[this.outCardList.childrenCount - 1];
+            if ((lastCardNode.getComponent('CardItemView') as CardItemView).cardNumber === card) {
+                lastCardNode.destroy();
+            }
+            // this.outCardList.children.forEach(node => {
+            //     if ((node.getComponent('CardItemView') as CardItemView).cardNumber === card) {
+            //         node.destroy();
+            //     }
+            // });
+        } else {
+            const self = this;
+            this.getData().gameData.partnerCardsList.forEach(partner => {
+                if (self.positionNode[playerIndex].name === 'p-top') {
+                    const lastCardNode = self.frontOutCardList.children[self.outCardList.childrenCount - 1];
+                    if ((lastCardNode.getComponent('CardItemView') as CardItemView).cardNumber === card) {
+                        lastCardNode.destroy();
+                    }
+                    // this.frontOutCardList.children.forEach(node => {
+                    //     if ((node.getComponent('CardItemView') as CardItemView).cardNumber === card) { node.destroy(); }
+                    // });
+                } else if (self.positionNode[playerIndex].name === 'p-left') {
+                    //更新左方打出牌
+                } else if (self.positionNode[playerIndex].name === 'p-right') {
+                    //更新右方打出牌
+                }
+            });
+        }
+        //this.arrowCard && (this.arrowCard.getComponent('CardItemView') as CardItemView).setArrows(false);
     }
     /**更新待选牌组框且执行事件 */
     updateChooseCardsAndHandler(launch: (card: number) => void) {

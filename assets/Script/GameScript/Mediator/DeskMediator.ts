@@ -56,7 +56,8 @@ export class DeskMediator extends BaseMediator {
             CommandDefine.ShowMyEventPush,
             CommandDefine.EventDonePush,
             CommandDefine.OpenRecordAlter,
-            CommandDefine.ShowCenterEffect
+            CommandDefine.ShowCenterEffect,
+            CommandDefine.ReStartGamePush
         ];
     }
 
@@ -125,15 +126,24 @@ export class DeskMediator extends BaseMediator {
                 this.deskPanel.destroy();
                 break;
             case CommandDefine.LicensingCardPush://发牌
+                
+
                 this.DeskPanelViewScript.updateMyCurCardList();
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
                 this.sendNotification(CommandDefine.ShowCenterEffect);
                 //在这里加入发牌动画
-
-
+                
+                
                 this.getDymjProxy().dealOver();
                 this.DeskPanelViewScript.updatedDeskAiming();
+                break;
+            case CommandDefine.ReStartGamePush://下一局
+                // 开始游戏前关掉结算信息界面
+                if(this.recordAlterNode){
+                    this.recordAlterNode.destroy();
+                    this.recordAlterNode = null;
+                }
                 break;
             case CommandDefine.GetGameCardPush://摸牌
                 this.DeskPanelViewScript.updateHandCardAndHuCard();//更新手牌
@@ -142,7 +152,7 @@ export class DeskMediator extends BaseMediator {
                 break;
             case CommandDefine.ShowCardPush://玩家出牌推送
                 const { playerInfo, showCard } = notification.getBody();
-                this.DeskPanelViewScript.updateOutCard((playerInfo as PlayerInfo).gameIndex);
+                this.DeskPanelViewScript.createOutCard((playerInfo as PlayerInfo).gameIndex);
                 this.DeskPanelViewScript.updateMyCurCardList();
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
@@ -153,6 +163,10 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
                 this.DeskPanelViewScript.updateMyBarAndTouchCard();
                 this.DeskPanelViewScript.initMyOpreationBtuShow();
+                // const givePlayer: PlayerInfo = notification.getBody().givePlayer;
+                // const giveCard: number = notification.getBody().giveCard;
+                const { givePlayer, giveCard } = notification.getBody();
+                givePlayer && giveCard && this.DeskPanelViewScript.deleteOutCard(givePlayer.gameIndex, giveCard);//去除outcard
                 this.sendNotification(CommandDefine.ShowCenterEffect);
                 break;
             case CommandDefine.ShowCardNotificationPush://通知出牌
