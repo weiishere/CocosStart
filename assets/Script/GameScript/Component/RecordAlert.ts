@@ -102,6 +102,8 @@ export default class RecordAlert extends ViewComponent {
 
         // 是否显示退出按钮
         this.quitRoom.active = dymjGameResult.currentGameCount >= dymjGameResult.totalGameCount
+        // 有退出按钮就没有下一局按钮
+        this.goOnBtn.active = !this.quitRoom.active;
         this.startNextRoundBtnCountdown(dymjGameResult.time);
 
         let huPaiName = this.getResultDesc(dymjGameResult.list);

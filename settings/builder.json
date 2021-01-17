@@ -1,5 +1,7 @@
 {
-  "excludeScenes": [],
+  "excludeScenes": [
+    "c70a7096-0cda-4d23-b5b0-480d49f2fd72"
+  ],
   "orientation": {
     "landscapeLeft": true,
     "landscapeRight": true,
@@ -23,7 +25,7 @@
   "fb-instant-games": {},
   "android": {
     "REMOTE_SERVER_ROOT": "",
-    "packageName": "org.cocos2d.demo"
+    "packageName": "org.cc.ziyunxuan"
   },
   "ios": {
     "REMOTE_SERVER_ROOT": "",
