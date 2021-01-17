@@ -60,7 +60,6 @@ export default class RecordDetailList extends ViewComponent {
         }
         LoginAfterHttpUtil.send(url, (response) => {
             let data: RoomPlayLog[] = <RoomPlayLog[]>response;
-            debugger
             this.buildData(data);
         }, (err) => {
         }, HttpUtil.METHOD_POST, param);

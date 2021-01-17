@@ -13,7 +13,7 @@ import { DymjGameUIResultItem } from '../GameData/Dymj/s2c/DymjGameUIResultItem'
 const { ccclass, property } = cc._decorator;
 
 @ccclass
-export default class RecordPanel extends ViewComponent {
+export default class RecordAlert extends ViewComponent {
 
     @property(cc.Node)
     quitRoom: cc.Node = null;
