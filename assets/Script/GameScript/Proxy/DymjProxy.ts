@@ -88,7 +88,20 @@ export class DymjProxy extends ModuleProxy {
             this.getDeskProxy().updateOutCard(dymjS2COpPutRsp);
         } else if (msgType === DymjProtocol.S_Game_OperationRsp_BroadCast) {   //推送玩家操作之后的消息
             let dymjGameOperation: DymjGameOperation = <DymjGameOperation>content;
+            // 操作之后玩家方位
             dymjGameOperation.playerAzimuth -= 1;
+            if (dymjGameOperation.gang) {
+                // 被杠的玩家方位
+                dymjGameOperation.gang.playerAzimuth -= 1;
+            }
+            if (dymjGameOperation.peng) {
+                // 被碰的玩家方位
+                dymjGameOperation.peng.playerAzimuth -= 1;
+            }
+            if (dymjGameOperation.hu) {
+                // 如果点炮或抢杠，这个是被胡的玩家方位
+                dymjGameOperation.hu.playerAzimuth -= 1;
+            }
             this.getDeskProxy().updateDeskEvent(dymjGameOperation);
         } else if (msgType === DymjProtocol.S_UPDATE_PLAYERS_CREDIT) {   //推送玩家分数变化
             let dymjUpdateUserCredit: DymjUpdateUserCredit = <DymjUpdateUserCredit>content;
