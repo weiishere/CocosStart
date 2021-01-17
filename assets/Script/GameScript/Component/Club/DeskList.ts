@@ -111,6 +111,16 @@ export default class DeskList extends ViewComponent {
         return null;
     }
 
+    speedFindDeskNo(myGold: number) {
+        let desks = [];
+        for (const deskNode of this.deskContainer.children) {
+            let script = <DymjDesk>deskNode.getComponent("DymjDesk");
+            if (myGold >= script.enterLimit) {
+                desks.push(deskNode);
+            }
+        }
+    }
+
     testAddDesk() {
         let desk = cc.instantiate(this.dymjDesk);
         this.deskContainer.addChild(desk);

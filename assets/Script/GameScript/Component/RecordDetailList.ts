@@ -60,6 +60,7 @@ export default class RecordDetailList extends ViewComponent {
         }
         LoginAfterHttpUtil.send(url, (response) => {
             let data: RoomPlayLog[] = <RoomPlayLog[]>response;
+            debugger
             this.buildData(data);
         }, (err) => {
         }, HttpUtil.METHOD_POST, param);
@@ -67,10 +68,9 @@ export default class RecordDetailList extends ViewComponent {
 
     buildData(data: RoomPlayLog[]) {
         let playLog: Map<string, RecorDetailData> = new Map();
-
         data.forEach(v => {
             let date = new Date(parseInt(v.gameTime));
-            let recorDetailData: RecorDetailData = playLog.get(v.roomRoundNo);
+            let recorDetailData: RecorDetailData = playLog.get(v.gameNo);
             if (!recorDetailData) {
                 recorDetailData = {
                     currentGameCount: v.gameNum,
@@ -78,7 +78,7 @@ export default class RecordDetailList extends ViewComponent {
                     gameTime: DateUtil.dateFormat("YYYY-mm-dd HH:MM:SS", date),
                     playerData: [],
                 };
-                playLog.set(v.roomRoundNo, recorDetailData);
+                playLog.set(v.gameNo, recorDetailData);
             }
 
             let gameParam = JSON.parse(v.extraParam);
