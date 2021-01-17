@@ -46,13 +46,13 @@ class SendMsgData {
     op: number;
     msgType: number;
     time: number;
-    callback: (op: number, msgType: number) => void;
+    timeOutCallback: (op: number, msgType: number) => void;
 
-    constructor(op: number, msgType: number, time: number, callback: (op: number, msgType: number) => void) {
+    constructor(op: number, msgType: number, time: number, timeOutCallback: (op: number, msgType: number) => void) {
         this.op = op;
         this.msgType = msgType;
         this.time = time;
-        this.callback = callback;
+        this.timeOutCallback = timeOutCallback;
     }
 }
 
@@ -332,8 +332,8 @@ export class WebSockerProxy extends Proxy {
 
     /** 处理超时的定时任务 */
     handleTimeoutMsg(sendMsgData: SendMsgData) {
-        if (sendMsgData.callback) {
-            sendMsgData.callback(sendMsgData.op, sendMsgData.msgType);
+        if (sendMsgData.timeOutCallback) {
+            sendMsgData.timeOutCallback(sendMsgData.op, sendMsgData.msgType);
             // 提示某个消息已经超时了
         }
     }
