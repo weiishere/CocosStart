@@ -126,7 +126,9 @@ export default class RecordAlert extends ViewComponent {
                 pengValues = v.pengValues;
             }
             if (v.gangValues) {
-                gangValues = v.gangValues;
+                v.gangValues.forEach(gangValue => {
+                    gangValues.push(gangValue.value);
+                });
             }
 
             let huValues = [];
