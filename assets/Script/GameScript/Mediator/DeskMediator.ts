@@ -54,7 +54,8 @@ export class DeskMediator extends BaseMediator {
             CommandDefine.ShowCardPush,
             CommandDefine.ShowCardNotificationPush,
             CommandDefine.ShowMyEventPush,
-            CommandDefine.EventDonePush
+            CommandDefine.EventDonePush,
+            CommandDefine.OpenRecordAlter
         ];
     }
 
