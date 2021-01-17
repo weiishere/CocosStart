@@ -108,6 +108,12 @@ export class DymjProxy extends ModuleProxy {
             let dymjUpdateUserCredit: DymjUpdateUserCredit = <DymjUpdateUserCredit>content;
         } else if (msgType === DymjProtocol.S_Game_Reconn) {   //推送玩家重连的数据
             let dymjGameReconnData: DymjGameReconnData = <DymjGameReconnData>content;
+            dymjGameReconnData.players.forEach(v=>{
+                v.playerInfo.azimuth -= 1;
+            });
+            dymjGameReconnData.lastPutPlayerAzimuth -= 1;
+            dymjGameReconnData.waitingPlayerAzimuth -= 1;
+            this.getDeskProxy().gameReconnect(dymjGameReconnData);
         } else if (msgType === DymjProtocol.S_PUSH_EXIT_ROOM) {   //推送玩家退出游戏消息
         } else if (msgType === DymjProtocol.S_HEARTBEAT) {   //推送玩家退出游戏消息
             this.sendHeartbeat();

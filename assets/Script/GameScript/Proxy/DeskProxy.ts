@@ -24,6 +24,7 @@ import { DymjUpdateUserCredit } from '../GameData/Dymj/s2c/DymjUpdateUserCredit'
 import { DymjGameUIResultItem } from '../GameData/Dymj/s2c/DymjGameUIResultItem';
 import { DymjS2CDoNextOperation } from '../GameData/Dymj/s2c/DymjS2CDoNextOperation';
 import { DymjOperation } from "../GameData/Dymj/s2c/DymjOperation";
+import { DymjGameReconnData } from '../GameData/Dymj/s2c/DymjGameReconnData';
 
 
 export class DeskProxy extends BaseProxy {
@@ -473,6 +474,129 @@ export class DeskProxy extends BaseProxy {
         //     recordType.gameRoundArr.push(gameRound);
         // });
         // this.getDeskData().roundRecordArr.push(recordType);
+    }
+
+    /**
+     * 游戏重连
+     */
+    gameReconnect(dymjGameReconnData: DymjGameReconnData) {
+        const playerList: Array<PlayerInfo> = [
+        ];
+
+        this.getGameData().countDownTime = dymjGameReconnData.waitingTime;
+        this.getGameData().positionIndex = dymjGameReconnData.waitingPlayerAzimuth;
+        this.getGameData().remainCard = dymjGameReconnData.lastCount;
+
+        // this.getGameData().myCards.hadHuCard
+        dymjGameReconnData.players.forEach(player => {
+            let playerInfo: PlayerInfo = {
+                playerId: player.playerInfo.username,
+                gameIndex: player.playerInfo.azimuth,
+                playerGold: player.playerInfo.credit,
+                playerGender: 0,
+                playerHeadImg: player.playerInfo.head,
+                playerName: player.playerInfo.nickname,
+                master: player.isBank
+            }
+
+            let barCard: Array<BarType> = [];
+            let outCard: Array<number> = [];
+            let pengCard: Array<number> = [];
+            let curCardList: Array<number> = [];
+            let handCard: number;
+            let huCard: number;
+            let isBaoHu: boolean;
+
+            if (player.gangValues) {
+                player.gangValues.forEach(v => {
+                    barCard.push({
+                        barCard: v.mjValues[0],
+                        barType: v.gangType as 0 | 1 | 2,
+                    });
+                });
+            }
+
+            if (player.chuValues) {
+                outCard = player.chuValues;
+            }
+            if (player.huValues && player.huValues.length > 0) {
+                huCard = player.huValues[0].mjValue;
+            }
+            if (player.pengValues) {
+                player.pengValues.forEach(v => {
+                    pengCard.push(v.mjValue);
+                });
+            }
+
+            if (player.shouValues) {
+                curCardList = player.shouValues;
+            }
+
+            isBaoHu = player.isTing;
+
+            if (curCardList.length === 2 || curCardList.length === 5 || curCardList.length === 8 ||
+                curCardList.length === 11) {
+                handCard = curCardList[curCardList.length - 1];
+            }
+
+            if (this.isMy(player.playerInfo.username)) {
+                this.getGameData().myCards = {
+                    barCard,
+                    hadHuCard: huCard,
+                    outCardList: outCard,
+                    touchCard: pengCard,
+                    curCardList: curCardList,
+                    setFace: 0,
+                    handCard: handCard,
+                    cardsChoose: [],
+                    status: {
+                        isHadHu: huCard > 0,
+                        isBaoHu: isBaoHu
+                    }
+                }
+
+                playerList.push(playerInfo);
+            } else {
+                let partnerCard: PartnerCard = {
+                    /**对家ID */
+                    playerId: player.playerInfo.username,
+                    //gameIndex: number,
+                    /**对家牌组 */
+                    partnerCards: {
+                        /**对家可操作牌列数 */
+                        curCardCount: player.chuValues.length,
+                        /**对家可操作牌列数（可不传） */
+                        curCardList: player.chuValues,
+                        /**是否收到新摸牌 */
+                        isHandCard: handCard > 0,
+                        /**新摸到的牌 */
+                        handCard: handCard,
+                        /**对家碰牌 */
+                        touchCard: pengCard,
+                        /**对家杠牌 */
+                        barCard: barCard,
+                        /**对家已经胡的牌 */
+                        hadHuCard: huCard,
+                        /**对家已经出的牌 */
+                        outCardList: outCard,
+                        /**对家定章 */
+                        setFace: 0,
+                        /**对家的状态 */
+                        status: {
+                            /**对家是否已经胡牌 */
+                            isHadHu: huCard > 0,
+                            /** 是否报胡 */
+                            isBaoHu: isBaoHu
+                        }
+                    },
+                }
+                this.getGameData().partnerCardsList.push(partnerCard);
+            }
+        });
+
+        this.getDeskData().playerList = playerList;
+
+        this.sendNotification(CommandDefine.ReStartGamePush, null);
     }
 
     getResultWinloss(list: DymjGameUIResultItem[], azimuth: number) {

@@ -11,7 +11,7 @@ export class DymjPlayerReconnData {
     pengValues: UIOpPengRsp[];  //碰牌数组。格式：[{playerAzimuth:int, mjValue:int}]。
     huValues: UIOpHuRsp[]; //胡牌数组。格式：
     //[{playerAzimuth:int, mjValue:int, huType:int, isAfterGang:Boolean, explosiveCount:int}]。
-    chuValues; //出牌数组。按照出牌顺序排列。格式：[int]。
+    chuValues: number[]; //出牌数组。按照出牌顺序排列。格式：[int]。
     //如果有定章功能，在定章牌没有翻开之前，不将定章牌归于出牌中。翻开后，就放入出牌中了。
     //甩出的牌归于出牌中。
     dingzhang: any; //定章对象。当有定章功能且玩家已经进行了定章才有值，否则为null。[TODO]四川麻将时再补充
