@@ -69,6 +69,9 @@ export default class RecordAlert extends ViewComponent {
         this.schedule(() => {
             time--;
             this.countdownLabel.string = time + "";
+            if (time <= 0) {
+                this.getDymjProxy().goOn();
+            }
         }, 1, time - 1);
     }
 
