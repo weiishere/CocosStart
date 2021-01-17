@@ -10,6 +10,7 @@ import { RecorDetailData } from './RecordDetailList';
 import { DymjGameResult } from '../GameData/Dymj/s2c/DymjGameResult';
 import { DymjGameUIResultItem } from '../GameData/Dymj/s2c/DymjGameUIResultItem';
 import { CommandDefine } from '../MahjongConst/CommandDefine';
+import { DymjProxy } from '../Proxy/DymjProxy';
 
 const { ccclass, property } = cc._decorator;
 
@@ -35,15 +36,20 @@ export default class RecordAlert extends ViewComponent {
             this.node.destroy();
         });
         this.quitRoom.on(cc.Node.EventType.TOUCH_END, () => {
-
+            this.getDymjProxy().logout();
         });
+
         this.goOnBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            Facade.Instance.sendNotification(CommandDefine.LicensingCardPush, {}, '');
+            this.getDymjProxy().goOn();
         });
     }
 
     public getConfigProxy() {
         return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
+    }
+
+    public getDymjProxy() {
+        return <DymjProxy>Facade.Instance.retrieveProxy(ProxyDefine.Dymj);
     }
 
     public getLocalCacheDataProxy() {

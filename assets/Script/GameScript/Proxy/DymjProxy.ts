@@ -58,7 +58,7 @@ export class DymjProxy extends ModuleProxy {
             });
             this.getDeskProxy().updateUserInfo(dymjEnterDeskPushPlyaerList.players)
         } else if (msgType === DymjProtocol.S_GO_ON) {  //继续游戏返回
-            
+            this.sendNotification(CommandDefine.ReStartGamePush, null);
         } else if (msgType === DymjProtocol.S_Game_BeginDeal_BroadCast) {   //开始游戏发牌数据
             let dymjS2CBeginDealData: DymjS2CBeginDealData = <DymjS2CBeginDealData>content;
             dymjS2CBeginDealData.players.forEach(v => {
