@@ -186,10 +186,11 @@ export class DymjProxy extends ModuleProxy {
      * 出牌
      * @param mahjongValue 牌值
      */
-    putMahkjong(mahjongValue: number) {
+    putMahkjong(mahjongValue: number, isQingHu: boolean = false) {
         let dymjC2SPutMahjong: DymjC2SPutMahjong = new DymjC2SPutMahjong();
         dymjC2SPutMahjong.acctName = this.getUserName();
         dymjC2SPutMahjong.mjValue = mahjongValue;
+        dymjC2SPutMahjong.isQingHu = isQingHu;
 
         this.sendGameData(DymjProtocol.C_Game_Put, dymjC2SPutMahjong);
     }
