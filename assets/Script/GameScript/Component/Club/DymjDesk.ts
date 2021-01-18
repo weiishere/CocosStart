@@ -69,6 +69,16 @@ export default class DymjDesk extends ViewComponent {
         let nicknameLabel = headSprite.node.getChildByName("Nickname").getComponent(cc.Label);
         nicknameLabel.string = nickname;
 
+        // cc.log("加载头像 ", head, headSprite.node.name);
+        // let texture = cc.loader.getRes(head, cc.Texture2D);
+        // if (texture) {
+        //     headSprite.spriteFrame = new cc.SpriteFrame(texture);
+        // } else {
+        //     cc.loader.load(head, (error, item) => {
+        //         headSprite.spriteFrame = new cc.SpriteFrame(item)
+        //     });
+        // }
+
         SpriteLoadUtil.loadSprite(headSprite, head);
     }
 

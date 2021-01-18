@@ -1,4 +1,5 @@
 import { DymjOperation } from './DymjOperation';
+import { DymjTing } from './DymjTing';
 export class DymjNextStep {
     /** 操作类型 */
     type: number;
@@ -9,7 +10,7 @@ export class DymjNextStep {
     /** 操作时间单位：s, 若该值 <= 0 则，会根据该房间的出牌时间计算得到响应时间 */
     time: number;
     /** args：附加参数, 为出牌后有叫的数据 */
-    // public CocosTing args;
+    args: DymjTing;
     /** 是否自动打牌 */
     isAutoPut: boolean;
 }

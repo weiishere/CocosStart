@@ -327,7 +327,7 @@ export class WebSockerProxy extends Proxy {
 
                 let networkMsg = "";
                 if (this.__webSocket.readyState) {
-                    networkMsg = " 当前 ws readyState: " + this.__webSocket.readyState + ", isopen : " + (WebSocket.OPEN == this.__webSocket.readyState);
+                    networkMsg = " 当前 ws readyState: " + this.__webSocket.readyState + ", OPEN: " + WebSocket.OPEN + ", isopen : " + (WebSocket.OPEN == this.__webSocket.readyState);
                 }
 
                 this.getGateProxy().toast("连接服务器超时，请检查您的网络是否正常！" + networkMsg);

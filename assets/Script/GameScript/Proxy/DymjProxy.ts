@@ -103,6 +103,10 @@ export class DymjProxy extends ModuleProxy {
                 // 如果点炮或抢杠，这个是被胡的玩家方位
                 dymjGameOperation.hu.playerAzimuth -= 1;
             }
+            if (dymjGameOperation.ting) {
+                // 如果点炮或抢杠，这个是被胡的玩家方位
+                dymjGameOperation.ting.playerAzimuth -= 1;
+            }
             this.getDeskProxy().updateDeskEvent(dymjGameOperation);
         } else if (msgType === DymjProtocol.S_UPDATE_PLAYERS_CREDIT) {   //推送玩家分数变化
             let dymjUpdateUserCredit: DymjUpdateUserCredit = <DymjUpdateUserCredit>content;
