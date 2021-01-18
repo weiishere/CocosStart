@@ -337,6 +337,26 @@ export class WebSockerProxy extends Proxy {
         }
     }
 
+    isConnected(): boolean {
+        return this.__webSocket && this.__webSocket.readyState === WebSocket.OPEN;
+    }
+
+    /**
+     * 重连方法
+     */
+    reconnect(): boolean {
+        if (this.isConnected()) {
+            return false;
+        }
+
+        if (this.__webSocket) {
+            this.__webSocket.close();
+        }
+
+        this.connect(this.__wsUrl);
+        return true;
+    }
+
     /** 处理超时的定时任务 */
     handleTimeoutMsg(sendMsgData: SendMsgData) {
         if (sendMsgData.timeOutCallback) {

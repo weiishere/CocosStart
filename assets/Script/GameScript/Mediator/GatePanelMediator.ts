@@ -65,6 +65,16 @@ export class GatePanelMediator extends BaseMediator {
 
     /** 事件监听方法 */
     private listenerEvent(): void {
+        // 应用被唤醒方法
+        cc.game.on(cc.game.EVENT_SHOW, () => {
+            let isReconnect = this.getWebSockerProxy().reconnect();
+
+            // 是否重连过ws了
+            if (isReconnect) {
+                
+            }
+        });
+
         // 监听登录按钮请求方法
         this.viewComponent.on(GateEventDefine.LOGIN_BTN_EVENT, this.onLoginBtnEvent.bind(this));
         // 监听验证码按钮请求事件
