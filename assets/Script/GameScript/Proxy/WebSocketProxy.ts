@@ -323,7 +323,14 @@ export class WebSockerProxy extends Proxy {
             let sendMsgData: SendMsgData = this.waitResultData.get(key);
             if (sendMsgData.time <= 0) {
                 this.waitResultData.delete(key);
-                this.getGateProxy().toast("连接服务器超时，请检查您的网络是否正常！");
+
+
+                let networkMsg = "";
+                if (this.__webSocket.readyState) {
+                    networkMsg = " 当前 ws readyState: " + this.__webSocket.readyState + ", isopen : " + (WebSocket.OPEN == this.__webSocket.readyState);
+                }
+
+                this.getGateProxy().toast("连接服务器超时，请检查您的网络是否正常！" + networkMsg);
                 this.handleTimeoutMsg(sendMsgData);
             }
             sendMsgData.time--;

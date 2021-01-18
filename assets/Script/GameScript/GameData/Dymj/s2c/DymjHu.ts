@@ -13,4 +13,6 @@ export class DymjHu extends MahjongInfo {
     explosiveCount: number;
     /** 是否五对 */
     isWuDui: boolean;
+    /** 是否请胡 */
+    isQingHu: boolean;
 }
