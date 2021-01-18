@@ -263,10 +263,10 @@ export class DeskRepository {
                 isPlay: true
             },
             /**局数 */
-            gameRoundNum: 8, 
-            totalRound: 8,
+            gameRoundNum: 0, 
+            totalRound: 0,
             baseScore: 1,
-            fanTime: 2
+            fanTime: 1
         },
         /**牌局记录 */
         roundRecordArr: []

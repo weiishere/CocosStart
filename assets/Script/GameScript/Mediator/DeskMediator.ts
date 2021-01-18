@@ -86,10 +86,16 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.bindDskOpreationEvent(node => {
                     if (node.name === 'exitIcon') {
                         //退出房间
-                        this.getDymjProxy().logout();
-                        this.facade.sendNotification(CommandDefine.ExitDeskPanel, {}, '');
+                        const { gameRoundNum, totalRound } = this.getDeskProxy().repository.deskData.gameSetting;
+                        if (gameRoundNum !== totalRound) {
+                            this.sendNotification(CommandDefine.OpenToast, { content: '抱歉，牌局未完成，请勿退出牌局' });
+                        } else {
+                            this.getDymjProxy().logout();
+                            this.sendNotification(CommandDefine.ExitDeskPanel);
+                        }
                     }
                 });
+                /**出牌事件 */
                 this.DeskPanelViewScript.bindShowCardEvent(cardNumber => {
                     this.sendNotification(CommandDefine.ShowCard, { cardNumber })
                 });
@@ -108,7 +114,8 @@ export class DeskMediator extends BaseMediator {
                         this.getDymjProxy().operation(DymjOperationType.TING, 0);
                     } else if (node.name === 'qingHu') {
                         //请胡
-                        this.getDymjProxy().operation(DymjOperationType.QING_HU, 0);
+                        //this.sendNotification(CommandDefine.ShowCard, { cardNumber: (correlationInfoData.qingHu as DymjHu).mjValue, isQingHu: true })
+                        this.getDymjProxy().operation(DymjOperationType.QING_HU, (correlationInfoData.qingHu as DymjHu).mjValue);
                     } else if (node.name === 'pass') {
                         //过
                         this.getDymjProxy().operation(DymjOperationType.XIAO, 0);
@@ -129,7 +136,7 @@ export class DeskMediator extends BaseMediator {
                 this.deskPanel.destroy();
                 break;
             case CommandDefine.LicensingCardPush://发牌
-
+                this.DeskPanelViewScript.updateRoomInfo();
                 this.DeskPanelViewScript.updateMyCurCardList();
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
@@ -150,25 +157,30 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
                 this.DeskPanelViewScript.updateMyBarAndTouchCard();
                 this.DeskPanelViewScript.updateOutCard();
+                this.DeskPanelViewScript.updatedDeskAiming();
+                this.DeskPanelViewScript.updateRoomInfo();
+                this.DeskPanelViewScript.updateCountDown();
                 break;
             case CommandDefine.GetGameCardPush://摸牌
                 this.DeskPanelViewScript.updateHandCardAndHuCard();//更新手牌
                 this.DeskPanelViewScript.updateMyOperationBtu();//可能有杠/胡
                 this.DeskPanelViewScript.updatedDeskAiming();
+                this.DeskPanelViewScript.updateCountDown();
                 break;
             case CommandDefine.ShowCardPush://玩家出牌推送
                 const { playerInfo, showCard } = notification.getBody();
-                this.DeskPanelViewScript.createOutCard((playerInfo as PlayerInfo).gameIndex);
                 this.DeskPanelViewScript.updateMyCurCardList();
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
+                this.DeskPanelViewScript.createOutCard((playerInfo as PlayerInfo).gameIndex);
                 break;
             case CommandDefine.EventDonePush://玩家处理操作之后的推送
                 this.DeskPanelViewScript.updateMyCurCardList();
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
                 this.DeskPanelViewScript.updateMyBarAndTouchCard();
-                this.DeskPanelViewScript.initMyOpreationBtuShow();
+                this.DeskPanelViewScript.updateMyOperationBtu();
+                this.DeskPanelViewScript.updatedDeskAiming();
                 // const givePlayer: PlayerInfo = notification.getBody().givePlayer;
                 // const giveCard: number = notification.getBody().giveCard;
                 const { givePlayer, giveCard } = notification.getBody();
@@ -176,15 +188,16 @@ export class DeskMediator extends BaseMediator {
                 this.sendNotification(CommandDefine.ShowCenterEffect);
                 break;
             case CommandDefine.ShowCardNotificationPush://通知出牌
-                this.DeskPanelViewScript.initMyOpreationBtuShow();
+                this.DeskPanelViewScript.updateMyOperationBtu();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
+                this.DeskPanelViewScript.updateCountDown();//更新倒计时
                 break;
             case CommandDefine.ShowMyEventPush://通知本方有事件
                 this.DeskPanelViewScript.updateMyOperationBtu();
                 break;
             case CommandDefine.ShowCard://本方出牌
-                const { cardNumber } = notification.getBody();
-                this.getDymjProxy().putMahkjong(cardNumber);
+                const { cardNumber, isQingHu } = notification.getBody();
+                this.getDymjProxy().putMahkjong(cardNumber, isQingHu);
                 break;
             case CommandDefine.ShowCenterEffect://显示中间大字
                 this.DeskPanelViewScript.updateEventWran(() => {

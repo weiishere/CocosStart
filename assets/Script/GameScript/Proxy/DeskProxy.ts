@@ -113,7 +113,7 @@ export class DeskProxy extends BaseProxy {
         })
         this.getGameData().eventData.gameEventData.deskGameEvent.eventName = 'gameBegin';
         this.getDeskData().gameSetting.gameRoundNum = dymjS2CBeginDealData.currentGameCount;
-        this.sendNotification(CommandDefine.LicensingCardPush)
+        this.sendNotification(CommandDefine.LicensingCardPush);
     }
     private doEventData(oprts: Array<DymjOperation>) {
 
@@ -151,6 +151,7 @@ export class DeskProxy extends BaseProxy {
                 _correlationInfoData['ting'] = op.ting;
             } else if (op.oprtType === DymjOperationType.QING_HU) {
                 _eventName.push("qingHu");
+                _correlationInfoData['qingHu'] = op.hu;
             }
         });
     }
@@ -166,9 +167,9 @@ export class DeskProxy extends BaseProxy {
         // 如果是自己
         if (this.isMy(playerInfo.playerId)) {
             this.getGameData().myCards.handCard = dymjS2CPlayerGet.getMjValue;
+
             if (dymjS2CPlayerGet.nextStep.oprts) {
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
-
                 this.doEventData(dymjS2CPlayerGet.nextStep.oprts);
                 // dymjS2CPlayerGet.nextStep.oprts.forEach(op => {
                 //     if (op.oprtType === DymjOperationType.GANG) {
@@ -189,6 +190,8 @@ export class DeskProxy extends BaseProxy {
                 //         this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;
                 //     }
                 // });
+            } else {
+                this.getGameData().eventData.gameEventData.myGameEvent.eventName = ['show'];
             }
         } else {
             let { partnerCards } = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
@@ -227,12 +230,12 @@ export class DeskProxy extends BaseProxy {
     }
 
     /**
-     * 通知下一步的操作动作(广播有事件处理完成)
+     * 事件处理完之后，通知下一步的操作动作(广播有事件处理完成)
      * @param dymjS2CDoNextOperation 
      */
     updateNextOperationEvent(dymjS2CDoNextOperation: DymjS2CDoNextOperation) {
         let playerInfo = this.getPlayerByGameIndex(dymjS2CDoNextOperation.playerAzimuth);
-
+        this.getGameData().countDownTime = dymjS2CDoNextOperation.nextStep.time;
         // 如果是自己
         if (this.isMy(playerInfo.playerId)) {
             if (dymjS2CDoNextOperation.nextStep.type === 1) {
@@ -243,8 +246,9 @@ export class DeskProxy extends BaseProxy {
                 //碰杠胡
                 this.doEventData(dymjS2CDoNextOperation.nextStep.oprts);
             }
-            this.sendNotification(CommandDefine.ShowCardNotificationPush);
+            //this.doEventData(dymjS2CDoNextOperation.nextStep.oprts);
         }
+        this.sendNotification(CommandDefine.ShowCardNotificationPush);
     }
 
     /** 碰，杠，胡，报胡 游戏事件(对家和自己处理后才接受的数) */
@@ -375,6 +379,7 @@ export class DeskProxy extends BaseProxy {
         let playerInfo = this.getPlayerByGameIndex(dymjS2COpPutRsp.playerAzimuth);
         // 如果是自己
         if (this.isMy(playerInfo.playerId)) {
+            this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
             this.getGameData().myCards.outCardList.push(dymjS2COpPutRsp.putMjValue);
             this.getGameData().myCards.handCard = 0;
             this.getGameData().myCards.curCardList = dymjS2COpPutRsp.spValuesSorted;
@@ -483,7 +488,6 @@ export class DeskProxy extends BaseProxy {
         const playerList: Array<PlayerInfo> = [
         ];
 
-        this.getGameData().countDownTime = dymjGameReconnData.waitingTime;
         this.getGameData().positionIndex = dymjGameReconnData.waitingPlayerAzimuth;
         this.getGameData().remainCard = dymjGameReconnData.lastCount;
 

@@ -1321,7 +1321,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        78,
+        38,
         0,
         0,
         0,
@@ -2635,7 +2635,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        37.5,
+        162,
         0,
         0,
         0,
@@ -18301,7 +18301,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 112.92,
+      "width": 104.02,
       "height": 45.2
     },
     "_anchorPoint": {
@@ -18353,8 +18353,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "第2/10局\n底分:10 / 翻数:1",
-    "_N$string": "第2/10局\n底分:10 / 翻数:1",
+    "_string": "第0/0局\n底分:1 / 翻数:1",
+    "_N$string": "第0/0局\n底分:1 / 翻数:1",
     "_fontSize": 16,
     "_lineHeight": 20,
     "_enableWrapText": true,

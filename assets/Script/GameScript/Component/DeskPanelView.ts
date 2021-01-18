@@ -46,6 +46,7 @@ export default class DeskPanelView extends ViewComponent {
     private gameEventView: cc.Node;
     private deskOpreationIconWrap: cc.Node;
 
+    private scheduleCallBack: () => void;
     private cardChooseAlert: cc.Node;
     private gameEventWarn: { touchWarn: cc.Node, huWarn: cc.Node, burWarn: cc.Node, xiayuWarn: cc.Node, zimoWarn: cc.Node, gameBeginWarn: cc.Node } = {
         touchWarn: null,
@@ -318,16 +319,17 @@ export default class DeskPanelView extends ViewComponent {
             const card = this.addCardToNode(this.mainCardListPanel, item, "mine", 'setUp', {
                 touchEndCallback: function () {
                     const script = this.node.getComponent("CardItemView") as CardItemView;
-                    if (script.isPress) {
+                    if (script.isChoose) {
                         if (script.isAvtive) {
-
                         } else {
-                            self.mainCardList.map(item => {
-                                const _view = (item.getComponent("CardItemView") as CardItemView);
-                                if (this._id !== _view['_id']) _view.reSetChooseFalse();
-                                card && (card.getComponent("CardItemView") as CardItemView).reSetChooseFalse();
-                            });
                         }
+                        (self.handCard.getChildByName('cardItemView').getComponent("CardItemView") as CardItemView).reSetChooseFalse();
+                    }else{
+                        self.mainCardList.map(item => {
+                            const _view = (item.getComponent("CardItemView") as CardItemView);
+                            if (this._id !== _view['_id']) _view.reSetChooseFalse();
+                            card && (card.getComponent("CardItemView") as CardItemView).reSetChooseFalse();
+                        });
                     }
                 }
             });
@@ -492,7 +494,7 @@ export default class DeskPanelView extends ViewComponent {
         });
         //} else if (type === 'hu') {
         //先检测本家胡牌
-        
+
         if (this.getData().gameData.myCards.hadHuCard !== 0) {
             this.addCardToNode(this.huCard, this.getData().gameData.myCards.hadHuCard, "mine", 'fall');
         } else {
@@ -515,6 +517,10 @@ export default class DeskPanelView extends ViewComponent {
                 //更新右方手牌
             }
         });
+
+        //更新剩余牌数
+        const remainCardNum = this.node.getChildByName("remainWrap").getChildByName("remainCard").getComponent(cc.Label);
+        remainCardNum.string = this.getData().gameData.remainCard + '';
         //}
     }
     /**更新方向盘 */
@@ -533,11 +539,11 @@ export default class DeskPanelView extends ViewComponent {
                 case 'hu': this.opreationBtus.hu_btu.active = true; break;
                 case 'qingHu': this.opreationBtus.qingHu_btu.active = true; break;
                 case 'ting': this.opreationBtus.baoHu_btu.active = true; break;
-                case 'show': /*this.opreationBtus.show_btu.active = true;*/ break;
+                case 'show': this.opreationBtus.show_btu.active = true; break;
                 case 'ready': this.opreationBtus.ready_btu.active = true; break;
             }
         });
-
+        
         if (eventName.length !== 0 && eventName.indexOf('show') === -1 && eventName.indexOf('ready') === -1) {
             this.opreationBtus.pass_btu.active = true;
         }
@@ -631,9 +637,9 @@ export default class DeskPanelView extends ViewComponent {
             const card = this.addCardToNode(this.outCardList, item, "mine", "fall")
             card.setPosition(cc.v2(0, 0));
             card.setScale(0.6, 0.6);
-            if (index === 0) {
-                (card.getComponent("CardItemView") as CardItemView).setArrows(true);
-            }
+            // if (index === 0) {
+            //     (card.getComponent("CardItemView") as CardItemView).setArrows(true);
+            // }
         });
         this.getData().gameData.partnerCardsList.forEach(partner => {
             this.frontOutCardList.removeAllChildren();
@@ -675,39 +681,59 @@ export default class DeskPanelView extends ViewComponent {
         }
     }
     /**控制自己的操作按钮显示 */
-    initMyOpreationBtuShow(): void {
-        this.reSetOpreationBtu();
-        //"show" | "touch" | "bar" | "hu" | "qingHu" | "ready" | "setFace" | "ting"
-        this.getData().gameData.eventData.gameEventData.myGameEvent.eventName.forEach(item => {
-            switch (item) {
-                case 'show':
-                    //this.opreationBtus.show_btu.active = true;
-                    break;
-                case 'touch':
-                    this.opreationBtus.touch_btu.active = true;
-                    break;
-                case 'bar':
-                    this.opreationBtus.bar_btu.active = true;
-                    break;
-                case 'hu':
-                    this.opreationBtus.hu_btu.active = true;
-                    break;
-                case 'qingHu':
-                    this.opreationBtus.qingHu_btu.active = true;
-                    break;
-                case 'ting':
-                    this.opreationBtus.baoHu_btu.active = true;
-                    break;
-                case 'ready':
-                    this.opreationBtus.ready_btu.active = true;
-                    break;
-            }
-        });
-        // if (gameData.eventData.gameEventData.myGameEvent.eventName.indexOf('show') === -1 && gameData.eventData.gameEventData.myGameEvent.eventName.indexOf('ready') === -1) {
-        //     this.opreationBtus.pass_btu.active = true;
-        // }
+    // initMyOpreationBtuShow(): void {
+    //     this.reSetOpreationBtu();
+    //     //"show" | "touch" | "bar" | "hu" | "qingHu" | "ready" | "setFace" | "ting"
+    //     this.getData().gameData.eventData.gameEventData.myGameEvent.eventName.forEach(item => {
+    //         switch (item) {
+    //             case 'show':
+    //                 //this.opreationBtus.show_btu.active = true;
+    //                 break;
+    //             case 'touch':
+    //                 this.opreationBtus.touch_btu.active = true;
+    //                 break;
+    //             case 'bar':
+    //                 this.opreationBtus.bar_btu.active = true;
+    //                 break;
+    //             case 'hu':
+    //                 this.opreationBtus.hu_btu.active = true;
+    //                 break;
+    //             case 'qingHu':
+    //                 this.opreationBtus.qingHu_btu.active = true;
+    //                 break;
+    //             case 'ting':
+    //                 this.opreationBtus.baoHu_btu.active = true;
+    //                 break;
+    //             case 'ready':
+    //                 this.opreationBtus.ready_btu.active = true;
+    //                 break;
+    //         }
+    //     });
+    //     // if (gameData.eventData.gameEventData.myGameEvent.eventName.indexOf('show') === -1 && gameData.eventData.gameEventData.myGameEvent.eventName.indexOf('ready') === -1) {
+    //     //     this.opreationBtus.pass_btu.active = true;
+    //     // }
+    // }
+    /**更新房间信息（牌局等） */
+    updateRoomInfo() {
+        const deskInfoStr = this.node.getChildByName('deskInfo').getChildByName('deskInfoStr').getComponent(cc.Label);
+        const { totalRound, gameRoundNum, baseScore, fanTime } = this.getData().deskData.gameSetting;
+        deskInfoStr.string = `第${gameRoundNum}/${totalRound}局\n底分:${baseScore} / 翻数:${fanTime}`;
     }
+    /**更新倒计时 */
+    updateCountDown() {
+        this.scheduleCallBack && this.unschedule(this.scheduleCallBack);
+        const deskAiming = this.node.getChildByName("desk").getChildByName("deskCenter");
+        const countDownNum = deskAiming.getChildByName("countDown").getComponent(cc.Label);
+        countDownNum.string = this.getData().gameData.countDownTime + '';
+        this.scheduleCallBack = function () {
+            let t = +countDownNum.string;
+            if (t >= 0) {
+                countDownNum.string = (--t) + '';
+            }
+        }
 
+        this.schedule(this.scheduleCallBack, 1);
+    }
 
 
 
