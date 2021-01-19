@@ -19,6 +19,7 @@ import { S2CClubJoinRoom } from '../GameData/Club/s2c/S2CClubJoinRoom';
 import { UserGold } from '../GameData/UserGold';
 import { GameNoDefine } from "../GameConst/GameNoDefine";
 import { DymjProxy } from "../Proxy/DymjProxy";
+import { GateProxy } from '../Proxy/GateProxy';
 
 export class DeskListMediator extends BaseMediator {
 
@@ -53,12 +54,27 @@ export class DeskListMediator extends BaseMediator {
         });
     }
 
+    /** 快速查到桌子 */
     private speedJoinDeskEvent(event: cc.Event.EventCustom) {
+        let roomNo = this.getViewScript().speedFindDeskNo(this.getLocalCacheDataProxy().getLoginData().gold);
 
+        if (!roomNo) {
+            this.getGateProxy().toast("没有找到合适的桌子！");
+            return;
+        }
+
+        let data: ClubC2SJoinRoom = new ClubC2SJoinRoom();
+        data.roomNo = roomNo;
+        this.getClubProxy().sendGameData(ClubProtocol.C2S_JOIN_ROOM, data, (op: number, msgType: number) => {
+        });
     }
 
     public getClubProxy(): ClubProxy {
         return <ClubProxy>this.facade.retrieveProxy(ProxyDefine.Club);
+    }
+
+    public getGateProxy(): GateProxy {
+        return <GateProxy>this.facade.retrieveProxy(ProxyDefine.Gate);
     }
 
     public getDymjProxy(): DymjProxy {

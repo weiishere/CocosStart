@@ -22,6 +22,7 @@ import { CommandDefine } from '../MahjongConst/CommandDefine';
 import { DymjEnterDeskPushPlyaerList } from '../GameData/Dymj/s2c/DymjEnterDeskPushPlyaerList';
 import { ProxyDefine } from '../MahjongConst/ProxyDefine';
 import { DeskProxy } from './DeskProxy';
+import { DymjS2CDissolveResult } from '../GameData/Dymj/s2c/DymjS2CDissolveResult';
 
 /**
  * 大邑麻将消息数据代理类
@@ -119,6 +120,9 @@ export class DymjProxy extends ModuleProxy {
             dymjGameReconnData.waitingPlayerAzimuth -= 1;
             this.getDeskProxy().gameReconnect(dymjGameReconnData);
         } else if (msgType === DymjProtocol.S_PUSH_EXIT_ROOM) {   //推送玩家退出游戏消息
+        } else if (msgType === DymjProtocol.S_PUSH_DISSOLVE_RESULT) {   //房间解散消息
+            let dymjS2CDissolveResult:DymjS2CDissolveResult = <DymjS2CDissolveResult>content;
+            
         } else if (msgType === DymjProtocol.S_HEARTBEAT) {   //推送玩家退出游戏消息
             this.sendHeartbeat();
         }
