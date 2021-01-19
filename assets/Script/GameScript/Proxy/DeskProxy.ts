@@ -158,13 +158,13 @@ export class DeskProxy extends BaseProxy {
                     _eventName.push("tingQingHu");
                     _correlationInfoData['ting'] = Object.assign(op.ting, { isBaoQingHu: true });
                     this.getGameData().myCards.cardsChoose = [];//可能有多种报牌方式
-                    op.ting.list.forEach(item => this.getGameData().myCards.cardsChoose.push(item.putValue));
+                    op.ting.list && op.ting.list.forEach(item => this.getGameData().myCards.cardsChoose.push(item.putValue));//list为空表示没有出牌情况下的报牌
                 } else {
-                    //报牌
+                    //一般报牌
                     _eventName.push("ting");
-                    _correlationInfoData['ting'] = op.ting;
+                    _correlationInfoData['ting'] = Object.assign(op.ting, { isBaoHu: true });
                     this.getGameData().myCards.cardsChoose = [];//可能有多种报牌方式
-                    op.ting.list.forEach(item => this.getGameData().myCards.cardsChoose.push(item.putValue));
+                    op.ting.list && op.ting.list.forEach(item => this.getGameData().myCards.cardsChoose.push(item.putValue));
                 }
             } else if (op.oprtType === DymjOperationType.QING_HU) {
                 _eventName.push("qingHu");
@@ -190,6 +190,8 @@ export class DeskProxy extends BaseProxy {
             } else {
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = ['show'];
             }
+            //不能出的牌(用户报胡之后)
+            this.getGameData().myCards.disableCard = dymjS2CPlayerGet.nextStep.datas || [];
         } else {
             let { partnerCards } = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
             partnerCards.isHandCard = true;
@@ -236,9 +238,10 @@ export class DeskProxy extends BaseProxy {
         // 如果是自己
         if (this.isMy(playerInfo.playerId)) {
             if (dymjS2CDoNextOperation.nextStep.type === 1) {
-                //出牌
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = ["show"];
                 this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = {};
+                //不能出的牌(用户报胡之后)
+                this.getGameData().myCards.disableCard = dymjS2CDoNextOperation.nextStep.datas || [];
             } else if (dymjS2CDoNextOperation.nextStep.type === 2) {
                 //碰杠胡
                 this.doEventData(dymjS2CDoNextOperation.nextStep.oprts);
@@ -258,13 +261,13 @@ export class DeskProxy extends BaseProxy {
         // 如果是自己
         if (this.isMy(playerInfo.playerId)) {
             this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
-            this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = {};//清空可能的杠选牌
-
+            let correlationInfoData = this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;//清空可能的杠选牌
+            correlationInfoData = {};
 
             if (dymjGameOperation.oprtType === DymjOperationType.PENG) {
                 this.getGameData().myCards.touchCard.push(dymjGameOperation.peng.mjValue);
                 _deskEventName = 'touch';
-                _deskEventCorrelationInfoData = dymjGameOperation.peng;
+                _deskEventCorrelationInfoData = correlationInfoData = dymjGameOperation.peng;
                 givePlayer = this.getPlayerByGameIndex(dymjGameOperation.peng.playerAzimuth);
                 giveCard = dymjGameOperation.peng.mjValue;
                 this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();//去掉引碰者出牌
@@ -272,14 +275,14 @@ export class DeskProxy extends BaseProxy {
                 const barType: BarType = { barCard: dymjGameOperation.gang.mjValues[0], barType: dymjGameOperation.gang.gangType as 0 | 1 | 2 };
                 this.getGameData().myCards.barCard.push(barType);
                 _deskEventName = 'bar';
-                _deskEventCorrelationInfoData = dymjGameOperation.gang;
+                _deskEventCorrelationInfoData = correlationInfoData = dymjGameOperation.gang;
                 givePlayer = this.getPlayerByGameIndex(dymjGameOperation.gang.playerAzimuth);
                 giveCard = dymjGameOperation.gang.mjValues[0];
                 if (barType.barType === 1) {
                     this.getGameData().myCards.touchCard = this.getGameData().myCards.touchCard.filter(item => item !== giveCard);
                 }
             } else if (dymjGameOperation.oprtType === DymjOperationType.HU) {
-                _deskEventCorrelationInfoData = dymjGameOperation.hu;
+                _deskEventCorrelationInfoData = correlationInfoData = dymjGameOperation.hu;
                 this.getGameData().myCards.hadHuCard = dymjGameOperation.hu.mjValue;
                 giveCard = dymjGameOperation.hu.mjValue;
                 if (dymjGameOperation.hu.huType === 1) {
@@ -301,8 +304,16 @@ export class DeskProxy extends BaseProxy {
                     _deskEventName = 'hu';
                 }
             } else if (dymjGameOperation.oprtType === DymjOperationType.TING) {
-                this.getGameData().myCards.status.isBaoHu = true;
+
+                _deskEventName = 'ting';
+                givePlayer = this.getPlayerByGameIndex(dymjGameOperation.ting.playerAzimuth);
                 giveCard = dymjGameOperation.ting.mjValue;
+                _deskEventCorrelationInfoData = correlationInfoData = dymjGameOperation.ting;
+                if (dymjGameOperation.ting.isBaoQingHu) {
+                    this.getGameData().myCards.status.isBaoQingHu = true;
+                } else {
+                    this.getGameData().myCards.status.isBaoHu = true;
+                }
             }
             // 自己剩下的牌
             this.getGameData().myCards.curCardList = dymjGameOperation.spValuesSorted;
@@ -372,7 +383,7 @@ export class DeskProxy extends BaseProxy {
         this.sendNotification(CommandDefine.EventDonePush, { givePlayer, giveCard });
     }
 
-    /** 自己和对家出牌 */
+    /** 自己和对家出牌（出牌之后） */
     updateOutCard(dymjS2COpPutRsp: DymjS2COpPutRsp) {
         let playerInfo = this.getPlayerByGameIndex(dymjS2COpPutRsp.playerAzimuth);
         // 如果是自己
@@ -552,6 +563,7 @@ export class DeskProxy extends BaseProxy {
                     setFace: 0,
                     handCard: handCard,
                     cardsChoose: [],
+                    disableCard: [],
                     status: {
                         isHadHu: huCard > 0,
                         isBaoQingHu: false,

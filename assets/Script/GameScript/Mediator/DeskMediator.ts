@@ -79,6 +79,7 @@ export class DeskMediator extends BaseMediator {
         const deskData = this.getDeskProxy().getDeskData();
         console.log('gameData', gameData);
         console.log('deskData', deskData);
+
         switch (notification.getName()) {
             case CommandDefine.InitDeskPanel:
                 await this.init();
@@ -125,10 +126,20 @@ export class DeskMediator extends BaseMediator {
 
                     } else if (node.name === 'baoHu') {
                         //一般报胡
-                        this.DeskPanelViewScript.updateChooseCardsAndHandler(card => { this.getDymjProxy().operation(DymjOperationType.TING, 0); });
+                        if (this.getDeskProxy().repository.gameData.myCards.cardsChoose.length === 0) {
+                            //有可能是没有摸牌的情况下报牌
+                            this.getDymjProxy().operation(DymjOperationType.TING, 0);
+                        } else {
+                            this.DeskPanelViewScript.updateChooseCardsAndHandler(card => { this.getDymjProxy().operation(DymjOperationType.TING, card); });
+                        }
                     } else if (node.name === 'baoQingHu') {
                         //报请胡
-                        this.DeskPanelViewScript.updateChooseCardsAndHandler(card => { this.getDymjProxy().operation(DymjOperationType.TING, 0); });
+                        if (this.getDeskProxy().repository.gameData.myCards.cardsChoose.length === 0) {
+                            //有可能是没有摸牌的情况下报牌
+                            this.getDymjProxy().operation(DymjOperationType.TING, 0);
+                        } else {
+                            this.DeskPanelViewScript.updateChooseCardsAndHandler(card => { this.getDymjProxy().operation(DymjOperationType.TING, card); });
+                        }
                     } else if (node.name === 'qingHu') {
                         //请胡
                         //this.sendNotification(CommandDefine.ShowCard, { cardNumber: (correlationInfoData.qingHu as DymjHu).mjValue, isQingHu: true })
@@ -137,8 +148,6 @@ export class DeskMediator extends BaseMediator {
                         //过
                         this.getDymjProxy().operation(DymjOperationType.XIAO, 0);
                     }
-
-
                 });
                 // 发送准备
                 this.getDymjProxy().ready();

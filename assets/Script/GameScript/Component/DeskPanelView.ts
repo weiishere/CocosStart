@@ -472,20 +472,52 @@ export default class DeskPanelView extends ViewComponent {
 
         const eventName = this.getData().gameData.eventData.gameEventData.myGameEvent.eventName;
         //当有手牌且无其他命令或者只有出牌命令的时候需要激活牌组
+
         if ((this.getData().gameData.myCards.handCard !== 0 && eventName.length === 0) || eventName.indexOf('show') !== -1) {
             if (this.getData().gameData.myCards.status.isBaoHu) {
                 //报胡不能出牌
-                self.mainCardList.map(item => ((item.getComponent("CardItemView") as CardItemView).getComponent("CardItemView") as CardItemView).setDisable());
+                self.mainCardList.map(item => (item.getComponent("CardItemView") as CardItemView).setDisable());
             } else if (this.getData().gameData.myCards.status.isBaoQingHu) {
                 //报请胡，有些牌可以出，对子牌不能出
-                const correlationInfoData = this.getData().gameData.eventData.gameEventData.myGameEvent.correlationInfoData;
+                const disableCard = this.getData().gameData.myCards.disableCard;
+                disableCard.forEach(item => {
+                    self.mainCardList.filter(card => {
+                        const _card = card.getComponent("CardItemView") as CardItemView;
+                        _card.isActive = true;
+                        return _card.cardNumber === item;
+                    }).forEach((card, i) => {
+                        const _card = card.getComponent("CardItemView") as CardItemView;
+                        if (i < 2) {//最多只能一对
+                            if (_card.isDisable) {
+                                _card.setDisable();
+                            }
+                        }
+                    });
+
+
+                    // for (let i = 0, l = self.mainCardList.length; i < l; i++) {
+                    //     const _card = (self.mainCardList[i].getComponent("CardItemView") as CardItemView).getComponent("CardItemView") as CardItemView;
+                    //     if (_card.isDisable && _card.cardNumber === item) {
+                    //         _card.setDisable();
+                    //         continue;
+                    //     }
+                    // }
+                })
+
+                // self.mainCardList.map(item => {
+                //     const _card = (item.getComponent("CardItemView") as CardItemView).getComponent("CardItemView") as CardItemView;
+                //     if (disableCard.some(item => item === _card.cardNumber)) {
+                //         _card.setDisable();
+                //     }
+                // });
+                //const correlationInfoData = this.getData().gameData.eventData.gameEventData.myGameEvent.correlationInfoData;
             } else {
                 //全部牌都可以出
-                self.mainCardList.map(item => ((item.getComponent("CardItemView") as CardItemView).getComponent("CardItemView") as CardItemView).isActive = true);
+                self.mainCardList.map(item => (item.getComponent("CardItemView") as CardItemView).isActive = true);
             }
         } else {
             //全部牌都不可以出
-            self.mainCardList.map(item => ((item.getComponent("CardItemView") as CardItemView).getComponent("CardItemView") as CardItemView).isActive = false);
+            self.mainCardList.map(item => (item.getComponent("CardItemView") as CardItemView).isActive = false);
 
         }
         //先检测本家胡牌
@@ -681,7 +713,7 @@ export default class DeskPanelView extends ViewComponent {
             const self = this;
             cardsChoose.map(item => {
                 const card = this.addCardToNode(this.cardChooseAlert, item, "mine", 'setUp', {
-                    purAddNode: node => { node.setScale(0.8, 0.8) },
+                    purAddNode: node => { node.setScale(0.8, 0.8); node.setPosition(cc.v2(0, 10)) },
                     touchEndCallback: function () {
                         //const script = this.node.getComponent("CardItemView") as CardItemView;
                         launch(item);
@@ -702,7 +734,7 @@ export default class DeskPanelView extends ViewComponent {
             });
             this.scheduleOnce(() => this.myShowCardWrap.removeAllChildren(), 1.5);
         } else {
-            const _card = this.addCardToNode(this.frontShowCardWrap, cardNumber, "mine", "setUp",{
+            const _card = this.addCardToNode(this.frontShowCardWrap, cardNumber, "mine", "setUp", {
                 purAddNode: node => (node.getComponent('CardItemView') as CardItemView).setStress(true)
             });
             this.scheduleOnce(() => this.frontShowCardWrap.removeAllChildren(), 1.5);
@@ -743,6 +775,7 @@ export default class DeskPanelView extends ViewComponent {
     // }
     /**更新房间信息（牌局等） */
     updateRoomInfo(): void {
+        this.node.getChildByName("remainWrap").active = true;//显示剩余牌数
         const deskInfoStr = this.node.getChildByName('deskInfo').getChildByName('deskInfoStr').getComponent(cc.Label);
         const { totalRound, gameRoundNum, baseScore, fanTime } = this.getData().deskData.gameSetting;
         deskInfoStr.string = `第${gameRoundNum}/${totalRound}局\n底分:${baseScore} / 翻数:${fanTime}`;
