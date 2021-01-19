@@ -73,6 +73,8 @@ export type PartnerCard = {
         status: {
             /**对家是否已经胡牌 */
             isHadHu: boolean,
+            /**报请胡 */
+            isBaoQingHu: boolean,
             /** 是否报胡 */
             isBaoHu: boolean
         }
@@ -100,6 +102,8 @@ export type GameData = {
         status: {
             /**对家是否已经胡牌 */
             isHadHu: boolean,
+            /**报请胡 */
+            isBaoQingHu: boolean,
             /** 是否报胡 */
             isBaoHu: boolean
         }
@@ -126,7 +130,7 @@ export type GameData = {
             /**玩家（本方）游戏事件名称（杠、碰、胡等） */
             myGameEvent: {
                 /**游戏事件队列（杠和胡一般一起传） */
-                eventName: Array<'' | 'show' | 'touch' | 'bar' | 'hu' | 'qingHu' | 'ready' | 'setFace' | 'ting'>,
+                eventName: Array<'' | 'show' | 'touch' | 'bar' | 'hu' | 'tianHu' | 'qingHu' | 'ready' | 'setFace' | 'ting' | 'tingQingHu'>,
                 /**游戏事件相关信息 */
                 correlationInfoData?: any
             },
@@ -182,6 +186,7 @@ export class DeskRepository {
             setFace: 3,
             status: {
                 isHadHu: false,
+                isBaoQingHu: false,
                 isBaoHu: false
             },
             cardsChoose: []
@@ -202,6 +207,7 @@ export class DeskRepository {
                     setFace: 0,
                     status: {
                         isHadHu: false,
+                        isBaoQingHu: false,
                         isBaoHu: false
                     }
                 },
@@ -263,7 +269,7 @@ export class DeskRepository {
                 isPlay: true
             },
             /**局数 */
-            gameRoundNum: 0, 
+            gameRoundNum: 0,
             totalRound: 0,
             baseScore: 1,
             fanTime: 1

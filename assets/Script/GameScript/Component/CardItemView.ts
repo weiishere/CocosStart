@@ -101,9 +101,10 @@ export default class CardItemView extends cc.Component {
     public scale: number;
     public isPress = false;
     public isDrag = false;
-    public isAvtive = false;//是否允许出牌
+    public isActive = false;//是否允许出牌
     public isChoose = false;
     public isStress = false;
+    public isDisable = true;
     private launch: () => void;
     /**抽出牌 */
     private extractionUp: (cardNumber: number) => void;
@@ -137,8 +138,8 @@ export default class CardItemView extends cc.Component {
         const cardChoose = this.node.getChildByName('cardChoose');
         const _action1 = cc.repeatForever(
             cc.sequence(
-                cc.scaleTo(0.3, 50),
-                cc.scaleTo(0.3, 255),
+                cc.fadeTo(0.4, 50),
+                cc.fadeTo(0.4, 255),
                 cc.callFunc(() => { })));
 
         if (stress) {
@@ -151,7 +152,14 @@ export default class CardItemView extends cc.Component {
     }
     /**设置是否可以出牌操作 */
     public setActive(active: boolean): void {
-        this.isAvtive = active;
+        this.isActive = active;
+    }
+    /**设置为禁用(置灰) */
+    setDisable() {
+        this.isDisable = false;
+        const faceNode = this.node.getChildByName('face');
+        this.node.getComponent(cc.Sprite).setMaterial(0, cc.Material.getBuiltinMaterial(cc.Material.BUILTIN_NAME.GRAY_SPRITE + ''));
+        faceNode.getComponent(cc.Sprite).setMaterial(0, cc.Material.getBuiltinMaterial(cc.Material.BUILTIN_NAME.GRAY_SPRITE + ''));
     }
     /**复位 */
     public reSetChooseFalse(): void {
@@ -164,11 +172,13 @@ export default class CardItemView extends cc.Component {
     }
     bindEvent(touchEndCallback: (node: cc.Node) => void): void {
         this.node.on(cc.Node.EventType.TOUCH_START, (touchEvent) => {
+            if (!this.isDisable) return;
             this.isPress = true;
             this.dragStartPosition = touchEvent.getLocation();
         }, this);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, (touchEvent) => {
             //通过touchEvent获取当前触摸坐标点
+            if (!this.isDisable) return;
             let location = touchEvent.getLocation();
             if (location.y - this.dragStartPosition.y > 50) {
                 if (this.isPress) {
@@ -180,26 +190,28 @@ export default class CardItemView extends cc.Component {
             }
         }, this);
         this.node.on(cc.Node.EventType.TOUCH_END, (touchEvent) => {
+            if (!this.isDisable) return;
             this.onTouchDoneCallBack(touchEndCallback, touchEvent)
         }, this);
         this.node.on(cc.Node.EventType.TOUCH_CANCEL, (touchEvent) => {
+            if (!this.isDisable) return;
             this.onTouchDoneCallBack(touchEndCallback, touchEvent)
         }, this);
     }
     /**绑定抽出事件 */
-    bindExtractionUp(extractionUp: (cardNumber: number) => {}) {
+    bindExtractionUp(extractionUp: (cardNumber: number) => void) {
         this.extractionUp = extractionUp;
     }
     private onTouchDoneCallBack(touchEndCallback, touchEvent) {
         touchEndCallback && touchEndCallback.call(this);
         if (!this.isChoose) {
-            cc.tween(this.node).to(0.1, { position: cc.v3(0, 25) }).start();
+            cc.tween(this.node).to(0.1, { position: cc.v3(0, 20) }).start();
             this.extractionUp && this.extractionUp(this.cardNumber);
         } else {
             let location = touchEvent.getLocation();
 
-            if (this.isAvtive) {
-                this.isAvtive && this.launch && this.launch.call(this, this.node);
+            if (this.isActive) {
+                this.isActive && this.launch && this.launch.call(this, this.node);
             } else {
                 cc.tween(this.node).to(0.1, { position: cc.v3(0, 0) }).start();
             }
@@ -233,7 +245,7 @@ export default class CardItemView extends cc.Component {
                 //玩家牌
                 if (this.mod === 'setUp') {
                     cardComp.spriteFrame = this.mainCardbg;
-                    this.isAvtive = (option && option.active) ? true : false;
+                    this.isActive = (option && option.active) ? true : false;
                     this.bindEvent(option && option.touchEndCallback);
                 } else if (this.mod === "fall") {
                     cardComp.spriteFrame = this.lieMineCardbg;

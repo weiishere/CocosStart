@@ -13,6 +13,8 @@ import { DymjOperationType } from "../GameData/Dymj/DymjOperationType";
 import { DymjGang } from "../GameData/Dymj/s2c/DymjGang";
 import { DymjPeng } from "../GameData/Dymj/s2c/DymjPeng";
 import { DymjHu } from "../GameData/Dymj/s2c/DymjHu";
+import { DymjTing } from "../GameData/Dymj/s2c/DymjTing";
+import { DymjGameResult } from "../GameData/Dymj/s2c/DymjGameResult";
 
 export class DeskMediator extends BaseMediator {
 
@@ -25,6 +27,7 @@ export class DeskMediator extends BaseMediator {
     private DeskPanelViewScript: DeskPanelView = null;
     private deskPanel: cc.Node = null;
     private deskProxy: DeskProxy;
+    private dymjGameResult: DymjGameResult = null;
     /** 结算面板 */
     private recordAlterNode: cc.Node = null;
     /**
@@ -57,7 +60,8 @@ export class DeskMediator extends BaseMediator {
             CommandDefine.EventDonePush,
             CommandDefine.OpenRecordAlter,
             CommandDefine.ShowCenterEffect,
-            CommandDefine.ReStartGamePush
+            CommandDefine.ReStartGamePush,
+            CommandDefine.ShowCardEffect
         ];
     }
 
@@ -81,17 +85,21 @@ export class DeskMediator extends BaseMediator {
                 this.deskPanel = this.viewComponent.getChildByName('deskView');
                 this.DeskPanelViewScript = this.deskPanel.getComponent('DeskPanelView') as DeskPanelView;
                 this.getDeskProxy().updateDeskInfo(notification.getBody().dymjS2CEnterRoom);
-
-
                 this.DeskPanelViewScript.bindDskOpreationEvent(node => {
                     if (node.name === 'exitIcon') {
                         //退出房间
-                        const { gameRoundNum, totalRound } = this.getDeskProxy().repository.deskData.gameSetting;
-                        if (gameRoundNum !== totalRound) {
-                            this.sendNotification(CommandDefine.OpenToast, { content: '抱歉，牌局未完成，请勿退出牌局' });
-                        } else {
+                        const { playerList } = this.getDeskProxy().repository.deskData;
+                        if (playerList.length === 1) {
                             this.getDymjProxy().logout();
                             this.sendNotification(CommandDefine.ExitDeskPanel);
+                        } else {
+                            this.sendNotification(CommandDefine.OpenToast, { content: '抱歉，牌局未完成，请勿退出牌局' });
+                        }
+                    } else if (node.name === 'recordIcon') {
+                        if (this.dymjGameResult) {
+                            this.openRecordAlter(this.dymjGameResult);
+                        } else {
+                            this.sendNotification(CommandDefine.OpenToast, { content: '抱歉，暂无对战记录~' });
                         }
                     }
                 });
@@ -108,10 +116,19 @@ export class DeskMediator extends BaseMediator {
                         this.getDymjProxy().operation(DymjOperationType.PENG, (correlationInfoData.peng as DymjPeng).mjValue);
                     } else if (node.name === 'hu') {
                         //胡
-                        this.getDymjProxy().operation(DymjOperationType.HU, (correlationInfoData.hu as DymjHu).mjValue);
+                        if (correlationInfoData.hu.isTianHu) {
+                            //天胡
+                            this.getDymjProxy().operation(DymjOperationType.TING, 0);
+                        } else {
+                            this.getDymjProxy().operation(DymjOperationType.HU, (correlationInfoData.hu as DymjHu).mjValue);
+                        }
+
                     } else if (node.name === 'baoHu') {
-                        //报胡
-                        this.getDymjProxy().operation(DymjOperationType.TING, 0);
+                        //一般报胡
+                        this.DeskPanelViewScript.updateChooseCardsAndHandler(card => { this.getDymjProxy().operation(DymjOperationType.TING, 0); });
+                    } else if (node.name === 'baoQingHu') {
+                        //报请胡
+                        this.DeskPanelViewScript.updateChooseCardsAndHandler(card => { this.getDymjProxy().operation(DymjOperationType.TING, 0); });
                     } else if (node.name === 'qingHu') {
                         //请胡
                         //this.sendNotification(CommandDefine.ShowCard, { cardNumber: (correlationInfoData.qingHu as DymjHu).mjValue, isQingHu: true })
@@ -127,7 +144,10 @@ export class DeskMediator extends BaseMediator {
                 this.getDymjProxy().ready();
                 break;
             case CommandDefine.OpenRecordAlter:
-                this.openRecordAlter(notification.getBody());
+                this.dymjGameResult = notification.getBody();
+                this.DeskPanelViewScript.scheduleOnce(() => {
+                    this.openRecordAlter(notification.getBody());
+                }, 2);
                 break;
             case CommandDefine.RefreshPlayerPush:
                 this.DeskPanelViewScript.updatePlayerHeadView();
@@ -191,6 +211,7 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateMyOperationBtu();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
                 this.DeskPanelViewScript.updateCountDown();//更新倒计时
+                this.DeskPanelViewScript.updatedDeskAiming();
                 break;
             case CommandDefine.ShowMyEventPush://通知本方有事件
                 this.DeskPanelViewScript.updateMyOperationBtu();
@@ -203,6 +224,10 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateEventWran(() => {
                     this.getDeskProxy().clearDeskGameEvent();
                 });
+                break;
+            case CommandDefine.ShowCardEffect://显示打出的牌
+                const body = notification.getBody();
+                this.DeskPanelViewScript.showCardAlert(body.gameIndex, body.cardNumber)
                 break;
         }
     }

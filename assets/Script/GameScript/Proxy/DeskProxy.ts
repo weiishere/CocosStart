@@ -30,6 +30,7 @@ import { DymjGameReconnData } from '../GameData/Dymj/s2c/DymjGameReconnData';
 export class DeskProxy extends BaseProxy {
     public repository: DeskRepository;
     private dataBackup: { gameData: GameData, deskData: DeskData } = null;
+
     public constructor(proxyName: string = null, data: any = null) {
         super(proxyName, data);
         this.repository = new DeskRepository();
@@ -70,6 +71,7 @@ export class DeskProxy extends BaseProxy {
                         "setFace": 0,
                         "status": {
                             "isHadHu": false,
+                            "isBaoQingHu": false,
                             "isBaoHu": false
                         }
                     }
@@ -86,6 +88,7 @@ export class DeskProxy extends BaseProxy {
      */
     beginGame(dymjS2CBeginDealData: DymjS2CBeginDealData) {
         let loginData = this.getLocalCacheDataProxy().getLoginData();
+        this.getGameData().countDownTime = dymjS2CBeginDealData.time;//倒计时
         const self = this;
         dymjS2CBeginDealData.players.forEach(user => {
             self.getPlayerInfo(user.name).master = user.isBank;
@@ -121,9 +124,7 @@ export class DeskProxy extends BaseProxy {
             const _eventName = this.getGameData().eventData.gameEventData.myGameEvent.eventName;
             const _correlationInfoData = this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;
             if (op.oprtType === DymjOperationType.GANG) {
-
                 _eventName.push("bar");
-
                 this.getGameData().myCards.cardsChoose = op.gang.mjValues;
                 _correlationInfoData['gang'] = op.gang;
                 // if (op.gang.isSelf) {
@@ -147,8 +148,24 @@ export class DeskProxy extends BaseProxy {
                 _eventName.push("show");
                 //_correlationInfoData;
             } else if (op.oprtType === DymjOperationType.TING) {
-                _eventName.push("ting");
-                _correlationInfoData['ting'] = op.ting;
+                //_correlationInfoData['ting'] = op.ting;
+                if (op.ting.isHu) {
+                    //天胡牌
+                    _eventName.push("hu");
+                    _correlationInfoData['hu'] = Object.assign(op.ting, { isTianHu: true });
+                } else if (op.ting.isBaoQingHu) {
+                    //报请胡
+                    _eventName.push("tingQingHu");
+                    _correlationInfoData['ting'] = Object.assign(op.ting, { isBaoQingHu: true });
+                    this.getGameData().myCards.cardsChoose = [];//可能有多种报牌方式
+                    op.ting.list.forEach(item => this.getGameData().myCards.cardsChoose.push(item.putValue));
+                } else {
+                    //报牌
+                    _eventName.push("ting");
+                    _correlationInfoData['ting'] = op.ting;
+                    this.getGameData().myCards.cardsChoose = [];//可能有多种报牌方式
+                    op.ting.list.forEach(item => this.getGameData().myCards.cardsChoose.push(item.putValue));
+                }
             } else if (op.oprtType === DymjOperationType.QING_HU) {
                 _eventName.push("qingHu");
                 _correlationInfoData['qingHu'] = op.hu;
@@ -167,29 +184,9 @@ export class DeskProxy extends BaseProxy {
         // 如果是自己
         if (this.isMy(playerInfo.playerId)) {
             this.getGameData().myCards.handCard = dymjS2CPlayerGet.getMjValue;
-
             if (dymjS2CPlayerGet.nextStep.oprts) {
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
                 this.doEventData(dymjS2CPlayerGet.nextStep.oprts);
-                // dymjS2CPlayerGet.nextStep.oprts.forEach(op => {
-                //     if (op.oprtType === DymjOperationType.GANG) {
-                //         this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("bar");
-                //         this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.gang;
-                //         if (op.gang.gangType === 1 || op.gang.gangType === 2) {
-                //             //弯钢、暗杠
-                //             this.getGameData().myCards.cardsChoose = op.gang.mjValues;
-                //             this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.gang
-                //             // this.getGameData().myCards.touchCard = this.getGameData().myCards.touchCard.filter(card => card !== op.gang.mjValues[0]);//暂时处理为一个=======================================
-                //             // this.getGameData().myCards.barCard.push({ barCard: op.gang.mjValues[0], barType: op.gang.gangType });
-                //         }
-                //     } else if (op.oprtType === DymjOperationType.HU) {
-                //         this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("hu");
-                //         this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.hu;
-                //     } else if (op.oprtType === DymjOperationType.PUT) {
-                //         this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("show");
-                //         this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;
-                //     }
-                // });
             } else {
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = ['show'];
             }
@@ -202,7 +199,7 @@ export class DeskProxy extends BaseProxy {
     }
 
     /**
-     * 有人出牌或者发牌之后，提示自己的碰、杠、胡等
+     * 有人出牌或者发牌之后，提示自己的碰、杠、胡、听等
      * @param dymjS2CShowOperation 
      */
     updateOperationEvent(dymjS2CShowOperation: DymjS2CShowOperation) {
@@ -230,12 +227,12 @@ export class DeskProxy extends BaseProxy {
     }
 
     /**
-     * 事件处理完之后，通知下一步的操作动作(广播有事件处理完成)
+     * 通知下一步有哪些操作动作(广播有事件)
      * @param dymjS2CDoNextOperation 
      */
     updateNextOperationEvent(dymjS2CDoNextOperation: DymjS2CDoNextOperation) {
         let playerInfo = this.getPlayerByGameIndex(dymjS2CDoNextOperation.playerAzimuth);
-        this.getGameData().countDownTime = dymjS2CDoNextOperation.nextStep.time;
+        //this.getGameData().countDownTime = dymjS2CDoNextOperation.nextStep.time;
         // 如果是自己
         if (this.isMy(playerInfo.playerId)) {
             if (dymjS2CDoNextOperation.nextStep.type === 1) {
@@ -325,7 +322,7 @@ export class DeskProxy extends BaseProxy {
                     this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();
                 }
             } else if (dymjGameOperation.oprtType === DymjOperationType.GANG) {
-                _deskEventName = 'bar'
+                _deskEventName = 'bar';
                 _deskEventCorrelationInfoData = dymjGameOperation.gang;
                 giveCard = dymjGameOperation.gang.mjValues[0];
                 const burObj: BarType = { barCard: dymjGameOperation.gang.mjValues[0], barType: dymjGameOperation.gang.gangType as 0 | 1 | 2 };
@@ -354,7 +351,6 @@ export class DeskProxy extends BaseProxy {
                     partnerCard.partnerCards.curCardCount -= 4;
                     partnerCard.partnerCards.isHandCard = false;
                 }
-
                 partnerCard.partnerCards.barCard.push(burObj);
             } else if (dymjGameOperation.oprtType === DymjOperationType.HU) {
                 partnerCard.partnerCards.hadHuCard = dymjGameOperation.hu.mjValue;
@@ -368,6 +364,8 @@ export class DeskProxy extends BaseProxy {
                 giveCard = dymjGameOperation.ting.mjValue;
             }
         }
+        //更新方向
+        this.getGameData().positionIndex = dymjGameOperation.playerAzimuth;
         //更新中间大字数据
         this.getGameData().eventData.gameEventData.deskGameEvent.eventName = _deskEventName;
         this.getGameData().eventData.gameEventData.deskGameEvent.correlationInfoData = _deskEventCorrelationInfoData;
@@ -393,6 +391,7 @@ export class DeskProxy extends BaseProxy {
             partnerCard.partnerCards.isHandCard = false;
             partnerCard.partnerCards.curCardList = dymjS2COpPutRsp.spValuesSorted;
         }
+        this.sendNotification(CommandDefine.ShowCardEffect, { gameIndex: dymjS2COpPutRsp.playerAzimuth, cardNumber: dymjS2COpPutRsp.putMjValue });
         this.sendNotification(CommandDefine.ShowCardPush, { playerInfo, showCard: dymjS2COpPutRsp.putMjValue });
     }
 
@@ -419,6 +418,7 @@ export class DeskProxy extends BaseProxy {
                 "setFace": 0,
                 "status": {
                     "isHadHu": false,
+                    "isBaoQingHu": false,
                     "isBaoHu": false
                 }
             }
@@ -426,7 +426,6 @@ export class DeskProxy extends BaseProxy {
         });
         this.repository.gameData = JSON.parse(JSON.stringify(this.dataBackup.gameData));//Object.assign({}, this.dataBackup.gameData);
         this.repository.gameData.partnerCardsList = _partnerCardsList;
-
         this.sendNotification(CommandDefine.OpenRecordAlter, dymjGameResult);
         // let recordType: RecordType = {
         //     roundIndex: dymjGameResult.currentGameCount,
@@ -490,7 +489,7 @@ export class DeskProxy extends BaseProxy {
 
         this.getGameData().positionIndex = dymjGameReconnData.waitingPlayerAzimuth;
         this.getGameData().remainCard = dymjGameReconnData.lastCount;
-
+        this.getGameData().countDownTime = dymjGameReconnData.waitingTime;//倒计时
         // this.getGameData().myCards.hadHuCard
         this.getGameData().partnerCardsList = [];
         dymjGameReconnData.players.forEach(player => {
@@ -539,9 +538,8 @@ export class DeskProxy extends BaseProxy {
 
             isBaoHu = player.isTing;
 
-            if (curCardList.length === 2 || curCardList.length === 5 || curCardList.length === 8 ||
-                curCardList.length === 11) {
-                handCard = curCardList[curCardList.length - 1];
+            if (curCardList.length === 2 || curCardList.length === 5 || curCardList.length === 8 || curCardList.length === 11) {
+                handCard = curCardList.pop();// curCardList[curCardList.length - 1];
             }
 
             if (this.isMy(player.playerInfo.username)) {
@@ -556,6 +554,7 @@ export class DeskProxy extends BaseProxy {
                     cardsChoose: [],
                     status: {
                         isHadHu: huCard > 0,
+                        isBaoQingHu: false,
                         isBaoHu: isBaoHu
                     }
                 }
@@ -569,7 +568,7 @@ export class DeskProxy extends BaseProxy {
                     /**对家牌组 */
                     partnerCards: {
                         /**对家可操作牌列数 */
-                        curCardCount: player.shouValues.length,
+                        curCardCount: player.shouValues.length - (handCard > 0 ? 1 : 0),
                         /**对家可操作牌列数（可不传） */
                         curCardList: player.shouValues,
                         /**是否收到新摸牌 */
@@ -589,7 +588,7 @@ export class DeskProxy extends BaseProxy {
                         /**对家的状态 */
                         status: {
                             /**对家是否已经胡牌 */
-                            isHadHu: huCard > 0,
+                            isHadHu: huCard > 0, isBaoQingHu: false,
                             /** 是否报胡 */
                             isBaoHu: isBaoHu
                         }
