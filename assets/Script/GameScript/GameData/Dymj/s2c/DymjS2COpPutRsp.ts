@@ -10,4 +10,6 @@ export class DymjS2COpPutRsp extends DymjAzimuth {
     huList: DymjUIOpTingHuData[];
     /** 是否请胡 */
     isQingHu: boolean;
+    /** 是否报胡 */
+    isBaoHu: boolean;
 }
