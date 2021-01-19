@@ -57,6 +57,15 @@ export default class DymjDesk extends ViewComponent {
         this.roundCountLabel.string = `第${currentGameCount}/${gameCount}局`;
     }
 
+    /**
+     * 获得坐下的人数
+     */
+    getSitDownCount() {
+        let count = this.head1.node.active ? 1 : 0;
+        count += this.head2.node.active ? 1 : 0;
+        return count;
+    }
+
     sitDown(head: string, nickname: string, seatNo: number) {
         let headSprite: cc.Sprite = null;
         if (seatNo === 1) {
@@ -68,16 +77,6 @@ export default class DymjDesk extends ViewComponent {
         headSprite.node.active = true;
         let nicknameLabel = headSprite.node.getChildByName("Nickname").getComponent(cc.Label);
         nicknameLabel.string = nickname;
-
-        // cc.log("加载头像 ", head, headSprite.node.name);
-        // let texture = cc.loader.getRes(head, cc.Texture2D);
-        // if (texture) {
-        //     headSprite.spriteFrame = new cc.SpriteFrame(texture);
-        // } else {
-        //     cc.loader.load(head, (error, item) => {
-        //         headSprite.spriteFrame = new cc.SpriteFrame(item)
-        //     });
-        // }
 
         SpriteLoadUtil.loadSprite(headSprite, head);
     }

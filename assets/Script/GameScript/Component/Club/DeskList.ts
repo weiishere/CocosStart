@@ -31,8 +31,9 @@ export default class DeskList extends ViewComponent {
         this.quitClubBtn.on(cc.Node.EventType.TOUCH_END, () => {
             this.dispatchCustomEvent(DeskListEventDefine.ClubQuitEvent, null);
         });
-        this.kuaiSuBtn.on(cc.Node.EventType.TOUCH_END, () => {
 
+        this.kuaiSuBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            this.dispatchCustomEvent(DeskListEventDefine.SpeedJoinDeskEvent, null);
         });
     }
 
@@ -105,14 +106,30 @@ export default class DeskList extends ViewComponent {
         return null;
     }
 
+    /**
+     * 快速查到桌子
+     * @param myGold 
+     */
     speedFindDeskNo(myGold: number) {
         let desks = [];
         for (const deskNode of this.deskContainer.children) {
             let script = <DymjDesk>deskNode.getComponent("DymjDesk");
-            if (myGold >= script.enterLimit) {
+            if (myGold >= script.enterLimit && script.getSitDownCount() < 2) {
                 desks.push(deskNode);
             }
         }
+
+        if (desks.length === 0) {
+            return null;
+        }
+
+        desks.sort((a, b) => {
+            let script1 = <DymjDesk>a.getComponent("DymjDesk");
+            let script2 = <DymjDesk>b.getComponent("DymjDesk");
+            return script1.getSitDownCount() - script2.getSitDownCount();
+        })
+
+        return desks[0].getComponent("DymjDesk").roomNo;
     }
 
     testAddDesk() {

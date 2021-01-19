@@ -131,7 +131,7 @@ export class GatePanelMediator extends BaseMediator {
         let exchangePanelResource = cc.loader.getRes(PrefabDefine.ExchangePanel, cc.Prefab);
         let exchangePanelPrefab = cc.instantiate(exchangePanelResource);
 
-        this.gameStartPanel.addChild(exchangePanelPrefab);
+        this.viewComponent.addChild(exchangePanelPrefab);
     }
 
     private openRecordPanel() {
