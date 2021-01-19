@@ -13,4 +13,6 @@ export class DymjS2CBeginDealData {
     diceValueArr: number[]; //单个骰子点数数组。长度可作为骰子个数
     /** 当前游戏局数 */
     currentGameCount: number;
+    /** 操作时间 */
+    time: number;
 }

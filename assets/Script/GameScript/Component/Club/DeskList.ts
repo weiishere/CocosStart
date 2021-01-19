@@ -36,22 +36,16 @@ export default class DeskList extends ViewComponent {
         });
     }
 
-    loadUserData(loginData: LoginData): void {
-        this.updateGold(loginData.gold);
-    }
-
     loadDeskList(s2CJoinClubInfo: S2CJoinClubInfo) {
         if (!s2CJoinClubInfo) {
             return;
         }
 
+        // 先删除所有子节点，避免重复显示
+        this.deskContainer.removeAllChildren();
         for (const roomInfo of s2CJoinClubInfo.roomInfos) {
             this.addDesk(roomInfo);
         }
-    }
-
-    updateGold(gold: number) {
-        // this.goldLabel.string = "金币: " + gold;
     }
 
     addDesk(roomInfo: S2CClubRoomInfoBase) {

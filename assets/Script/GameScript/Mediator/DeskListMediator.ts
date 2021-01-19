@@ -22,6 +22,8 @@ import { DymjProxy } from "../Proxy/DymjProxy";
 
 export class DeskListMediator extends BaseMediator {
 
+    /** 是否重连 */
+    isReconnect: boolean;
     userHeaderScript: any;
     public constructor(mediatorName: string = null, viewComponent: any = null) {
         super(mediatorName, viewComponent);
@@ -86,6 +88,10 @@ export class DeskListMediator extends BaseMediator {
             }
         }
 
+        if (notification.getName() === CommandDefine.WebSocketReconnect) {
+            this.reconnectHandle();
+        }
+
         if (notification.getName() !== CommandDefine.OpenDeskList) {
             return;
         }
@@ -127,6 +133,18 @@ export class DeskListMediator extends BaseMediator {
         this.view = null;
     }
 
+    private reconnectHandle() {
+        // 没在当前界面就不处理了
+        if (!this.view) {
+            return;
+        }
+
+        // 标记重连状态
+        this.isReconnect = true;
+        // 重新拉取一次桌子列表
+        this.getClubProxy().joinClub();
+    }
+
     private showDeskList(s2CJoinClubInfo: S2CJoinClubInfo) {
         let prefab = cc.loader.getRes(this.prefabSource(), cc.Prefab)
 
@@ -136,15 +154,17 @@ export class DeskListMediator extends BaseMediator {
         }
 
         if (this.view) {
+            if (this.isReconnect) {
+                this.isReconnect = false;
+                this.loadData(s2CJoinClubInfo);
+            }
             return;
         }
 
         this.view = cc.instantiate(prefab);
         this.viewComponent.addChild(this.view);
 
-        const script = this.getViewScript();
-        script.loadUserData(this.getLocalCacheDataProxy().getLoginData());
-        script.loadDeskList(s2CJoinClubInfo);
+        this.loadData(s2CJoinClubInfo);
 
         const userInfoPanel = cc.loader.getRes(PrefabDefine.UserInfoPanel, cc.Prefab);
         let _userInfoPanel = cc.instantiate(userInfoPanel) as cc.Node;
@@ -152,6 +172,12 @@ export class DeskListMediator extends BaseMediator {
         this.view.addChild(_userInfoPanel);
         this.userHeaderScript = (_userInfoPanel as cc.Node).getComponent('UserHeader');
         this.userHeaderScript.showAcount(this.getLocalCacheDataProxy().getLoginData());
+    }
+
+    /** 加载数据了 */
+    private loadData(s2CJoinClubInfo: S2CJoinClubInfo) {
+        const script = this.getViewScript();
+        script.loadDeskList(s2CJoinClubInfo);
     }
 
     private getViewScript(): DeskList {

@@ -63,6 +63,7 @@ export class WebSockerProxy extends Proxy {
 
     private loginData: LoginData = null;
     private tokenData: string = null;
+    private isReconnect: boolean;
 
     /** 心跳是否返回 */
     private isHeartbeatResult: boolean = false;
@@ -111,7 +112,14 @@ export class WebSockerProxy extends Proxy {
     }
 
     onWebSocketOpen(event: Event) {
-        this.startHeartbeatHandle();
+        // websocket重连之后进行的处理
+        if (this.isReconnect) {
+            this.sendNotification(CommandDefine.WebSocketReconnect, null);
+        }
+        this.isReconnect = false;
+
+        this.stopHeartbeatHandle();
+        this.startHeartbeatHandle(4000);
 
         this.heartbeatNotResultCount = 0;
         this.isHeartbeatResult = false;
@@ -160,6 +168,7 @@ export class WebSockerProxy extends Proxy {
             case OperationDefine.C2GGW_Heartbeat:
                 // 心跳返回
                 this.isHeartbeatResult = true;
+                this.heartbeatNotResultCount = 0;
                 break;
             case OperationDefine.Server_Shutdown:
                 // 服务停止消息的通知
@@ -301,10 +310,10 @@ export class WebSockerProxy extends Proxy {
         }
     }
 
-    startHeartbeatHandle() {
+    startHeartbeatHandle(timeout: number) {
         this.stopHeartbeatHandle();
         // 10秒钟发送一次心跳
-        this.heartbeatIntervalNumber = setInterval(this.heartbeatHandle.bind(this), 10000);
+        this.heartbeatIntervalNumber = setInterval(this.heartbeatHandle.bind(this), timeout);
     }
 
     stopHeartbeatHandle() {
@@ -348,12 +357,10 @@ export class WebSockerProxy extends Proxy {
         if (this.isConnected()) {
             return false;
         }
-
-        if (this.__webSocket) {
-            this.__webSocket.close();
-        }
-
-        this.connect(this.__wsUrl);
+        this.stopHeartbeatHandle();
+        this.isReconnect = true;
+        // 重连时，每200毫秒发送一次心跳
+        this.startHeartbeatHandle(200);
         return true;
     }
 
@@ -367,12 +374,17 @@ export class WebSockerProxy extends Proxy {
 
     onWebSocketClose(event: Event) {
         cc.log("onWebSocketClose", event);
-        this.stopHeartbeatHandle();
-        this.loginData = null;
+        this.getGateProxy().toast("网络断开了，正在进行重连");
+        // if (this.isReconnect) {
+        //     this.connect(this.__wsUrl);
+        // }
+        // this.stopHeartbeatHandle();
+        // this.loginData = null;
     }
 
     onWebSocketError(event: Event) {
         cc.log("onWebSocketError", event);
+        // this.getGateProxy().toast("onWebSocketError: " + event);
         this.loginData = null;
     }
 

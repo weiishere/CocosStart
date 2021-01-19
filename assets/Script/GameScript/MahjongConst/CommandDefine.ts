@@ -5,6 +5,7 @@ export enum CommandDefine {
     GateCommand = "GateCommand",
     StartUp = "StartUp",
     AudioCommand = "AudioCommand",
+    WebSocketReconnect = "WebSocketReconnect",
     CheckLoginState = "CheckLoginState",
     OpenLoginPanel = "OpenLoginPanel",
     ShowHeaderPanel = "ShowHeaderPanel",
