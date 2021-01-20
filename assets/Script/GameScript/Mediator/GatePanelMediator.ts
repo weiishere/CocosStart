@@ -15,6 +15,7 @@ import { AudioNotificationTypeDefine } from '../MahjongConst/AudioNotificationTy
 import { MusicManager } from '../Other/MusicManager';
 import { UserGold } from '../GameData/UserGold';
 import { WebSockerProxy } from '../Proxy/WebSocketProxy';
+import MyCenter from '../Component/MyCenter';
 
 export class GatePanelMediator extends BaseMediator {
     //private gatePanelView: GatePanelView = null;
@@ -28,6 +29,11 @@ export class GatePanelMediator extends BaseMediator {
     private userHeaderScript;
 
     private musicManager: MusicManager;
+
+    /** 兑换窗口 */
+    private exchangePanelNode: cc.Node;
+    /** 个人中心窗口 */
+    private myCenterNode: cc.Node;
 
     public constructor(mediatorName: string = null, viewComponent: any = null) {
         super(mediatorName, viewComponent);
@@ -55,6 +61,7 @@ export class GatePanelMediator extends BaseMediator {
             PrefabDefine.Setting,
             PrefabDefine.ExchangePanel,
             PrefabDefine.RecordPanel,
+            PrefabDefine.MyCenter,
         ];
     }
 
@@ -67,11 +74,15 @@ export class GatePanelMediator extends BaseMediator {
     private listenerEvent(): void {
         // 应用被唤醒方法
         cc.game.on(cc.game.EVENT_SHOW, () => {
-            let isReconnect = this.getWebSockerProxy().reconnect();
+            // 主界面没有接就不处理了
+            if (!this.gameStartPanel) {
+                return;
+            }
 
+            let isReconnect = this.getWebSockerProxy().reconnect();
             // 是否重连过ws了
             if (isReconnect) {
-                
+
             }
         });
 
@@ -127,13 +138,15 @@ export class GatePanelMediator extends BaseMediator {
         }
     }
 
+    /** 打开兑换 */
     private openExchangePanel() {
         let exchangePanelResource = cc.loader.getRes(PrefabDefine.ExchangePanel, cc.Prefab);
-        let exchangePanelPrefab = cc.instantiate(exchangePanelResource);
+        this.exchangePanelNode = cc.instantiate(exchangePanelResource);
 
-        this.viewComponent.addChild(exchangePanelPrefab);
+        this.viewComponent.addChild(this.exchangePanelNode);
     }
 
+    /** 打开战绩 */
     private openRecordPanel() {
         let recordPanelResource = cc.loader.getRes(PrefabDefine.RecordPanel, cc.Prefab);
         let recordPanelPrefab = cc.instantiate(recordPanelResource);
@@ -141,15 +154,40 @@ export class GatePanelMediator extends BaseMediator {
         this.gameStartPanel.addChild(recordPanelPrefab);
     }
 
+    /** 打开个人中心 */
+    private openMyCenter() {
+        let myCenterResource = cc.loader.getRes(PrefabDefine.MyCenter, cc.Prefab);
+        this.myCenterNode = cc.instantiate(myCenterResource);
+        this.viewComponent.addChild(this.myCenterNode);
+
+        let script = <MyCenter>this.myCenterNode.getComponent("MyCenter");
+
+        let localCache = this.getLocalCacheDataProxy();
+        script.loadData(localCache.getLoginData(), localCache.getInviteCode());
+    }
+
+    /** 切换账号 */
     private changeUserHandle() {
         // 暂停音乐
         this.musicManager.updatePauseMusic(true, false);
-        this.gameStartPanel.destroy();
+        if (this.gameStartPanel.isValid) {
+            this.gameStartPanel.destroy();
+        }
 
-        this.sendNotification(CommandDefine.OpenLoginPanel);
+        if (!this._loginView) {
+            this.sendNotification(CommandDefine.OpenLoginPanel);
+        }
 
         this.getWebSockerProxy().disconnect();
         this.gameStartPanel = null;
+
+        if (this.exchangePanelNode && this.exchangePanelNode.isValid) {
+            this.exchangePanelNode.destroy();
+        }
+
+        if (this.myCenterNode && this.myCenterNode.isValid) {
+            this.myCenterNode.destroy();
+        }
     }
 
 
@@ -177,7 +215,9 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.UpdatePlayerGold,
             CommandDefine.OpenExchangePanel,
             CommandDefine.ChangeUser,
+            CommandDefine.ForcedOffline,
             CommandDefine.OpenRecordPanel,
+            CommandDefine.OpenMyCenter,
         ];
     }
 
@@ -194,6 +234,10 @@ export class GatePanelMediator extends BaseMediator {
                 this.musciHandle(notification);
                 break;
             case CommandDefine.OpenLoginPanel:
+                // 登录打开了就不在处理了
+                if (this._loginView) {
+                    return;
+                }
                 this.gatePanelView = this.view.getComponent('GatePanelView');
                 this._loginView = cc.instantiate(this.gatePanelView.LoginView);
                 this.viewComponent.addChild(this._loginView);
@@ -235,7 +279,11 @@ export class GatePanelMediator extends BaseMediator {
             case CommandDefine.OpenRecordPanel:
                 this.openRecordPanel();
                 break;
+            case CommandDefine.OpenMyCenter:
+                this.openMyCenter();
+                break;
             case CommandDefine.ChangeUser:
+            case CommandDefine.ForcedOffline:
                 this.changeUserHandle();
                 break;
             case CommandDefine.InitGateMainPanel:

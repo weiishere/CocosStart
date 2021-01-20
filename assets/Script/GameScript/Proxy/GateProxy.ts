@@ -11,6 +11,7 @@ import { ClubProxy } from './ClubProxy';
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
 import { UserOfflineData } from '../GameData/UserOfflineData';
+import { LoginAfterHttpUtil } from '../Util/LoginAfterHttpUtil';
 
 
 export class GateProxy extends BaseProxy {
@@ -110,6 +111,21 @@ export class GateProxy extends BaseProxy {
         }, HttpUtil.METHOD_POST, param);
     }
 
+    private getInviteCode() {
+        let param = {
+            userName: this.getLocalCacheDataProxy().getLoginData().userName,
+        }
+        let url = this.getFacadeUrl() + "/user/getInviteCode";
+        LoginAfterHttpUtil.send(url, (response) => {
+            if (response.hd === "success") {
+                if (response.bd) {
+                    this.getLocalCacheDataProxy().setInviteCode(response.bd);
+                }
+            }
+        }, (err) => {
+            this.toast("获取邀请码失败！");
+        }, HttpUtil.METHOD_POST, param);
+    }
 
     /**
      * 登录成功之后的处理
@@ -124,6 +140,9 @@ export class GateProxy extends BaseProxy {
 
         // 登录成功之后连接socket
         this.connectWebSocket();
+
+        // 获得邀请码
+        this.getInviteCode();
     }
 
     /**

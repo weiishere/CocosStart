@@ -1758,7 +1758,7 @@
     "_enabled": true,
     "_string": "",
     "returnType": 0,
-    "maxLength": 6,
+    "maxLength": 10,
     "_tabIndex": 0,
     "editingDidBegan": [],
     "textChanged": [],
@@ -1774,7 +1774,7 @@
       "__id__": 37
     },
     "_N$inputFlag": 5,
-    "_N$inputMode": 2,
+    "_N$inputMode": 6,
     "_N$stayOnTop": false,
     "_id": ""
   },

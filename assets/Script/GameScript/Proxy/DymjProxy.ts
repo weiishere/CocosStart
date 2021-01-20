@@ -23,6 +23,8 @@ import { DymjEnterDeskPushPlyaerList } from '../GameData/Dymj/s2c/DymjEnterDeskP
 import { ProxyDefine } from '../MahjongConst/ProxyDefine';
 import { DeskProxy } from './DeskProxy';
 import { DymjS2CDissolveResult } from '../GameData/Dymj/s2c/DymjS2CDissolveResult';
+import { DymjEntrust } from '../GameData/Dymj/s2c/DymjEntrust';
+import { DymjEntrustRsp } from '../GameData/Dymj/s2c/DymjEntrustRsp';
 
 /**
  * 大邑麻将消息数据代理类
@@ -113,7 +115,7 @@ export class DymjProxy extends ModuleProxy {
             let dymjUpdateUserCredit: DymjUpdateUserCredit = <DymjUpdateUserCredit>content;
         } else if (msgType === DymjProtocol.S_Game_Reconn) {   //推送玩家重连的数据
             let dymjGameReconnData: DymjGameReconnData = <DymjGameReconnData>content;
-            dymjGameReconnData.players.forEach(v=>{
+            dymjGameReconnData.players.forEach(v => {
                 v.playerInfo.azimuth -= 1;
             });
             dymjGameReconnData.lastPutPlayerAzimuth -= 1;
@@ -121,8 +123,9 @@ export class DymjProxy extends ModuleProxy {
             this.getDeskProxy().gameReconnect(dymjGameReconnData);
         } else if (msgType === DymjProtocol.S_PUSH_EXIT_ROOM) {   //推送玩家退出游戏消息
         } else if (msgType === DymjProtocol.S_PUSH_DISSOLVE_RESULT) {   //房间解散消息
-            let dymjS2CDissolveResult:DymjS2CDissolveResult = <DymjS2CDissolveResult>content;
-            
+            let dymjS2CDissolveResult: DymjS2CDissolveResult = <DymjS2CDissolveResult>content;
+        } else if (msgType === DymjProtocol.S_ENTRUST) {   //请求托管返回
+            let dymjEntrustRsp: DymjEntrustRsp = <DymjEntrustRsp>content;
         } else if (msgType === DymjProtocol.S_HEARTBEAT) {   //推送玩家退出游戏消息
             this.sendHeartbeat();
         }
@@ -213,14 +216,28 @@ export class DymjProxy extends ModuleProxy {
      * 碰，杠，胡操作
      * @param opType 碰，杠，听，胡
      * @param mjValue 牌值
+     * @param isQingHu 是否请胡，报胡的时候使用
      */
-    operation(opType: DymjOperationType, mjValue: number) {
+    operation(opType: DymjOperationType, mjValue: number, isQingHu: boolean = false) {
         let dymjC2SOperatioinData: DymjC2SOperatioinData = new DymjC2SOperatioinData();
         dymjC2SOperatioinData.acctName = this.getUserName();
         dymjC2SOperatioinData.oprtType = opType;
         dymjC2SOperatioinData.mjValues = [mjValue];
+        dymjC2SOperatioinData.isQingHu = isQingHu;
 
         this.sendGameData(DymjProtocol.C_Game_Operation, dymjC2SOperatioinData);
+    }
+
+    /**
+     * 托管
+     * @param isHosted 是否托管，false 取消托管
+     */
+    entrust(isHosted: boolean) {
+        let dymjEntrust: DymjEntrust = new DymjEntrust();
+        dymjEntrust.acctName = this.getUserName();
+        dymjEntrust.isUserRequest = false;
+        dymjEntrust.isHosted = isHosted;
+        this.sendGameData(DymjProtocol.C_ENTRUST, dymjEntrust);
     }
 
     /**

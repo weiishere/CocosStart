@@ -35,6 +35,10 @@ export default class UserHeader extends ViewComponent {
         this.goldBgNode.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenExchangePanel, null, '')
         });
+
+        this.head.node.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenMyCenter, null, '')
+        });
     }
 
     start() {
