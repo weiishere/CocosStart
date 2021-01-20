@@ -738,7 +738,7 @@
     "_enabled": true,
     "alignMode": 1,
     "_target": null,
-    "_alignFlags": 8,
+    "_alignFlags": 40,
     "_left": 0,
     "_right": 0,
     "_top": 0,
@@ -751,7 +751,7 @@
     "_isAbsBottom": true,
     "_isAbsHorizontalCenter": true,
     "_isAbsVerticalCenter": true,
-    "_originalWidth": 0,
+    "_originalWidth": 1334,
     "_originalHeight": 0,
     "_id": ""
   },
