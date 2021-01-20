@@ -117,10 +117,8 @@ export class GateProxy extends BaseProxy {
         }
         let url = this.getFacadeUrl() + "/user/getInviteCode";
         LoginAfterHttpUtil.send(url, (response) => {
-            if (response.hd === "success") {
-                if (response.bd) {
-                    this.getLocalCacheDataProxy().setInviteCode(response.bd);
-                }
+            if (response) {
+                this.getLocalCacheDataProxy().setInviteCode(response);
             }
         }, (err) => {
             this.toast("获取邀请码失败！");
