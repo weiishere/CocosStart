@@ -113,7 +113,7 @@ export class DymjProxy extends ModuleProxy {
             let dymjUpdateUserCredit: DymjUpdateUserCredit = <DymjUpdateUserCredit>content;
         } else if (msgType === DymjProtocol.S_Game_Reconn) {   //推送玩家重连的数据
             let dymjGameReconnData: DymjGameReconnData = <DymjGameReconnData>content;
-            dymjGameReconnData.players.forEach(v=>{
+            dymjGameReconnData.players.forEach(v => {
                 v.playerInfo.azimuth -= 1;
             });
             dymjGameReconnData.lastPutPlayerAzimuth -= 1;
@@ -121,8 +121,8 @@ export class DymjProxy extends ModuleProxy {
             this.getDeskProxy().gameReconnect(dymjGameReconnData);
         } else if (msgType === DymjProtocol.S_PUSH_EXIT_ROOM) {   //推送玩家退出游戏消息
         } else if (msgType === DymjProtocol.S_PUSH_DISSOLVE_RESULT) {   //房间解散消息
-            let dymjS2CDissolveResult:DymjS2CDissolveResult = <DymjS2CDissolveResult>content;
-            
+            let dymjS2CDissolveResult: DymjS2CDissolveResult = <DymjS2CDissolveResult>content;
+
         } else if (msgType === DymjProtocol.S_HEARTBEAT) {   //推送玩家退出游戏消息
             this.sendHeartbeat();
         }
@@ -213,12 +213,14 @@ export class DymjProxy extends ModuleProxy {
      * 碰，杠，胡操作
      * @param opType 碰，杠，听，胡
      * @param mjValue 牌值
+     * @param isQingHu 是否请胡，报胡的时候使用
      */
-    operation(opType: DymjOperationType, mjValue: number) {
+    operation(opType: DymjOperationType, mjValue: number, isQingHu: boolean = false) {
         let dymjC2SOperatioinData: DymjC2SOperatioinData = new DymjC2SOperatioinData();
         dymjC2SOperatioinData.acctName = this.getUserName();
         dymjC2SOperatioinData.oprtType = opType;
         dymjC2SOperatioinData.mjValues = [mjValue];
+        dymjC2SOperatioinData.isQingHu = isQingHu;
 
         this.sendGameData(DymjProtocol.C_Game_Operation, dymjC2SOperatioinData);
     }
