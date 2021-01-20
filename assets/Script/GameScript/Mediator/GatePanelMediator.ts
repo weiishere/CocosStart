@@ -152,7 +152,7 @@ export class GatePanelMediator extends BaseMediator {
             this.gameStartPanel.destroy();
         }
 
-        if (this._loginView) {
+        if (!this._loginView) {
             this.sendNotification(CommandDefine.OpenLoginPanel);
         }
 
