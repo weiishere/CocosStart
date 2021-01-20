@@ -1552,6 +1552,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -1951,6 +1952,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -2350,6 +2352,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -2863,6 +2866,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -3230,6 +3234,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -3629,6 +3634,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -4256,6 +4262,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -4623,6 +4630,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -5022,6 +5030,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -5421,6 +5430,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -6092,6 +6102,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -6568,6 +6579,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -7044,6 +7056,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -7520,6 +7533,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -7995,6 +8009,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -8470,6 +8485,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -10730,6 +10746,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -11129,6 +11146,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -11528,6 +11546,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -12041,6 +12060,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -12408,6 +12428,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -12807,6 +12828,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -13434,6 +13456,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -13801,6 +13824,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -14200,6 +14224,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -14599,6 +14624,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -15149,6 +15175,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -15624,6 +15651,7 @@
     "hideFrontCardbg": {
       "__uuid__": "3008ce4a-53c2-43a8-a441-2b9347af81b4"
     },
+    "hideFrontFallCardbg": null,
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
@@ -16306,8 +16334,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -581,
-        -147.169,
+        -597.208,
+        -281.692,
         0,
         0,
         0,
@@ -18494,8 +18522,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 143,
-      "height": 45
+      "width": 200,
+      "height": 70
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -18507,7 +18535,7 @@
       "ctor": "Float64Array",
       "array": [
         -469.474,
-        345.421,
+        308.031,
         0,
         0,
         0,
@@ -18561,8 +18589,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 104.02,
-      "height": 45.2
+      "width": 143.03,
+      "height": 58.76
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -18574,7 +18602,7 @@
       "ctor": "Float64Array",
       "array": [
         4.185,
-        2.1762499999999996,
+        -0.9130000000000003,
         0,
         0,
         0,
@@ -18615,8 +18643,8 @@
     "_dstBlendFactor": 771,
     "_string": "第0/0局\n底分:1 / 翻数:1",
     "_N$string": "第0/0局\n底分:1 / 翻数:1",
-    "_fontSize": 16,
-    "_lineHeight": 20,
+    "_fontSize": 22,
+    "_lineHeight": 26,
     "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,
@@ -18644,8 +18672,8 @@
     "_alignFlags": 5,
     "_left": 0,
     "_right": 0,
-    "_top": -2.276250000000001,
-    "_bottom": 2.076249999999998,
+    "_top": 6.533000000000003,
+    "_bottom": 4.707,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,
     "_isAbsLeft": true,
@@ -18729,7 +18757,7 @@
         "__id__": 460
       }
     ],
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 463
@@ -18748,8 +18776,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 95.6,
-      "height": 25
+      "width": 150,
+      "height": 30
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -18761,7 +18789,7 @@
       "ctor": "Float64Array",
       "array": [
         -472.163,
-        299.647,
+        251.433,
         0,
         0,
         0,
@@ -18812,7 +18840,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 81.78,
+      "width": 113.34,
       "height": 20.16
     },
     "_anchorPoint": {
@@ -18825,7 +18853,7 @@
       "ctor": "Float64Array",
       "array": [
         1.514,
-        0.514,
+        -0.182,
         0,
         0,
         0,
@@ -18864,9 +18892,9 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "剩余：    张",
-    "_N$string": "剩余：    张",
-    "_fontSize": 16,
+    "_string": "剩余：      张",
+    "_N$string": "剩余：      张",
+    "_fontSize": 20,
     "_lineHeight": 16,
     "_enableWrapText": true,
     "_N$file": null,
@@ -18920,7 +18948,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 21.06,
+      "width": 27.65,
       "height": 14
     },
     "_anchorPoint": {
@@ -18933,7 +18961,7 @@
       "ctor": "Float64Array",
       "array": [
         13.109,
-        0.514,
+        1.484,
         0,
         0,
         0,
@@ -18974,7 +19002,7 @@
     "_dstBlendFactor": 771,
     "_string": "25",
     "_N$string": "25",
-    "_fontSize": 14,
+    "_fontSize": 18,
     "_lineHeight": 14,
     "_enableWrapText": true,
     "_N$file": {

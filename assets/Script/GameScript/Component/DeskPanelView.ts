@@ -8,7 +8,7 @@
 const { ccclass, property } = cc._decorator;
 import { GameData, DeskData, PlayerInfo, DeskRepository } from "../repositories/DeskRepository"
 import ViewComponent from "../Base/ViewComponent";
-import CardItemView, { ModType, PositionType } from "../Component/CardItemView"
+import CardItemView, { ModType, PositionType, FallShowStatus } from "../Component/CardItemView"
 import Facade from "../../Framework/care/Facade";
 import { ProxyDefine } from "../MahjongConst/ProxyDefine";
 import { DeskProxy } from "../Proxy/DeskProxy";
@@ -104,7 +104,7 @@ export default class DeskPanelView extends ViewComponent {
         if (index !== false) {
             const player = this.getPlayerByIndex(index);
             if (player) {
-                return this.getPlayerByIndex(index).playerId === userName
+                return this.getPlayerByIndex(index).playerId === userName;
             } else {
                 console.log('===============Error=====================',)
                 return false;
@@ -116,15 +116,6 @@ export default class DeskPanelView extends ViewComponent {
     }
     /**重置游戏操作区按钮 */
     reSetOpreationBtu() {
-        // this.opreationBtus.ready_btu.active = false;
-        // this.opreationBtus.show_btu.active = false;
-        // this.opreationBtus.bar_btu.active = false;
-        // this.opreationBtus.touch_btu.active = false;
-        // this.opreationBtus.hu_btu.active = false;
-        // this.opreationBtus.selfHu_btu.active = false;
-        // this.opreationBtus.pass_btu.active = false;
-        // this.opreationBtus.qingHu_btu.active = false;
-        // this.opreationBtus.baoHu_btu.active = false;
         for (let i in this.opreationBtus) {
             if (this.opreationBtus[i] instanceof cc.Node) {
                 (this.opreationBtus[i] as cc.Node).active = false;
@@ -150,6 +141,7 @@ export default class DeskPanelView extends ViewComponent {
         scale?: number,
         active?: boolean,
         position?: cc.Vec2,
+        fallShowStatus?: FallShowStatus,
         purAddNode?: (node: cc.Node) => void
         touchEndCallback?: (node: cc.Node) => void
     } = {}): cc.Node {
@@ -160,6 +152,25 @@ export default class DeskPanelView extends ViewComponent {
         (card.getComponent("CardItemView") as CardItemView).show(position, mod, num, option);
         parentNode.addChild(card);
         return card;
+    }
+    /**执行动画 */
+    effectAction(node: cc.Node, mode: 'show' | 'hide', option: { startPosition?: cc.Vec2, moveBy?: { x: number, y: number } } = {}, done?: (node: cc.Node) => void) {
+        option.startPosition && node.setPosition(option.startPosition);
+        if (mode === 'show') {
+            node.opacity = 0;
+            node.setScale(0.9, 0.9);
+            node.active = true;
+            const _moveBy = option.moveBy ? option.moveBy : { x: 0, y: 0 };
+            //const action = cc.sequence(cc.spawn((cc.scaleTo(0.2, 1, 1), cc.moveBy(0.2, _moveBy.x, _moveBy.y))), cc.callFunc(() => done && done(node)));
+            const action = cc.sequence(cc.spawn((cc.scaleTo(0.2, 1, 1), cc.fadeTo(0.2, 255))), cc.moveBy(0.3, _moveBy.x, _moveBy.y), cc.callFunc(() => done && done(node)));
+            node.runAction(action);
+        } else if (mode === 'hide') {
+            const action = cc.sequence(cc.spawn((cc.scaleTo(0.2, 0.9, 0.9), cc.fadeTo(0.2, 0))), cc.callFunc(() => {
+                node.active = false;
+                done && done(node);
+            }));
+            node.runAction(action);
+        }
     }
     bindUI(): void {
         const jobLayout = this.node.getChildByName("myJobNode").getChildByName("jobLayout");//本方工作区
@@ -329,21 +340,20 @@ export default class DeskPanelView extends ViewComponent {
                         if (script.isActive) {
                         } else {
                         }
-                        if (self.getData().gameData.myCards.handCard) (self.handCard.getChildByName('cardItemView').getComponent("CardItemView") as CardItemView).reSetChooseFalse();
+
                     } else {
                         self.mainCardList.map(item => {
                             const _view = (item.getComponent("CardItemView") as CardItemView);
                             if (this._id !== _view['_id']) _view.reSetChooseFalse();
                             card && (card.getComponent("CardItemView") as CardItemView).reSetChooseFalse();
                         });
+                        if (self.getData().gameData.myCards.handCard) (self.handCard.getChildByName('cardItemView').getComponent("CardItemView") as CardItemView).reSetChooseFalse();
                     }
                 }
             });
             const cardScript = (card.getComponent("CardItemView") as CardItemView);
             if (cardScript.isActive) {
-                cardScript.bindExtractionUp((cardNumber: number) => {
-
-                });
+                cardScript.bindExtractionUp((cardNumber: number) => { });
             }
             cardScript.bindLaunch((node) => {
                 console.log("出牌", node);
@@ -388,7 +398,7 @@ export default class DeskPanelView extends ViewComponent {
                 this.addCardToNode(touchItem, item.barCard, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 0));
                 this.addCardToNode(touchItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-72, 0));
                 this.addCardToNode(touchItem, item.barCard, "mine", "fall", { position: cc.v2(-144, 0) });//.setPosition(cc.v2(-144, 0));
-                this.addCardToNode(touchItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 28) });//.setPosition(cc.v2(-72, 28));
+                this.addCardToNode(touchItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 29), fallShowStatus: 'hide' });//.setPosition(cc.v2(-72, 28));
             }
             this.barCard.addChild(touchItem);
         });
@@ -414,16 +424,16 @@ export default class DeskPanelView extends ViewComponent {
                     const layoutCom = touchItem.addComponent(cc.Layout);
                     layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
                     if (item.barType === 0 || item.barType === 1) {
-                        this.addCardToNode(touchItem, item.barCard, "front", "fall").setPosition(cc.v2(0, 0));
-                        this.addCardToNode(touchItem, item.barCard, "front", "fall").setPosition(cc.v2(-72, 0));
-                        this.addCardToNode(touchItem, item.barCard, "front", "fall").setPosition(cc.v2(-144, 0));
-                        this.addCardToNode(touchItem, item.barCard, "front", "fall").setPosition(cc.v2(-72, 28));
+                        this.addCardToNode(touchItem, item.barCard, "front", "fall", { position: cc.v2(0, 0) });
+                        this.addCardToNode(touchItem, item.barCard, "front", "fall", { position: cc.v2(-72, 0) });
+                        this.addCardToNode(touchItem, item.barCard, "front", "fall", { position: cc.v2(-144, 0) });
+                        this.addCardToNode(touchItem, item.barCard, "front", "fall", { position: cc.v2(-72, 28) });
                     } else if (item.barType === 2) {
                         //----------------------------------------暗杠,最上面一张需要盖住
-                        this.addCardToNode(touchItem, item.barCard, "front", "fall").setPosition(cc.v2(0, 0));
-                        this.addCardToNode(touchItem, item.barCard, "front", "fall").setPosition(cc.v2(-72, 0));
-                        this.addCardToNode(touchItem, item.barCard, "front", "fall").setPosition(cc.v2(-144, 0));
-                        this.addCardToNode(touchItem, item.barCard, "front", "fall").setPosition(cc.v2(-72, 28));
+                        this.addCardToNode(touchItem, item.barCard, "front", "fall", { position: cc.v2(0, 0) });
+                        this.addCardToNode(touchItem, item.barCard, "front", "fall", { position: cc.v2(-72, 0) });
+                        this.addCardToNode(touchItem, item.barCard, "front", "fall", { position: cc.v2(-144, 0) });
+                        this.addCardToNode(touchItem, item.barCard, "front", "fall", { position: cc.v2(-72, 29), fallShowStatus: 'hide' });
                     }
                     this.frontBarCard.addChild(touchItem);
                 });
@@ -468,6 +478,9 @@ export default class DeskPanelView extends ViewComponent {
                 const cardNumber = ((node as cc.Node).getComponent('CardItemView') as CardItemView).cardNumber
                 self.showCardEvent(cardNumber);
             });
+            const _card = (_handCard.getComponent("CardItemView") as CardItemView);
+            const _mayHuCard = self.getData().gameData.myCards.mayHuCards.find(item => item.putCard === _card.cardNumber);
+            if (_mayHuCard) _card.setHuCard(_mayHuCard);
         }
 
         const eventName = this.getData().gameData.eventData.gameEventData.myGameEvent.eventName;
@@ -487,33 +500,18 @@ export default class DeskPanelView extends ViewComponent {
                         return _card.cardNumber === item;
                     }).forEach((card, i) => {
                         const _card = card.getComponent("CardItemView") as CardItemView;
-                        if (i < 2) {//最多只能一对
-                            if (_card.isDisable) {
-                                _card.setDisable();
-                            }
+                        if (i < 2) {
+                            if (_card.isDisable) _card.setDisable();//最多只能一对
                         }
                     });
-
-
-                    // for (let i = 0, l = self.mainCardList.length; i < l; i++) {
-                    //     const _card = (self.mainCardList[i].getComponent("CardItemView") as CardItemView).getComponent("CardItemView") as CardItemView;
-                    //     if (_card.isDisable && _card.cardNumber === item) {
-                    //         _card.setDisable();
-                    //         continue;
-                    //     }
-                    // }
                 })
-
-                // self.mainCardList.map(item => {
-                //     const _card = (item.getComponent("CardItemView") as CardItemView).getComponent("CardItemView") as CardItemView;
-                //     if (disableCard.some(item => item === _card.cardNumber)) {
-                //         _card.setDisable();
-                //     }
-                // });
-                //const correlationInfoData = this.getData().gameData.eventData.gameEventData.myGameEvent.correlationInfoData;
             } else {
-                //全部牌都可以出
-                self.mainCardList.map(item => (item.getComponent("CardItemView") as CardItemView).isActive = true);
+                //全部牌都可以出，并配置可胡牌
+                self.mainCardList.map(item => {
+                    const _card = (item.getComponent("CardItemView") as CardItemView); _card.isActive = true;
+                    const _mayHuCard = self.getData().gameData.myCards.mayHuCards.find(item => item.putCard === _card.cardNumber);
+                    if (_mayHuCard) _card.setHuCard(_mayHuCard);
+                });
             }
         } else {
             //全部牌都不可以出
@@ -591,7 +589,10 @@ export default class DeskPanelView extends ViewComponent {
         });
 
         if (eventName.length !== 0 && eventName.indexOf('show') === -1 && eventName.indexOf('ready') === -1) {
-            this.opreationBtus.pass_btu.active = true;
+            this.effectAction(this.opreationBtus.pass_btu, 'show', {}, () => {
+
+            })
+            //this.opreationBtus.pass_btu.active = true;
         }
     }
     /**更新其他玩家事件提醒 */
@@ -740,39 +741,6 @@ export default class DeskPanelView extends ViewComponent {
             this.scheduleOnce(() => this.frontShowCardWrap.removeAllChildren(), 1.5);
         }
     }
-    /**控制自己的操作按钮显示 */
-    // initMyOpreationBtuShow(): void {
-    //     this.reSetOpreationBtu();
-    //     //"show" | "touch" | "bar" | "hu" | "qingHu" | "ready" | "setFace" | "ting"
-    //     this.getData().gameData.eventData.gameEventData.myGameEvent.eventName.forEach(item => {
-    //         switch (item) {
-    //             case 'show':
-    //                 //this.opreationBtus.show_btu.active = true;
-    //                 break;
-    //             case 'touch':
-    //                 this.opreationBtus.touch_btu.active = true;
-    //                 break;
-    //             case 'bar':
-    //                 this.opreationBtus.bar_btu.active = true;
-    //                 break;
-    //             case 'hu':
-    //                 this.opreationBtus.hu_btu.active = true;
-    //                 break;
-    //             case 'qingHu':
-    //                 this.opreationBtus.qingHu_btu.active = true;
-    //                 break;
-    //             case 'ting':
-    //                 this.opreationBtus.baoHu_btu.active = true;
-    //                 break;
-    //             case 'ready':
-    //                 this.opreationBtus.ready_btu.active = true;
-    //                 break;
-    //         }
-    //     });
-    //     // if (gameData.eventData.gameEventData.myGameEvent.eventName.indexOf('show') === -1 && gameData.eventData.gameEventData.myGameEvent.eventName.indexOf('ready') === -1) {
-    //     //     this.opreationBtus.pass_btu.active = true;
-    //     // }
-    // }
     /**更新房间信息（牌局等） */
     updateRoomInfo(): void {
         this.node.getChildByName("remainWrap").active = true;//显示剩余牌数

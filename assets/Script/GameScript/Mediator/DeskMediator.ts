@@ -8,13 +8,14 @@ import { DeskProxy } from "../Proxy/DeskProxy"
 import { LocalCacheDataProxy } from "../Proxy/LocalCacheDataProxy"
 import { DymjProxy } from '../Proxy/DymjProxy';
 import DeskPanelView from "../Component/DeskPanelView";
-import { PlayerInfo } from "../repositories/DeskRepository";
+import { DeskEventName, PlayerInfo } from "../repositories/DeskRepository";
 import { DymjOperationType } from "../GameData/Dymj/DymjOperationType";
 import { DymjGang } from "../GameData/Dymj/s2c/DymjGang";
 import { DymjPeng } from "../GameData/Dymj/s2c/DymjPeng";
 import { DymjHu } from "../GameData/Dymj/s2c/DymjHu";
 import { DymjTing } from "../GameData/Dymj/s2c/DymjTing";
 import { DymjGameResult } from "../GameData/Dymj/s2c/DymjGameResult";
+import { DymjMusicManager } from '../Other/DymjMusicManager';
 
 export class DeskMediator extends BaseMediator {
 
@@ -72,7 +73,24 @@ export class DeskMediator extends BaseMediator {
         let script = this.recordAlterNode.getComponent("RecordAlert");
         script.buildData(data);
     }
+    public playEventSound(eventName: DeskEventName, cardNumber?: number) {
+        if (cardNumber) {
+            DymjMusicManager.put(cardNumber - 1, 1);
+        } else {
+            switch (eventName) {
+                case 'bar': DymjMusicManager.gang(1); break;
+                case 'touch': DymjMusicManager.peng(1); break;
+                case 'zimo': DymjMusicManager.ziMo(1); break;
+                case 'ting':
+                    //const _correlationInfoData = this.getDeskProxy().repository.gameData.eventData.gameEventData.deskGameEvent.correlationInfoData;
+                    DymjMusicManager.baoHu(1);
+                    break;
+                case 'qingHu': DymjMusicManager.qingHu(1); break;
+                case 'hu': DymjMusicManager.dianPao(1); break;
+            }
+        }
 
+    }
     public async handleNotification(notification: INotification) {
 
         const gameData = this.getDeskProxy().getGameData();
@@ -202,6 +220,7 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
                 this.DeskPanelViewScript.createOutCard((playerInfo as PlayerInfo).gameIndex);
+                this.playEventSound('', showCard);
                 break;
             case CommandDefine.EventDonePush://玩家处理操作之后的推送
                 this.DeskPanelViewScript.updateMyCurCardList();
@@ -212,7 +231,8 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updatedDeskAiming();
                 // const givePlayer: PlayerInfo = notification.getBody().givePlayer;
                 // const giveCard: number = notification.getBody().giveCard;
-                const { givePlayer, giveCard } = notification.getBody();
+                const { givePlayer, giveCard, eventName } = <{ givePlayer: PlayerInfo, giveCard: number, eventName: DeskEventName }>notification.getBody();
+                this.playEventSound(eventName);
                 givePlayer && giveCard && this.DeskPanelViewScript.deleteOutCard(givePlayer.gameIndex, giveCard);//去除outcard
                 this.sendNotification(CommandDefine.ShowCenterEffect);
                 break;
@@ -224,6 +244,7 @@ export class DeskMediator extends BaseMediator {
                 break;
             case CommandDefine.ShowMyEventPush://通知本方有事件
                 this.DeskPanelViewScript.updateMyOperationBtu();
+                this.playEventSound(notification.getBody().eventName);
                 break;
             case CommandDefine.ShowCard://本方出牌
                 const { cardNumber, isQingHu } = notification.getBody();

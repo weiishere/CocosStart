@@ -23,6 +23,8 @@ export type BarType = {
     barType: 0 | 1 | 2,
 }
 
+export type DeskEventName = "" | "gameBegin" | "gameEnd" | "show" | "touch" | "bar" | "hu" | "qingHu" | "setFace" | "ting" | "xiayu" | "guafeng" | "zimo"
+
 export type RecordType = {
     /**牌局第几局 */
     roundIndex: number,
@@ -44,6 +46,8 @@ export type RecordType = {
         score: number
     }>
 }
+
+export type MayHuCard = { putCard: number, huList: Array<{ huCard: number, fanShu: number, remainNum: number }> };
 
 export type PartnerCard = {
     /**对家ID */
@@ -108,7 +112,8 @@ export type GameData = {
             isBaoHu: boolean
         }
         cardsChoose: Array<number>,
-        disableCard: Array<number>
+        disableCard: Array<number>,
+        mayHuCards: Array<MayHuCard>;
     },
     partnerCardsList: Array<PartnerCard>,
     /**倒计时 */
@@ -137,7 +142,7 @@ export type GameData = {
             },
             /**对家的事件（show：出牌） */
             deskGameEvent: {
-                eventName: '' | 'show' | 'touch' | 'bar' | 'hu' | 'setFace' | 'ting' | 'gameBegin' | 'gameEnd' | 'xiayu' | 'guafeng' | 'zimo',
+                eventName: DeskEventName,//'' | 'show' | 'touch' | 'bar' | 'hu' | 'setFace' | 'ting' | 'gameBegin' | 'gameEnd' | 'xiayu' | 'guafeng' | 'zimo',
                 correlationInfoData?: any
             }
         }
@@ -191,7 +196,8 @@ export class DeskRepository {
                 isBaoHu: false
             },
             cardsChoose: [],
-            disableCard: []
+            disableCard: [],
+            mayHuCards: []
         },
         /**对手方牌列数据 */
         partnerCardsList: [

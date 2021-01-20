@@ -1,5 +1,5 @@
 import BaseProxy from "./BaseProxy";
-import { DeskRepository, GameData, DeskData, PlayerInfo, BarType, RecordType, PartnerCard } from '../repositories/DeskRepository';
+import { DeskRepository, GameData, DeskData, PlayerInfo, BarType, RecordType, PartnerCard, MayHuCard, DeskEventName } from '../repositories/DeskRepository';
 import { ConfigProxy } from './ConfigProxy';
 import { ProxyDefine } from '../MahjongConst/ProxyDefine';
 import { HttpUtil } from '../Util/HttpUtil';
@@ -192,6 +192,8 @@ export class DeskProxy extends BaseProxy {
             }
             //不能出的牌(用户报胡之后)
             this.getGameData().myCards.disableCard = dymjS2CPlayerGet.nextStep.datas || [];
+            const huList = (dymjS2CPlayerGet.nextStep.args && dymjS2CPlayerGet.nextStep.args.list) ? dymjS2CPlayerGet.nextStep.args.list : [];
+            this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
         } else {
             let { partnerCards } = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
             partnerCards.isHandCard = true;
@@ -224,7 +226,7 @@ export class DeskProxy extends BaseProxy {
                 //     }
                 // });
             }
-            this.sendNotification(CommandDefine.ShowMyEventPush);
+            this.sendNotification(CommandDefine.ShowMyEventPush, { eventName: this.getGameData().eventData.gameEventData.myGameEvent.eventName });
         }
     }
 
@@ -254,7 +256,7 @@ export class DeskProxy extends BaseProxy {
     /** 碰，杠，胡，报胡 游戏事件(对家和自己处理后才接受的数) */
     updateDeskEvent(dymjGameOperation: DymjGameOperation) {
         let playerInfo = this.getPlayerByGameIndex(dymjGameOperation.playerAzimuth);
-        let _deskEventName: "" | "gameBegin" | "gameEnd" | "show" | "touch" | "bar" | "hu" | "setFace" | "ting" | "xiayu" | "guafeng" | "zimo" = '';
+        let _deskEventName: DeskEventName = '';
         let _deskEventCorrelationInfoData: any = {}
         let givePlayer: PlayerInfo = null;
         let giveCard: number = 0;
@@ -304,7 +306,6 @@ export class DeskProxy extends BaseProxy {
                     _deskEventName = 'hu';
                 }
             } else if (dymjGameOperation.oprtType === DymjOperationType.TING) {
-
                 _deskEventName = 'ting';
                 givePlayer = this.getPlayerByGameIndex(dymjGameOperation.ting.playerAzimuth);
                 giveCard = dymjGameOperation.ting.mjValue;
@@ -380,7 +381,7 @@ export class DeskProxy extends BaseProxy {
         //更新中间大字数据
         this.getGameData().eventData.gameEventData.deskGameEvent.eventName = _deskEventName;
         this.getGameData().eventData.gameEventData.deskGameEvent.correlationInfoData = _deskEventCorrelationInfoData;
-        this.sendNotification(CommandDefine.EventDonePush, { givePlayer, giveCard });
+        this.sendNotification(CommandDefine.EventDonePush, { givePlayer, giveCard, eventName: _deskEventName });
     }
 
     /** 自己和对家出牌（出牌之后） */
@@ -564,6 +565,7 @@ export class DeskProxy extends BaseProxy {
                     handCard: handCard,
                     cardsChoose: [],
                     disableCard: [],
+                    mayHuCards: [],
                     status: {
                         isHadHu: huCard > 0,
                         isBaoQingHu: false,
