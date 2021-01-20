@@ -11,6 +11,7 @@ import { ClubProxy } from './ClubProxy';
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
 import { UserOfflineData } from '../GameData/UserOfflineData';
+import { LoginAfterHttpUtil } from '../Util/LoginAfterHttpUtil';
 
 
 export class GateProxy extends BaseProxy {
@@ -115,14 +116,14 @@ export class GateProxy extends BaseProxy {
             userName: this.getLocalCacheDataProxy().getLoginData().userName,
         }
         let url = this.getFacadeUrl() + "/user/getInviteCode";
-        HttpUtil.send(url, (response) => {
+        LoginAfterHttpUtil.send(url, (response) => {
             if (response.hd === "success") {
                 if (response.bd) {
                     this.getLocalCacheDataProxy().setInviteCode(response.bd);
                 }
             }
         }, (err) => {
-            this.toast("请求服务器失败！");
+            this.toast("获取邀请码失败！");
         }, HttpUtil.METHOD_POST, param);
     }
 

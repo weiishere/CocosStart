@@ -58,7 +58,7 @@ export class LocalCacheDataProxy extends Proxy {
     /** 获得邀请码 */
     getInviteCode() {
         if (!this.cache.has(LocalCacheDataProxy.INVITE_CODE)) {
-            return null;
+            return "";
         }
         return this.getCache(LocalCacheDataProxy.INVITE_CODE);
     }

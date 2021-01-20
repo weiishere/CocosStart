@@ -74,8 +74,8 @@ export class GatePanelMediator extends BaseMediator {
     private listenerEvent(): void {
         // 应用被唤醒方法
         cc.game.on(cc.game.EVENT_SHOW, () => {
-            // 在登录界面不进行重连处理
-            if (this._loginView) {
+            // 主界面没有接就不处理了
+            if (!this.gameStartPanel) {
                 return;
             }
 
