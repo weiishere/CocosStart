@@ -110,6 +110,21 @@ export class GateProxy extends BaseProxy {
         }, HttpUtil.METHOD_POST, param);
     }
 
+    private getInviteCode() {
+        let param = {
+            userName: this.getLocalCacheDataProxy().getLoginData().userName,
+        }
+        let url = this.getFacadeUrl() + "/user/getInviteCode";
+        HttpUtil.send(url, (response) => {
+            if (response.hd === "success") {
+                if (response.bd) {
+                    this.getLocalCacheDataProxy().setInviteCode(response.bd);
+                }
+            }
+        }, (err) => {
+            this.toast("请求服务器失败！");
+        }, HttpUtil.METHOD_POST, param);
+    }
 
     /**
      * 登录成功之后的处理
@@ -124,6 +139,9 @@ export class GateProxy extends BaseProxy {
 
         // 登录成功之后连接socket
         this.connectWebSocket();
+
+        // 获得邀请码
+        this.getInviteCode();
     }
 
     /**

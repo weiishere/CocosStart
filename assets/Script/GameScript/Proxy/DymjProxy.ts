@@ -23,6 +23,8 @@ import { DymjEnterDeskPushPlyaerList } from '../GameData/Dymj/s2c/DymjEnterDeskP
 import { ProxyDefine } from '../MahjongConst/ProxyDefine';
 import { DeskProxy } from './DeskProxy';
 import { DymjS2CDissolveResult } from '../GameData/Dymj/s2c/DymjS2CDissolveResult';
+import { DymjEntrust } from '../GameData/Dymj/s2c/DymjEntrust';
+import { DymjEntrustRsp } from '../GameData/Dymj/s2c/DymjEntrustRsp';
 
 /**
  * 大邑麻将消息数据代理类
@@ -122,7 +124,8 @@ export class DymjProxy extends ModuleProxy {
         } else if (msgType === DymjProtocol.S_PUSH_EXIT_ROOM) {   //推送玩家退出游戏消息
         } else if (msgType === DymjProtocol.S_PUSH_DISSOLVE_RESULT) {   //房间解散消息
             let dymjS2CDissolveResult: DymjS2CDissolveResult = <DymjS2CDissolveResult>content;
-
+        } else if (msgType === DymjProtocol.S_ENTRUST) {   //请求托管返回
+            let dymjEntrustRsp: DymjEntrustRsp = <DymjEntrustRsp>content;
         } else if (msgType === DymjProtocol.S_HEARTBEAT) {   //推送玩家退出游戏消息
             this.sendHeartbeat();
         }
@@ -223,6 +226,18 @@ export class DymjProxy extends ModuleProxy {
         dymjC2SOperatioinData.isQingHu = isQingHu;
 
         this.sendGameData(DymjProtocol.C_Game_Operation, dymjC2SOperatioinData);
+    }
+
+    /**
+     * 托管
+     * @param isHosted 是否托管，false 取消托管
+     */
+    entrust(isHosted: boolean) {
+        let dymjEntrust: DymjEntrust = new DymjEntrust();
+        dymjEntrust.acctName = this.getUserName();
+        dymjEntrust.isUserRequest = false;
+        dymjEntrust.isHosted = isHosted;
+        this.sendGameData(DymjProtocol.C_ENTRUST, dymjEntrust);
     }
 
     /**

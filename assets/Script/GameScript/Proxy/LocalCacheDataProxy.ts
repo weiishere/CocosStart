@@ -3,6 +3,7 @@ import Proxy from '../../Framework/patterns/proxy/Proxy';
 export class LocalCacheDataProxy extends Proxy {
     static LOGIN_DATA: string = "LOGIN_DATA";
     static TOKEN: string = "TOKEN";
+    static INVITE_CODE: string = "INVITE_CODE";
 
     private localStorage: any = null;
     private cache: Map<string, any> = null;
@@ -50,8 +51,20 @@ export class LocalCacheDataProxy extends Proxy {
      * 保存用户token
      * @param {*} userToken 
      */
-    setUserToken(userToken): any {
+    setUserToken(userToken) {
         this.setCache(LocalCacheDataProxy.TOKEN, userToken);
+    }
+
+    /** 获得邀请码 */
+    getInviteCode() {
+        if (!this.cache.has(LocalCacheDataProxy.INVITE_CODE)) {
+            return null;
+        }
+        return this.getCache(LocalCacheDataProxy.INVITE_CODE);
+    }
+
+    setInviteCode(inviteCode: string) {
+        this.setCache(LocalCacheDataProxy.INVITE_CODE, inviteCode);
     }
 
     getCache(key: string): any {
