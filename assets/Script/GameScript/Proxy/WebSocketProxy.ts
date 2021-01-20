@@ -304,7 +304,7 @@ export class WebSockerProxy extends Proxy {
      * 心跳处理
      */
     heartbeatHandle() {
-        cc.log("heartbeatHandle===========================");
+        // cc.log("heartbeatHandle===========================");
         if (this.__webSocket) {
             if (WebSocket.OPEN == this.__webSocket.readyState) {
                 // 心跳超过2次就重新连接
@@ -328,14 +328,14 @@ export class WebSockerProxy extends Proxy {
         this.stopHeartbeatHandle();
         // 10秒钟发送一次心跳
         this.heartbeatIntervalNumber = setInterval(this.heartbeatHandle.bind(this), timeout);
-        cc.log("startHeartbeatHandle ", this.heartbeatIntervalNumber);
+        // cc.log("startHeartbeatHandle ", this.heartbeatIntervalNumber);
     }
 
     stopHeartbeatHandle() {
         if (this.heartbeatIntervalNumber === -1) {
             return;
         }
-        cc.log("stopHeartbeatHandle =====  ", this.heartbeatIntervalNumber);
+        // cc.log("stopHeartbeatHandle =====  ", this.heartbeatIntervalNumber);
         clearInterval(this.heartbeatIntervalNumber);
         this.heartbeatIntervalNumber = -1;
     }
