@@ -170,6 +170,7 @@ export default class DeskList extends ViewComponent {
     }
 
     update(dt) {
+        
         if (this.waitHandleDesk.length === 0) {
             return;
         }
