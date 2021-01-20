@@ -21,6 +21,8 @@ export default class DeskList extends ViewComponent {
     @property(cc.Node)
     deskContainer: cc.Node = null;
 
+    waitHandleDesk = [];
+
     start() {
 
     }
@@ -45,13 +47,20 @@ export default class DeskList extends ViewComponent {
         // 先删除所有子节点，避免重复显示
         this.deskContainer.removeAllChildren();
         for (const roomInfo of s2CJoinClubInfo.roomInfos) {
-            this.addDesk(roomInfo);
+            this.addDeskNode(roomInfo);
         }
 
         this.sortDesk();
     }
 
     addDesk(roomInfo: S2CClubRoomInfoBase) {
+        this.waitHandleDesk.push(roomInfo);
+    }
+
+    addDeskNode(roomInfo: S2CClubRoomInfoBase) {
+        if (this.getDeskNode(roomInfo.roomNo)) {
+            return;
+        }
         let desk = cc.instantiate(this.dymjDesk);
         this.deskContainer.addChild(desk);
 
@@ -60,6 +69,10 @@ export default class DeskList extends ViewComponent {
     }
 
     deteleDesk(roomNo: number) {
+        this.waitHandleDesk.push(roomNo);
+    }
+
+    deleteDeskNode(roomNo: number) {
         let deskScript = this.getDeskNode(roomNo);
         if (deskScript == null) {
             return;
@@ -156,5 +169,16 @@ export default class DeskList extends ViewComponent {
         this.deskContainer.children[this.deskContainer.childrenCount - 1].destroy();
     }
 
-    // update (dt) {}
+    update(dt) {
+        if (this.waitHandleDesk.length === 0) {
+            return;
+        }
+
+        let value = this.waitHandleDesk.shift();
+        if ('number' === typeof (value)) {
+            this.deleteDeskNode(value);
+        } else {
+            this.addDeskNode(value);
+        }
+    }
 }
