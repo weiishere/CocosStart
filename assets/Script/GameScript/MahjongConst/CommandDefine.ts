@@ -41,5 +41,7 @@ export enum CommandDefine {
     EventDonePush = "EventDonePush",
     ShowCenterEffect = "ShowCenterEffect",
     ReStartGamePush = 'ReStartGamePush',
-    ShowCardEffect = "ShowCardEffect"
+    ShowCardEffect = "ShowCardEffect",
+    Entrust = "Entrust",
+    EntrustNotice = "EntrustNotice"
 }

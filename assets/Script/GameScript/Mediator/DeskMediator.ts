@@ -62,7 +62,9 @@ export class DeskMediator extends BaseMediator {
             CommandDefine.OpenRecordAlter,
             CommandDefine.ShowCenterEffect,
             CommandDefine.ReStartGamePush,
-            CommandDefine.ShowCardEffect
+            CommandDefine.ShowCardEffect,
+            CommandDefine.Entrust,
+            CommandDefine.EntrustNotice
         ];
     }
 
@@ -188,7 +190,7 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
                 this.DeskPanelViewScript.updateOutCard();
-                this.sendNotification(CommandDefine.ShowCenterEffect);
+                this.sendNotification(CommandDefine.ShowCenterEffect, { givePlayerIndex: undefined });
                 //在这里加入发牌动画
                 this.getDymjProxy().dealOver();
                 this.DeskPanelViewScript.updatedDeskAiming();
@@ -234,7 +236,7 @@ export class DeskMediator extends BaseMediator {
                 const { givePlayer, giveCard, eventName } = <{ givePlayer: PlayerInfo, giveCard: number, eventName: DeskEventName }>notification.getBody();
                 this.playEventSound(eventName);
                 givePlayer && giveCard && this.DeskPanelViewScript.deleteOutCard(givePlayer.gameIndex, giveCard);//去除outcard
-                this.sendNotification(CommandDefine.ShowCenterEffect);
+                this.sendNotification(CommandDefine.ShowCenterEffect, { givePlayerIndex: givePlayer ? givePlayer.gameIndex : undefined });
                 break;
             case CommandDefine.ShowCardNotificationPush://通知出牌
                 this.DeskPanelViewScript.updateMyOperationBtu();
@@ -251,13 +253,23 @@ export class DeskMediator extends BaseMediator {
                 this.getDymjProxy().putMahkjong(cardNumber, isQingHu);
                 break;
             case CommandDefine.ShowCenterEffect://显示中间大字
-                this.DeskPanelViewScript.updateEventWran(() => {
+                const { givePlayerIndex } = notification.getBody();
+                this.DeskPanelViewScript.updateEventWran(givePlayerIndex, () => {
                     this.getDeskProxy().clearDeskGameEvent();
                 });
                 break;
             case CommandDefine.ShowCardEffect://显示打出的牌
                 const body = notification.getBody();
                 this.DeskPanelViewScript.showCardAlert(body.gameIndex, body.cardNumber)
+                break;
+            case CommandDefine.Entrust:
+                this.getDymjProxy().entrust(notification.getBody().command || false);
+                break;
+            case CommandDefine.EntrustNotice://点击取消托管后收到的消息
+                const { entrustState } = notification.getBody();
+                if (entrustState) {
+                    this.DeskPanelViewScript.closeEntrustMask();
+                }
                 break;
         }
     }

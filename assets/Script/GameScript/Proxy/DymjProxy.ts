@@ -126,6 +126,7 @@ export class DymjProxy extends ModuleProxy {
             let dymjS2CDissolveResult: DymjS2CDissolveResult = <DymjS2CDissolveResult>content;
         } else if (msgType === DymjProtocol.S_ENTRUST) {   //请求托管返回
             let dymjEntrustRsp: DymjEntrustRsp = <DymjEntrustRsp>content;
+            this.sendNotification(CommandDefine.EntrustNotice, { entrustState: dymjEntrustRsp.isHosted });
         } else if (msgType === DymjProtocol.S_HEARTBEAT) {   //推送玩家退出游戏消息
             this.sendHeartbeat();
         }

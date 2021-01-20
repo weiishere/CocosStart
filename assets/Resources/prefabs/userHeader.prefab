@@ -849,7 +849,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 58.04,
+      "width": 97.59,
       "height": 20
     },
     "_anchorPoint": {
@@ -901,16 +901,16 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "6309",
-    "_N$string": "6309",
-    "_fontSize": 20,
+    "_string": "00000.00",
+    "_N$string": "00000.00",
+    "_fontSize": 18,
     "_lineHeight": 20,
     "_enableWrapText": true,
     "_N$file": {
-      "__uuid__": "2f2203ec-a116-46f3-86db-fd3e80cc8f70"
+      "__uuid__": "5d743df7-44b8-47ce-8f74-033ad2d7a1f2"
     },
     "_isSystemFontUsed": false,
-    "_spacingX": -5,
+    "_spacingX": -3,
     "_batchAsBitmap": false,
     "_styleFlags": 0,
     "_underlineHeight": 0,

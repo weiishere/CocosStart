@@ -47,6 +47,7 @@ export default class DeskPanelView extends ViewComponent {
     private deskOpreationIconWrap: cc.Node;
     private myShowCardWrap: cc.Node;
     private frontShowCardWrap: cc.Node;
+    private showOutCard: cc.Node;
 
     private scheduleCallBack: () => void;
     private cardChooseAlert: cc.Node;
@@ -154,7 +155,7 @@ export default class DeskPanelView extends ViewComponent {
         return card;
     }
     /**执行动画 */
-    effectAction(node: cc.Node, mode: 'show' | 'hide', option: { startPosition?: cc.Vec2, moveBy?: { x: number, y: number } } = {}, done?: (node: cc.Node) => void) {
+    effectAction(node: cc.Node, mode: 'show' | 'hide', option: { startPosition?: cc.Vec2 | cc.Vec3, moveBy?: { x: number, y: number } } = {}, done?: (node: cc.Node) => void) {
         option.startPosition && node.setPosition(option.startPosition);
         if (mode === 'show') {
             node.opacity = 0;
@@ -162,7 +163,7 @@ export default class DeskPanelView extends ViewComponent {
             node.active = true;
             const _moveBy = option.moveBy ? option.moveBy : { x: 0, y: 0 };
             //const action = cc.sequence(cc.spawn((cc.scaleTo(0.2, 1, 1), cc.moveBy(0.2, _moveBy.x, _moveBy.y))), cc.callFunc(() => done && done(node)));
-            const action = cc.sequence(cc.spawn((cc.scaleTo(0.2, 1, 1), cc.fadeTo(0.2, 255))), cc.moveBy(0.3, _moveBy.x, _moveBy.y), cc.callFunc(() => done && done(node)));
+            const action = cc.sequence(cc.spawn(cc.scaleTo(0.2, 1, 1), cc.fadeTo(0.2, 255), cc.moveBy(0.2, _moveBy.x, _moveBy.y)), cc.callFunc(() => done && done(node)));
             node.runAction(action);
         } else if (mode === 'hide') {
             const action = cc.sequence(cc.spawn((cc.scaleTo(0.2, 0.9, 0.9), cc.fadeTo(0.2, 0))), cc.callFunc(() => {
@@ -357,6 +358,7 @@ export default class DeskPanelView extends ViewComponent {
             }
             cardScript.bindLaunch((node) => {
                 console.log("出牌", node);
+                this.showOutCard = node;
                 const cardNumber = ((node as cc.Node).getComponent('CardItemView') as CardItemView).cardNumber;
                 self.showCardEvent(cardNumber);
             })
@@ -596,24 +598,44 @@ export default class DeskPanelView extends ViewComponent {
         }
     }
     /**更新其他玩家事件提醒 */
-    updateEventWran(effectDone: () => void) {
+    updateEventWran(givePlayerIndex: number, effectDone: () => void) {
         this.reSetDeskEventEffect();
+        let effectNode: cc.Node;
         switch (this.getData().gameData.eventData.gameEventData.deskGameEvent.eventName) {
-            case 'bar': this.gameEventWarn.burWarn.active = true; break;
-            case 'touch': this.gameEventWarn.touchWarn.active = true; break;
-            case 'hu': this.gameEventWarn.huWarn.active = true; break;
-            case 'xiayu': this.gameEventWarn.xiayuWarn.active = true; break;
-            case 'guafeng': this.gameEventWarn.xiayuWarn.active = true; break;//刮风，图片待换
-            case 'zimo': this.gameEventWarn.zimoWarn.active = true; break;
-            case 'gameBegin': this.gameEventWarn.gameBeginWarn.active = true; break;
+            case 'bar': effectNode = this.gameEventWarn.burWarn; break;
+            case 'touch': effectNode = this.gameEventWarn.touchWarn; break;
+            case 'hu': effectNode = this.gameEventWarn.huWarn; break;
+            case 'xiayu': effectNode = this.gameEventWarn.xiayuWarn; break;
+            case 'guafeng': effectNode = this.gameEventWarn.xiayuWarn; break;//刮风，图片待换
+            case 'zimo': effectNode = this.gameEventWarn.zimoWarn; break;
+            case 'gameBegin': effectNode = this.gameEventWarn.gameBeginWarn; break;
             case 'gameEnd': break;
             case 'ting': break;
             //case 'gameEnd'://游戏结束
         }
-        this.scheduleOnce(() => {
-            this.reSetDeskEventEffect();
-            effectDone();
-        }, 2);
+        if (!givePlayerIndex || this.isMe(givePlayerIndex)) {
+            this.effectAction(effectNode, 'show', { moveBy: { x: 0, y: 0 } }, (node) => {
+                this.scheduleOnce(() => {
+                    cc.tween(node).to(0.2, { position: cc.v3(0, !givePlayerIndex ? 0 : 250), opacity: 0 }).call(() => {
+                        node.setPosition(0, 0);
+                        this.reSetDeskEventEffect();
+                        effectDone();
+                    }).start();
+                }, 1);
+
+            });
+        } else {
+            this.effectAction(effectNode, 'show', { moveBy: { x: 0, y: 0 } }, (node) => {
+                this.scheduleOnce(() => {
+                    cc.tween(node).to(0.2, { position: cc.v3(0, -250), opacity: 0 }).call(() => {
+                        node.setPosition(0, 0);
+                        this.reSetDeskEventEffect();
+                        effectDone();
+                    }).start();
+                }, 1);
+
+            });
+        }
     }
     /**获取outCard数据最后一个添加（考虑到性能没有做重刷） */
     createOutCard(playerIndex): void {
@@ -623,7 +645,6 @@ export default class DeskPanelView extends ViewComponent {
             _card = this.addCardToNode(this.outCardList, this.getData().gameData.myCards.outCardList[this.getData().gameData.myCards.outCardList.length - 1], "mine", "fall")
             _card.setPosition(cc.v2(0, 0));
             _card.setScale(0.6, 0.6);
-
         } else {
             const self = this;
             this.getData().gameData.partnerCardsList.forEach(partner => {
@@ -733,12 +754,24 @@ export default class DeskPanelView extends ViewComponent {
             const _card = this.addCardToNode(this.myShowCardWrap, cardNumber, "mine", "setUp", {
                 purAddNode: node => (node.getComponent('CardItemView') as CardItemView).setStress(true)
             });
-            this.scheduleOnce(() => this.myShowCardWrap.removeAllChildren(), 1.5);
+            _card.active = false;
+            //this.showOutCard && _card.setPosition(this.showOutCard.position.x, this.showOutCard.position.y + 40);
+            this.effectAction(_card, 'show', {
+                moveBy: { x: 0, y: 50 }
+            }, () => {
+                this.scheduleOnce(() => this.myShowCardWrap.removeAllChildren(), 1.5);
+            });
         } else {
             const _card = this.addCardToNode(this.frontShowCardWrap, cardNumber, "mine", "setUp", {
                 purAddNode: node => (node.getComponent('CardItemView') as CardItemView).setStress(true)
             });
-            this.scheduleOnce(() => this.frontShowCardWrap.removeAllChildren(), 1.5);
+            _card.active = false;
+            this.effectAction(_card, 'show', {
+                moveBy: { x: 0, y: -50 }
+            }, () => {
+                this.scheduleOnce(() => this.frontShowCardWrap.removeAllChildren(), 1.5);
+            });
+
         }
     }
     /**更新房间信息（牌局等） */
@@ -759,9 +792,27 @@ export default class DeskPanelView extends ViewComponent {
             if (t >= 0) {
                 countDownNum.string = (--t) + '';
             }
+            if (t === 1) {
+                Facade.Instance.sendNotification(CommandDefine.Entrust, { command: true }, '');
+                this.openEntrustMask();
+            }
         }
-
         this.schedule(this.scheduleCallBack, 1);
+    }
+    /**打开托管蒙版 */
+    openEntrustMask(): void {
+        const maskWrap = this.node.getChildByName('maskWrap');
+        const tuoguanBtu = maskWrap.getChildByName('cancleTuoGuan');
+        maskWrap.active = true;
+        tuoguanBtu.on(cc.Node.EventType.TOUCH_START, () => {
+            Facade.Instance.sendNotification(CommandDefine.Entrust, { command: false }, '');
+            cc.tween(tuoguanBtu).to(0.1, { position: cc.v3(0, -5) }).to(0.1, { position: cc.v3(0, 5) }).call(() => { }).start();
+        }, this);
+    }
+    /**关闭托管蒙版 */
+    closeEntrustMask(): void {
+        const maskWrap = this.node.getChildByName('maskWrap');
+        maskWrap.active = false;
     }
 
 
