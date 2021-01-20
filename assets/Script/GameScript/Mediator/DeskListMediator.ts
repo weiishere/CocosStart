@@ -93,6 +93,8 @@ export class DeskListMediator extends BaseMediator {
         return [
             CommandDefine.OpenDeskList,
             CommandDefine.UpdatePlayerGold,
+            CommandDefine.WebSocketReconnect,
+            CommandDefine.ForcedOffline,
         ];
     }
 
@@ -106,6 +108,10 @@ export class DeskListMediator extends BaseMediator {
 
         if (notification.getName() === CommandDefine.WebSocketReconnect) {
             this.reconnectHandle();
+        }
+
+        if (notification.getName() === CommandDefine.ForcedOffline) {
+            this.destroyView();
         }
 
         if (notification.getName() !== CommandDefine.OpenDeskList) {
@@ -138,12 +144,17 @@ export class DeskListMediator extends BaseMediator {
 
             this.getDymjProxy().loginGame(s2CClubJoinRoom.roomNo);
         } else if (notification.getType() === NotificationTypeDefine.ClubShutdown) {
-
             this.destroyView();
         }
     }
 
     destroyView() {
+        if (!this.view) {
+            return;
+        }
+        if (!this.view.isValid) {
+            return;
+        }
         this.view.destroy();
         this.userHeaderScript = null;
         this.view = null;

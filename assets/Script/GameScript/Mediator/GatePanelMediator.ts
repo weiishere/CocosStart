@@ -29,6 +29,9 @@ export class GatePanelMediator extends BaseMediator {
 
     private musicManager: MusicManager;
 
+    /** 兑换窗口 */
+    private exchangePanelNode: cc.Node;
+
     public constructor(mediatorName: string = null, viewComponent: any = null) {
         super(mediatorName, viewComponent);
         this.musicManager = new MusicManager();
@@ -71,7 +74,7 @@ export class GatePanelMediator extends BaseMediator {
 
             // 是否重连过ws了
             if (isReconnect) {
-                
+
             }
         });
 
@@ -129,9 +132,9 @@ export class GatePanelMediator extends BaseMediator {
 
     private openExchangePanel() {
         let exchangePanelResource = cc.loader.getRes(PrefabDefine.ExchangePanel, cc.Prefab);
-        let exchangePanelPrefab = cc.instantiate(exchangePanelResource);
+        this.exchangePanelNode = cc.instantiate(exchangePanelResource);
 
-        this.viewComponent.addChild(exchangePanelPrefab);
+        this.viewComponent.addChild(this.exchangePanelNode);
     }
 
     private openRecordPanel() {
@@ -141,15 +144,24 @@ export class GatePanelMediator extends BaseMediator {
         this.gameStartPanel.addChild(recordPanelPrefab);
     }
 
+    /** 切换账号 */
     private changeUserHandle() {
         // 暂停音乐
         this.musicManager.updatePauseMusic(true, false);
-        this.gameStartPanel.destroy();
+        if (this.gameStartPanel.isValid) {
+            this.gameStartPanel.destroy();
+        }
 
-        this.sendNotification(CommandDefine.OpenLoginPanel);
+        if (this._loginView) {
+            this.sendNotification(CommandDefine.OpenLoginPanel);
+        }
 
         this.getWebSockerProxy().disconnect();
         this.gameStartPanel = null;
+
+        if (this.exchangePanelNode && this.exchangePanelNode.isValid) {
+            this.exchangePanelNode.destroy();
+        }
     }
 
 
@@ -177,6 +189,7 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.UpdatePlayerGold,
             CommandDefine.OpenExchangePanel,
             CommandDefine.ChangeUser,
+            CommandDefine.ForcedOffline,
             CommandDefine.OpenRecordPanel,
         ];
     }
@@ -194,6 +207,10 @@ export class GatePanelMediator extends BaseMediator {
                 this.musciHandle(notification);
                 break;
             case CommandDefine.OpenLoginPanel:
+                // 登录打开了就不在处理了
+                if (this._loginView) {
+                    return;
+                }
                 this.gatePanelView = this.view.getComponent('GatePanelView');
                 this._loginView = cc.instantiate(this.gatePanelView.LoginView);
                 this.viewComponent.addChild(this._loginView);
@@ -236,6 +253,7 @@ export class GatePanelMediator extends BaseMediator {
                 this.openRecordPanel();
                 break;
             case CommandDefine.ChangeUser:
+            case CommandDefine.ForcedOffline:
                 this.changeUserHandle();
                 break;
             case CommandDefine.InitGateMainPanel:

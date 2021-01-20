@@ -85,6 +85,44 @@ export default class RecordAlert extends ViewComponent {
         return "";
     }
 
+    /**
+     * 获得杠牌描述
+     * @param list 
+     */
+    getGangDesc(list: DymjGameUIResultItem[]) {
+        // gangValues 索引说明 0： 暗杠 1：直杠 2：面下杠
+        let gangValues = [0, 0, 0];
+        for (const value of list) {
+            if (value.itemType === 4) {
+                gangValues[0]++;
+            } else if (value.itemType === 5) {
+                gangValues[1]++;
+            } else if (value.itemType === 10) {
+                gangValues[2]++;
+            }
+        }
+
+        let desc = "";
+        for (let index = 0; index < gangValues.length; index++) {
+            const count = gangValues[index];
+            if (count > 0) {
+                if (index === 0) {
+                    desc += "暗杠*" + count + ", ";
+                } else if (index === 1) {
+                    desc += "直杠*" + count + ", ";
+                } else if (index === 2) {
+                    desc += "面下杠*" + count + ", ";
+                }
+            }
+        }
+
+        if (desc) {
+            desc = desc.substring(0, desc.length - 1);
+        }
+
+        return desc;
+    }
+
     getResultWinloss(list: DymjGameUIResultItem[], azimuth: number) {
         for (const value of list) {
             if (value.type === 'total') {
@@ -117,6 +155,14 @@ export default class RecordAlert extends ViewComponent {
         this.startNextRoundBtnCountdown(dymjGameResult.time);
 
         let huPaiName = this.getResultDesc(dymjGameResult.list);
+        let gangPaiName = this.getGangDesc(dymjGameResult.list);
+        if (gangPaiName) {
+            if (huPaiName) {
+                huPaiName += ", " + gangPaiName;
+            } else {
+                huPaiName = gangPaiName;
+            }
+        }
         dymjGameResult.players.forEach(v => {
             let winlossScore = this.getResultWinloss(dymjGameResult.list, v.azimuth);
             let shouValues = [];

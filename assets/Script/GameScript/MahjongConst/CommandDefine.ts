@@ -21,6 +21,8 @@ export enum CommandDefine {
     OpenRecordPanel = "OpenRecordPanel",
     OpenRecordAlter = "OpenRecordAlter",
     ChangeUser = "ChangeUser",
+    /** 强制下线 */
+    ForcedOffline = "ForcedOffline",
     //牌桌
     /**更新玩家信息 */
     RefreshPlayerPush = "RefreshPlayer",

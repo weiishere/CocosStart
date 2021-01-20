@@ -13,6 +13,7 @@ import { ClubProxy } from './ClubProxy';
 import { UserGold } from '../GameData/UserGold';
 import { DymjProxy } from './DymjProxy';
 import { GateProxy } from './GateProxy';
+import { ResponseCode } from '../GameConst/ResponseCode';
 
 class WebSocketData {
     gsData: any;
@@ -63,6 +64,9 @@ export class WebSockerProxy extends Proxy {
 
     private loginData: LoginData = null;
     private tokenData: string = null;
+
+    /** 是否用户主动断开网络 */
+    private isInitative: boolean;
     private isReconnect: boolean;
 
     /** 心跳是否返回 */
@@ -116,6 +120,7 @@ export class WebSockerProxy extends Proxy {
         if (this.isReconnect) {
             this.sendNotification(CommandDefine.WebSocketReconnect, null);
         }
+        this.isInitative = false;
         this.isReconnect = false;
 
         this.stopHeartbeatHandle();
@@ -165,6 +170,10 @@ export class WebSockerProxy extends Proxy {
                 let userGold = <UserGold>JSON.parse(dt.content);
                 this.handleUpdateGold(userGold);
                 break;
+            case OperationDefine.ForceOffline:
+                this.getGateProxy().toast("你的账号被别人登录，强制你下线");
+                this.sendNotification(CommandDefine.ForcedOffline, null);
+                break;
             case OperationDefine.C2GGW_Heartbeat:
                 // 心跳返回
                 this.isHeartbeatResult = true;
@@ -201,6 +210,10 @@ export class WebSockerProxy extends Proxy {
             return false;
         }
 
+        if (errorCode === ResponseCode.LOGIN_TOKEN_ERROR) {
+            this.getGateProxy().toast("token校验失败，请重新登录！");
+            this.sendNotification(CommandDefine.ForcedOffline, null);
+        }
         cc.log("网关返回错误码: ", errorCode);
         return true;
     }
@@ -291,6 +304,7 @@ export class WebSockerProxy extends Proxy {
      * 心跳处理
      */
     heartbeatHandle() {
+        cc.log("heartbeatHandle===========================");
         if (this.__webSocket) {
             if (WebSocket.OPEN == this.__webSocket.readyState) {
                 // 心跳超过2次就重新连接
@@ -314,12 +328,14 @@ export class WebSockerProxy extends Proxy {
         this.stopHeartbeatHandle();
         // 10秒钟发送一次心跳
         this.heartbeatIntervalNumber = setInterval(this.heartbeatHandle.bind(this), timeout);
+        cc.log("startHeartbeatHandle ", this.heartbeatIntervalNumber);
     }
 
     stopHeartbeatHandle() {
-        if (this.heartbeatIntervalNumber == -1) {
+        if (this.heartbeatIntervalNumber === -1) {
             return;
         }
+        cc.log("stopHeartbeatHandle =====  ", this.heartbeatIntervalNumber);
         clearInterval(this.heartbeatIntervalNumber);
         this.heartbeatIntervalNumber = -1;
     }
@@ -354,9 +370,16 @@ export class WebSockerProxy extends Proxy {
      * 重连方法
      */
     reconnect(): boolean {
+        // 主动断开网络的，不进行重连处理
+        if (this.isInitative) {
+            return;
+        }
+
         if (this.isConnected()) {
             return false;
         }
+
+        this.getGateProxy().toast("网络断开了，正在进行重连");
         this.stopHeartbeatHandle();
         this.isReconnect = true;
         // 重连时，每200毫秒发送一次心跳
@@ -375,17 +398,10 @@ export class WebSockerProxy extends Proxy {
 
     onWebSocketClose(event: Event) {
         cc.log("onWebSocketClose", event);
-        this.getGateProxy().toast("网络断开了，正在进行重连");
-        // if (this.isReconnect) {
-        //     this.connect(this.__wsUrl);
-        // }
-        // this.stopHeartbeatHandle();
-        // this.loginData = null;
     }
 
     onWebSocketError(event: Event) {
         cc.log("onWebSocketError", event);
-        // this.getGateProxy().toast("onWebSocketError: " + event);
         this.loginData = null;
     }
 
@@ -411,7 +427,11 @@ export class WebSockerProxy extends Proxy {
     }
 
     disconnect() {
-        this.__webSocket.close();
+        this.isInitative = true;
+        this.stopHeartbeatHandle();
+        if (this.__webSocket) {
+            this.__webSocket.close();
+        }
         this.loginData = null;
     }
 
