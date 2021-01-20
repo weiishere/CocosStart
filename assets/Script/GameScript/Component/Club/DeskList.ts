@@ -47,6 +47,8 @@ export default class DeskList extends ViewComponent {
         for (const roomInfo of s2CJoinClubInfo.roomInfos) {
             this.addDesk(roomInfo);
         }
+
+        this.sortDesk();
     }
 
     addDesk(roomInfo: S2CClubRoomInfoBase) {
@@ -63,6 +65,15 @@ export default class DeskList extends ViewComponent {
             return;
         }
         deskScript.node.destroy();
+    }
+
+    sortDesk() {
+        this.deskContainer.children.sort((d1, d2) => {
+            let script1 = <DymjDesk>d1.getComponent("DymjDesk");
+            let script2 = <DymjDesk>d2.getComponent("DymjDesk");
+
+            return script1.basicScore - script2.basicScore;
+        })
     }
 
     sitDown(s2CClubRoomSitDown: S2CClubRoomSitDown) {

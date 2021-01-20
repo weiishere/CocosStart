@@ -25,6 +25,7 @@ export default class DymjDesk extends ViewComponent {
 
     roomNo: number = 0;
     enterLimit: number = 0;
+    basicScore: number = 0;
 
     protected bindUI(): void {
     }
@@ -42,6 +43,7 @@ export default class DymjDesk extends ViewComponent {
 
     initData(s2CClubRoomInfoBase: S2CClubRoomInfoBase) {
         this.roomNo = s2CClubRoomInfoBase.roomNo;
+        this.basicScore = s2CClubRoomInfoBase.basicScore;
         this.enterLimit = s2CClubRoomInfoBase.enterLimit;
         this.anteLabel.string = `断勾卡${s2CClubRoomInfoBase.basicScore}底分`;
         this.setRoundCount(s2CClubRoomInfoBase.currentGameCount, s2CClubRoomInfoBase.gameCount);
