@@ -127,17 +127,6 @@ export class DeskProxy extends BaseProxy {
                 _eventName.push("bar");
                 this.getGameData().myCards.cardsChoose = op.gang.mjValues;
                 _correlationInfoData['gang'] = op.gang;
-                // if (op.gang.isSelf) {
-                //     //弯钢、暗杠
-                //     this.getGameData().myCards.cardsChoose = op.gang.mjValues;
-                //     _correlationInfoData = op.gang;
-                //     // this.getGameData().myCards.touchCard = this.getGameData().myCards.touchCard.filter(card => card !== op.gang.mjValues[0]);//暂时处理为一个=======================================
-                //     // this.getGameData().myCards.barCard.push({ barCard: op.gang.mjValues[0], barType: op.gang.gangType });
-                // } else {
-                //     //引杠
-                //     this.getGameData().myCards.cardsChoose = op.gang.mjValues;
-                //     _correlationInfoData = op.gang;
-                // }
             } else if (op.oprtType === DymjOperationType.PENG) {
                 _eventName.push("touch");
                 _correlationInfoData['peng'] = op.peng;
@@ -263,8 +252,9 @@ export class DeskProxy extends BaseProxy {
         // 如果是自己
         if (this.isMy(playerInfo.playerId)) {
             this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
-            let correlationInfoData = this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;//清空可能的杠选牌
-            correlationInfoData = {};
+            //let correlationInfoData = this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;//清空可能的杠选牌
+            this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = {};//清空可能的杠选牌
+            let correlationInfoData = {};
 
             if (dymjGameOperation.oprtType === DymjOperationType.PENG) {
                 this.getGameData().myCards.touchCard.push(dymjGameOperation.peng.mjValue);
@@ -381,7 +371,7 @@ export class DeskProxy extends BaseProxy {
         //更新中间大字数据
         this.getGameData().eventData.gameEventData.deskGameEvent.eventName = _deskEventName;
         this.getGameData().eventData.gameEventData.deskGameEvent.correlationInfoData = _deskEventCorrelationInfoData;
-        this.sendNotification(CommandDefine.EventDonePush, { givePlayer, giveCard, eventName: _deskEventName });
+        this.sendNotification(CommandDefine.EventDonePush, { givePlayer, giveCard, isMe: this.isMy(playerInfo.playerId), eventName: _deskEventName });
     }
 
     /** 自己和对家出牌（出牌之后） */

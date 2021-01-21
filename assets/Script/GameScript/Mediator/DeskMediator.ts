@@ -195,7 +195,7 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
                 this.DeskPanelViewScript.updateOutCard();
-                this.sendNotification(CommandDefine.ShowCenterEffect, { givePlayerIndex: undefined });
+                this.sendNotification(CommandDefine.ShowCenterEffect, { isMe: undefined });
                 //在这里加入发牌动画
                 this.getDymjProxy().dealOver();
                 this.DeskPanelViewScript.updatedDeskAiming();
@@ -238,10 +238,11 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updatedDeskAiming();
                 // const givePlayer: PlayerInfo = notification.getBody().givePlayer;
                 // const giveCard: number = notification.getBody().giveCard;
-                const { givePlayer, giveCard, eventName } = <{ givePlayer: PlayerInfo, giveCard: number, eventName: DeskEventName }>notification.getBody();
-                this.playEventSound(eventName);
+                const _body = <{ givePlayer: PlayerInfo, giveCard: number, isMe: boolean, eventName: DeskEventName }>notification.getBody();
+                const { givePlayer, giveCard, eventName } = _body;
+                this.playEventSound(eventName); 
                 givePlayer && giveCard && this.DeskPanelViewScript.deleteOutCard(givePlayer.gameIndex, giveCard);//去除outcard
-                this.sendNotification(CommandDefine.ShowCenterEffect, { givePlayerIndex: givePlayer ? givePlayer.gameIndex : undefined });
+                this.sendNotification(CommandDefine.ShowCenterEffect, { isMe: _body.isMe });
                 break;
             case CommandDefine.ShowCardNotificationPush://通知出牌
                 this.DeskPanelViewScript.updateMyOperationBtu();
@@ -258,8 +259,8 @@ export class DeskMediator extends BaseMediator {
                 this.getDymjProxy().putMahkjong(cardNumber, isQingHu);
                 break;
             case CommandDefine.ShowCenterEffect://显示中间大字
-                const { givePlayerIndex } = notification.getBody();
-                this.DeskPanelViewScript.updateEventWran(givePlayerIndex, () => {
+                const { isMe } = notification.getBody();
+                this.DeskPanelViewScript.updateEventWran(isMe, () => {
                     this.getDeskProxy().clearDeskGameEvent();
                 });
                 break;

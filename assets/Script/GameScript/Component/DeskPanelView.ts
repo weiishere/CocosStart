@@ -599,7 +599,7 @@ export default class DeskPanelView extends ViewComponent {
         }
     }
     /**更新其他玩家事件提醒 */
-    updateEventWran(givePlayerIndex: number, effectDone: () => void) {
+    updateEventWran(isMe: boolean, effectDone: () => void) {
         this.reSetDeskEventEffect();
         let effectNode: cc.Node;
         const _eventName = this.getData().gameData.eventData.gameEventData.deskGameEvent.eventName;
@@ -615,31 +615,63 @@ export default class DeskPanelView extends ViewComponent {
             case 'ting': break;
             //case 'gameEnd'://游戏结束
         }
-        if (givePlayerIndex) {
-            const po = this.isMe(this.getData().gameData.positionIndex) ? -250 : 250;
-            this.effectAction(effectNode, 'show', { moveBy: { x: 0, y: 0 } }, (node) => {
-                this.scheduleOnce(() => {
-                    cc.tween(node).to(0.2, { position: cc.v3(0, po), opacity: 0, scale: 0.3 }).call(() => {
-                        node.setPosition(0, 0);
-                        this.reSetDeskEventEffect();
-                        effectDone();
-                    }).start();
-                }, 1);
-            });
-        } else {
-            //没有，判断是不是全局事件
-            const po = 0;
-            let isAllEvent = ['xiayu', 'guafeng', 'gameBegin', 'gameEnd'].indexOf(_eventName) !== -1;
-            this.effectAction(effectNode, 'show', { moveBy: { x: 0, y: 0 } }, (node) => {
-                this.scheduleOnce(() => {
-                    cc.tween(node).to(0.2, { position: cc.v3(0, po), opacity: 0, scale: 0.3 }).call(() => {
-                        node.setPosition(0, 0);
-                        this.reSetDeskEventEffect();
-                        effectDone();
-                    }).start();
-                }, 1);
-            });
+        let po = 0;
+        if (isMe !== undefined) {
+            po = isMe ? -250 : 250;
         }
+        this.effectAction(effectNode, 'show', { moveBy: { x: 0, y: 0 } }, (node) => {
+            this.scheduleOnce(() => {
+                cc.tween(node).to(0.2, { position: cc.v3(0, po), opacity: 0, scale: 0.3 }).call(() => {
+                    node.setPosition(0, 0);
+                    this.reSetDeskEventEffect();
+                    effectDone();
+                }).start();
+            }, 1);
+        });
+
+
+        // console.log('-----------give:' + givePlayerIndex + '-----------')
+        // if (!givePlayerIndex && givePlayerIndex !== 0) {
+        //     let isAllEvent = ['xiayu', 'guafeng', 'gameBegin', 'gameEnd'].indexOf(_eventName) !== -1;
+        //     if (isAllEvent && !this.isMe(this.getData().gameData.positionIndex)) {
+        //         //如果不是全局事件，而且上次操作者不是自己，那么字就不动
+        //         isAllEvent = false;
+        //     }
+        //     console.log('-----------------no:' + isAllEvent + '--------------------------');
+        //     this.effectAction(effectNode, 'show', {}, (node) => {
+        //         this.scheduleOnce(() => {
+        //             cc.tween(node).to(0.2, { position: cc.v3(0, isAllEvent ? -250 : 0), opacity: 0, scale: 0.3 }).call(() => {
+        //                 node.setPosition(0, 0);
+        //                 this.reSetDeskEventEffect();
+        //                 effectDone();
+        //             }).start();
+        //         }, 1);
+        //     });
+        // } else if (!this.isMe(givePlayerIndex)) {
+        //     console.log('-----------------down--------------------------');
+        //     this.effectAction(effectNode, 'show', { moveBy: { x: 0, y: 0 } }, (node) => {
+        //         this.scheduleOnce(() => {
+        //             cc.tween(node).to(0.2, { position: cc.v3(0, -250), opacity: 0, scale: 0.3 }).call(() => {
+        //                 node.setPosition(0, 0);
+        //                 this.reSetDeskEventEffect();
+        //                 effectDone();
+        //             }).start();
+        //         }, 1);
+
+        //     });
+        // } else if (this.isMe(givePlayerIndex)) {
+        //     console.log('-----------------up--------------------------');
+        //     this.effectAction(effectNode, 'show', { moveBy: { x: 0, y: 0 } }, (node) => {
+        //         this.scheduleOnce(() => {
+        //             cc.tween(node).to(0.2, { position: cc.v3(0, 250), opacity: 0, scale: 0.3 }).call(() => {
+        //                 node.setPosition(0, 0);
+        //                 this.reSetDeskEventEffect();
+        //                 effectDone();
+        //             }).start();
+        //         }, 1);
+
+        //     });
+        // }
     }
     /**获取outCard数据最后一个添加（考虑到性能没有做重刷） */
     createOutCard(playerIndex): void {
