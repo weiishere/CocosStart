@@ -32,15 +32,21 @@ export default class RecordAlert extends ViewComponent {
     protected bindUI(): void {
     }
     protected bindEvent(): void {
-        this.closeBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            this.node.destroy();
+        this.closeBtn.on(cc.Node.EventType.TOUCH_START, () => {
+            cc.tween(this.closeBtn).to(0.1, { scale: 1.1 }).to(0.1, { scale: 1 }).call(() => this.node.destroy()).start();
         });
-        this.quitRoom.on(cc.Node.EventType.TOUCH_END, () => {
-            this.getDymjProxy().logout();
+        this.quitRoom.on(cc.Node.EventType.TOUCH_START, () => {
+            cc.tween(this.quitRoom).to(0.1, { scale: 1.1 }).to(0.1, { scale: 1 }).call(() => {
+                this.getDymjProxy().logout();
+                Facade.Instance.sendNotification(CommandDefine.ExitDeskPanel, {}, '');
+            }).start();
         });
 
-        this.goOnBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            this.getDymjProxy().goOn();
+        this.goOnBtn.on(cc.Node.EventType.TOUCH_START, () => {
+            cc.tween(this.quitRoom).to(0.1, { scale: 1.1 }).to(0.1, { scale: 1 }).call(() => {
+                this.getDymjProxy().goOn();
+            }).start();
+
         });
     }
 

@@ -43,5 +43,6 @@ export enum CommandDefine {
     ReStartGamePush = 'ReStartGamePush',
     ShowCardEffect = "ShowCardEffect",
     Entrust = "Entrust",
-    EntrustNotice = "EntrustNotice"
+    EntrustNotice = "EntrustNotice",
+    OpenEntrustPanel = "OpenEntrustPanel"
 }

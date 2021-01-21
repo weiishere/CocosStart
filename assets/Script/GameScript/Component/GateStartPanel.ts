@@ -69,7 +69,11 @@ export default class GateStartPanel extends ViewComponent {
         });
 
         this.helpBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '开发中，敬请期待...', toastOverlay: true }, '');
+            //加载帮助框
+            cc.loader.loadRes('prefabs/helpAlert', cc.Prefab, (error, item) => {
+                this.node.addChild(cc.instantiate(item));
+            });
+            //Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '开发中，敬请期待...', toastOverlay: true }, '');
         });
 
         this.msgBtn.on(cc.Node.EventType.TOUCH_END, () => {

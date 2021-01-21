@@ -115,7 +115,8 @@ export class GatePanelMediator extends BaseMediator {
         let settingSource = cc.loader.getRes(PrefabDefine.Setting, cc.Prefab);
         let settingPrefab = cc.instantiate(settingSource);
 
-        this.gameStartPanel.addChild(settingPrefab);
+        cc.find('Canvas').addChild(settingPrefab);
+        //zthis.gameStartPanel.addChild(settingPrefab);
 
         let settingScript = settingPrefab.getComponent("Setting");
         settingScript.init(this.musicManager.isPauseMusic, this.musicManager.isPauseEffect);

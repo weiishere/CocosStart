@@ -64,7 +64,8 @@ export class DeskMediator extends BaseMediator {
             CommandDefine.ReStartGamePush,
             CommandDefine.ShowCardEffect,
             CommandDefine.Entrust,
-            CommandDefine.EntrustNotice
+            CommandDefine.EntrustNotice,
+            CommandDefine.OpenEntrustPanel
         ];
     }
 
@@ -122,6 +123,10 @@ export class DeskMediator extends BaseMediator {
                         } else {
                             this.sendNotification(CommandDefine.OpenToast, { content: '抱歉，暂无对战记录~' });
                         }
+                    } else if (node.name === 'helpIcon') {
+                        this.DeskPanelViewScript.openHelperAlert();
+                    } else if (node.name === 'setIcon') {
+                        this.sendNotification(CommandDefine.OpenSetting);
                     }
                 });
                 /**出牌事件 */
@@ -262,14 +267,15 @@ export class DeskMediator extends BaseMediator {
                 const body = notification.getBody();
                 this.DeskPanelViewScript.showCardAlert(body.gameIndex, body.cardNumber)
                 break;
+            case CommandDefine.OpenEntrustPanel://打开托管提示面板
+                this.DeskPanelViewScript.openEntrustMask();
+                break;
             case CommandDefine.Entrust:
                 this.getDymjProxy().entrust(notification.getBody().command || false);
                 break;
             case CommandDefine.EntrustNotice://点击取消托管后收到的消息
                 const { entrustState } = notification.getBody();
-                if (entrustState) {
-                    this.DeskPanelViewScript.closeEntrustMask();
-                }
+                if (entrustState) this.DeskPanelViewScript.closeEntrustMask();
                 break;
         }
     }
