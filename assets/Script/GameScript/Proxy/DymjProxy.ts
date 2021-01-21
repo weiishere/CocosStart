@@ -126,7 +126,11 @@ export class DymjProxy extends ModuleProxy {
             let dymjS2CDissolveResult: DymjS2CDissolveResult = <DymjS2CDissolveResult>content;
         } else if (msgType === DymjProtocol.S_ENTRUST) {   //请求托管返回
             let dymjEntrustRsp: DymjEntrustRsp = <DymjEntrustRsp>content;
-            this.sendNotification(CommandDefine.EntrustNotice, { entrustState: dymjEntrustRsp.isHosted });
+            if (dymjEntrustRsp.isHosted) {
+                this.sendNotification(CommandDefine.OpenEntrustPanel, null);
+            } else {
+                this.sendNotification(CommandDefine.EntrustNotice, null);
+            }
         } else if (msgType === DymjProtocol.S_HEARTBEAT) {   //推送玩家退出游戏消息
             this.sendHeartbeat();
         }
@@ -234,6 +238,10 @@ export class DymjProxy extends ModuleProxy {
      * @param isHosted 是否托管，false 取消托管
      */
     entrust(isHosted: boolean) {
+        if (isHosted) {
+            return;
+        }
+        
         let dymjEntrust: DymjEntrust = new DymjEntrust();
         dymjEntrust.acctName = this.getUserName();
         dymjEntrust.isUserRequest = false;
