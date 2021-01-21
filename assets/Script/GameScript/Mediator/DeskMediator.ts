@@ -75,6 +75,8 @@ export class DeskMediator extends BaseMediator {
         this.view.addChild(this.recordAlterNode);
         let script = this.recordAlterNode.getComponent("RecordAlert");
         script.buildData(data);
+
+        this.DeskPanelViewScript.closeEntrustMask();
     }
     public playEventSound(eventName: DeskEventName, cardNumber?: number) {
         if (cardNumber) {
@@ -274,8 +276,9 @@ export class DeskMediator extends BaseMediator {
                 this.getDymjProxy().entrust(notification.getBody().command || false);
                 break;
             case CommandDefine.EntrustNotice://点击取消托管后收到的消息
-                const { entrustState } = notification.getBody();
-                if (entrustState) this.DeskPanelViewScript.closeEntrustMask();
+                // const { entrustState } = notification.getBody();
+                // if (entrustState) this.DeskPanelViewScript.closeEntrustMask();
+                this.DeskPanelViewScript.closeEntrustMask();
                 break;
         }
     }
