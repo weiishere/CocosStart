@@ -16,6 +16,7 @@ import { LocalCacheDataProxy } from "../Proxy/LocalCacheDataProxy";
 import { LoginData } from "../GameData/LoginData";
 import { GateCommand } from "../Command/GateCommand";
 import { CommandDefine } from "../MahjongConst/CommandDefine";
+import { DeskPanelViewEventDefine } from "../GameConst/Event/DeskPanelViewEventDefine";
 
 @ccclass
 export default class DeskPanelView extends ViewComponent {
@@ -249,6 +250,8 @@ export default class DeskPanelView extends ViewComponent {
         this.deskAiming.left = deskAiming.getChildByName("p-left");
         this.deskAiming.right = deskAiming.getChildByName("p-right");
         //#endregion
+
+        this.dispatchCustomEvent(DeskPanelViewEventDefine.DeskPanelViewOnLoadComplate, null);
     }
     bindEvent(): void { }
     /**绑定游戏操作事件（杠碰胡等） */

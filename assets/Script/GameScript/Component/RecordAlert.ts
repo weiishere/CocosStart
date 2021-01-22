@@ -159,17 +159,6 @@ export default class RecordAlert extends ViewComponent {
 
         let huPaiName = this.getResultDesc(dymjGameResult.list);
         dymjGameResult.players.forEach(v => {
-            if (v.userName === userName) {
-                let gangPaiName = this.getGangDesc(v.gangValues);
-                if (gangPaiName) {
-                    if (huPaiName) {
-                        huPaiName += ", " + gangPaiName;
-                    } else {
-                        huPaiName = gangPaiName;
-                    }
-                }
-            }
-
             let winlossScore = this.getResultWinloss(dymjGameResult.list, v.azimuth);
             let shouValues = [];
             let pengValues = [];
@@ -193,12 +182,23 @@ export default class RecordAlert extends ViewComponent {
                 });
             }
 
+            let gangPaiName = this.getGangDesc(v.gangValues);
+            if (huValues.length > 0) {
+                if (huPaiName) {
+                    huPaiName += ", " + gangPaiName;
+                } else {
+                    huPaiName = gangPaiName;
+                }
+            } else {
+                huPaiName = "未胡牌, " + gangPaiName;
+            }
+
             let playerRecordData: PlayerRecordData = {
                 shouValues: shouValues,
                 huValues: huValues,
                 pengValues: pengValues,
                 gangValues: gangValues,
-                huPaiName: huValues.length != 0 ? huPaiName : null,
+                huPaiName: huPaiName,
                 userName: v.userName,
                 nickname: v.nickname,
                 head: v.head,
