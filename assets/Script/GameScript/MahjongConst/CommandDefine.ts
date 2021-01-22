@@ -13,6 +13,8 @@ export enum CommandDefine {
     OpenDeskList = "OpenDeskList",
     /** 更新玩家金币 */
     UpdatePlayerGold = "UpdatePlayerGold",
+    /** 更新昵称 */
+    UpdateNickname = "UpdateNickname",
     OpenPromptWindow = "OpenPromptWindow",
     InitGateMainPanel = "InitGateMainPanel",
     CloseLoginPanel = "CloseLoginPanel",

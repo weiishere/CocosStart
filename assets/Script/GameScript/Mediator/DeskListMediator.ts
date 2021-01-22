@@ -93,6 +93,7 @@ export class DeskListMediator extends BaseMediator {
         return [
             CommandDefine.OpenDeskList,
             CommandDefine.UpdatePlayerGold,
+            CommandDefine.UpdateNickname,
             CommandDefine.WebSocketReconnect,
             CommandDefine.ForcedOffline,
         ];
@@ -103,6 +104,13 @@ export class DeskListMediator extends BaseMediator {
             let userGold: UserGold = notification.getBody();
             if (this.userHeaderScript) {
                 this.userHeaderScript.updateGold(userGold.newGold);
+            }
+        }
+
+        if (notification.getName() === CommandDefine.UpdateNickname) {
+            let nickname = notification.getBody();
+            if (this.userHeaderScript) {
+                this.userHeaderScript.updateNickname(nickname);
             }
         }
 
