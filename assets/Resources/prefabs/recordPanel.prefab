@@ -2094,20 +2094,20 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 122.34,
+      "width": 67.85,
       "height": 50.4
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.5,
+      "x": 0,
       "y": 0.5
     },
     "_trs": {
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        33.644999999999996,
-        -18.195999999999998,
+        -36.649,
+        -18.196,
         0,
         0,
         0,
@@ -2160,7 +2160,7 @@
     "_N$horizontalAlign": 1,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
-    "_N$overflow": 1,
+    "_N$overflow": 0,
     "_N$cacheMode": 0,
     "_id": ""
   },

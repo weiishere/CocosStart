@@ -25,6 +25,7 @@ export class GatePanelMediator extends BaseMediator {
     private toastActive = false;
     private gateProxy: GateProxy;
     private gameStartPanel: cc.Node;
+    private settingPrefab: cc.Node;
 
     private userHeaderScript;
 
@@ -111,15 +112,19 @@ export class GatePanelMediator extends BaseMediator {
     /**
      * 打开设置
      */
-    private openSetting(): void {
+    private openSetting(body: any): void {
+        let isShowChangeUserBtn = false;
+        if (body) {
+            isShowChangeUserBtn = body.isShowChangeUserBtn;
+        }
         let settingSource = cc.loader.getRes(PrefabDefine.Setting, cc.Prefab);
-        let settingPrefab = cc.instantiate(settingSource);
+        this.settingPrefab = cc.instantiate(settingSource);
 
-        cc.find('Canvas').addChild(settingPrefab);
-        //zthis.gameStartPanel.addChild(settingPrefab);
+        // cc.find('Canvas').addChild(this.settingPrefab);
+        this.viewComponent.addChild(this.settingPrefab);
 
-        let settingScript = settingPrefab.getComponent("Setting");
-        settingScript.init(this.musicManager.isPauseMusic, this.musicManager.isPauseEffect);
+        let settingScript = this.settingPrefab.getComponent("Setting");
+        settingScript.init(this.musicManager.isPauseMusic, this.musicManager.isPauseEffect, isShowChangeUserBtn);
     }
 
     private musciHandle(notification: INotification): void {
@@ -188,6 +193,10 @@ export class GatePanelMediator extends BaseMediator {
 
         if (this.myCenterNode && this.myCenterNode.isValid) {
             this.myCenterNode.destroy();
+        }
+
+        if (this.settingPrefab && this.settingPrefab.isValid) {
+            this.settingPrefab.destroy();
         }
     }
 
@@ -272,7 +281,7 @@ export class GatePanelMediator extends BaseMediator {
                 break;
 
             case CommandDefine.OpenSetting:
-                this.openSetting();
+                this.openSetting(notification.getBody());
                 break;
             case CommandDefine.OpenExchangePanel:
                 this.openExchangePanel();

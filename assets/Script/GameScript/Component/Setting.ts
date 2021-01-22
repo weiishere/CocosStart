@@ -40,9 +40,11 @@ export default class Setting extends ViewComponent {
     start() {
 
     }
-    init(isPauseMusic: boolean, isPauseEffect: boolean) {
+    init(isPauseMusic: boolean, isPauseEffect: boolean, isShowChangeUserBtn: boolean = true) {
         this.musicToggle.isChecked = !isPauseMusic;
         this.effectToggle.isChecked = !isPauseEffect;
+
+        this.changeUser.active = isShowChangeUserBtn;
     }
 
     musicOnOff() {

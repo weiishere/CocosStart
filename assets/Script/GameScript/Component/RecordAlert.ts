@@ -11,6 +11,7 @@ import { DymjGameResult } from '../GameData/Dymj/s2c/DymjGameResult';
 import { DymjGameUIResultItem } from '../GameData/Dymj/s2c/DymjGameUIResultItem';
 import { CommandDefine } from '../MahjongConst/CommandDefine';
 import { DymjProxy } from '../Proxy/DymjProxy';
+import { DymjGangHuTypeValue } from '../GameData/Dymj/s2c/DymjGangHuTypeValue';
 
 const { ccclass, property } = cc._decorator;
 
@@ -95,17 +96,11 @@ export default class RecordAlert extends ViewComponent {
      * 获得杠牌描述
      * @param list 
      */
-    getGangDesc(list: DymjGameUIResultItem[]) {
-        // gangValues 索引说明 0： 暗杠 1：直杠 2：面下杠
+    getGangDesc(list: DymjGangHuTypeValue[]) {
+        // gangValues 索引说明 0：直杠 1：面下杠 2：暗杠
         let gangValues = [0, 0, 0];
         for (const value of list) {
-            if (value.itemType === 4) {
-                gangValues[0]++;
-            } else if (value.itemType === 5) {
-                gangValues[1]++;
-            } else if (value.itemType === 10) {
-                gangValues[2]++;
-            }
+            gangValues[value.type]++;
         }
 
         let desc = "";
@@ -113,11 +108,11 @@ export default class RecordAlert extends ViewComponent {
             const count = gangValues[index];
             if (count > 0) {
                 if (index === 0) {
-                    desc += "暗杠*" + count + ", ";
-                } else if (index === 1) {
                     desc += "直杠*" + count + ", ";
-                } else if (index === 2) {
+                } else if (index === 1) {
                     desc += "面下杠*" + count + ", ";
+                } else if (index === 2) {
+                    desc += "暗杠*" + count + ", ";
                 }
             }
         }
@@ -154,6 +149,8 @@ export default class RecordAlert extends ViewComponent {
             playerData: []
         }
 
+        let userName = this.getLocalCacheDataProxy().getLoginData().userName;
+
         // 是否显示退出按钮
         this.quitRoom.active = dymjGameResult.currentGameCount >= dymjGameResult.totalGameCount
         // 有退出按钮就没有下一局按钮
@@ -161,15 +158,18 @@ export default class RecordAlert extends ViewComponent {
         this.startNextRoundBtnCountdown(dymjGameResult.time);
 
         let huPaiName = this.getResultDesc(dymjGameResult.list);
-        let gangPaiName = this.getGangDesc(dymjGameResult.list);
-        if (gangPaiName) {
-            if (huPaiName) {
-                huPaiName += ", " + gangPaiName;
-            } else {
-                huPaiName = gangPaiName;
-            }
-        }
         dymjGameResult.players.forEach(v => {
+            if (v.userName === userName) {
+                let gangPaiName = this.getGangDesc(v.gangValues);
+                if (gangPaiName) {
+                    if (huPaiName) {
+                        huPaiName += ", " + gangPaiName;
+                    } else {
+                        huPaiName = gangPaiName;
+                    }
+                }
+            }
+
             let winlossScore = this.getResultWinloss(dymjGameResult.list, v.azimuth);
             let shouValues = [];
             let pengValues = [];

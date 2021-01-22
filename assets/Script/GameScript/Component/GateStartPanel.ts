@@ -65,7 +65,7 @@ export default class GateStartPanel extends ViewComponent {
         }, this, true);
 
         this.settingBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            Facade.Instance.sendNotification(CommandDefine.OpenSetting, null, '')
+            Facade.Instance.sendNotification(CommandDefine.OpenSetting, { isShowChangeUserBtn: true }, '')
         });
 
         this.helpBtn.on(cc.Node.EventType.TOUCH_END, () => {
