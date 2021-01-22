@@ -16,6 +16,7 @@ import { LocalCacheDataProxy } from "../Proxy/LocalCacheDataProxy";
 import { LoginData } from "../GameData/LoginData";
 import { GateCommand } from "../Command/GateCommand";
 import { CommandDefine } from "../MahjongConst/CommandDefine";
+import { DeskPanelViewEventDefine } from "../GameConst/Event/DeskPanelViewEventDefine";
 
 @ccclass
 export default class DeskPanelView extends ViewComponent {
@@ -262,6 +263,8 @@ export default class DeskPanelView extends ViewComponent {
                 clickCount++;
             }
         }, this);
+
+        this.dispatchCustomEvent(DeskPanelViewEventDefine.DeskPanelViewOnLoadComplate, null);
     }
     bindEvent(): void { }
     /**绑定游戏操作事件（杠碰胡等） */

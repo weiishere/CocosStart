@@ -32,6 +32,9 @@ import { DymjEntrustRsp } from '../GameData/Dymj/s2c/DymjEntrustRsp';
 export class DymjProxy extends ModuleProxy {
     joinRoomNo: number;
 
+    // 是否准备房间
+    isReadyEnterRoom: boolean;
+
     public constructor(proxyName: string = null, data: any = null) {
         super(proxyName, data);
     }
@@ -160,12 +163,21 @@ export class DymjProxy extends ModuleProxy {
     }
 
     loginGame(roomNo: number) {
+        if (this.joinRoomNo) {
+            return;
+        }
+        if (this.isReadyEnterRoom) {
+            return;
+        }
+        this.isReadyEnterRoom = true;
         this.joinRoomNo = roomNo;
         let data: DymjC2SPlayerLogin = new DymjC2SPlayerLogin();
         data.acctName = this.getUserName();
         data.acctToken = this.getLocalCacheDataProxy().getUserToken();
         data.clientType = 3;
         this.sendGameData(DymjProtocol.C_PLAYER_LOGIN, data, (op: number, msgType: number) => {
+            this.isReadyEnterRoom = false;
+            this.joinRoomNo = null;
         });
     }
 
@@ -177,6 +189,8 @@ export class DymjProxy extends ModuleProxy {
         data.vipGameSubClass = 1;
 
         this.sendGameData(DymjProtocol.C_ENTER_ROOM, data, (op: number, msgType: number) => {
+            this.isReadyEnterRoom = false;
+            this.joinRoomNo = null;
         });
     }
     /**
@@ -192,6 +206,8 @@ export class DymjProxy extends ModuleProxy {
      * 准备
      */
     ready() {
+        cc.log("发送准备=================");
+        this.isReadyEnterRoom = false;
         let dymjC2SEnterUserInfo: DymjC2SEnterUserInfo = new DymjC2SEnterUserInfo();
         dymjC2SEnterUserInfo.acctName = this.getUserName();
         this.sendGameData(DymjProtocol.C_READY, dymjC2SEnterUserInfo);
@@ -241,7 +257,7 @@ export class DymjProxy extends ModuleProxy {
         if (isHosted) {
             return;
         }
-        
+
         let dymjEntrust: DymjEntrust = new DymjEntrust();
         dymjEntrust.acctName = this.getUserName();
         dymjEntrust.isUserRequest = false;
@@ -253,6 +269,7 @@ export class DymjProxy extends ModuleProxy {
      * 登出
      */
     logout() {
+        this.joinRoomNo = null;
         this.sendGameData(DymjProtocol.LOGOUT, this.getLocalCacheDataProxy().getLoginData().userName);
     }
 

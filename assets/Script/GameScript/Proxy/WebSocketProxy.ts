@@ -116,18 +116,7 @@ export class WebSockerProxy extends Proxy {
     }
 
     onWebSocketOpen(event: Event) {
-        // websocket重连之后进行的处理
-        if (this.isReconnect) {
-            this.sendNotification(CommandDefine.WebSocketReconnect, null);
-        }
-        this.isInitative = false;
-        this.isReconnect = false;
-
         this.stopHeartbeatHandle();
-        this.startHeartbeatHandle(4000);
-
-        this.heartbeatNotResultCount = 0;
-        this.isHeartbeatResult = false;
 
         this.send({ op: OperationDefine.Authentication, un: this.loginData.userName, tk: this.tokenData });
     }
@@ -222,6 +211,18 @@ export class WebSockerProxy extends Proxy {
      * 网关登录成功返回
      */
     gateWayLoginRes(resData) {
+        // websocket重连之后进行的处理
+        if (this.isReconnect) {
+            this.sendNotification(CommandDefine.WebSocketReconnect, null);
+        }
+        this.isInitative = false;
+        this.isReconnect = false;
+
+        this.startHeartbeatHandle(4000);
+
+        this.heartbeatNotResultCount = 0;
+        this.isHeartbeatResult = false;
+
         this.facade.sendNotification(CommandDefine.GateCommand, null, NotificationTypeDefine.Authentication);
     }
 

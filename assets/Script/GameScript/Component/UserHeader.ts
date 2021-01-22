@@ -56,4 +56,8 @@ export default class UserHeader extends ViewComponent {
     updateGold(gold) {
         this.glod.string = gold;
     }
+
+    updateNickname(nickname: string) {
+        this.nickname.string = nickname;
+    }
 }

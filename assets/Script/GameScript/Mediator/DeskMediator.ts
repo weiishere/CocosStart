@@ -16,12 +16,22 @@ import { DymjHu } from "../GameData/Dymj/s2c/DymjHu";
 import { DymjTing } from "../GameData/Dymj/s2c/DymjTing";
 import { DymjGameResult } from "../GameData/Dymj/s2c/DymjGameResult";
 import { DymjMusicManager } from '../Other/DymjMusicManager';
+import { DeskPanelViewEventDefine } from "../GameConst/Event/DeskPanelViewEventDefine";
 
 export class DeskMediator extends BaseMediator {
 
     public constructor(mediatorName: string = null, viewComponent: any = null) {
         super(mediatorName, viewComponent);
+        this.listenerEvent();
     }
+
+    private listenerEvent() {
+        // 加载完成事件
+        this.viewComponent.on(DeskPanelViewEventDefine.DeskPanelViewOnLoadComplate, () => {
+            this.getDymjProxy().ready();
+        });
+    }
+
     protected prefabSource(): string {
         return PrefabDefine.DeskPanel;
     }
@@ -78,6 +88,7 @@ export class DeskMediator extends BaseMediator {
 
         this.DeskPanelViewScript.closeEntrustMask();
     }
+
     public playEventSound(eventName: DeskEventName, cardNumber?: number) {
         if (cardNumber) {
             DymjMusicManager.put(cardNumber - 1, 1);
@@ -96,6 +107,7 @@ export class DeskMediator extends BaseMediator {
         }
 
     }
+
     public async handleNotification(notification: INotification) {
 
         const gameData = this.getDeskProxy().getGameData();
@@ -177,8 +189,6 @@ export class DeskMediator extends BaseMediator {
                         this.getDymjProxy().operation(DymjOperationType.XIAO, 0);
                     }
                 });
-                // 发送准备
-                this.getDymjProxy().ready();
                 break;
             case CommandDefine.OpenRecordAlter:
                 this.dymjGameResult = notification.getBody();
