@@ -342,7 +342,7 @@ export default class DeskPanelView extends ViewComponent {
     /**更新桌面信息 */
     updateDeskInfo(): void {
         const { gameRoundNum, totalRound, baseScore, fanTime } = this.getData().deskData.gameSetting;
-        this.node.getChildByName("deskInfo").getChildByName("deskInfoStr").getComponent(cc.Label).string = `第${gameRoundNum}/${totalRound}局\n底分:${baseScore} / 翻数:${fanTime}`;
+        this.node.getChildByName("deskInfo").getChildByName("deskInfoStr").getComponent(cc.Label).string = `第${gameRoundNum + 1}/${totalRound}局\n底分:${baseScore} / 翻数:${fanTime}`;
     }
     /**更新自己主牌 */
     updateMyCurCardList(): void {

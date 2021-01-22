@@ -469,7 +469,12 @@ export class DeskProxy extends BaseProxy {
         });
         this.repository.gameData = JSON.parse(JSON.stringify(this.dataBackup.gameData));//Object.assign({}, this.dataBackup.gameData);
         this.repository.gameData.partnerCardsList = _partnerCardsList;
+        //更新用户金币
+        dymjGameResult.players.forEach(player => {
+            this.repository.deskData.playerList.find(item => item.playerId === player.userName).playerGold = player.credit;
+        })
         this.sendNotification(CommandDefine.OpenRecordAlter, dymjGameResult);
+
         // let recordType: RecordType = {
         //     roundIndex: dymjGameResult.currentGameCount,
         //     gameRoundArr: []
@@ -633,7 +638,7 @@ export class DeskProxy extends BaseProxy {
                         /**对家的状态 */
                         status: {
                             /**对家是否已经胡牌 */
-                            isHadHu: huCard > 0, 
+                            isHadHu: huCard > 0,
                             isBaoQingHu: isBaoHu,
                             /** 是否报胡 */
                             isBaoHu: isBaoHu

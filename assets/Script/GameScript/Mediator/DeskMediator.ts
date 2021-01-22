@@ -195,6 +195,7 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.scheduleOnce(() => {
                     this.openRecordAlter(notification.getBody());
                 }, 2);
+                this.DeskPanelViewScript.updatePlayerHeadView();
                 break;
             case CommandDefine.RefreshPlayerPush:
                 this.DeskPanelViewScript && this.DeskPanelViewScript.updatePlayerHeadView();
