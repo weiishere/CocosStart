@@ -27,7 +27,7 @@ export class GatePanelMediator extends BaseMediator {
     private gameStartPanel: cc.Node;
 
     private userHeaderScript;
-
+    private loadingPanel: cc.Node = null;
     private musicManager: MusicManager;
 
     /** 兑换窗口 */
@@ -219,6 +219,8 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.ForcedOffline,
             CommandDefine.OpenRecordPanel,
             CommandDefine.OpenMyCenter,
+            CommandDefine.OpenLoadingPanel,
+            CommandDefine.CloseLoadingPanel
         ];
     }
 
@@ -312,6 +314,16 @@ export class GatePanelMediator extends BaseMediator {
                 this.scrollMsgNode.setPosition(cc.v2(30, 233));
                 this.scrollMsgNode.getComponent('ScrollMsgNode').createContent('抵制不良游戏，拒绝盗版游戏，注意自我保护，谨防受骗上当，适度游戏益脑，沉迷游戏伤身，合理安排时间，享受健康生活', 300);
                 break;
+            case CommandDefine.OpenLoadingPanel:
+                this.loadingPanel = new cc.Node('loading');
+                const label = this.loadingPanel.addComponent(cc.Label);
+                label.string = "laoding";
+                cc.find("Canvas").addChild(this.loadingPanel);
+                break;
+            case CommandDefine.CloseLoadingPanel:
+                this.loadingPanel.destroy();
+                break;
+
 
         }
     }

@@ -105,6 +105,7 @@ export class DeskMediator extends BaseMediator {
 
         switch (notification.getName()) {
             case CommandDefine.InitDeskPanel:
+                this.sendNotification(CommandDefine.CloseLoadingPanel);
                 await this.init();
                 this.deskPanel = this.viewComponent.getChildByName('deskView');
                 this.DeskPanelViewScript = this.deskPanel.getComponent('DeskPanelView') as DeskPanelView;
@@ -186,7 +187,7 @@ export class DeskMediator extends BaseMediator {
                 }, 2);
                 break;
             case CommandDefine.RefreshPlayerPush:
-                this.DeskPanelViewScript.updatePlayerHeadView();
+                this.DeskPanelViewScript && this.DeskPanelViewScript.updatePlayerHeadView();
                 break;
             case CommandDefine.ExitDeskPanel:
                 this.deskPanel.destroy();
@@ -242,7 +243,7 @@ export class DeskMediator extends BaseMediator {
                 // const giveCard: number = notification.getBody().giveCard;
                 const _body = <{ givePlayer: PlayerInfo, giveCard: number, isMe: boolean, eventName: DeskEventName }>notification.getBody();
                 const { givePlayer, giveCard, eventName } = _body;
-                this.playEventSound(eventName); 
+                this.playEventSound(eventName);
                 givePlayer && giveCard && this.DeskPanelViewScript.deleteOutCard(givePlayer.gameIndex, giveCard);//去除outcard
                 this.sendNotification(CommandDefine.ShowCenterEffect, { isMe: _body.isMe });
                 break;

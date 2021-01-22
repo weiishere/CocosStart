@@ -62,6 +62,7 @@ export class DeskProxy extends BaseProxy {
                     "partnerCards":
                     {
                         "curCardList": [],
+                        "handCard": 0,
                         "curCardCount": 0,
                         "isHandCard": false,
                         "touchCard": [],
@@ -105,9 +106,10 @@ export class DeskProxy extends BaseProxy {
                     partnerCard.partnerCards.curCardList = user.initSpValuesSorted;
                     if (user.isBank) {
                         partnerCard.partnerCards.curCardCount--;
+                        partnerCard.partnerCards.handCard = partnerCard.partnerCards.curCardList.pop();
                         partnerCard.partnerCards.isHandCard = true;
                         //toushi
-                        if (user.initSpValuesSorted[0] !== 0) partnerCard.partnerCards.handCard = partnerCard.partnerCards.curCardList.pop();
+                        //if (user.initSpValuesSorted[0] !== 0) partnerCard.partnerCards.handCard = partnerCard.partnerCards.curCardList.pop();
                     }
                 }
 
@@ -184,8 +186,10 @@ export class DeskProxy extends BaseProxy {
             const huList = (dymjS2CPlayerGet.nextStep.args && dymjS2CPlayerGet.nextStep.args.list) ? dymjS2CPlayerGet.nextStep.args.list : [];
             this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
         } else {
+            console.log('dymjS2CPlayerGet.getMjValue', dymjS2CPlayerGet.getMjValue);
             let { partnerCards } = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
             partnerCards.isHandCard = true;
+            partnerCards.handCard = dymjS2CPlayerGet.getMjValue;
         }
 
         this.sendNotification(CommandDefine.GetGameCardPush);
@@ -317,6 +321,10 @@ export class DeskProxy extends BaseProxy {
                 giveCard = dymjGameOperation.peng.mjValue;
                 partnerCard.partnerCards.touchCard.push(dymjGameOperation.peng.mjValue);
                 partnerCard.partnerCards.curCardCount -= 2;
+                let count = 0;
+                partnerCard.partnerCards.curCardList = partnerCard.partnerCards.curCardList.filter((item, index) => {
+                    if (item === dymjGameOperation.peng.mjValue && count <= 1) { count++; return false; } else { return true; }
+                });
                 givePlayer = this.getPlayerByGameIndex(dymjGameOperation.peng.playerAzimuth);//引碰者
                 if (this.isMy(givePlayer.playerId)) {
                     this.getGameData().myCards.outCardList.pop();
@@ -332,6 +340,10 @@ export class DeskProxy extends BaseProxy {
                 if (dymjGameOperation.gang.gangType === 0) {
                     //点杠
                     partnerCard.partnerCards.curCardCount -= 3;
+                    let count = 0;
+                    partnerCard.partnerCards.curCardList = partnerCard.partnerCards.curCardList.filter((item, index) => {
+                        if (item === dymjGameOperation.gang.mjValues[0] && count <= 3) { count++; return false; } else { return true; }
+                    });
                     if (this.isMy(givePlayer.playerId)) {
                         this.getGameData().myCards.outCardList.pop();
                     } else {
@@ -340,6 +352,7 @@ export class DeskProxy extends BaseProxy {
                 } else if (dymjGameOperation.gang.gangType === 1) {
                     //抢杠
                     partnerCard.partnerCards.isHandCard = false;
+                    partnerCard.partnerCards.handCard = 0;
                     if (this.isMy(givePlayer.playerId)) {
                         this.getGameData().myCards.outCardList.pop();
                     } else {
@@ -351,7 +364,12 @@ export class DeskProxy extends BaseProxy {
                 } else if (dymjGameOperation.gang.gangType === 2) {
                     //暗杠
                     partnerCard.partnerCards.curCardCount -= 4;
+                    let count = 0;
+                    partnerCard.partnerCards.curCardList = partnerCard.partnerCards.curCardList.filter((item, index) => {
+                        if (item === dymjGameOperation.gang.mjValues[0] && count <= 3) { count++; return false; } else { return true; }
+                    });
                     partnerCard.partnerCards.isHandCard = false;
+                    partnerCard.partnerCards.handCard = 0;
                 }
                 partnerCard.partnerCards.barCard.push(burObj);
             } else if (dymjGameOperation.oprtType === DymjOperationType.HU) {
@@ -383,15 +401,37 @@ export class DeskProxy extends BaseProxy {
             this.getGameData().myCards.outCardList.push(dymjS2COpPutRsp.putMjValue);
             this.getGameData().myCards.handCard = 0;
             this.getGameData().myCards.curCardList = dymjS2COpPutRsp.spValuesSorted;
+
         } else {
             let partnerCard = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
             partnerCard.partnerCards.outCardList.push(dymjS2COpPutRsp.putMjValue);
             //partnerCard.partnerCards.curCardCount--;
+
             if (!partnerCard.partnerCards.isHandCard) {
                 partnerCard.partnerCards.curCardCount--;
+                let count = 0;
+                partnerCard.partnerCards.curCardList = partnerCard.partnerCards.curCardList.filter((item, index) => {
+                    if (item === dymjS2COpPutRsp.putMjValue && count === 0) { count++; return false; } else { return true; }
+                });
+            } else {
+                //如果有手牌，这里要注意看打出的牌是否等于手牌
+                if (partnerCard.partnerCards.handCard !== dymjS2COpPutRsp.putMjValue) {
+                    //出的不是手牌
+                    let count = 0;
+                    partnerCard.partnerCards.curCardList = partnerCard.partnerCards.curCardList.filter((item, index) => {
+                        if (item === dymjS2COpPutRsp.putMjValue && count === 0) { count++; return false; } else { return true; }
+                    });
+                    // console.log('----------------------------')
+                    // debugger
+                    // console.log(partnerCard.partnerCards.handCard);
+                    // console.log('----------------------------')
+                    partnerCard.partnerCards.curCardList.push(partnerCard.partnerCards.handCard + 0);
+                    partnerCard.partnerCards.curCardList.sort((a, b) => a - b);
+                }
             }
+
             partnerCard.partnerCards.isHandCard = false;
-            partnerCard.partnerCards.curCardList = dymjS2COpPutRsp.spValuesSorted;
+            partnerCard.partnerCards.handCard = 0;
         }
         this.sendNotification(CommandDefine.ShowCardEffect, { gameIndex: dymjS2COpPutRsp.playerAzimuth, cardNumber: dymjS2COpPutRsp.putMjValue });
         this.sendNotification(CommandDefine.ShowCardPush, { playerInfo, showCard: dymjS2COpPutRsp.putMjValue });
@@ -411,6 +451,7 @@ export class DeskProxy extends BaseProxy {
             item.partnerCards =
             {
                 "curCardList": [],
+                "handCard": 0,
                 "curCardCount": 0,
                 "isHandCard": false,
                 "touchCard": [],
@@ -541,7 +582,7 @@ export class DeskProxy extends BaseProxy {
             isBaoHu = player.isTing;
 
             if (curCardList.length === 2 || curCardList.length === 5 || curCardList.length === 8 || curCardList.length === 11) {
-                handCard = curCardList.pop();// curCardList[curCardList.length - 1];
+                handCard = curCardList[curCardList.length - 1];
             }
 
             if (this.isMy(player.playerInfo.username)) {
@@ -550,7 +591,7 @@ export class DeskProxy extends BaseProxy {
                     hadHuCard: huCard,
                     outCardList: outCard,
                     touchCard: pengCard,
-                    curCardList: curCardList,
+                    curCardList: (handCard > 0 ? curCardList.splice(0, curCardList.length - 1) : curCardList),//curCardList,
                     setFace: 0,
                     handCard: handCard,
                     cardsChoose: [],
@@ -558,7 +599,7 @@ export class DeskProxy extends BaseProxy {
                     mayHuCards: [],
                     status: {
                         isHadHu: huCard > 0,
-                        isBaoQingHu: false,
+                        isBaoQingHu: isBaoHu,
                         isBaoHu: isBaoHu
                     }
                 }
@@ -574,7 +615,7 @@ export class DeskProxy extends BaseProxy {
                         /**对家可操作牌列数 */
                         curCardCount: player.shouValues.length - (handCard > 0 ? 1 : 0),
                         /**对家可操作牌列数（可不传） */
-                        curCardList: player.shouValues,
+                        curCardList: (handCard > 0 ? player.shouValues.splice(0, player.shouValues.length - 1) : player.shouValues),
                         /**是否收到新摸牌 */
                         isHandCard: handCard > 0,
                         /**新摸到的牌 */
@@ -592,7 +633,8 @@ export class DeskProxy extends BaseProxy {
                         /**对家的状态 */
                         status: {
                             /**对家是否已经胡牌 */
-                            isHadHu: huCard > 0, isBaoQingHu: false,
+                            isHadHu: huCard > 0, 
+                            isBaoQingHu: isBaoHu,
                             /** 是否报胡 */
                             isBaoHu: isBaoHu
                         }

@@ -221,7 +221,7 @@ export default class CardItemView extends cc.Component {
     }
     private onTouchDoneCallBack(touchEndCallback, touchEvent) {
         touchEndCallback && touchEndCallback.call(this);
-        this.mayHuCards && this.mayHuCards.huList.length !== 0 && (this.node.getChildByName('down').active = true); 
+        this.mayHuCards && this.mayHuCards.huList.length !== 0 && (this.node.getChildByName('down').active = true);
         if (!this.isChoose) {
             cc.tween(this.node).to(0.1, { position: cc.v3(0, 20) }).start();
             this.extractionUp && this.extractionUp(this.cardNumber);
@@ -326,9 +326,18 @@ export default class CardItemView extends cc.Component {
                 faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
                 break;
             case 'front':
+                faceNode.setRotation(180);
                 if (this.mod === 'setUp') {
-                    cardComp.spriteFrame = this.hideFrontCardbg;
-                    faceNode.active = false;
+                    if (!cardNumber) {
+                        cardComp.spriteFrame = this.hideFrontCardbg;
+                        faceNode.active = false;
+                    } else {
+                        cardComp.spriteFrame = this.mainCardbg;
+                        this.node.setScale(0.6);
+                        faceNode.active = true;
+                        faceNode.setRotation(0);
+                        faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
+                    }
                 } else if (this.mod === "fall") {
                     if (option && option.fallShowStatus && option.fallShowStatus === 'hide') {
                         cardComp.spriteFrame = this.hideFrontFallCardbg;
@@ -339,7 +348,6 @@ export default class CardItemView extends cc.Component {
                     faceNode.setPosition(cc.v2(0, 6));
                     faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
                 }
-                faceNode.setRotation(180)
                 //对家牌
                 break;
             case 'left':

@@ -43,7 +43,7 @@ export default class RecordAlert extends ViewComponent {
         });
 
         this.goOnBtn.on(cc.Node.EventType.TOUCH_START, () => {
-            cc.tween(this.quitRoom).to(0.1, { scale: 1.1 }).to(0.1, { scale: 1 }).call(() => {
+            cc.tween(this.goOnBtn).to(0.1, { scale: 1.1 }).to(0.1, { scale: 1 }).call(() => {
                 this.getDymjProxy().goOn();
             }).start();
 

@@ -58,11 +58,11 @@ export type PartnerCard = {
         /**对家可操作牌列数 */
         curCardCount: number,
         /**对家可操作牌列数（可不传） */
-        curCardList?: Array<number>,
+        curCardList: Array<number>,
         /**是否收到新摸牌 */
         isHandCard: boolean,
         /**新摸到的牌 */
-        handCard?: number,
+        handCard: number,
         /**对家碰牌 */
         touchCard: Array<number>,
         /**对家杠牌 */
@@ -205,9 +205,9 @@ export class DeskRepository {
                 playerId: '',
                 partnerCards: {
                     curCardCount: 0,
-                    //curCardList: [],
+                    curCardList: [],
                     isHandCard: true,
-                    //handCard: [],
+                    handCard: 0,
                     touchCard: [],
                     barCard: [],
                     hadHuCard: 0,

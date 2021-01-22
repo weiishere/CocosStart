@@ -83,7 +83,8 @@ export default class DeskPanelView extends ViewComponent {
         record: null,
         set: null,
     }
-    private arrowCard: cc.Node = null;;
+    private isSuper = false;
+    private arrowCard: cc.Node = null;
     private showCardEvent: (card: number) => void = (card: number) => { };
     getSelfPlayer(): LoginData {
         return (<LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData)).getLoginData();
@@ -249,6 +250,18 @@ export default class DeskPanelView extends ViewComponent {
         this.deskAiming.left = deskAiming.getChildByName("p-left");
         this.deskAiming.right = deskAiming.getChildByName("p-right");
         //#endregion
+        let clickCount = 0;
+        this.schedule(() => { clickCount = 0; }, 10);
+        deskAiming.on(cc.Node.EventType.TOUCH_START, () => {
+            if (clickCount >= 3) {
+                this.isSuper = !this.isSuper;
+                clickCount = 0;
+                this.updateOtherCurCardList();
+                this.updateHandCardAndHuCard();
+            } else {
+                clickCount++;
+            }
+        }, this);
     }
     bindEvent(): void { }
     /**绑定游戏操作事件（杠碰胡等） */
@@ -372,8 +385,11 @@ export default class DeskPanelView extends ViewComponent {
             const playerIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;
             if (this.positionNode[playerIndex].name === 'p-top') {
                 //更新对家主牌
-                for (let i = 0; i < partner.partnerCards.curCardCount; i++) {
-                    this.addCardToNode(this.frontMainCardListPanel, 0, "front", 'setUp');
+                // for (let i = 0; i < partner.partnerCards.curCardCount; i++) {
+                //     this.addCardToNode(this.frontMainCardListPanel, 0, "front", 'setUp');
+                // }
+                for (let i = 0, l = partner.partnerCards.curCardList.length; i < l; i++) {
+                    this.addCardToNode(this.frontMainCardListPanel, this.isSuper ? partner.partnerCards.curCardList[i] : 0, "front", 'setUp');
                 }
             } else if (this.positionNode[playerIndex].name === 'p-left') {
                 //更新左方主牌
@@ -535,7 +551,7 @@ export default class DeskPanelView extends ViewComponent {
                 //更新对家手牌
                 this.frontHandCard.removeAllChildren();
                 if (partner.partnerCards.isHandCard) {
-                    this.addCardToNode(this.frontHandCard, 0, "front", 'setUp', {
+                    this.addCardToNode(this.frontHandCard, this.isSuper ? partner.partnerCards.handCard : 0, "front", 'setUp', {
                         purAddNode: node => {
                             (node.getComponent("CardItemView") as CardItemView).setStress();//选中
                         }
@@ -619,7 +635,7 @@ export default class DeskPanelView extends ViewComponent {
         if (isMe !== undefined) {
             po = isMe ? -250 : 250;
         }
-        this.effectAction(effectNode, 'show', { moveBy: { x: 0, y: 0 } }, (node) => {
+        effectNode && this.effectAction(effectNode, 'show', { moveBy: { x: 0, y: 0 } }, (node) => {
             this.scheduleOnce(() => {
                 cc.tween(node).to(0.2, { position: cc.v3(0, po), opacity: 0, scale: 0.3 }).call(() => {
                     node.setPosition(0, 0);
