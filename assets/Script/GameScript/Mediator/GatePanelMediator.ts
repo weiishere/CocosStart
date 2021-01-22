@@ -331,7 +331,7 @@ export class GatePanelMediator extends BaseMediator {
             case CommandDefine.OpenLoadingPanel:
                 this.loadingPanel = new cc.Node('loading');
                 const label = this.loadingPanel.addComponent(cc.Label);
-                label.string = "laoding";
+                label.string = "loading"; 
                 cc.find("Canvas").addChild(this.loadingPanel);
                 break;
             case CommandDefine.CloseLoadingPanel:
