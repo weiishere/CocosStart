@@ -18,4 +18,6 @@ export class DymjGameResult {
     totalGameCount: number;
     /** 房间号 */
     roomNo: number
+    /** 是否显示退出按钮 */
+    isShowQuitBtn: boolean;
 }

@@ -152,9 +152,15 @@ export default class RecordAlert extends ViewComponent {
         let userName = this.getLocalCacheDataProxy().getLoginData().userName;
 
         // 是否显示退出按钮
-        this.quitRoom.active = dymjGameResult.currentGameCount >= dymjGameResult.totalGameCount
+        this.quitRoom.active = dymjGameResult.currentGameCount >= dymjGameResult.totalGameCount;
+
+        if (dymjGameResult.isShowQuitBtn) {
+            this.quitRoom.active = true;
+        }
+
         // 有退出按钮就没有下一局按钮
         this.goOnBtn.active = !this.quitRoom.active;
+
         this.startNextRoundBtnCountdown(dymjGameResult.time);
 
         let huPaiName = this.getResultDesc(dymjGameResult.list);

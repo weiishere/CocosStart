@@ -274,6 +274,9 @@ export class DymjProxy extends ModuleProxy {
     }
 
     serverShutDown(): void {
+        this.joinRoomNo = null;
+        this.getGateProxy().toast("游戏服务暂停了");
+        this.sendNotification(CommandDefine.ExitDeskPanel, {}, '');
     }
 
     onRegister() {
