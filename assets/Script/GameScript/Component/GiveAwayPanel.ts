@@ -137,12 +137,11 @@ export default class GiveAwayPanel extends ViewComponent {
             let statusStr = "";
             let giveAwayScore = logsData.giveAwayScore;
             let giveAwayName = "";
+            statusStr = "成功";
             if (logsData.userName === userName) {
-                statusStr = "出";
                 giveAwayScore = -giveAwayScore;
                 giveAwayName = logsData.toUserName;
             } else {
-                statusStr = "收";
                 giveAwayName = logsData.userName;
             }
             this.updateLogContent(node, DateUtil.dateFormat(DateUtil.DATE_FORMAT, date), giveAwayName, giveAwayScore, statusStr);
