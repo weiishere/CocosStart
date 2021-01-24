@@ -74,7 +74,7 @@ export default class RecordDetailList extends ViewComponent {
                 recorDetailData = {
                     currentGameCount: v.gameNum,
                     roomNo: v.roomNo,
-                    gameTime: DateUtil.dateFormat("YYYY-mm-dd HH:MM:SS", date),
+                    gameTime: DateUtil.dateFormat(DateUtil.DATE_FORMAT, date),
                     playerData: [],
                 };
                 playLog.set(v.gameNo, recorDetailData);

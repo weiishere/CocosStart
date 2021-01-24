@@ -35,6 +35,8 @@ export class GatePanelMediator extends BaseMediator {
     private exchangePanelNode: cc.Node;
     /** 个人中心窗口 */
     private myCenterNode: cc.Node;
+    /** 赠送窗口 */
+    private giveAwatPanelNode: cc.Node;
 
     public constructor(mediatorName: string = null, viewComponent: any = null) {
         super(mediatorName, viewComponent);
@@ -63,6 +65,7 @@ export class GatePanelMediator extends BaseMediator {
             PrefabDefine.ExchangePanel,
             PrefabDefine.RecordPanel,
             PrefabDefine.MyCenter,
+            PrefabDefine.GiveAwayPanel,
         ];
     }
 
@@ -172,6 +175,15 @@ export class GatePanelMediator extends BaseMediator {
         script.loadData(localCache.getLoginData(), localCache.getInviteCode());
     }
 
+    /** 打开赠送界面 */
+    private openGiveAwayPanel() {
+        let giveAwatPanelResource = cc.loader.getRes(PrefabDefine.GiveAwayPanel, cc.Prefab);
+        this.giveAwatPanelNode = cc.instantiate(giveAwatPanelResource);
+        this.viewComponent.addChild(this.giveAwatPanelNode);
+
+        let script = <MyCenter>this.giveAwatPanelNode.getComponent("GiveAwayPanel");
+    }
+
     /** 切换账号 */
     private changeUserHandle() {
         // 暂停音乐
@@ -229,6 +241,7 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.ForcedOffline,
             CommandDefine.OpenRecordPanel,
             CommandDefine.OpenMyCenter,
+            CommandDefine.OpenGiveAwayPanel,
             CommandDefine.OpenLoadingPanel,
             CommandDefine.CloseLoadingPanel
         ];
@@ -299,6 +312,9 @@ export class GatePanelMediator extends BaseMediator {
             case CommandDefine.OpenMyCenter:
                 this.openMyCenter();
                 break;
+            case CommandDefine.OpenGiveAwayPanel:
+                this.openGiveAwayPanel();
+                break;
             case CommandDefine.ChangeUser:
             case CommandDefine.ForcedOffline:
                 this.changeUserHandle();
@@ -331,11 +347,13 @@ export class GatePanelMediator extends BaseMediator {
             case CommandDefine.OpenLoadingPanel:
                 this.loadingPanel = new cc.Node('loading');
                 const label = this.loadingPanel.addComponent(cc.Label);
-                label.string = "loading"; 
+                label.string = "loading";
                 cc.find("Canvas").addChild(this.loadingPanel);
                 break;
             case CommandDefine.CloseLoadingPanel:
-                this.loadingPanel.destroy();
+                if (this.loadingPanel && this.loadingPanel.isValid) {
+                    this.loadingPanel.destroy();
+                }
                 break;
 
 

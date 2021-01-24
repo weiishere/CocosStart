@@ -24,6 +24,7 @@ export enum CommandDefine {
     OpenRecordAlter = "OpenRecordAlter",
     ChangeUser = "ChangeUser",
     OpenMyCenter = "OpenMyCenter",
+    OpenGiveAwayPanel = "OpenGiveAwayPanel",
     OpenLoadingPanel = "OpenLoadingPanel",
     CloseLoadingPanel = "CloseLoadingPanel",
     /** 强制下线 */

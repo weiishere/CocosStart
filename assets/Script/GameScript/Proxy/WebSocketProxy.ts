@@ -145,7 +145,10 @@ export class WebSockerProxy extends Proxy {
         // 操作号
         let op: number = resData.op;
         // 错误码
-        let errorCode: number = dt.errorCode;
+        let errorCode: number = 0;
+        if (dt && dt.errorCode) {
+            errorCode = dt.errorCode;
+        }
 
         if (this.errorCodeHandle(errorCode)) {
             return;
@@ -162,6 +165,9 @@ export class WebSockerProxy extends Proxy {
             case OperationDefine.ForceOffline:
                 this.getGateProxy().toast("你的账号被别人登录，强制你下线");
                 this.sendNotification(CommandDefine.ForcedOffline, null);
+                break;
+            case OperationDefine.GGW2C_Heartbeat:
+                this.send({ op: OperationDefine.GGW2C_Heartbeat });
                 break;
             case OperationDefine.C2GGW_Heartbeat:
                 // 心跳返回

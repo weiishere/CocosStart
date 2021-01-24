@@ -163,6 +163,7 @@ export default class RecordAlert extends ViewComponent {
 
         this.startNextRoundBtnCountdown(dymjGameResult.time);
 
+        // 最后胡牌的牌型
         let huPaiName = this.getResultDesc(dymjGameResult.list);
         dymjGameResult.players.forEach(v => {
             let winlossScore = this.getResultWinloss(dymjGameResult.list, v.azimuth);
@@ -189,14 +190,15 @@ export default class RecordAlert extends ViewComponent {
             }
 
             let gangPaiName = this.getGangDesc(v.gangValues);
+            let huPaiNameTmp = huPaiName;
             if (huValues.length > 0) {
-                if (huPaiName) {
-                    huPaiName += ", " + gangPaiName;
+                if (huPaiNameTmp) {
+                    huPaiNameTmp += ", " + gangPaiName;
                 } else {
-                    huPaiName = gangPaiName;
+                    huPaiNameTmp = gangPaiName;
                 }
             } else {
-                huPaiName = "未胡牌, " + gangPaiName;
+                huPaiNameTmp = "未胡牌, " + gangPaiName;
             }
 
             let playerRecordData: PlayerRecordData = {
@@ -204,7 +206,7 @@ export default class RecordAlert extends ViewComponent {
                 huValues: huValues,
                 pengValues: pengValues,
                 gangValues: gangValues,
-                huPaiName: huPaiName,
+                huPaiName: huPaiNameTmp,
                 userName: v.userName,
                 nickname: v.nickname,
                 head: v.head,

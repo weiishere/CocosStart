@@ -1,4 +1,6 @@
 export class DateUtil {
+    static DATE_FORMAT:string = "YYYY-mm-dd HH:MM:SS";
+
     static dateFormat(fmt, date): string {
         let ret;
         const opt = {
