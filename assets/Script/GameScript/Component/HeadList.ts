@@ -41,7 +41,7 @@ export default class HeadList extends ViewComponent {
     }
 
     protected bindUI(): void {
-        let headUrl = "http://139.9.242.13/static/userHead/";
+        let headUrl = this.getConfigProxy().staticUrl + "/userHead/";
 
         for (let index = 0; index < 24; index++) {
             let headName = "r" + index + ".png";
