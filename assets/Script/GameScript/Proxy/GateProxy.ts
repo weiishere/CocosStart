@@ -77,6 +77,8 @@ export class GateProxy extends BaseProxy {
                     this.toast("手机号已经注册了！");
                 } else if (errorCode === ServerCode.SECURITY_CODE_ERROR) {
                     this.toast("验证码错误！");
+                } else if (errorCode === ServerCode.INVITE_CODE_ERROR) {
+                    this.toast("邀请码错误！");
                 }
             }
         }, (err) => {

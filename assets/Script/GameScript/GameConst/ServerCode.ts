@@ -19,4 +19,6 @@ export enum ServerCode {
     SECURITY_CODE_ERROR = -8,
     /** 系统维护中 */
     SYSTEM_MAINTAIN = -9,
+	/** 邀请码错误 */
+	INVITE_CODE_ERROR = -10,
 }
