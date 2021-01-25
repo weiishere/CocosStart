@@ -30,18 +30,20 @@ export default class GateStartPanel extends ViewComponent {
     private mahjongEntrance: cc.Node;
     private pdkEntrance: cc.Node;
     private exchangeEntrance: cc.Node;
+    private otherGamePanel: cc.Node;
 
     protected async bindUI() {
         this.mahjongEntrance = this.root.getChildByName("gameBg1");
         this.pdkEntrance = this.root.getChildByName("gameBg2");
+        this.otherGamePanel = this.root.getChildByName("otherGame");
         this.exchangeEntrance = this.root.getChildByName("gameBg3");
         this.initEffect();
     }
 
     private initEffect(): void {
-        const pdkNode = this.root.getChildByName("gameBg2").getChildByName("gameItem2");
-        const _action2 = cc.repeatForever(cc.sequence(cc.rotateTo(1, 5), cc.rotateTo(1, -5), cc.callFunc(() => { })));
-        pdkNode.runAction(_action2);
+        // const pdkNode = this.root.getChildByName("gameBg2").getChildByName("gameItem2");
+        // const _action2 = cc.repeatForever(cc.sequence(cc.rotateTo(1, 5), cc.rotateTo(1, -5), cc.callFunc(() => { })));
+        // pdkNode.runAction(_action2);
 
 
         const mahjongNode = this.root.getChildByName("gameBg1").getChildByName("gameItem1");
@@ -57,9 +59,15 @@ export default class GateStartPanel extends ViewComponent {
         this.mahjongEntrance.on(cc.Node.EventType.TOUCH_END, () => {
             (Facade.Instance.retrieveProxy(ProxyDefine.Gate) as GateProxy).joinClub();
         }, this, true);
-        this.pdkEntrance.on(cc.Node.EventType.TOUCH_END, () => {
-            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '游戏开发中，敬请期待...', toastOverlay: true }, '');
-        }, this, true);
+
+        this.otherGamePanel.children.forEach(node => {
+            node.on(cc.Node.EventType.TOUCH_START, (eventData, item) => {
+                const _action = cc.sequence(cc.scaleTo(0.1, 1.1), cc.scaleTo(0.1, 1), cc.callFunc(() => { }));
+                eventData.target.runAction(_action);
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '游戏开发中，敬请期待...', toastOverlay: false }, '');
+            }, this, true);
+        });
+
         this.exchangeEntrance.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenExchangePanel, null, '')
         }, this, true);
