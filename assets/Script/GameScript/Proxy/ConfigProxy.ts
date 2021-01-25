@@ -8,6 +8,7 @@ export class ConfigProxy extends BaseProxy {
 
     private _facadeUrl: string;
     private _ggwUrl: string;
+    private _staticUrl: string;
 
     public constructor(proxyName: string = null, data: any = null) {
         super(proxyName, data);
@@ -25,6 +26,7 @@ export class ConfigProxy extends BaseProxy {
             HttpUtil.send(configUrl, (response, request, url) => {
                 this._facadeUrl = response.facadeUrl;
                 this._ggwUrl = response.ggwUrl;
+                this._staticUrl = response.staticUrl;
 
                 this.facade.sendNotification(CommandDefine.GateCommand, null, NotificationTypeDefine.CheckLogin);
             }, (errorCode, request, state, url) => {
@@ -40,5 +42,9 @@ export class ConfigProxy extends BaseProxy {
 
     public get ggwUrl(): string {
         return this._ggwUrl;
+    }
+
+    public get staticUrl(): string {
+        return this._staticUrl;
     }
 }

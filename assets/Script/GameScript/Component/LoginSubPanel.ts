@@ -97,6 +97,10 @@ export class LoginSubPanel extends ViewComponent {
         // 验证码可以为空，为空表示登录
         let inviteCode = this.inviteInput.string;
 
+        if(inviteCode && inviteCode.length > 10){
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '邀请码太长了', toastOverlay: false }, '');
+        }
+
         this.dispatchCustomEvent(GateEventDefine.LOGIN_BTN_EVENT, new PhoneRegisterOrLoginData(phoneNo, code, inviteCode));
     }
 

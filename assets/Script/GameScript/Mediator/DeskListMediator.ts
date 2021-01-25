@@ -94,6 +94,7 @@ export class DeskListMediator extends BaseMediator {
             CommandDefine.OpenDeskList,
             CommandDefine.UpdatePlayerGold,
             CommandDefine.UpdateNickname,
+            CommandDefine.UpdateHead,
             CommandDefine.WebSocketReconnect,
             CommandDefine.ForcedOffline,
         ];
@@ -111,6 +112,13 @@ export class DeskListMediator extends BaseMediator {
             let nickname = notification.getBody();
             if (this.userHeaderScript) {
                 this.userHeaderScript.updateNickname(nickname);
+            }
+        }
+
+        if (notification.getName() === CommandDefine.UpdateHead) {
+            let head = notification.getBody();
+            if (this.userHeaderScript) {
+                this.userHeaderScript.updateHead(head);
             }
         }
 

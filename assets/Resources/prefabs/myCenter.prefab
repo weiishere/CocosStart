@@ -3341,6 +3341,12 @@
       "__id__": 1
     },
     "_enabled": true,
+    "headList": {
+      "__uuid__": "eb00f27e-f779-4fb2-acab-e3c377dab0e9"
+    },
+    "headNode": {
+      "__id__": 24
+    },
     "nicknameLabel": {
       "__id__": 33
     },

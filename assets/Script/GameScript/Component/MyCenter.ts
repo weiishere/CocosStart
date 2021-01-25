@@ -15,6 +15,10 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class MyCenter extends ViewComponent {
 
+    @property(cc.Prefab)
+    headList: cc.Prefab = null;
+    @property(cc.Node)
+    headNode: cc.Node = null;
     @property(cc.Label)
     nicknameLabel: cc.Label = null;
     @property(cc.Label)
@@ -41,6 +45,10 @@ export default class MyCenter extends ViewComponent {
     confirmEidtBtn: cc.Node = null;
 
     protected bindUI(): void {
+        this.node.on("update_head", (event: cc.Event.EventCustom) => {
+            let sprite = this.headNode.getComponent(cc.Sprite);
+            SpriteLoadUtil.loadSprite(sprite, event.getUserData());
+        });
     }
     protected bindEvent(): void {
         this.closeBtn.on(cc.Node.EventType.TOUCH_END, () => {
@@ -65,6 +73,10 @@ export default class MyCenter extends ViewComponent {
         });
         this.confirmEidtBtn.on(cc.Node.EventType.TOUCH_END, () => {
             this.updateNickname(this.nicknameEditBox.string);
+        });
+
+        this.headNode.on(cc.Node.EventType.TOUCH_END, () => {
+            this.node.addChild(cc.instantiate(this.headList));
         });
 
     }

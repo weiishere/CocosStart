@@ -31,8 +31,16 @@ export default class RecordPanel extends ViewComponent {
     closeBtn: cc.Node = null;
     @property(cc.Node)
     recordTipsLabel: cc.Node = null;
+    @property(cc.Node)
+    upPageBtn: cc.Node = null;
+    @property(cc.Node)
+    downPageBtn: cc.Node = null;
     @property(cc.Prefab)
     recordDetailList: cc.Prefab = null;
+
+    beforePageIndex = 1;
+    pageIndex = 1;
+    pageCount = 10;
 
 
     protected bindUI(): void {
@@ -40,6 +48,19 @@ export default class RecordPanel extends ViewComponent {
     protected bindEvent(): void {
         this.closeBtn.on(cc.Node.EventType.TOUCH_END, () => {
             this.node.destroy();
+        });
+
+        this.upPageBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            this.pageIndex--;
+            if (this.pageIndex < 1) {
+                this.pageIndex = 1;
+            }
+            this.getRecoldLog(this.pageIndex);
+        });
+
+        this.downPageBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            this.pageIndex++;
+            this.getRecoldLog(this.pageIndex);
         });
     }
 
@@ -52,7 +73,7 @@ export default class RecordPanel extends ViewComponent {
     }
 
     start() {
-        this.getRecoldLog(1);
+        this.getRecoldLog(this.pageIndex);
     }
 
     getRecoldLog(pageIndex: number) {
@@ -61,7 +82,7 @@ export default class RecordPanel extends ViewComponent {
         let param = {
             userName: this.getLocalCacheDataProxy().getLoginData().userName,
             pageIndex: pageIndex,
-            pageCount: 20
+            pageCount: this.pageCount,
         }
         LoginAfterHttpUtil.send(url, (response) => {
             let data: GameRecordInfo[] = <GameRecordInfo[]>response;
@@ -70,8 +91,13 @@ export default class RecordPanel extends ViewComponent {
                 data.forEach(v => {
                     this.createRecordItem(v);
                 })
+                this.beforePageIndex = this.pageIndex;
             } else {
                 this.recordTipsLabel.active = true;
+            }
+
+            if (!data || data.length < this.pageCount) {
+                this.pageIndex = this.beforePageIndex;
             }
         }, (err) => {
         }, HttpUtil.METHOD_POST, param);
