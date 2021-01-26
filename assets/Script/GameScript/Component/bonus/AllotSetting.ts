@@ -31,6 +31,9 @@ export default class AllotSetting extends ViewComponent {
     @property(cc.Node)
     CancleBtu: cc.Node = null;
 
+    @property(cc.Slider)
+    Slider: cc.Slider = null;
+
     @property
     text: string = 'hello';
 
@@ -88,9 +91,9 @@ export default class AllotSetting extends ViewComponent {
         HttpUtil.send(bonusUrl + `/api/v1/account/leader?userName=${localCacheDataProxy.getLoginData().userName}`, res => {
             this.loading.active = false;
             if (res.code === 200) {
-                const remail = 1 - res.data;
-                this.node.getChildByName("biliValue").getComponent(cc.Label).string = remail * 100 + "%";
-                this.TextSet.getComponent(cc.EditBox).placeholder = `请输入分配到的百分比(<${remail * 100}%)`;
+                const remail = (1 - res.data).toFixed(2);
+                this.node.getChildByName("biliValue").getComponent(cc.Label).string = +remail * 100 + "%";
+                this.TextSet.getComponent(cc.EditBox).placeholder = `请输入分配到的百分比(<${+remail * 100}%)`;
             } else {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
             }
