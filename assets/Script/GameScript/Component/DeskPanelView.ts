@@ -566,7 +566,7 @@ export default class DeskPanelView extends ViewComponent {
                 //更新右方手牌
             }
         });
-        //再检测对家胡牌
+        //再检测对家胡牌/听牌
         this.getData().gameData.partnerCardsList.forEach(partner => {
             const _gameIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;
             if (this.positionNode[_gameIndex].name === 'p-top') {
@@ -576,13 +576,17 @@ export default class DeskPanelView extends ViewComponent {
                 if (_hadHuCard !== 0) {
                     this.addCardToNode(this.frontHuCard, _hadHuCard, "front", 'fall');
                 }
+                //对家是否听牌
+                const status = this.getData().gameData.partnerCardsList.find(item => item.playerId === partner.playerId).partnerCards.status;
+                if ((status.isBaoQingHu || status.isBaoHu)) {
+                    this.node.getChildByName("frontJobNode").getChildByName("ting").active = true;
+                }
             } else if (this.positionNode[_gameIndex].name === 'p-left') {
                 //更新左方手牌
             } else if (this.positionNode[_gameIndex].name === 'p-right') {
                 //更新右方手牌
             }
         });
-
         //更新剩余牌数
         const remainCardNum = this.node.getChildByName("remainWrap").getChildByName("remainCard").getComponent(cc.Label);
         remainCardNum.string = this.getData().gameData.remainCard + '';
