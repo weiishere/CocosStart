@@ -580,6 +580,8 @@ export default class DeskPanelView extends ViewComponent {
                 const status = this.getData().gameData.partnerCardsList.find(item => item.playerId === partner.playerId).partnerCards.status;
                 if ((status.isBaoQingHu || status.isBaoHu)) {
                     this.node.getChildByName("frontJobNode").getChildByName("ting").active = true;
+                } else {
+                    this.node.getChildByName("frontJobNode").getChildByName("ting").active = false;
                 }
             } else if (this.positionNode[_gameIndex].name === 'p-left') {
                 //更新左方手牌
