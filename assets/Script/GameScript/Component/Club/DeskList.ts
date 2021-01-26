@@ -85,7 +85,26 @@ export default class DeskList extends ViewComponent {
             let script1 = <DymjDesk>d1.getComponent("DymjDesk");
             let script2 = <DymjDesk>d2.getComponent("DymjDesk");
 
-            return script1.basicScore - script2.basicScore;
+            // 根据座位人数排序
+            let res = script2.getSitDownCount() - script1.getSitDownCount();
+            if (res === 0) {
+                res = script1.basicScore - script2.basicScore;
+            }
+            return res;
+        })
+    }
+
+    changeDeskAfterSort() {
+        this.deskContainer.children.sort((d1, d2) => {
+            let script1 = <DymjDesk>d1.getComponent("DymjDesk");
+            let script2 = <DymjDesk>d2.getComponent("DymjDesk");
+
+            // 根据座位人数排序
+            let res = script2.getSitDownCount() - script1.getSitDownCount();
+            if (res === 0) {
+                res = script1.basicScore - script2.basicScore;
+            }
+            return res;
         })
     }
 
@@ -97,6 +116,7 @@ export default class DeskList extends ViewComponent {
         }
 
         deskScript.sitDown(s2CClubRoomSitDown.head, s2CClubRoomSitDown.nickname, s2CClubRoomSitDown.seatNo);
+        this.changeDeskAfterSort();
     }
 
     standUp(s2CClubRoomStandUp: S2CClubRoomStandUp) {
@@ -107,6 +127,7 @@ export default class DeskList extends ViewComponent {
         }
 
         deskScript.standUp(s2CClubRoomStandUp.seatNo);
+        this.changeDeskAfterSort();
     }
 
     setRoundCount(s2CClubPushRoomRound: S2CClubPushRoomRound) {
@@ -170,7 +191,7 @@ export default class DeskList extends ViewComponent {
     }
 
     update(dt) {
-        
+
         if (this.waitHandleDesk.length === 0) {
             return;
         }
