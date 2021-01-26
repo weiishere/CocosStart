@@ -91,7 +91,7 @@ export default class GateStartPanel extends ViewComponent {
         });
 
         this.shareBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '开发中，敬请期待...', toastOverlay: true }, '');
+            Facade.Instance.sendNotification(CommandDefine.OpenShare, null, '');
         });
 
         this.logBtn.on(cc.Node.EventType.TOUCH_END, () => {

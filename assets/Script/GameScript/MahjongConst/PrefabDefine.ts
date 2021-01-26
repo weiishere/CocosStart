@@ -14,6 +14,7 @@ export enum PrefabDefine {
     RecordAlert = "prefabs/recordAlert",
     /** 个人中心 */
     MyCenter = "prefabs/myCenter",
+    ShareAlert = "prefabs/shareAlert",
     GiveAwayPanel = "prefabs/giveAwayPanel",
     BonusIndex = "prefabs/bonus/bonusIndex",
     ExtractRecord = "prefabs/bonus/extractRecord",

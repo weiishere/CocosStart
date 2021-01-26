@@ -35,6 +35,7 @@ export class GatePanelMediator extends BaseMediator {
     private exchangePanelNode: cc.Node;
     /** 个人中心窗口 */
     private myCenterNode: cc.Node;
+    private shareNode: cc.Node;
     /** 赠送窗口 */
     private giveAwatPanelNode: cc.Node;
 
@@ -65,6 +66,7 @@ export class GatePanelMediator extends BaseMediator {
             PrefabDefine.ExchangePanel,
             PrefabDefine.RecordPanel,
             PrefabDefine.MyCenter,
+            PrefabDefine.ShareAlert,
             PrefabDefine.GiveAwayPanel,
             PrefabDefine.BonusIndex
         ];
@@ -176,6 +178,17 @@ export class GatePanelMediator extends BaseMediator {
         script.loadData(localCache.getLoginData(), localCache.getInviteCode());
     }
 
+    private openShare(){
+        let shareResource = cc.loader.getRes(PrefabDefine.ShareAlert, cc.Prefab);
+        this.shareNode = cc.instantiate(shareResource);
+        this.viewComponent.addChild(this.shareNode);
+
+        let script = this.shareNode.getComponent("ShareAlert");
+
+        let localCache = this.getLocalCacheDataProxy();
+        script.loadData(localCache.getInviteCode());
+    }
+
     /** 打开赠送界面 */
     private openGiveAwayPanel() {
         let giveAwatPanelResource = cc.loader.getRes(PrefabDefine.GiveAwayPanel, cc.Prefab);
@@ -243,6 +256,7 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.ForcedOffline,
             CommandDefine.OpenRecordPanel,
             CommandDefine.OpenMyCenter,
+            CommandDefine.OpenShare,
             CommandDefine.OpenGiveAwayPanel,
             CommandDefine.OpenLoadingPanel,
             CommandDefine.CloseLoadingPanel,
@@ -318,6 +332,9 @@ export class GatePanelMediator extends BaseMediator {
                 break;
             case CommandDefine.OpenMyCenter:
                 this.openMyCenter();
+                break;
+            case CommandDefine.OpenShare:
+                this.openShare();
                 break;
             case CommandDefine.OpenGiveAwayPanel:
                 this.openGiveAwayPanel();
