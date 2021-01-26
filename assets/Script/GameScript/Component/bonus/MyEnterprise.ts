@@ -11,6 +11,7 @@ import { ApplicationGlobal } from "../../MahjongConst/ApplicationGlobal";
 import { CommandDefine } from "../../MahjongConst/CommandDefine";
 import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
 import { ProxyDefine } from "../../MahjongConst/ProxyDefine";
+import { ConfigProxy } from "../../Proxy/ConfigProxy";
 import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
 import { HttpUtil } from "../../Util/HttpUtil";
 import PageCommand from "../../Util/PageCommand";
@@ -128,13 +129,18 @@ export default class MyEnterprise extends ViewComponent {
         this._closeCallBack = fn;
     }
 
+    getConfigProxy() {
+        return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
+    }
+
     httpRequest(level) {
+        let bonusUrl = this.getConfigProxy().bonusUrl;
         const self = this;
         let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         //${/*localCacheDataProxy.getLoginData().userName*/}
         self.loading.active = true;
         this.scrollView.removeAllChildren();
-        HttpUtil.send(ApplicationGlobal.BaseUrl + `/api/v1/my/achievement?userName=${localCacheDataProxy.getLoginData().userName}&pageSize=${this.pageSize}&level=${level}&currentPage=${this.pageCommand.currentPage}`, res => {
+        HttpUtil.send(bonusUrl + `/api/v1/my/achievement?userName=${localCacheDataProxy.getLoginData().userName}&pageSize=${this.pageSize}&level=${level}&currentPage=${this.pageCommand.currentPage}`, res => {
             self.loading.active = false;
             if (res.code === 200) {
                 this.pageCommand.init(res.data.totalNum, this.pageSize);

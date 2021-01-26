@@ -9,6 +9,8 @@ export class ConfigProxy extends BaseProxy {
     private _facadeUrl: string;
     private _ggwUrl: string;
     private _staticUrl: string;
+    private _bonusUrl: string;
+    private _shareUrl: string;
 
     public constructor(proxyName: string = null, data: any = null) {
         super(proxyName, data);
@@ -27,6 +29,8 @@ export class ConfigProxy extends BaseProxy {
                 this._facadeUrl = response.facadeUrl;
                 this._ggwUrl = response.ggwUrl;
                 this._staticUrl = response.staticUrl;
+                this._shareUrl = response.shareUrl;
+                this._bonusUrl = response.bonusUrl;
 
                 this.facade.sendNotification(CommandDefine.GateCommand, null, NotificationTypeDefine.CheckLogin);
             }, (errorCode, request, state, url) => {
@@ -46,5 +50,12 @@ export class ConfigProxy extends BaseProxy {
 
     public get staticUrl(): string {
         return this._staticUrl;
+    }
+
+    public get shareUrl(): string {
+        return this._shareUrl;
+    }
+    public get bonusUrl(): string {
+        return this._bonusUrl;
     }
 }

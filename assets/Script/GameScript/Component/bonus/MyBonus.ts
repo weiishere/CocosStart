@@ -13,6 +13,7 @@ import { CommandDefine } from "../../MahjongConst/CommandDefine";
 import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
 import { ProxyDefine } from "../../MahjongConst/ProxyDefine";
 import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
+import { ConfigProxy } from "../../Proxy/ConfigProxy";
 const { ccclass, property } = cc._decorator;
 
 
@@ -38,11 +39,16 @@ export default class MyBonus extends ViewComponent {
     private loading: cc.Node = null;
 
 
+    getConfigProxy() {
+        return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
+    }
+
     bindUI() {
+        let bonusUrl = this.getConfigProxy().bonusUrl;
         this.loading = this.node.getChildByName('loading');
         let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         //判断是不是盟主
-        HttpUtil.send(ApplicationGlobal.BaseUrl + `/api/v1/account/get?userName=${localCacheDataProxy.getLoginData().userName}`, res => {
+        HttpUtil.send(bonusUrl + `/api/v1/account/get?userName=${localCacheDataProxy.getLoginData().userName}`, res => {
             if (res.code === 200) {
                 this.node.getChildByName("bg").getChildByName("bg2_hl").active = true;
                 this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_2").active = true;
@@ -116,10 +122,11 @@ export default class MyBonus extends ViewComponent {
             });
         }, this);
 
+        let bonusUrl = this.getConfigProxy().bonusUrl;
         //提取红利
         this.extractBonus_btn.on(cc.Node.EventType.TOUCH_END, () => {
             let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
-            HttpUtil.send(ApplicationGlobal.BaseUrl + '/api/v1/capital/add/withdrawal?serialType=3&amount=0&userName=' + localCacheDataProxy.getLoginData().userName, res => {
+            HttpUtil.send(bonusUrl + '/api/v1/capital/add/withdrawal?serialType=3&amount=0&userName=' + localCacheDataProxy.getLoginData().userName, res => {
                 this.loading.active = false;
                 if (res.code === 200) {
                     Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '提取红利成功~', toastOverlay: true }, '');
@@ -139,8 +146,9 @@ export default class MyBonus extends ViewComponent {
     httpRequest() {
         /**我的红利 */
         const self = this;
+        let bonusUrl = this.getConfigProxy().bonusUrl;
         let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
-        HttpUtil.send(ApplicationGlobal.BaseUrl + '/api/v1/dividend?userName=' + localCacheDataProxy.getLoginData().userName, res => {
+        HttpUtil.send(bonusUrl + '/api/v1/dividend?userName=' + localCacheDataProxy.getLoginData().userName, res => {
             self.loading.active = false;
             if (res.code === 200) {
                 self.node.getChildByName("bg").getChildByName("bg2_hl").getChildByName("hlye_value").getComponent(cc.Label).string = res.data.surplusDividend;//红利余额

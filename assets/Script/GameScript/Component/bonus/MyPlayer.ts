@@ -15,6 +15,7 @@ import { CommandDefine } from "../../MahjongConst/CommandDefine";
 import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
 import MyPlayerItem from "./MyPlayerItem"
 import PageCommand from "../../Util/PageCommand";
+import { ConfigProxy } from "../../Proxy/ConfigProxy";
 
 const { ccclass, property } = cc._decorator;
 
@@ -71,14 +72,18 @@ export default class MyPlayer extends ViewComponent {
             this._closeCallBack();
         }, this);
     }
+    getConfigProxy() {
+        return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
+    }
 
     httpRequest(currentPage) {
+        let bonusUrl = this.getConfigProxy().bonusUrl;
         const self = this;
         let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         //${/*localCacheDataProxy.getLoginData().userName*/}
         self.loading.active = true;
         this.scrollViewContent.removeAllChildren();
-        HttpUtil.send(ApplicationGlobal.BaseUrl + `/api/v1/gamePlayer?userName=${localCacheDataProxy.getLoginData().userName}&pageSize=${this.pageSize}&currentPage=${currentPage}`, res => {
+        HttpUtil.send(bonusUrl + `/api/v1/gamePlayer?userName=${localCacheDataProxy.getLoginData().userName}&pageSize=${this.pageSize}&currentPage=${currentPage}`, res => {
             self.loading.active = false;
             if (res.code === 200) {
                 // const p = parseInt((res.data.totalNum / this.pageSize) + '');

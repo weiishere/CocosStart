@@ -14,6 +14,7 @@ import Facade from "../../../Framework/care/Facade";
 import { CommandDefine } from "../../MahjongConst/CommandDefine";
 import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
 import PageCommand from "../../Util/PageCommand";
+import { ConfigProxy } from "../../Proxy/ConfigProxy";
 
 const { ccclass, property } = cc._decorator;
 
@@ -70,14 +71,19 @@ export default class ExtractRecord extends ViewComponent {
         }, this);
     }
 
+    getConfigProxy() {
+        return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
+    }
+
     httpRequest(currentPage) {
+        let bonusUrl = this.getConfigProxy().bonusUrl;
         const self = this;
         let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         //${/*localCacheDataProxy.getLoginData().userName*/}
         self.loading.active = true;
         this.scrollViewContent1.removeAllChildren();
         this.scrollViewContent2.removeAllChildren();
-        HttpUtil.send(ApplicationGlobal.BaseUrl + `/api/v1/capital/list?userName=${localCacheDataProxy.getLoginData().userName}&serialType=3&startDate=&endDate=&pageSize=${this.pageSize}&currentPage=${currentPage}`, res => {
+        HttpUtil.send(bonusUrl + `/api/v1/capital/list?userName=${localCacheDataProxy.getLoginData().userName}&serialType=3&startDate=&endDate=&pageSize=${this.pageSize}&currentPage=${currentPage}`, res => {
             self.loading.active = false;
             if (res.code === 200) {
                 this.pageCommand.init(res.data.totalElements, this.pageSize);
