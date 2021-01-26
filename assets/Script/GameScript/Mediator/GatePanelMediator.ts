@@ -178,7 +178,7 @@ export class GatePanelMediator extends BaseMediator {
         script.loadData(localCache.getLoginData(), localCache.getInviteCode());
     }
 
-    private openShare(){
+    private openShare() {
         let shareResource = cc.loader.getRes(PrefabDefine.ShareAlert, cc.Prefab);
         this.shareNode = cc.instantiate(shareResource);
         this.viewComponent.addChild(this.shareNode);
@@ -186,7 +186,7 @@ export class GatePanelMediator extends BaseMediator {
         let script = this.shareNode.getComponent("ShareAlert");
 
         let localCache = this.getLocalCacheDataProxy();
-        script.loadData(localCache.getInviteCode());
+        script.loadData(localCache.getInviteCode(), this.getConfigProxy().shareUrl);
     }
 
     /** 打开赠送界面 */

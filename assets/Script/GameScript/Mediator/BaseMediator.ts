@@ -5,6 +5,7 @@ import ViewComponent from "../Base/ViewComponent";
 import { ProxyDefine } from "../MahjongConst/ProxyDefine";
 import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
 import { PrefabDefine } from '../MahjongConst/PrefabDefine';
+import { ConfigProxy } from "../Proxy/ConfigProxy";
 
 export default class BaseMediator extends Mediator {
     public view: cc.Node = null;
@@ -74,6 +75,10 @@ export default class BaseMediator extends Mediator {
 
     public getLocalCacheDataProxy(): LocalCacheDataProxy {
         return <LocalCacheDataProxy>this.facade.retrieveProxy(ProxyDefine.LocalCacheData);
+    }
+
+    public getConfigProxy(): ConfigProxy {
+        return <ConfigProxy>this.facade.retrieveProxy(ProxyDefine.Config);
     }
 
     /**
