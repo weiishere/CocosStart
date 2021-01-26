@@ -425,7 +425,7 @@ export class DeskProxy extends BaseProxy {
                     // debugger
                     // console.log(partnerCard.partnerCards.handCard);
                     // console.log('----------------------------')
-                    partnerCard.partnerCards.curCardList.push(partnerCard.partnerCards.handCard + 0);
+                    partnerCard.partnerCards.handCard !== 0 && partnerCard.partnerCards.curCardList.push(partnerCard.partnerCards.handCard + 0);
                     partnerCard.partnerCards.curCardList.sort((a, b) => a - b);
                 }
             }
