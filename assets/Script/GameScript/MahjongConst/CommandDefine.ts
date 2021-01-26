@@ -49,5 +49,6 @@ export enum CommandDefine {
     ShowCardEffect = "ShowCardEffect",
     Entrust = "Entrust",
     EntrustNotice = "EntrustNotice",
-    OpenEntrustPanel = "OpenEntrustPanel"
+    OpenEntrustPanel = "OpenEntrustPanel",
+    OpenBonusIndex = "OpenBonusIndex"
 }

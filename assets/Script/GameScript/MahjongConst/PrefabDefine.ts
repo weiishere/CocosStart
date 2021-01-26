@@ -15,4 +15,13 @@ export enum PrefabDefine {
     /** 个人中心 */
     MyCenter = "prefabs/myCenter",
     GiveAwayPanel = "prefabs/giveAwayPanel",
+    BonusIndex = "prefabs/bonus/bonusIndex",
+    ExtractRecord = "prefabs/bonus/extractRecord",
+    ExtractRecordItem = "prefabs/bonus/extractRecordItem",
+    LeaderEnterPrise = "prefabs/bonus/leaderEnterPrise",
+    MyPlayer = "prefabs/bonus/myPlayer",
+    MyPlayerItem = "prefabs/bonus/myPlayerItem",
+    MyEnterPrise = "prefabs/bonus/myEnterPrise",
+    MyEnterPriseItem = "prefabs/bonus/enterPriseItem",
+    AllotSettingAlert = "prefabs/bonus/allotSettingAlert",
 }

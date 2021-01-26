@@ -335,7 +335,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 112,
+      "width": 150,
       "height": 35.28
     },
     "_anchorPoint": {
@@ -390,7 +390,7 @@
     "_string": "用户昵称",
     "_N$string": "用户昵称",
     "_fontSize": 28,
-    "_lineHeight": 28,
+    "_lineHeight": 40,
     "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,
@@ -399,9 +399,9 @@
     "_styleFlags": 0,
     "_underlineHeight": 0,
     "_N$horizontalAlign": 1,
-    "_N$verticalAlign": 1,
+    "_N$verticalAlign": 0,
     "_N$fontFamily": "Arial",
-    "_N$overflow": 0,
+    "_N$overflow": 1,
     "_N$cacheMode": 0,
     "_id": ""
   },
@@ -514,8 +514,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 22,
-      "height": 22
+      "width": 19.3,
+      "height": 19.8
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -526,8 +526,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -50.559,
-        0.304,
+        -51.9,
+        -0.079,
         0,
         0,
         0,
@@ -785,7 +785,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 167.7,
+      "width": 177.59,
       "height": 32.4
     },
     "_anchorPoint": {
@@ -861,7 +861,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        3,
+        0,
         1,
         0,
         0,

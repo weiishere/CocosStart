@@ -26,6 +26,8 @@ export default class GateStartPanel extends ViewComponent {
     shareBtn: cc.Node = null;
     @property(cc.Node)
     logBtn: cc.Node = null;
+    @property(cc.Node)
+    bonusBtn: cc.Node = null;
 
     private mahjongEntrance: cc.Node;
     private pdkEntrance: cc.Node;
@@ -94,6 +96,10 @@ export default class GateStartPanel extends ViewComponent {
 
         this.logBtn.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenRecordPanel, null, '');
+        });
+
+        this.bonusBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenBonusIndex, null, '');
         });
     }
     // onLoad () {

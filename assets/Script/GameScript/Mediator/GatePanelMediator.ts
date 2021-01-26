@@ -66,6 +66,7 @@ export class GatePanelMediator extends BaseMediator {
             PrefabDefine.RecordPanel,
             PrefabDefine.MyCenter,
             PrefabDefine.GiveAwayPanel,
+            PrefabDefine.BonusIndex
         ];
     }
 
@@ -243,7 +244,8 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.OpenMyCenter,
             CommandDefine.OpenGiveAwayPanel,
             CommandDefine.OpenLoadingPanel,
-            CommandDefine.CloseLoadingPanel
+            CommandDefine.CloseLoadingPanel,
+            CommandDefine.OpenBonusIndex,
         ];
     }
 
@@ -355,7 +357,10 @@ export class GatePanelMediator extends BaseMediator {
                     this.loadingPanel.destroy();
                 }
                 break;
-
+            case CommandDefine.OpenBonusIndex:
+                const bonusIndex = cc.loader.getRes(PrefabDefine.BonusIndex);
+                this.viewComponent.addChild(cc.instantiate(bonusIndex))
+                break;
 
         }
     }
