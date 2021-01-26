@@ -60,4 +60,8 @@ export default class UserHeader extends ViewComponent {
     updateNickname(nickname: string) {
         this.nickname.string = nickname;
     }
+
+    updateHead(head: string) {
+        SpriteLoadUtil.loadSprite(this.head, head);
+    }
 }

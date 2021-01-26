@@ -15,6 +15,7 @@ export enum CommandDefine {
     UpdatePlayerGold = "UpdatePlayerGold",
     /** 更新昵称 */
     UpdateNickname = "UpdateNickname",
+    UpdateHead = "UpdateHead",
     OpenPromptWindow = "OpenPromptWindow",
     InitGateMainPanel = "InitGateMainPanel",
     CloseLoginPanel = "CloseLoginPanel",

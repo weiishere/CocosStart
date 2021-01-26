@@ -237,6 +237,7 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.AudioCommand,
             CommandDefine.UpdatePlayerGold,
             CommandDefine.UpdateNickname,
+            CommandDefine.UpdateHead,
             CommandDefine.OpenExchangePanel,
             CommandDefine.ChangeUser,
             CommandDefine.ForcedOffline,
@@ -261,6 +262,10 @@ export class GatePanelMediator extends BaseMediator {
             case CommandDefine.UpdateNickname:
                 let nickname = notification.getBody();
                 this.userHeaderScript.updateNickname(nickname);
+                break;
+            case CommandDefine.UpdateHead:
+                let head = notification.getBody();
+                this.userHeaderScript.updateHead(head);
                 break;
             case CommandDefine.AudioCommand:
                 this.musciHandle(notification);
