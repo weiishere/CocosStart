@@ -41,6 +41,9 @@ export class DeskMediator extends BaseMediator {
     private dymjGameResult: DymjGameResult = null;
     /** 结算面板 */
     private recordAlterNode: cc.Node = null;
+
+    /** 根据这个值在游戏中查询战绩 */
+    private roundMark: string;
     /**
      * 需要预先加载的文件
      */
@@ -117,6 +120,7 @@ export class DeskMediator extends BaseMediator {
 
         switch (notification.getName()) {
             case CommandDefine.InitDeskPanel:
+                this.roundMark = notification.getBody().roundMark;
                 this.sendNotification(CommandDefine.CloseLoadingPanel);
                 await this.init();
                 this.deskPanel = this.viewComponent.getChildByName('deskView');
