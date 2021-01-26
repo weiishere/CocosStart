@@ -44,12 +44,12 @@ export default class MyBonus extends ViewComponent {
         //判断是不是盟主
         HttpUtil.send(ApplicationGlobal.BaseUrl + `/api/v1/account/get?userName=${localCacheDataProxy.getLoginData().userName}`, res => {
             if (res.code === 200) {
-                this.node.getChildByName("bg2_hl").active = true;
-                this.node.getChildByName("bg3_hl").getChildByName("item_title_2").active = true;
-                this.node.getChildByName("bg3_hl").getChildByName("item_title_4").active = true;
+                this.node.getChildByName("bg").getChildByName("bg2_hl").active = true;
+                this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_2").active = true;
+                this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_4").active = true;
                 if (res.data.accountType === 666) {
-                    this.node.getChildByName("bg3_hl").getChildByName("item_title_1").active = true;
-                    this.node.getChildByName("bg3_hl").getChildByName("item_title_3").active = true;
+                    this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_1").active = true;
+                    this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_3").active = true;
                 }
             } else {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
@@ -143,9 +143,9 @@ export default class MyBonus extends ViewComponent {
         HttpUtil.send(ApplicationGlobal.BaseUrl + '/api/v1/dividend?userName=' + localCacheDataProxy.getLoginData().userName, res => {
             self.loading.active = false;
             if (res.code === 200) {
-                self.node.getChildByName("bg2_hl").getChildByName("hlye_value").getComponent(cc.Label).string = res.data.surplusDividend;//红利余额
-                self.node.getChildByName("bg2_hl").getChildByName("ljzhl_value").getComponent(cc.Label).string = res.data.totalDividend;//累计总红利
-                self.node.getChildByName("bg2_hl").getChildByName("ljztq_value").getComponent(cc.Label).string = res.data.drawDividend;//累计总提取
+                self.node.getChildByName("bg").getChildByName("bg2_hl").getChildByName("hlye_value").getComponent(cc.Label).string = res.data.surplusDividend;//红利余额
+                self.node.getChildByName("bg").getChildByName("bg2_hl").getChildByName("ljzhl_value").getComponent(cc.Label).string = res.data.totalDividend;//累计总红利
+                self.node.getChildByName("bg").getChildByName("bg2_hl").getChildByName("ljztq_value").getComponent(cc.Label).string = res.data.drawDividend;//累计总提取
             } else {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
             }
