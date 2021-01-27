@@ -86,14 +86,14 @@ export default class LeaderEnterprise extends ViewComponent {
                 this.pageCommand.init(res.data.totalNum, this.pageSize);
                 cc.loader.loadRes(PrefabDefine.MyEnterPriseItem, cc.Prefab, (err, myEnterPriseItem) => {
                     this.node.getChildByName("headerNumWrap").getChildByName("zrs").getComponent(cc.Label).string = res.data.totalNum + "\n总人数";
-                    this.node.getChildByName("headerNumWrap").getChildByName("zgx").getComponent(cc.Label).string = res.data.dayDividend + "\n今日总贡献";
-                    this.node.getChildByName("headerNumWrap").getChildByName("ljzgx").getComponent(cc.Label).string = res.data.totalDividend + "\n累计总贡献";
+                    this.node.getChildByName("headerNumWrap").getChildByName("zgx").getComponent(cc.Label).string = (+res.data.dayDividend).toFixed(2) + "\n今日总贡献";
+                    this.node.getChildByName("headerNumWrap").getChildByName("ljzgx").getComponent(cc.Label).string = (+res.data.totalDividend).toFixed(2) + "\n累计总贡献";
                     res.data.list.forEach(element => {
                         const myEnterPriseItemNode: cc.Node = cc.instantiate(myEnterPriseItem);
                         myEnterPriseItemNode.getChildByName("name").getComponent(cc.Label).string = element.nickName;
                         myEnterPriseItemNode.getChildByName("playerId").getComponent(cc.Label).string = element.userName;
-                        myEnterPriseItemNode.getChildByName("playNum").getComponent(cc.Label).string = "今日总贡献：" + element.todayPay;
-                        myEnterPriseItemNode.getChildByName("regTime").getComponent(cc.Label).string = "累计总贡献：" + element.totalPay;
+                        myEnterPriseItemNode.getChildByName("playNum").getComponent(cc.Label).string = "今日总贡献：" + (+element.todayPay).toFixed(2);
+                        myEnterPriseItemNode.getChildByName("regTime").getComponent(cc.Label).string = "累计总贡献：" + (+element.totalPay).toFixed(2);
                         this.scrollViewContent.addChild(myEnterPriseItemNode);
                     });
                 });

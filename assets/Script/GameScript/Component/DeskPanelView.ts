@@ -340,10 +340,10 @@ export default class DeskPanelView extends ViewComponent {
 
     }
     /**更新桌面信息 */
-    updateDeskInfo(): void {
-        const { gameRoundNum, totalRound, baseScore, fanTime } = this.getData().deskData.gameSetting;
-        this.node.getChildByName("deskInfo").getChildByName("deskInfoStr").getComponent(cc.Label).string = `第${gameRoundNum + 1}/${totalRound}局\n底分:${baseScore} / 翻数:${fanTime}`;
-    }
+    // updateDeskInfo(): void {
+    //     const { gameRoundNum, totalRound, baseScore, fanTime } = this.getData().deskData.gameSetting;
+    //     this.node.getChildByName("deskInfo").getChildByName("deskInfoStr").getComponent(cc.Label).string = `第${(gameRoundNum + 1)}/${totalRound}局\n底分:${baseScore} / 翻数:${fanTime}`;
+    // }
     /**更新自己主牌 */
     updateMyCurCardList(): void {
         this.mainCardList = [];
@@ -405,6 +405,7 @@ export default class DeskPanelView extends ViewComponent {
     updateMyBarAndTouchCard(): void {
         //先更新杠/碰
         this.barCard.removeAllChildren();
+        this.barCard.width = 0;
         this.getData().gameData.myCards.barCard.map(item => {
             const touchItem = new cc.Node('barItem');
             const layoutCom = touchItem.addComponent(cc.Layout);
@@ -424,6 +425,7 @@ export default class DeskPanelView extends ViewComponent {
             this.barCard.addChild(touchItem);
         });
         this.touchCard.removeAllChildren();
+        this.touchCard.width = 0;
         this.getData().gameData.myCards.touchCard.map(item => {
             const touchItem = new cc.Node('touchItem');
             const layoutCom = touchItem.addComponent(cc.Layout);
@@ -440,6 +442,7 @@ export default class DeskPanelView extends ViewComponent {
             if (this.positionNode[_gameIndex].name === 'p-top') {
                 //更新对家手牌
                 this.frontBarCard.removeAllChildren();
+                this.frontBarCard.width = 0;
                 partner.partnerCards.barCard.forEach(item => {
                     const touchItem = new cc.Node('barItem');
                     const layoutCom = touchItem.addComponent(cc.Layout);
@@ -459,6 +462,7 @@ export default class DeskPanelView extends ViewComponent {
                     this.frontBarCard.addChild(touchItem);
                 });
                 this.frontTouchCard.removeAllChildren();
+                this.frontTouchCard.width = 0;
                 partner.partnerCards.touchCard.forEach(item => {
                     const touchItem = new cc.Node('touchItem');
                     const layoutCom = touchItem.addComponent(cc.Layout);
@@ -481,6 +485,7 @@ export default class DeskPanelView extends ViewComponent {
         //if (type === 'hand') {
         //先检测本方手牌
         this.handCard.removeAllChildren();
+        this.handCard.width = 0;
         if (this.getData().gameData.myCards.handCard !== 0) {
             const _handCard = this.addCardToNode(this.handCard, this.getData().gameData.myCards.handCard, "mine", 'setUp', {
                 active: true,
@@ -542,6 +547,7 @@ export default class DeskPanelView extends ViewComponent {
         }
         //先检测本家胡牌
         this.huCard.removeAllChildren();
+        this.huCard.width = 0;
         if (this.getData().gameData.myCards.hadHuCard !== 0) {
             this.addCardToNode(this.huCard, this.getData().gameData.myCards.hadHuCard, "mine", 'fall');
         }
@@ -553,6 +559,7 @@ export default class DeskPanelView extends ViewComponent {
             if (this.positionNode[_gameIndex].name === 'p-top') {
                 //更新对家手牌
                 this.frontHandCard.removeAllChildren();
+                this.frontHandCard.width = 0;
                 if (partner.partnerCards.isHandCard) {
                     this.addCardToNode(this.frontHandCard, this.isSuper ? partner.partnerCards.handCard : 0, "front", 'setUp', {
                         purAddNode: node => {
@@ -573,6 +580,7 @@ export default class DeskPanelView extends ViewComponent {
                 //更新对家手牌
                 const _hadHuCard = this.getData().gameData.partnerCardsList.find(item => item.playerId === partner.playerId).partnerCards.hadHuCard;
                 this.frontHuCard.removeAllChildren();
+                this.frontHuCard.width = 0;
                 if (_hadHuCard !== 0) {
                     this.addCardToNode(this.frontHuCard, _hadHuCard, "front", 'fall');
                 }
@@ -840,7 +848,7 @@ export default class DeskPanelView extends ViewComponent {
         this.node.getChildByName("remainWrap").active = true;//显示剩余牌数
         const deskInfoStr = this.node.getChildByName('deskInfo').getChildByName('deskInfoStr').getComponent(cc.Label);
         const { totalRound, gameRoundNum, baseScore, fanTime } = this.getData().deskData.gameSetting;
-        deskInfoStr.string = `第${gameRoundNum}/${totalRound}局\n底分:${baseScore} / 翻数:${fanTime}`;
+        deskInfoStr.string = `第${gameRoundNum + 1}/${totalRound}局\n底分:${baseScore} / 翻数:${fanTime}`;
     }
     /**更新倒计时 */
     updateCountDown(): void {

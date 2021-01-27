@@ -422,7 +422,6 @@ export class DeskProxy extends BaseProxy {
                         if (item === dymjS2COpPutRsp.putMjValue && count === 0) { count++; return false; } else { return true; }
                     });
                     // console.log('----------------------------')
-                    // debugger
                     // console.log(partnerCard.partnerCards.handCard);
                     // console.log('----------------------------')
                     partnerCard.partnerCards.handCard !== 0 && partnerCard.partnerCards.curCardList.push(partnerCard.partnerCards.handCard + 0);

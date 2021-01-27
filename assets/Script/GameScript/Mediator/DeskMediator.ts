@@ -113,10 +113,10 @@ export class DeskMediator extends BaseMediator {
 
     public async handleNotification(notification: INotification) {
 
-        const gameData = this.getDeskProxy().getGameData();
-        const deskData = this.getDeskProxy().getDeskData();
-        console.log('gameData', gameData);
-        console.log('deskData', deskData);
+        // const gameData = this.getDeskProxy().getGameData();
+        // const deskData = this.getDeskProxy().getDeskData();
+        // console.log('gameData', gameData);
+        // console.log('deskData', deskData);
 
         switch (notification.getName()) {
             case CommandDefine.InitDeskPanel:
