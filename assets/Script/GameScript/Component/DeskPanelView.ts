@@ -78,11 +78,12 @@ export default class DeskPanelView extends ViewComponent {
         bottom: null,
         right: null,
     }
-    private deskBtus: { exit: cc.Node, help: cc.Node, record: cc.Node, set: cc.Node } = {
+    private deskBtus: { exit: cc.Node, help: cc.Node, record: cc.Node, set: cc.Node, chat: cc.Node } = {
         exit: null,
         help: null,
         record: null,
         set: null,
+        chat: null
     }
     private isSuper = false;
     private arrowCard: cc.Node = null;
@@ -218,6 +219,8 @@ export default class DeskPanelView extends ViewComponent {
         this.deskBtus.help = this.node.getChildByName('deskOpreationIcon').getChildByName('helpIcon');
         this.deskBtus.record = this.node.getChildByName('deskOpreationIcon').getChildByName('recordIcon');
         this.deskBtus.set = this.node.getChildByName('deskOpreationIcon').getChildByName('setIcon');
+        this.deskBtus.set = this.node.getChildByName('deskOpreationIcon').getChildByName('setIcon');
+        this.deskBtus.chat = this.node.getChildByName('deskOpreationIcon').getChildByName('chatIcon');
         //#endregion
 
         this.cardChooseAlert = this.node.getChildByName('cardChooseAlert');

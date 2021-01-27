@@ -26,4 +26,5 @@ export enum PrefabDefine {
     MyEnterPrise = "prefabs/bonus/myEnterPrise",
     MyEnterPriseItem = "prefabs/bonus/enterPriseItem",
     AllotSettingAlert = "prefabs/bonus/allotSettingAlert",
+    ChatBox = "prefabs/chatBox",
 }

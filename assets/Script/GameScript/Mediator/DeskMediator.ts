@@ -50,7 +50,8 @@ export class DeskMediator extends BaseMediator {
     protected inAdvanceLoadFiles(): string[] {
         return [
             //PrefabDefine.DeskPanel,
-            PrefabDefine.RecordAlert
+            PrefabDefine.RecordAlert,
+            PrefabDefine.ChatBox
         ];
     }
     public getDeskProxy(): DeskProxy {
@@ -78,7 +79,8 @@ export class DeskMediator extends BaseMediator {
             CommandDefine.ShowCardEffect,
             CommandDefine.Entrust,
             CommandDefine.EntrustNotice,
-            CommandDefine.OpenEntrustPanel
+            CommandDefine.OpenEntrustPanel,
+            CommandDefine.OpenChatBox
         ];
     }
 
@@ -147,6 +149,8 @@ export class DeskMediator extends BaseMediator {
                         this.DeskPanelViewScript.openHelperAlert();
                     } else if (node.name === 'setIcon') {
                         this.sendNotification(CommandDefine.OpenSetting);
+                    } else if (node.name === 'chatIcon') {
+                        this.sendNotification(CommandDefine.OpenChatBox);
                     }
                 });
                 /**出牌事件 */
@@ -297,6 +301,10 @@ export class DeskMediator extends BaseMediator {
                 // const { entrustState } = notification.getBody();
                 // if (entrustState) this.DeskPanelViewScript.closeEntrustMask();
                 this.DeskPanelViewScript.closeEntrustMask();
+                break;
+            case CommandDefine.OpenChatBox://打开聊天窗口
+                const cartBox = cc.loader.getRes(PrefabDefine.ChatBox, cc.Prefab);
+                this.viewComponent.addChild(cc.instantiate(cartBox));
                 break;
         }
     }
