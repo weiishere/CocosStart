@@ -137,11 +137,12 @@ export class DeskMediator extends BaseMediator {
                             this.sendNotification(CommandDefine.OpenToast, { content: '抱歉，牌局未完成，请勿退出牌局' });
                         }
                     } else if (node.name === 'recordIcon') {
-                        if (this.dymjGameResult) {
-                            this.openRecordAlter(this.dymjGameResult);
-                        } else {
-                            this.sendNotification(CommandDefine.OpenToast, { content: '抱歉，暂无对战记录~' });
-                        }
+                        // if (this.dymjGameResult) {
+                        //     this.openRecordAlter(this.dymjGameResult);
+                        // } else {
+                        //     this.sendNotification(CommandDefine.OpenToast, { content: '抱歉，暂无对战记录~' });
+                        // }
+                        this.sendNotification(CommandDefine.OpenRecordDetailList, this.roundMark, "");
                     } else if (node.name === 'helpIcon') {
                         this.DeskPanelViewScript.openHelperAlert();
                     } else if (node.name === 'setIcon') {

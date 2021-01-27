@@ -9,6 +9,7 @@ import { HttpUtil } from '../Util/HttpUtil';
 import { GameRecordInfo } from '../GameData/GameRecordInfo';
 import { RoomPlayerCredit } from '../GameData/RoomPlayerCredit';
 import RecordDetailList from './RecordDetailList';
+import { CommandDefine } from '../MahjongConst/CommandDefine';
 // Learn TypeScript:
 //  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
 // Learn Attribute:
@@ -129,10 +130,12 @@ export default class RecordPanel extends ViewComponent {
     }
 
     private openRecordDetailList(roomRoundNo: string) {
-        let recordDetailListNode = cc.instantiate(this.recordDetailList);
-        this.root.addChild(recordDetailListNode);
-        let recordRetailListScript = <RecordDetailList>recordDetailListNode.getComponent("RecordDetailList");
-        recordRetailListScript.loadData(roomRoundNo);
+        // let recordDetailListNode = cc.instantiate(this.recordDetailList);
+        // this.root.addChild(recordDetailListNode);
+        // let recordRetailListScript = <RecordDetailList>recordDetailListNode.getComponent("RecordDetailList");
+        // recordRetailListScript.loadData(roomRoundNo);
+
+        Facade.Instance.sendNotification(CommandDefine.OpenRecordDetailList, roomRoundNo, "");
     }
 
     /**

@@ -22,6 +22,7 @@ export enum CommandDefine {
     OpenSetting = "OpenSetting",
     OpenExchangePanel = "OpenExchangePanel",
     OpenRecordPanel = "OpenRecordPanel",
+    OpenRecordDetailList = "OpenRecordDetailList",
     OpenRecordAlter = "OpenRecordAlter",
     ChangeUser = "ChangeUser",
     OpenMyCenter = "OpenMyCenter",

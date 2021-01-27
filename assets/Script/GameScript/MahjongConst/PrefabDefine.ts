@@ -12,6 +12,7 @@ export enum PrefabDefine {
     RecordPanel = "prefabs/recordPanel",
     /** 结算面板 */
     RecordAlert = "prefabs/recordAlert",
+    RecordDetailList = "prefabs/recordDetailList",
     /** 个人中心 */
     MyCenter = "prefabs/myCenter",
     ShareAlert = "prefabs/shareAlert",

@@ -16,6 +16,7 @@ import { MusicManager } from '../Other/MusicManager';
 import { UserGold } from '../GameData/UserGold';
 import { WebSockerProxy } from '../Proxy/WebSocketProxy';
 import MyCenter from '../Component/MyCenter';
+import RecordDetailList from "../Component/RecordDetailList";
 
 export class GatePanelMediator extends BaseMediator {
     //private gatePanelView: GatePanelView = null;
@@ -65,6 +66,7 @@ export class GatePanelMediator extends BaseMediator {
             PrefabDefine.Setting,
             PrefabDefine.ExchangePanel,
             PrefabDefine.RecordPanel,
+            PrefabDefine.RecordDetailList,
             PrefabDefine.MyCenter,
             PrefabDefine.ShareAlert,
             PrefabDefine.GiveAwayPanel,
@@ -166,6 +168,16 @@ export class GatePanelMediator extends BaseMediator {
         this.gameStartPanel.addChild(recordPanelPrefab);
     }
 
+    /** 打开战绩详情 */
+    private openRecordDetailList(roomRoundNo) {
+        let recordDetailListResource = cc.loader.getRes(PrefabDefine.RecordDetailList, cc.Prefab);
+        let recordDetailListPrefab = cc.instantiate(recordDetailListResource);
+        this.gameStartPanel.addChild(recordDetailListPrefab);
+
+        let script = <RecordDetailList>recordDetailListPrefab.getComponent("RecordDetailList");
+        script.loadData(roomRoundNo);
+    }
+
     /** 打开个人中心 */
     private openMyCenter() {
         let myCenterResource = cc.loader.getRes(PrefabDefine.MyCenter, cc.Prefab);
@@ -255,6 +267,7 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.ChangeUser,
             CommandDefine.ForcedOffline,
             CommandDefine.OpenRecordPanel,
+            CommandDefine.OpenRecordDetailList,
             CommandDefine.OpenMyCenter,
             CommandDefine.OpenShare,
             CommandDefine.OpenGiveAwayPanel,
@@ -329,6 +342,9 @@ export class GatePanelMediator extends BaseMediator {
                 break;
             case CommandDefine.OpenRecordPanel:
                 this.openRecordPanel();
+                break;
+            case CommandDefine.OpenRecordDetailList:
+                this.openRecordDetailList(notification.getBody());
                 break;
             case CommandDefine.OpenMyCenter:
                 this.openMyCenter();
