@@ -122,7 +122,7 @@ export class DeskMediator extends BaseMediator {
 
         switch (notification.getName()) {
             case CommandDefine.InitDeskPanel:
-                this.roundMark = notification.getBody().roundMark;
+                this.roundMark = notification.getBody().dymjS2CEnterRoom.roundMark;
                 this.sendNotification(CommandDefine.CloseLoadingPanel);
                 await this.init();
                 this.deskPanel = this.viewComponent.getChildByName('deskView');

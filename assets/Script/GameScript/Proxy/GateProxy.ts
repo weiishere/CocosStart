@@ -12,6 +12,7 @@ import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
 import { UserOfflineData } from '../GameData/UserOfflineData';
 import { LoginAfterHttpUtil } from '../Util/LoginAfterHttpUtil';
+import { ResponseCode } from "../GameConst/ResponseCode";
 
 
 export class GateProxy extends BaseProxy {
@@ -79,6 +80,8 @@ export class GateProxy extends BaseProxy {
                     this.toast("验证码错误！");
                 } else if (errorCode === ServerCode.INVITE_CODE_ERROR) {
                     this.toast("邀请码错误！");
+                } else if (errorCode === ResponseCode.USER_NOT_EXIST) {
+                    this.toast("账号不存在，请重新注册！");
                 }
             }
         }, (err) => {
@@ -106,6 +109,10 @@ export class GateProxy extends BaseProxy {
                     this.toast("用户名或者密码错误！");
                 } else if (errorCode === ServerCode.PWD_ERROR) {
                     this.toast("用户名或者密码错误！");
+                } else if (errorCode === ResponseCode.USER_NOT_EXIST) {
+                    this.toast("账号不存在，请重新注册！");
+
+                    this.sendNotification(CommandDefine.OpenLoginPanel);
                 }
             }
         }, (err) => {
