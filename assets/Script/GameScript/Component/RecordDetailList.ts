@@ -29,6 +29,8 @@ export default class RecordDetailList extends ViewComponent {
     recordContent: cc.Node = null;
     @property(cc.Node)
     closeBtn: cc.Node = null;
+    @property(cc.Node)
+    remarkLabel: cc.Node = null;
     @property(cc.Prefab)
     recordDetail: cc.Prefab = null;
 
@@ -60,6 +62,9 @@ export default class RecordDetailList extends ViewComponent {
         }
         LoginAfterHttpUtil.send(url, (response) => {
             let data: RoomPlayLog[] = <RoomPlayLog[]>response;
+            if (!data || data.length === 0) {
+                this.remarkLabel.active = true;
+            }
             this.buildData(data);
         }, (err) => {
         }, HttpUtil.METHOD_POST, param);
