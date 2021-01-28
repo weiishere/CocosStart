@@ -25,6 +25,7 @@ import { DymjGameUIResultItem } from '../GameData/Dymj/s2c/DymjGameUIResultItem'
 import { DymjS2CDoNextOperation } from '../GameData/Dymj/s2c/DymjS2CDoNextOperation';
 import { DymjOperation } from "../GameData/Dymj/s2c/DymjOperation";
 import { DymjGameReconnData } from '../GameData/Dymj/s2c/DymjGameReconnData';
+import { DymjProxy } from "./DymjProxy";
 
 
 export class DeskProxy extends BaseProxy {
@@ -164,7 +165,7 @@ export class DeskProxy extends BaseProxy {
         });
     }
     /**
-     * 玩家自己摸牌
+     * 玩家摸牌
      * @param dymjS2CPlayerGet 
      */
     drawCard(dymjS2CPlayerGet: DymjS2CPlayerGet) {
@@ -185,7 +186,18 @@ export class DeskProxy extends BaseProxy {
             this.getGameData().myCards.disableCard = dymjS2CPlayerGet.nextStep.datas || [];
             const huList = (dymjS2CPlayerGet.nextStep.args && dymjS2CPlayerGet.nextStep.args.list) ? dymjS2CPlayerGet.nextStep.args.list : [];
             this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
-
+            if (this.getGameData().myCards.status.isBaoHu && !dymjS2CPlayerGet.nextStep.oprts) {
+                window.setTimeout(() => {
+                    (<DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj)).putMahkjong(dymjS2CPlayerGet.getMjValue);
+                }, 800);
+            } else if (this.getGameData().myCards.status.isBaoQingHu && !dymjS2CPlayerGet.nextStep.oprts) {
+                const arr = this.getGameData().myCards.curCardList.filter(card => this.getGameData().myCards.disableCard.some(item => item === card) ? false : true);
+                if (arr.length === 0) {
+                    (<DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj)).putMahkjong(dymjS2CPlayerGet.getMjValue);
+                }else{
+                    (<DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj)).putMahkjong(arr[0]);
+                }
+            }
         } else {
             console.log('dymjS2CPlayerGet.getMjValue', dymjS2CPlayerGet.getMjValue);
             let { partnerCards } = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
@@ -586,7 +598,8 @@ export class DeskProxy extends BaseProxy {
             }
 
             isBaoHu = player.isTing;
-            isBaoQingHu = player.isTingQingHu;
+            //isBaoQingHu = player.isTingQingHu;
+
             if (curCardList.length === 2 || curCardList.length === 5 || curCardList.length === 8 || curCardList.length === 11) {
                 handCard = curCardList[curCardList.length - 1];
             }

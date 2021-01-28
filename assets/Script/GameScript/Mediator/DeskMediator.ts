@@ -252,6 +252,7 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
                 this.DeskPanelViewScript.createOutCard((playerInfo as PlayerInfo).gameIndex);
                 this.playEventSound('', showCard);
+                this.DeskPanelViewScript.closeChooseCardPanel();
                 break;
             case CommandDefine.EventDonePush://玩家处理操作之后的推送
                 this.DeskPanelViewScript.updateMyCurCardList();
