@@ -134,6 +134,8 @@ export class DymjProxy extends ModuleProxy {
             } else {
                 this.sendNotification(CommandDefine.EntrustNotice, null);
             }
+        } else if (msgType === DymjProtocol.C_SEND_INTERACT_MSG) {   //推送玩家互动消息
+            this.getDeskProxy().playerInteractMsg(content);
         } else if (msgType === DymjProtocol.S_HEARTBEAT) {   //推送玩家退出游戏消息
             this.sendHeartbeat();
         }
@@ -271,6 +273,14 @@ export class DymjProxy extends ModuleProxy {
     logout() {
         this.joinRoomNo = null;
         this.sendGameData(DymjProtocol.LOGOUT, this.getLocalCacheDataProxy().getLoginData().userName);
+    }
+
+    /**
+     * 发送互动消息
+     * @param msgContent 
+     */
+    sendInteractMsg(msgContent: string) {
+        this.sendGameData(DymjProtocol.C_SEND_INTERACT_MSG, msgContent);
     }
 
     serverShutDown(): void {

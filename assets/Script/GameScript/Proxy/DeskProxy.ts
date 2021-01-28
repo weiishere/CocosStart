@@ -194,7 +194,7 @@ export class DeskProxy extends BaseProxy {
                 const arr = this.getGameData().myCards.curCardList.filter(card => this.getGameData().myCards.disableCard.some(item => item === card) ? false : true);
                 if (arr.length === 0) {
                     (<DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj)).putMahkjong(dymjS2CPlayerGet.getMjValue);
-                }else{
+                } else {
                     (<DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj)).putMahkjong(arr[0]);
                 }
             }
@@ -717,6 +717,14 @@ export class DeskProxy extends BaseProxy {
         this.getDeskData().gameSetting.fanTime = dymjS2CEnterRoom.fanNum;
 
         this.updateUserInfo(dymjS2CEnterRoom.players);
+    }
+
+    /**
+     * 收到玩家互动消息
+     * @param msgContent 
+     */
+    playerInteractMsg(msgContent: string) {
+
     }
     getGameData(): GameData {
         return this.repository.gameData;

@@ -27,6 +27,10 @@ export default class DeskPanelView extends ViewComponent {
     @property(cc.Prefab)
     cardItem: cc.Prefab = null;
 
+    @property(cc.Node)
+    maskWrap: cc.Node = null;
+
+
     private mainCardListPanel: cc.Node;
     private touchCard: cc.Node;
     private barCard: cc.Node;
@@ -912,10 +916,12 @@ export default class DeskPanelView extends ViewComponent {
     }
     /**打开托管蒙版 */
     openEntrustMask(): void {
-        const maskWrap = this.node.getChildByName('maskWrap');
-        const tuoguanBtu = maskWrap.getChildByName('cancleTuoGuan');
-        maskWrap.active = true;
-        tuoguanBtu.on(cc.Node.EventType.TOUCH_START, () => {
+        if (this.maskWrap.active) {
+            return;
+        }
+        const tuoguanBtu = this.maskWrap.getChildByName('cancleTuoGuan');
+        this.maskWrap.active = true;
+        tuoguanBtu.once(cc.Node.EventType.TOUCH_START, () => {
             Facade.Instance.sendNotification(CommandDefine.Entrust, { command: false }, '');
             cc.tween(tuoguanBtu).to(0.1, { position: cc.v3(0, -5) }).to(0.1, { position: cc.v3(0, 5) }).call(() => {
                 this.closeEntrustMask();
@@ -924,8 +930,9 @@ export default class DeskPanelView extends ViewComponent {
     }
     /**关闭托管蒙版 */
     closeEntrustMask(): void {
-        const maskWrap = this.node.getChildByName('maskWrap');
-        maskWrap.active = false;
+        this.maskWrap.active = false;
+        const tuoguanBtu = this.maskWrap.getChildByName('cancleTuoGuan');
+        tuoguanBtu.targetOff(tuoguanBtu);
     }
 
     start() {

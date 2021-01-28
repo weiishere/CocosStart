@@ -50,6 +50,8 @@ export class DymjProtocol {
 
     /** 退出游戏 */
     static LOGOUT: number = COCOS_MAHJONG_PROTOCOL + 0x011;
+    /** 发送互动消息 */
+    static C_SEND_INTERACT_MSG: number = COCOS_MAHJONG_PROTOCOL + 0x012;
 
     //:number ========================================== 游戏操作 start
     //:number =============================================

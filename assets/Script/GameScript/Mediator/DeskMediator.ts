@@ -45,6 +45,9 @@ export class DeskMediator extends BaseMediator {
 
     /** 根据这个值在游戏中查询战绩 */
     private roundMark: string;
+
+    /** 是否托管 */
+    private isEntrust: boolean;
     /**
      * 需要预先加载的文件
      */
@@ -86,13 +89,14 @@ export class DeskMediator extends BaseMediator {
     }
 
     public openRecordAlter(data) {
+        if (this.recordAlterNode && this.recordAlterNode.isValid) {
+            this.recordAlterNode.destroy();
+        }
         let recordAlterResource = cc.loader.getRes(PrefabDefine.RecordAlert, cc.Prefab);
         this.recordAlterNode = <cc.Node>cc.instantiate(recordAlterResource);
         this.view.addChild(this.recordAlterNode);
         let script = this.recordAlterNode.getComponent("RecordAlert");
         script.buildData(data);
-
-        this.DeskPanelViewScript.closeEntrustMask();
     }
 
     public playEventSound(eventName: DeskEventName, cardNumber?: number) {
@@ -206,6 +210,9 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.scheduleOnce(() => {
                     this.openRecordAlter(notification.getBody());
                 }, 2);
+
+                // 结束就立马关闭托管面板
+                this.DeskPanelViewScript.closeEntrustMask();
                 this.DeskPanelViewScript.updatePlayerHeadView();
                 break;
             case CommandDefine.RefreshPlayerPush:
@@ -228,7 +235,7 @@ export class DeskMediator extends BaseMediator {
                 break;
             case CommandDefine.ReStartGamePush://下一局
                 // 开始游戏前关掉结算信息界面
-                if (this.recordAlterNode) {
+                if (this.recordAlterNode && this.recordAlterNode.isValid) {
                     this.recordAlterNode.destroy();
                     this.recordAlterNode = null;
                 }
@@ -297,6 +304,7 @@ export class DeskMediator extends BaseMediator {
                 break;
             case CommandDefine.OpenEntrustPanel://打开托管提示面板
                 this.DeskPanelViewScript && this.DeskPanelViewScript.openEntrustMask();
+                this.isEntrust = true;
                 break;
             case CommandDefine.Entrust:
                 this.getDymjProxy().entrust(notification.getBody().command || false);
@@ -305,6 +313,7 @@ export class DeskMediator extends BaseMediator {
                 // const { entrustState } = notification.getBody();
                 // if (entrustState) this.DeskPanelViewScript.closeEntrustMask();
                 this.DeskPanelViewScript.closeEntrustMask();
+                this.isEntrust = false;
                 break;
             case CommandDefine.OpenChatBox://打开聊天窗口
                 const cartBox = cc.loader.getRes(PrefabDefine.ChatBox, cc.Prefab);
