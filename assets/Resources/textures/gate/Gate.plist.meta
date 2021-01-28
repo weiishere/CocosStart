@@ -113,7 +113,7 @@
       "rawHeight": 78,
       "borderTop": 15,
       "borderBottom": 17,
-      "borderLeft": 19,
+      "borderLeft": 17,
       "borderRight": 15,
       "spriteType": "normal",
       "subMetas": {}
@@ -199,10 +199,10 @@
       "height": 560,
       "rawWidth": 550,
       "rawHeight": 560,
-      "borderTop": 0,
-      "borderBottom": 0,
-      "borderLeft": 0,
-      "borderRight": 0,
+      "borderTop": 102,
+      "borderBottom": 31,
+      "borderLeft": 20,
+      "borderRight": 31,
       "spriteType": "normal",
       "subMetas": {}
     },

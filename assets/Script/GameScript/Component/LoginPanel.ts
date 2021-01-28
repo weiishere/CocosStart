@@ -19,38 +19,50 @@ export class LoginPanel extends ViewComponent {
         this.phoneButton = this.buttonWrap.getChildByName("phone").getComponent(cc.Sprite);
         this.weixinButton = this.buttonWrap.getChildByName("weixin").getComponent(cc.Sprite);
         this.appName = cc.find("Canvas/Gate_bg/appName").getComponent(cc.Sprite);
-        this.phoneLoginNode = cc.instantiate(this.PhoneLoginAlert);
-        this.appName.node.active = true;
-        this.root.addChild(this.phoneLoginNode);
-        //this.phoneLoginNode.parent = cc.find("Canvas");这个会破坏节点结构
-        this.phoneLoginNode.setScale(1.1);
-        this.phoneLoginNode.opacity = 0;
-        this.phoneLoginNode.active = false;
+        
 
 
     }
     protected async bindEvent() {
-        this.phoneButton.node.on(cc.Node.EventType.TOUCH_START, () => {
-            this.phoneButton.node.setPosition(cc.v2(this.phoneButton.node.x, this.phoneButton.node.y - 10));
-        }, this, true);
-
+        // this.phoneButton.node.on(cc.Node.EventType.TOUCH_START, () => {
+        //     this.phoneButton.node.setPosition(cc.v2(this.phoneButton.node.x, this.phoneButton.node.y - 10));
+        // }, this, true);
+        this.appName.node.active = true;
         this.phoneButton.node.on(cc.Node.EventType.TOUCH_END, this.onPhoneTouchEndCallback, this, true);
+        this.weixinButton.node.on(cc.Node.EventType.TOUCH_END, this.onRegTouchEndCallback, this, true);
+        // const script = this.phoneLoginNode.getComponent('LoginSubPanel');
 
-        const script = this.phoneLoginNode.getComponent('LoginSubPanel');
-
-        script.bindCancleEvent(() => {
-            //console.log('bindCancleEvent');
-            this.appName.node.active = true;
-            this.buttonWrap.active = true;
-            cc.tween(this.phoneLoginNode).to(0.1, { scale: 1.1, opacity: 0 }, { easing: 'sineOut' }).call(() => { this.phoneLoginNode.active = false; }).start()
-        });
+        // script.bindCancleEvent(() => {
+        //     //console.log('bindCancleEvent');
+        //     this.appName.node.active = true;
+        //     this.buttonWrap.active = true;
+        //     cc.tween(this.phoneLoginNode).to(0.1, { scale: 1.1, opacity: 0 }, { easing: 'sineOut' }).call(() => { this.phoneLoginNode.active = false; }).start()
+        // });
     }
     private onPhoneTouchEndCallback() {
-        this.appName.node.active = false;
-        this.phoneButton.node.setPosition(cc.v2(this.phoneButton.node.x, this.phoneButton.node.y + 10));
-        this.buttonWrap.active = false;
-        this.phoneLoginNode.active = true;
+        // this.appName.node.active = false;
+        // this.phoneButton.node.setPosition(cc.v2(this.phoneButton.node.x, this.phoneButton.node.y + 10));
+        // this.buttonWrap.active = false;
+        // this.phoneLoginNode.active = true;
+        // cc.tween(this.phoneLoginNode).to(0.2, { scale: 1.0, opacity: 255 }, { easing: 'sineOut' }).start()
+        this.phoneLoginNode = cc.instantiate(this.PhoneLoginAlert);
+        this.appName.node.active = true;
+        cc.find("Canvas").addChild(this.phoneLoginNode);
+        this.phoneLoginNode.setScale(1.1);
+        this.phoneLoginNode.opacity = 0;
         cc.tween(this.phoneLoginNode).to(0.2, { scale: 1.0, opacity: 255 }, { easing: 'sineOut' }).start()
+        const script = this.phoneLoginNode.getComponent('LoginSubPanel');
+        script.show('login');
+    }
+    private onRegTouchEndCallback() {
+        this.phoneLoginNode = cc.instantiate(this.PhoneLoginAlert);
+        this.appName.node.active = true;
+        cc.find("Canvas").addChild(this.phoneLoginNode);
+        this.phoneLoginNode.setScale(1.1);
+        this.phoneLoginNode.opacity = 0;
+        cc.tween(this.phoneLoginNode).to(0.2, { scale: 1.0, opacity: 255 }, { easing: 'sineOut' }).start()
+        const script = this.phoneLoginNode.getComponent('LoginSubPanel');
+        script.show('reg')
     }
 
 

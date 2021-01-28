@@ -214,14 +214,15 @@ export class DeskMediator extends BaseMediator {
                 break;
             case CommandDefine.LicensingCardPush://发牌
                 this.DeskPanelViewScript.updateRoomInfo();
-                this.DeskPanelViewScript.updateMyCurCardList();
-                this.DeskPanelViewScript.updateOtherCurCardList();
-                this.DeskPanelViewScript.updateHandCardAndHuCard();
-                this.DeskPanelViewScript.updateOutCard();
                 this.sendNotification(CommandDefine.ShowCenterEffect, { isMe: undefined });
-                //在这里加入发牌动画
-                this.getDymjProxy().dealOver();
                 this.DeskPanelViewScript.updatedDeskAiming();
+                this.DeskPanelViewScript.updateOtherCurCardList();
+                this.DeskPanelViewScript.updateMyCurCardList(() => {
+                    this.DeskPanelViewScript.updateHandCardAndHuCard();
+                    this.DeskPanelViewScript.updateOutCard();
+                    //在这里加入发牌动画
+                    this.getDymjProxy().dealOver();
+                });
                 break;
             case CommandDefine.ReStartGamePush://下一局
                 // 开始游戏前关掉结算信息界面

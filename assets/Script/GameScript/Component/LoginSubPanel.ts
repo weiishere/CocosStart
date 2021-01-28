@@ -16,20 +16,20 @@ export class LoginSubPanel extends ViewComponent {
     private phoneInput: cc.EditBox = null;
     private verificationInput: cc.EditBox = null;
     private inviteInput: cc.EditBox = null;
-    private loginButton: cc.Button = null;
-    private cancleButton: cc.Button = null;
-
+    private loginButton: cc.Node = null;
+    private cancleButton: cc.Node = null;
+    private order: "reg" | "login";
     protected async bindUI() {
-        this.phoneInput = this.root.getChildByName("PhoneInput").getComponent(cc.EditBox);
-        this.verificationInput = this.root.getChildByName("VerificationInput").getComponent(cc.EditBox);
-        this.inviteInput = this.root.getChildByName("InviteInput").getComponent(cc.EditBox);
+        this.phoneInput = this.root.getChildByName("bg").getChildByName("PhoneInput").getComponent(cc.EditBox);
+        this.verificationInput = this.root.getChildByName("bg").getChildByName("VerificationInput").getComponent(cc.EditBox);
+        this.inviteInput = this.root.getChildByName("bg").getChildByName("InviteInput").getComponent(cc.EditBox);
 
-        this.loginButton = this.root.getChildByName("LoginSubmit").getComponent(cc.Button);
-        this.cancleButton = this.root.getChildByName("Cancle").getComponent(cc.Button);
+        this.loginButton = this.root.getChildByName("bg").getChildByName("btuWrap").getChildByName("LoginSubmit");
+        this.cancleButton = this.root.getChildByName("bg").getChildByName("btuWrap").getChildByName("Cancle");
     }
     protected bindEvent() {
-        this.loginButton.node.on(cc.Node.EventType.TOUCH_END, this.loginBtnEvent.bind(this))
-
+        this.loginButton.on(cc.Node.EventType.TOUCH_END, this.loginBtnEvent.bind(this));
+        this.cancleButton.on(cc.Node.EventType.TOUCH_END, this.cancle.bind(this));
         this.verifyClick();
     }
 
@@ -48,7 +48,17 @@ export class LoginSubPanel extends ViewComponent {
             }
         });
     }
-
+    show(order: "reg" | "login") {
+        this.order = order;
+        cc.tween(this.root).to(0.2, { scale: 1.0, opacity: 255 }, { easing: 'sineOut' }).start();
+        if (order === 'login') {
+            this.root.getChildByName("bg").getChildByName("title").getComponent(cc.Label).string = "玩家登录";
+            this.root.getChildByName("bg").getChildByName("InviteInput").active = false;
+        } else {
+            this.root.getChildByName("bg").getChildByName("title").getComponent(cc.Label).string = "玩家注册";
+            this.root.getChildByName("bg").getChildByName("InviteInput").active = true;
+        }
+    }
     /**
      * 开始验证码倒计时
      */
@@ -97,23 +107,23 @@ export class LoginSubPanel extends ViewComponent {
         // 验证码可以为空，为空表示登录
         let inviteCode = this.inviteInput.string;
 
-        if(inviteCode && inviteCode.length > 10){
+        if (inviteCode && inviteCode.length > 10) {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '邀请码太长了', toastOverlay: false }, '');
+            return;
+        }
+
+        if (this.order === "reg" && inviteCode === '') {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '新注册玩家请输入邀请码', toastOverlay: false }, '');
+            return;
         }
 
         this.dispatchCustomEvent(GateEventDefine.LOGIN_BTN_EVENT, new PhoneRegisterOrLoginData(phoneNo, code, inviteCode));
     }
-
-    private onTouchEndCallback() {
-        // const node = cc.instantiate(this.PhoneLoginAlert);
-        // this.root.addChild(node);
-        // node.parent = cc.find("Canvas");
-        // node.setScale(1.5); 
-        // node.opacity = 0;
-        // this.buttonWrap.active = false;
-        // cc.tween(node)
-        //     .to(0.2, { scale: 1.0, opacity: 255 })
-        //     .start()
+    public cancle(): void {
+        // cc.tween(this.root).to(0.2, { scale: 1.0, opacity: 50 }, { easing: 'sineOut' }).call(()=>{
+        //     this.root.destroy();
+        // }).start()
+        cc.tween(this.root).to(0.1, { scale: 1.1, opacity: 0 }, { easing: 'sineOut' }).call(() => { this.root.destroy(); }).start()
     }
     start() {
 

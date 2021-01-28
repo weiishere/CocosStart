@@ -185,6 +185,7 @@ export class DeskProxy extends BaseProxy {
             this.getGameData().myCards.disableCard = dymjS2CPlayerGet.nextStep.datas || [];
             const huList = (dymjS2CPlayerGet.nextStep.args && dymjS2CPlayerGet.nextStep.args.list) ? dymjS2CPlayerGet.nextStep.args.list : [];
             this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
+
         } else {
             console.log('dymjS2CPlayerGet.getMjValue', dymjS2CPlayerGet.getMjValue);
             let { partnerCards } = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
@@ -557,6 +558,7 @@ export class DeskProxy extends BaseProxy {
             let handCard: number = 0;
             let huCard: number = 0;
             let isBaoHu: boolean = false;
+            let isBaoQingHu: boolean = false;
 
             if (player.gangValues) {
                 player.gangValues.forEach(v => {
@@ -584,7 +586,7 @@ export class DeskProxy extends BaseProxy {
             }
 
             isBaoHu = player.isTing;
-
+            isBaoQingHu = player.isTingQingHu;
             if (curCardList.length === 2 || curCardList.length === 5 || curCardList.length === 8 || curCardList.length === 11) {
                 handCard = curCardList[curCardList.length - 1];
             }

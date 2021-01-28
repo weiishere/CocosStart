@@ -21,6 +21,9 @@ export default class CardItemView extends cc.Component {
     mainCardbg: cc.SpriteFrame = null;//玩家主牌
 
     @property(cc.SpriteFrame)
+    mainHideCardbg: cc.SpriteFrame = null;//玩家背对主牌
+
+    @property(cc.SpriteFrame)
     hideLeftCardbg: cc.SpriteFrame = null;//左对手隐藏牌
 
     @property(cc.SpriteFrame)
@@ -173,6 +176,18 @@ export default class CardItemView extends cc.Component {
         const faceNode = this.node.getChildByName('face');
         this.node.getComponent(cc.Sprite).setMaterial(0, cc.Material.getBuiltinMaterial(cc.Material.BUILTIN_NAME.GRAY_SPRITE + ''));
         faceNode.getComponent(cc.Sprite).setMaterial(0, cc.Material.getBuiltinMaterial(cc.Material.BUILTIN_NAME.GRAY_SPRITE + ''));
+    }
+    /**设置牌背对自己 */
+    setMainHide(isHide: boolean) {
+        const cardComp = this.node.getComponent(cc.Sprite);
+        const faceNode = this.node.getChildByName('face');
+        if (isHide === false) {
+            cardComp.spriteFrame = this.mainHideCardbg;
+            faceNode.active = false;
+        } else {
+            cardComp.spriteFrame = this.mainCardbg;
+            faceNode.active = true;
+        }
     }
     /**复位 */
     public reSetChooseFalse(): void {

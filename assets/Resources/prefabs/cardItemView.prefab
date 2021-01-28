@@ -686,6 +686,9 @@
     "mainCardbg": {
       "__uuid__": "00990dd0-9c87-4583-a5f1-1c77cc3d284f"
     },
+    "mainHideCardbg": {
+      "__uuid__": "a3ed5faf-39c6-4935-8512-93f45f56efa1"
+    },
     "hideLeftCardbg": {
       "__uuid__": "b70c5002-97b5-4a55-9c2e-ae6cff193785"
     },

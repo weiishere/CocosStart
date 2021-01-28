@@ -348,7 +348,7 @@ export default class DeskPanelView extends ViewComponent {
     //     this.node.getChildByName("deskInfo").getChildByName("deskInfoStr").getComponent(cc.Label).string = `第${(gameRoundNum + 1)}/${totalRound}局\n底分:${baseScore} / 翻数:${fanTime}`;
     // }
     /**更新自己主牌 */
-    updateMyCurCardList(): void {
+    updateMyCurCardList(effectDone: () => void): void {
         this.mainCardList = [];
         const self = this;
         this.mainCardListPanel.removeAllChildren();
@@ -383,6 +383,26 @@ export default class DeskPanelView extends ViewComponent {
             })
             this.mainCardList.push(card);
         });
+        if (effectDone) {
+            this.mainCardListPanel.children.forEach(item => {
+                item.setPosition(0, 50);
+                item.opacity = 0;
+                item.scale = 0.8;
+                (item.getComponent("CardItemView") as CardItemView).setMainHide(false);
+            });
+            let index = 0;
+            this.schedule(() => {
+                const card = this.mainCardListPanel.children[index];
+                cc.tween(card).to(0.2, { position: cc.v3(0, 0), opacity: 255, scale: 1 }, { easing: 'easeBackInOut' }).call(() => { 
+                    (card.getComponent("CardItemView") as CardItemView).setMainHide(true);
+                }).start();
+                index++;
+                console.log(index);
+                if (index === this.mainCardListPanel.children.length - 1) {
+                    effectDone();
+                }
+            }, 0.2, this.mainCardListPanel.children.length - 1)
+        }
     }
     /**更新其他玩家的主牌 */
     updateOtherCurCardList(): void {
