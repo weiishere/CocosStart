@@ -393,7 +393,7 @@ export default class DeskPanelView extends ViewComponent {
             let index = 0;
             this.schedule(() => {
                 const card = this.mainCardListPanel.children[index];
-                cc.tween(card).to(0.2, { position: cc.v3(0, 0), opacity: 255, scale: 1 }, { easing: 'easeBackInOut' }).call(() => {
+                cc.tween(card).to(0.15, { position: cc.v3(0, -10), opacity: 255, scale: 1 }, { easing: 'easeBackInOut' }).to(0.05, { position: cc.v3(0, 0) }).call(() => {
                     (card.getComponent("CardItemView") as CardItemView).setMainHide(true);
                 }).start();
                 index++;

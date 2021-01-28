@@ -56,10 +56,10 @@ export default class ChatBox extends ViewComponent {
         '你的牌打的也太好了吧！',
         '快点吧，都等到我花儿都谢了',
         '鸡不叫不睡觉，决战到天亮',
-        '别走，换桌再战一百回合',
-        '我这把牌看来，你怕是要遭输光哦',
-        '这盘投降输一半可以不，看你表演咯',
-        '今天输了一个亿，我不急...'
+        '别走，大厅见，换桌再战一百回合',
+        '看我这把牌，你这盘怕是要遭输光哦',
+        '投降输一半嘛，看你表演咯',
+        '今天不输一个亿，人活一生无意义'
     ]
     // onLoad () {}
     private order: ChatOrder = "face";
@@ -69,7 +69,9 @@ export default class ChatBox extends ViewComponent {
     }
     bindEvent() {
         this.closeBtu.on(cc.Node.EventType.TOUCH_END, () => {
-            this.node.destroy();
+            cc.tween(this.node).to(0.1, { opacity: 0, scale: 0.9 }).call(() => {
+                this.node.destroy();
+            }).start();
         }, this);
         this.faceBtu.on(cc.Node.EventType.TOUCH_END, () => {
             this.faceBtu.getComponent(cc.Sprite).spriteFrame = this.faceBtuActiveSf;
@@ -81,9 +83,23 @@ export default class ChatBox extends ViewComponent {
             this.msgBtu.getComponent(cc.Sprite).spriteFrame = this.msgBtuActiveSf;
             this.switchChatPanel("msg");
         }, this);
+
+        // var editboxEventHandler = new cc.Component.EventHandler();
+        // editboxEventHandler.target = this.node; // 这个 node 节点是你的事件处理代码组件所属的节点
+        // editboxEventHandler.component = "cc.MyComponent"
+        // editboxEventHandler.handler = "onEditDidBegan";
+        // editboxEventHandler.customEventData = "foobar";
+        // this.editBox.editingReturn.push(editboxEventHandler);
+        this.editBox.node.on('editing-return', (editbox) => {
+            if (this.editBox.string !== '') {
+                this.send(this.editBox.string, 'msg');
+                this.editBox.string = '';
+            }
+        }, this);
         this.sendBtu.on(cc.Node.EventType.TOUCH_END, () => {
             if (this.editBox.string !== '') {
                 this.send(this.editBox.string, 'msg');
+                this.editBox.string = '';
             }
         }, this);
     }
@@ -92,19 +108,12 @@ export default class ChatBox extends ViewComponent {
     }
     private send(content: any, order?: ChatOrder) {
         const userInfo = (<LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData)).getLoginData();
-        if (order) {
-            this.sendHandler({
-                nickName: userInfo.nickname,
-                type: order,
-                content: content + ''
-            })
-        } else {
-            this.sendHandler({
-                nickName: userInfo.nickname,
-                type: this.order,
-                content: content
-            })
-        }
+
+        this.sendHandler && this.sendHandler({
+            nickName: userInfo.nickname,
+            type: order ? order : this.order,
+            content: content + ''
+        })
     }
     switchChatPanel(order: ChatOrder) {
         this.order = order;
@@ -113,15 +122,23 @@ export default class ChatBox extends ViewComponent {
         if (order === 'face') {
             for (let i = 1; i <= 25; i++) {
                 cc.loader.loadRes(`textures/desk/face/face(${i})`, cc.Texture2D, (err, item) => {
+                    const nodeWrap = new cc.Node('faceWrap');
+                    nodeWrap.width = nodeWrap.height = 60;
+                    const layout = nodeWrap.addComponent(cc.Layout);
+                    layout.type = cc.Layout.Type.HORIZONTAL;
+
                     const node = new cc.Node('face');
-                    const face = node.addComponent(cc.Sprite)
+                    const face = node.addComponent(cc.Sprite);
                     face.spriteFrame = new cc.SpriteFrame(item);
                     node.scale = 0.15;
-                    const btu = node.addComponent(cc.Button);
+
+                    nodeWrap.addChild(node);
+
+                    const btu = nodeWrap.addComponent(cc.Button);
                     btu.transition = cc.Button.Transition.COLOR;
                     btu.pressedColor = new cc.Color(0, 255, 0);
-                    this.chatListWrap.addChild(node);
-                    node.on(cc.Node.EventType.TOUCH_END, () => {
+                    this.chatListWrap.addChild(nodeWrap);
+                    nodeWrap.on(cc.Node.EventType.TOUCH_END, () => {
                         this.send(i);
                     }, this);
                 });
@@ -131,7 +148,7 @@ export default class ChatBox extends ViewComponent {
                 const node = new cc.Node('face');
                 const label = node.addComponent(cc.Label)
                 label.string = item;
-                label.fontSize = 22;
+                label.fontSize = 24;
                 label.lineHeight = 26;
                 const btu = node.addComponent(cc.Button);
                 btu.transition = cc.Button.Transition.COLOR;
@@ -142,6 +159,13 @@ export default class ChatBox extends ViewComponent {
                 }, this);
             });
         }
+    }
+    show() {
+        this.node.opacity = 0;
+        this.node.scale = 0.9;
+        cc.tween(this.node).to(0.1, { opacity: 255, scale: 1 }).call(() => {
+
+        }).start();
     }
     start() {
 

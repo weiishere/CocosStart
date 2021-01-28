@@ -1207,7 +1207,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 614,
+      "width": 649,
       "height": 51
     },
     "_anchorPoint": {
@@ -1286,15 +1286,15 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -233.5,
+        -251,
         -3.5,
         0,
         0,
         0,
         0,
         1,
-        0.8,
-        0.8,
+        1,
+        1,
         0
       ]
     },
@@ -1466,15 +1466,15 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -86.5,
+        -84,
         -3.5,
         0,
         0,
         0,
         0,
         1,
-        0.8,
-        0.8,
+        1,
+        1,
         0
       ]
     },
@@ -1646,15 +1646,15 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        60.5,
+        83,
         -3.5,
         0,
         0,
         0,
         0,
         1,
-        0.8,
-        0.8,
+        1,
+        1,
         0
       ]
     },
@@ -1826,15 +1826,15 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        208,
+        250.5,
         -3.5,
         0,
         0,
         0,
         0,
         1,
-        0.8,
-        0.8,
+        1,
+        1,
         0
       ]
     },
@@ -1974,11 +1974,11 @@
     "_enabled": true,
     "_layoutSize": {
       "__type__": "cc.Size",
-      "width": 300,
-      "height": 200
+      "width": 649,
+      "height": 51
     },
-    "_resize": 0,
-    "_N$layoutType": 3,
+    "_resize": 1,
+    "_N$layoutType": 1,
     "_N$cellSize": {
       "__type__": "cc.Size",
       "width": 40,
@@ -1989,7 +1989,7 @@
     "_N$paddingRight": 0,
     "_N$paddingTop": 0,
     "_N$paddingBottom": 0,
-    "_N$spacingX": 0,
+    "_N$spacingX": 20,
     "_N$spacingY": 0,
     "_N$verticalDirection": 1,
     "_N$horizontalDirection": 0,

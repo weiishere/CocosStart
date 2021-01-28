@@ -65,7 +65,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 505,
-      "height": 481
+      "height": 529.8
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -76,8 +76,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        671.191,
-        352.726,
+        1045,
+        388.1,
         0,
         0,
         0,
@@ -129,7 +129,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 391,
-      "height": 351
+      "height": 367
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -141,7 +141,7 @@
       "ctor": "Float64Array",
       "array": [
         -35,
-        28,
+        40.258,
         0,
         0,
         0,
@@ -175,8 +175,8 @@
     "_enabled": true,
     "_layoutSize": {
       "__type__": "cc.Size",
-      "width": 300,
-      "height": 200
+      "width": 391,
+      "height": 367
     },
     "_resize": 0,
     "_N$layoutType": 3,
@@ -188,7 +188,7 @@
     "_N$startAxis": 0,
     "_N$paddingLeft": 0,
     "_N$paddingRight": 0,
-    "_N$paddingTop": 0,
+    "_N$paddingTop": 10,
     "_N$paddingBottom": 0,
     "_N$spacingX": 20,
     "_N$spacingY": 20,
@@ -239,7 +239,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 70,
-      "height": 228
+      "height": 239.4
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -250,8 +250,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        203.273,
-        115.227,
+        203,
+        121.2,
         0,
         0,
         0,
@@ -419,7 +419,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 70,
-      "height": 228.5
+      "height": 241.2
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -430,8 +430,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        203.03,
-        -113.3,
+        203,
+        -119.7,
         0,
         0,
         0,
@@ -785,8 +785,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 249,
-      "height": 55
+      "width": 249.8,
+      "height": 69
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -797,8 +797,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -105,
-        -188,
+        -99.8,
+        -209,
         0,
         0,
         0,
@@ -825,7 +825,7 @@
   {
     "__type__": "cc.Node",
     "_name": "BACKGROUND_SPRITE",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 17
     },
@@ -852,8 +852,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 249,
-      "height": 55
+      "width": 261.5,
+      "height": 69
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -864,7 +864,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        0,
+        -5.900000000000006,
         0,
         0,
         0,
@@ -934,8 +934,8 @@
     "alignMode": 0,
     "_target": null,
     "_alignFlags": 45,
-    "_left": 0,
-    "_right": 0,
+    "_left": -11.750000000000002,
+    "_right": 0.05000000000001059,
     "_top": 0,
     "_bottom": 0,
     "_verticalCenter": 0,
@@ -1003,7 +1003,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -78,
+        -109.083,
         20,
         0,
         0,
@@ -1043,7 +1043,7 @@
     "_N$string": "",
     "_fontSize": 20,
     "_lineHeight": 25,
-    "_enableWrapText": false,
+    "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,
     "_spacingX": 0,
@@ -1053,7 +1053,7 @@
     "_N$horizontalAlign": 0,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
-    "_N$overflow": 1,
+    "_N$overflow": 2,
     "_N$cacheMode": 0,
     "_id": ""
   },
@@ -1068,7 +1068,7 @@
     "alignMode": 0,
     "_target": null,
     "_alignFlags": 45,
-    "_left": 2,
+    "_left": 20,
     "_right": 0,
     "_top": 0,
     "_bottom": 0,
@@ -1098,7 +1098,7 @@
   {
     "__type__": "cc.Node",
     "_name": "PLACEHOLDER_LABEL",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 17
     },
@@ -1125,8 +1125,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 247,
-      "height": 55
+      "width": 245.5,
+      "height": 69
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1137,8 +1137,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -122.5,
-        27.5,
+        -120.6,
+        34.5,
         0,
         0,
         0,
@@ -1177,8 +1177,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "Enter text here...",
-    "_N$string": "Enter text here...",
+    "_string": "在此输入文字(小于50字)",
+    "_N$string": "在此输入文字(小于50字)",
     "_fontSize": 20,
     "_lineHeight": 25,
     "_enableWrapText": false,
@@ -1206,7 +1206,7 @@
     "alignMode": 0,
     "_target": null,
     "_alignFlags": 45,
-    "_left": 2,
+    "_left": 4.300000000000011,
     "_right": 0,
     "_top": 0,
     "_bottom": 0,
@@ -1242,8 +1242,8 @@
     },
     "_enabled": true,
     "_string": "",
-    "returnType": 0,
-    "maxLength": 8,
+    "returnType": 2,
+    "maxLength": 50,
     "_tabIndex": 0,
     "editingDidBegan": [],
     "textChanged": [],
@@ -1305,8 +1305,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 144,
-      "height": 60
+      "width": 153.3,
+      "height": 81.8
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1317,8 +1317,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        90,
-        -192,
+        96.496,
+        -213.7,
         0,
         0,
         0,
@@ -1468,7 +1468,7 @@
     "_spriteFrame": {
       "__uuid__": "f10a580b-6516-4658-a4f8-3ede3994b997"
     },
-    "_type": 0,
+    "_type": 1,
     "_sizeMode": 0,
     "_fillType": 0,
     "_fillCenter": {
@@ -1514,7 +1514,7 @@
       "__uuid__": "cc39cc15-a1ff-4b1d-bf9d-6baf2fb58155"
     },
     "_type": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 0,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -1551,8 +1551,8 @@
     "_target": null,
     "_alignFlags": 33,
     "_left": 0,
-    "_right": 36.30899999999997,
-    "_top": 46.774,
+    "_right": 36.5,
+    "_top": 97.00000000000006,
     "_bottom": 0,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,

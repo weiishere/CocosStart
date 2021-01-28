@@ -17,6 +17,7 @@ import { DymjTing } from "../GameData/Dymj/s2c/DymjTing";
 import { DymjGameResult } from "../GameData/Dymj/s2c/DymjGameResult";
 import { DymjMusicManager } from '../Other/DymjMusicManager';
 import { DeskPanelViewEventDefine } from "../GameConst/Event/DeskPanelViewEventDefine";
+import ChatBox, { MsgObj } from "../Component/ChatBox";
 
 export class DeskMediator extends BaseMediator {
 
@@ -128,6 +129,7 @@ export class DeskMediator extends BaseMediator {
                 this.deskPanel = this.viewComponent.getChildByName('deskView');
                 this.DeskPanelViewScript = this.deskPanel.getComponent('DeskPanelView') as DeskPanelView;
                 this.getDeskProxy().updateDeskInfo(notification.getBody().dymjS2CEnterRoom);
+                this.DeskPanelViewScript.updateRoomInfo();
                 this.DeskPanelViewScript.bindDskOpreationEvent(node => {
                     if (node.name === 'exitIcon') {
                         //退出房间
@@ -294,7 +296,7 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.showCardAlert(body.gameIndex, body.cardNumber)
                 break;
             case CommandDefine.OpenEntrustPanel://打开托管提示面板
-                this.DeskPanelViewScript.openEntrustMask();
+                this.DeskPanelViewScript && this.DeskPanelViewScript.openEntrustMask();
                 break;
             case CommandDefine.Entrust:
                 this.getDymjProxy().entrust(notification.getBody().command || false);
@@ -306,7 +308,13 @@ export class DeskMediator extends BaseMediator {
                 break;
             case CommandDefine.OpenChatBox://打开聊天窗口
                 const cartBox = cc.loader.getRes(PrefabDefine.ChatBox, cc.Prefab);
-                this.viewComponent.addChild(cc.instantiate(cartBox));
+                const cartBoxNode: cc.Node = cc.instantiate(cartBox)
+                this.viewComponent.addChild(cartBoxNode);
+                const chatBoxScript = (cartBoxNode.getComponent("ChatBox") as ChatBox)
+                chatBoxScript.show();
+                chatBoxScript.bindSendHandler((msgObj: MsgObj) => {
+                    console.log(JSON.stringify(msgObj));
+                });
                 break;
         }
     }
