@@ -6,145 +6,184 @@
         <dict>
             <key>appName.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{686,74},{1026,254}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{1026,254}}</string>
-                <key>sourceSize</key>
+                <key>spriteSize</key>
                 <string>{1026,254}</string>
+                <key>spriteSourceSize</key>
+                <string>{1026,254}</string>
+                <key>textureRect</key>
+                <string>{{354,196},{1026,254}}</string>
+                <key>textureRotated</key>
+                <false/>
             </dict>
             <key>botton.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{564,2},{1334,70}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{1334,70}}</string>
-                <key>sourceSize</key>
+                <key>spriteSize</key>
                 <string>{1334,70}</string>
+                <key>spriteSourceSize</key>
+                <string>{1334,70}</string>
+                <key>textureRect</key>
+                <string>{{266,2},{1334,70}}</string>
+                <key>textureRotated</key>
+                <false/>
             </dict>
             <key>btu_1.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{686,330},{249,89}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{249,89}}</string>
-                <key>sourceSize</key>
+                <key>spriteSize</key>
                 <string>{249,89}</string>
+                <key>spriteSourceSize</key>
+                <string>{249,89}</string>
+                <key>textureRect</key>
+                <string>{{492,74},{249,89}}</string>
+                <key>textureRotated</key>
+                <false/>
             </dict>
             <key>btu_2.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{937,330},{249,89}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{249,89}}</string>
-                <key>sourceSize</key>
+                <key>spriteSize</key>
                 <string>{249,89}</string>
+                <key>spriteSourceSize</key>
+                <string>{249,89}</string>
+                <key>textureRect</key>
+                <string>{{743,74},{249,89}}</string>
+                <key>textureRotated</key>
+                <false/>
             </dict>
             <key>input1.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{1000,421},{484,74}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{2,2},{484,74}}</string>
-                <key>sourceSize</key>
+                <key>spriteSize</key>
                 <string>{488,78}</string>
+                <key>spriteSourceSize</key>
+                <string>{488,78}</string>
+                <key>textureRect</key>
+                <string>{{2,74},{488,78}}</string>
+                <key>textureRotated</key>
+                <false/>
             </dict>
             <key>input_btu_1.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{916,421},{130,40}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
-                <true/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{130,40}}</string>
-                <key>sourceSize</key>
+                <key>spriteSize</key>
                 <string>{130,40}</string>
+                <key>spriteSourceSize</key>
+                <string>{130,40}</string>
+                <key>textureRect</key>
+                <string>{{134,2},{130,40}}</string>
+                <key>textureRotated</key>
+                <false/>
             </dict>
             <key>input_btu_2.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{958,421},{130,40}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
-                <true/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{130,40}}</string>
-                <key>sourceSize</key>
+                <key>spriteSize</key>
                 <string>{130,40}</string>
+                <key>spriteSourceSize</key>
+                <string>{130,40}</string>
+                <key>textureRect</key>
+                <string>{{2,2},{130,40}}</string>
+                <key>textureRotated</key>
+                <false/>
             </dict>
             <key>phone.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{564,74},{350,120}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
-                <true/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{350,120}}</string>
-                <key>sourceSize</key>
+                <key>spriteSize</key>
                 <string>{350,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{350,120}</string>
+                <key>textureRect</key>
+                <string>{{2,196},{350,120}}</string>
+                <key>textureRotated</key>
+                <false/>
             </dict>
             <key>regBg.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{2,2},{550,560}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
-                <true/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{550,560}}</string>
-                <key>sourceSize</key>
+                <key>spriteSize</key>
                 <string>{550,560}</string>
+                <key>spriteSourceSize</key>
+                <string>{550,560}</string>
+                <key>textureRect</key>
+                <string>{{1382,196},{550,560}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
+            <key>regBtu.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{348,118}</string>
+                <key>spriteSourceSize</key>
+                <string>{348,118}</string>
+                <key>textureRect</key>
+                <string>{{994,74},{348,118}}</string>
+                <key>textureRotated</key>
+                <false/>
             </dict>
             <key>weixin.png</key>
             <dict>
-                <key>frame</key>
-                <string>{{564,426},{350,120}}</string>
-                <key>offset</key>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
                 <string>{0,0}</string>
-                <key>rotated</key>
-                <false/>
-                <key>sourceColorRect</key>
-                <string>{{0,0},{350,120}}</string>
-                <key>sourceSize</key>
+                <key>spriteSize</key>
                 <string>{350,120}</string>
+                <key>spriteSourceSize</key>
+                <string>{350,120}</string>
+                <key>textureRect</key>
+                <string>{{1344,74},{350,120}}</string>
+                <key>textureRotated</key>
+                <false/>
             </dict>
         </dict>
         <key>metadata</key>
         <dict>
             <key>format</key>
-            <integer>2</integer>
+            <integer>3</integer>
+            <key>pixelFormat</key>
+            <string>RGBA8888</string>
+            <key>premultiplyAlpha</key>
+            <false/>
             <key>realTextureFileName</key>
             <string>Gate.png</string>
             <key>size</key>
-            <string>{1900,554}</string>
+            <string>{1934,758}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:2480bdf69ebe3571adafa3de1fbaebcc:05526c4df066389c6dd3cd0bd69c1f57:494a3559cad2a07bda1a731e5a30f3d6$</string>
+            <string>$TexturePacker:SmartUpdate:7b2caf29d3d0555445b80c00f6c44369:3ea8990f5961aba67d8f0349337263e6:494a3559cad2a07bda1a731e5a30f3d6$</string>
             <key>textureFileName</key>
             <string>Gate.png</string>
         </dict>
