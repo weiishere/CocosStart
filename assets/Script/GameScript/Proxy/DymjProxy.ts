@@ -44,7 +44,7 @@ export class DymjProxy extends ModuleProxy {
     }
 
     handle(msgType: number, content: any, errorCode: number): void {
-        if (this.errorCodeHandle(errorCode)) {
+        if (this.errorCodeHandle(msgType, errorCode)) {
             return;
         }
         if (msgType === DymjProtocol.S_PLAYER_LOGIN) {
@@ -141,7 +141,7 @@ export class DymjProxy extends ModuleProxy {
         }
     }
 
-    errorCodeHandle(errorCode: number) {
+    errorCodeHandle(msgType: number, errorCode: number) {
         if (errorCode === DymjErrorCode.SUCCEED) {
             return false;
         }
@@ -153,8 +153,11 @@ export class DymjProxy extends ModuleProxy {
             errorMsg = "低于准入限制";
         }
 
-        this.isReadyEnterRoom = false;
-        this.joinRoomNo = null;
+        if (msgType === DymjProtocol.S_PLAYER_LOGIN || msgType === DymjProtocol.S_ENTER_ROOM) {
+            this.isReadyEnterRoom = false;
+            this.joinRoomNo = null;
+        }
+
         this.getGateProxy().toast(errorMsg);
         cc.log("DYMJ错误码: ", errorMsg);
         return true;
