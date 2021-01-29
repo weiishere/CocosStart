@@ -326,7 +326,9 @@ export class WebSockerProxy extends Proxy {
                 this.isHeartbeatResult = false;
                 this.send({ op: OperationDefine.C2GGW_Heartbeat, un: this.loginData.userName, tk: this.tokenData });
             } else {
+                this.isReconnect = true;
                 this.connect(this.__wsUrl);
+                // this.reconnect();
             }
         }
     }
