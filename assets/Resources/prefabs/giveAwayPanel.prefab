@@ -1834,7 +1834,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 175,
+      "width": 140,
       "height": 44.1
     },
     "_anchorPoint": {
@@ -1846,7 +1846,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -264.981,
+        -246.981,
         178.596,
         0,
         0,
@@ -1886,8 +1886,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "赠送账号：",
-    "_N$string": "赠送账号：",
+    "_string": "赠送ID：",
+    "_N$string": "赠送ID：",
     "_fontSize": 35,
     "_lineHeight": 35,
     "_enableWrapText": true,
@@ -2348,8 +2348,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "请输入赠送账号",
-    "_N$string": "请输入赠送账号",
+    "_string": "请输入赠送ID",
+    "_N$string": "请输入赠送ID",
     "_fontSize": 20,
     "_lineHeight": 25,
     "_enableWrapText": false,

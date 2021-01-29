@@ -112,24 +112,44 @@ export default class ExchangePanel extends ViewComponent {
         this.convertNode.active = false;
     }
 
+    /**
+     * 更新记录内容
+     * @param cotnent 
+     * @param timeStr 
+     * @param typeStr 
+     * @param moneyStr 
+     * @param statusStr 
+     */
     updateLogContent(cotnent: cc.Node, timeStr, typeStr, moneyStr, statusStr) {
         let timeLabel = cotnent.getChildByName("TimeLabel").getComponent(cc.Label);
         timeLabel.string = timeStr;
         let typeLabel = cotnent.getChildByName("TypeLabel").getComponent(cc.Label);
         typeLabel.string = typeStr;
         let moneyLabel = cotnent.getChildByName("MoneyLabel").getComponent(cc.Label);
-        moneyLabel.string = moneyStr;
+        moneyLabel.string = "￥" + moneyStr;
         let statusLabel = cotnent.getChildByName("StatusLabel").getComponent(cc.Label);
         statusLabel.string = statusStr;
     }
 
-    addLogContent() {
-        this.logContentContainer.removeAllChildren();
+    /**
+     * 添加记录
+     */
+    addLogContent(timeStr, typeStr, moneyStr, statusStr) {
+        // this.logContentContainer.removeAllChildren();
         let node = cc.instantiate(this.logContentItem);
+        node.active = true;
+        node.x = 0;
+        node.y = 0;
         // this.updateLogContent(node, "");
         this.logContentContainer.addChild(node);
     }
 
+    /**
+     * 更新标题
+     * @param timeStr 
+     * @param typeStr 
+     * @param moneyStr 
+     */
     updateLogTitle(timeStr, typeStr, moneyStr) {
         let node = <cc.Node>this.logNode.getChildByName("Title");
         let timeLabel = node.getChildByName("TimeLabel").getComponent(cc.Label);
@@ -156,6 +176,9 @@ export default class ExchangePanel extends ViewComponent {
         } else if (event.target.name === "exchangeLogItem") {
             this.exchangeLogTitleUpdate();
             this.logNode.active = true;
+            for (let index = 0; index < 10; index++) {
+                this.addLogContent();
+            }
         } else if (event.target.name === "convert") {
             this.convertNode.active = true;
         } else if (event.target.name === "convertLog") {
