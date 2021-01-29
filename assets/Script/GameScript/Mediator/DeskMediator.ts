@@ -84,7 +84,8 @@ export class DeskMediator extends BaseMediator {
             CommandDefine.Entrust,
             CommandDefine.EntrustNotice,
             CommandDefine.OpenEntrustPanel,
-            CommandDefine.OpenChatBox
+            CommandDefine.OpenChatBox,
+            CommandDefine.ShowDeskChatMsg
         ];
     }
 
@@ -315,15 +316,20 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.closeEntrustMask();
                 this.isEntrust = false;
                 break;
-            case CommandDefine.OpenChatBox://打开聊天窗口
+            case CommandDefine.OpenChatBox://打开聊天窗口 
                 const cartBox = cc.loader.getRes(PrefabDefine.ChatBox, cc.Prefab);
                 const cartBoxNode: cc.Node = cc.instantiate(cartBox)
                 this.viewComponent.addChild(cartBoxNode);
                 const chatBoxScript = (cartBoxNode.getComponent("ChatBox") as ChatBox)
                 chatBoxScript.show();
                 chatBoxScript.bindSendHandler((msgObj: MsgObj) => {
-                    console.log(JSON.stringify(msgObj));
+                    //console.log(JSON.stringify(msgObj));
+                    this.getDymjProxy().sendInteractMsg(JSON.stringify(msgObj));
                 });
+                break;
+            case CommandDefine.ShowDeskChatMsg:
+                const { msgContent } = notification.getBody();
+                this.DeskPanelViewScript.openChatMsgNotice(JSON.parse(msgContent));
                 break;
         }
     }

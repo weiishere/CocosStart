@@ -58,8 +58,8 @@ export default class ChatBox extends ViewComponent {
         '鸡不叫不睡觉，决战到天亮',
         '别走，大厅见，换桌再战一百回合',
         '看我这把牌，你这盘怕是要遭输光哦',
-        '投降输一半嘛，看你表演咯',
-        '今天不输一个亿，人活一生无意义'
+        '这局看你表演，我全力配合',
+        '今天不赢一个亿，人活一生无意义'
     ]
     // onLoad () {}
     private order: ChatOrder = "face";
@@ -127,6 +127,10 @@ export default class ChatBox extends ViewComponent {
                     const layout = nodeWrap.addComponent(cc.Layout);
                     layout.type = cc.Layout.Type.HORIZONTAL;
 
+                    const btu2 = nodeWrap.addComponent(cc.Button);
+                    btu2.transition = cc.Button.Transition.COLOR;
+                    btu2.pressedColor = new cc.Color(0, 255, 0);
+
                     const node = new cc.Node('face');
                     const face = node.addComponent(cc.Sprite);
                     face.spriteFrame = new cc.SpriteFrame(item);
@@ -134,11 +138,12 @@ export default class ChatBox extends ViewComponent {
 
                     nodeWrap.addChild(node);
 
-                    const btu = nodeWrap.addComponent(cc.Button);
-                    btu.transition = cc.Button.Transition.COLOR;
-                    btu.pressedColor = new cc.Color(0, 255, 0);
+                    const btu = node.addComponent(cc.Button);
+                    btu.transition = cc.Button.Transition.SCALE;
+                    btu.zoomScale = 0.9;
+
                     this.chatListWrap.addChild(nodeWrap);
-                    nodeWrap.on(cc.Node.EventType.TOUCH_END, () => {
+                    node.on(cc.Node.EventType.TOUCH_END, () => {
                         this.send(i);
                     }, this);
                 });

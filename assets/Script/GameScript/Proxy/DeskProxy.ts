@@ -598,7 +598,7 @@ export class DeskProxy extends BaseProxy {
             }
 
             isBaoHu = player.isTing;
-            //isBaoQingHu = player.isTingQingHu;
+            isBaoQingHu = player.isTingQingHu;
 
             if (curCardList.length === 2 || curCardList.length === 5 || curCardList.length === 8 || curCardList.length === 11) {
                 handCard = curCardList[curCardList.length - 1];
@@ -724,7 +724,7 @@ export class DeskProxy extends BaseProxy {
      * @param msgContent 
      */
     playerInteractMsg(msgContent: string) {
-
+        this.sendNotification(CommandDefine.ShowDeskChatMsg, { msgContent })
     }
     getGameData(): GameData {
         return this.repository.gameData;

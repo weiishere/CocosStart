@@ -17,6 +17,7 @@ import { LoginData } from "../GameData/LoginData";
 import { GateCommand } from "../Command/GateCommand";
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { DeskPanelViewEventDefine } from "../GameConst/Event/DeskPanelViewEventDefine";
+import { MsgObj } from "./ChatBox";
 
 @ccclass
 export default class DeskPanelView extends ViewComponent {
@@ -53,6 +54,8 @@ export default class DeskPanelView extends ViewComponent {
     private myShowCardWrap: cc.Node;
     private frontShowCardWrap: cc.Node;
     private showOutCard: cc.Node;
+    private charNotice: cc.Node;
+    private timer: number;
 
     private scheduleCallBack: () => void;
     private cardChooseAlert: cc.Node;
@@ -229,6 +232,8 @@ export default class DeskPanelView extends ViewComponent {
 
         this.cardChooseAlert = this.node.getChildByName('cardChooseAlert');
         this.deskOpreationIconWrap = this.node.getChildByName("deskOpreationIcon");
+        this.charNotice = this.node.getChildByName("desk").getChildByName("charNotice");
+        this.charNotice.opacity =0;
         //#region 其他玩家事件提醒
         this.gameEventWarn.touchWarn = this.gameEventView.getChildByName("peng_2x");
         this.gameEventWarn.huWarn = this.gameEventView.getChildByName("hu_2x");
@@ -933,6 +938,39 @@ export default class DeskPanelView extends ViewComponent {
         this.maskWrap.active = false;
         const tuoguanBtu = this.maskWrap.getChildByName('cancleTuoGuan');
         tuoguanBtu.targetOff(tuoguanBtu);
+    }
+    /**打开桌面聊天提醒 */
+    openChatMsgNotice(msgObj: MsgObj): void {
+        if (this.charNotice.opacity) {
+            window.clearTimeout(this.timer);
+            this.charNotice.setPosition(cc.v2(this.charNotice.x, this.charNotice.y - 30));
+        }
+        //this.charNotice.active = true;
+        this.charNotice.setPosition(cc.v2(this.charNotice.x, this.charNotice.y));
+        this.charNotice.opacity = 0;
+        const nickName_chat = this.charNotice.getChildByName("sendNickName");
+        const msg_chat = this.charNotice.getChildByName("chatContent");
+        const face_chat = this.charNotice.getChildByName("face");
+        nickName_chat.getComponent(cc.Label).string = msgObj.nickName + "：";
+        if (msgObj.type === 'msg') {
+            msg_chat.active = true;
+            face_chat.active = false;
+            msg_chat.getComponent(cc.Label).string = msgObj.content;
+        } else {
+            face_chat.active = true;
+            msg_chat.active = false;
+            msg_chat.getComponent(cc.Label).string = '';
+            cc.loader.loadRes(`textures/desk/face/face(${msgObj.content})`, cc.Texture2D, (err, item) => {
+                face_chat.getComponent(cc.Sprite).spriteFrame = new cc.SpriteFrame(item);
+            })
+        }
+        console.log(this.charNotice.width);
+        cc.tween(this.charNotice).to(0.1, { position: cc.v3(this.charNotice.x, this.charNotice.y + 30), opacity: 255 }).call(() => {
+            this.timer = window.setTimeout(() => {
+                cc.tween(this.charNotice).to(0.1, { position: cc.v3(this.charNotice.x, this.charNotice.y - 30), opacity: 0 }).call(() => { this.charNotice.opacity = 0; }).start();
+            }, 3000);
+        }).start();
+
     }
 
     start() {
