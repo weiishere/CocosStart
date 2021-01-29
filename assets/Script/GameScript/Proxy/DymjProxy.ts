@@ -149,8 +149,12 @@ export class DymjProxy extends ModuleProxy {
         let errorMsg = "";
         if (errorCode === DymjErrorCode.ROOM_NOT_EXIST) {
             errorMsg = "房间不存在";
+        } else if (errorCode === DymjErrorCode.UNDER_LIMIT) {
+            errorMsg = "低于准入限制";
         }
 
+        this.isReadyEnterRoom = false;
+        this.joinRoomNo = null;
         this.getGateProxy().toast(errorMsg);
         cc.log("DYMJ错误码: ", errorMsg);
         return true;
@@ -173,7 +177,7 @@ export class DymjProxy extends ModuleProxy {
                 return;
             }
         }
-        
+
         this.isReadyEnterRoom = true;
         this.joinRoomNo = roomNo;
         let data: DymjC2SPlayerLogin = new DymjC2SPlayerLogin();
@@ -274,6 +278,7 @@ export class DymjProxy extends ModuleProxy {
      * 登出
      */
     logout() {
+        this.isReadyEnterRoom = false;
         this.joinRoomNo = null;
         this.sendGameData(DymjProtocol.LOGOUT, this.getLocalCacheDataProxy().getLoginData().userName);
     }
@@ -287,6 +292,7 @@ export class DymjProxy extends ModuleProxy {
     }
 
     serverShutDown(): void {
+        this.isReadyEnterRoom = false;
         this.joinRoomNo = null;
         this.getGateProxy().toast("游戏服务暂停了");
         this.sendNotification(CommandDefine.ExitDeskPanel, {}, '');
