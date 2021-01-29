@@ -919,7 +919,6 @@ export default class DeskPanelView extends ViewComponent {
         if (this.maskWrap.active) {
             return;
         }
-        cc.log("openEntrustMask ====================");
         const tuoguanBtu = this.maskWrap.getChildByName('cancleTuoGuan');
         this.maskWrap.active = true;
         tuoguanBtu.once(cc.Node.EventType.TOUCH_START, () => {
@@ -931,7 +930,6 @@ export default class DeskPanelView extends ViewComponent {
     }
     /**关闭托管蒙版 */
     closeEntrustMask(): void {
-        cc.log("closeEntrustMask ====================");
         this.maskWrap.active = false;
         const tuoguanBtu = this.maskWrap.getChildByName('cancleTuoGuan');
         tuoguanBtu.targetOff(tuoguanBtu);
