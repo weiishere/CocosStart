@@ -6,6 +6,7 @@ export class DymjPlayerReconnData {
     playerInfo: DymjPlayerInfo;
     isBank: boolean; //是否为庄。
     isTing: boolean;  //是否已经听牌。
+    isTingQingHu: boolean;  //是否已经报请胡。
     shouValues: number[]; // 手牌数组。已经排序好的手牌。格式：[int]。
     gangValues: DymjGang[]; //杠牌数组。格式：[{playerAzimuth:int, mjValue:int, gangType:int}]。
     pengValues: UIOpPengRsp[];  //碰牌数组。格式：[{playerAzimuth:int, mjValue:int}]。
