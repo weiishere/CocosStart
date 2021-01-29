@@ -44,7 +44,7 @@ export class DymjProxy extends ModuleProxy {
     }
 
     handle(msgType: number, content: any, errorCode: number): void {
-        if (this.errorCodeHandle(errorCode)) {
+        if (this.errorCodeHandle(msgType, errorCode)) {
             return;
         }
         if (msgType === DymjProtocol.S_PLAYER_LOGIN) {
@@ -141,7 +141,7 @@ export class DymjProxy extends ModuleProxy {
         }
     }
 
-    errorCodeHandle(errorCode: number) {
+    errorCodeHandle(msgType: number, errorCode: number) {
         if (errorCode === DymjErrorCode.SUCCEED) {
             return false;
         }
@@ -149,6 +149,13 @@ export class DymjProxy extends ModuleProxy {
         let errorMsg = "";
         if (errorCode === DymjErrorCode.ROOM_NOT_EXIST) {
             errorMsg = "房间不存在";
+        } else if (errorCode === DymjErrorCode.UNDER_LIMIT) {
+            errorMsg = "低于准入限制";
+        }
+
+        if (msgType === DymjProtocol.S_PLAYER_LOGIN || msgType === DymjProtocol.S_ENTER_ROOM) {
+            this.isReadyEnterRoom = false;
+            this.joinRoomNo = null;
         }
 
         this.getGateProxy().toast(errorMsg);
@@ -173,7 +180,7 @@ export class DymjProxy extends ModuleProxy {
                 return;
             }
         }
-        
+
         this.isReadyEnterRoom = true;
         this.joinRoomNo = roomNo;
         let data: DymjC2SPlayerLogin = new DymjC2SPlayerLogin();
@@ -274,6 +281,7 @@ export class DymjProxy extends ModuleProxy {
      * 登出
      */
     logout() {
+        this.isReadyEnterRoom = false;
         this.joinRoomNo = null;
         this.sendGameData(DymjProtocol.LOGOUT, this.getLocalCacheDataProxy().getLoginData().userName);
     }
@@ -287,6 +295,7 @@ export class DymjProxy extends ModuleProxy {
     }
 
     serverShutDown(): void {
+        this.isReadyEnterRoom = false;
         this.joinRoomNo = null;
         this.getGateProxy().toast("游戏服务暂停了");
         this.sendNotification(CommandDefine.ExitDeskPanel, {}, '');
