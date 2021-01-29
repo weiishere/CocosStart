@@ -164,13 +164,16 @@ export class DymjProxy extends ModuleProxy {
         return this.getLocalCacheDataProxy().getLoginData().userName;
     }
 
-    loginGame(roomNo: number) {
-        if (this.joinRoomNo) {
-            return;
+    loginGame(roomNo: number, isReconnect: boolean = false) {
+        if (!isReconnect) {
+            if (this.joinRoomNo) {
+                return;
+            }
+            if (this.isReadyEnterRoom) {
+                return;
+            }
         }
-        if (this.isReadyEnterRoom) {
-            return;
-        }
+        
         this.isReadyEnterRoom = true;
         this.joinRoomNo = roomNo;
         let data: DymjC2SPlayerLogin = new DymjC2SPlayerLogin();

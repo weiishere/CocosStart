@@ -122,16 +122,20 @@ export class DeskMediator extends BaseMediator {
 
     public async handleNotification(notification: INotification) {
 
-        // const gameData = this.getDeskProxy().getGameData();
-        // const deskData = this.getDeskProxy().getDeskData();
-        // console.log('gameData', gameData);
-        // console.log('deskData', deskData);
+        const gameData = this.getDeskProxy().getGameData();
+        const deskData = this.getDeskProxy().getDeskData();
+        console.log('gameData', gameData);
+        console.log('deskData', deskData);
 
         switch (notification.getName()) {
             case CommandDefine.InitDeskPanel:
                 this.roundMark = notification.getBody().dymjS2CEnterRoom.roundMark;
                 this.sendNotification(CommandDefine.CloseLoadingPanel);
-                await this.init();
+                let isReconnect = true;
+                if (!this.view || !this.view.isValid) {
+                    isReconnect = false;
+                    await this.init();
+                }
                 this.deskPanel = this.viewComponent.getChildByName('deskView');
                 this.DeskPanelViewScript = this.deskPanel.getComponent('DeskPanelView') as DeskPanelView;
                 this.getDeskProxy().updateDeskInfo(notification.getBody().dymjS2CEnterRoom);
@@ -206,6 +210,11 @@ export class DeskMediator extends BaseMediator {
                         this.getDymjProxy().operation(DymjOperationType.XIAO, 0);
                     }
                 });
+
+                // 如果是重连，在这里发送准备消息
+                if (isReconnect) {
+                    this.getDymjProxy().ready();
+                }
                 break;
             case CommandDefine.OpenRecordAlter:
                 this.dymjGameResult = notification.getBody();
@@ -340,7 +349,7 @@ export class DeskMediator extends BaseMediator {
                 // window.setTimeout(() => { 
                 //     this.DeskPanelViewScript.openReloadPanel();
                 // }, 2000)
-                this.getDymjProxy().loginGame(this.getDeskProxy().getDeskData().gameSetting.roomId);
+                this.getDymjProxy().loginGame(this.getDeskProxy().getDeskData().gameSetting.roomId, true);
                 break;
         }
     }
