@@ -10,6 +10,7 @@ import { GameRecordInfo } from '../GameData/GameRecordInfo';
 import { RoomPlayerCredit } from '../GameData/RoomPlayerCredit';
 import RecordDetailList from './RecordDetailList';
 import { CommandDefine } from '../MahjongConst/CommandDefine';
+import { GateProxy } from '../Proxy/GateProxy';
 // Learn TypeScript:
 //  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
 // Learn Attribute:
@@ -42,6 +43,8 @@ export default class RecordPanel extends ViewComponent {
     beforePageIndex = 1;
     pageIndex = 1;
     pageCount = 10;
+    /** 是否最后一页 */
+    isLastPage: boolean;
 
 
     protected bindUI(): void {
@@ -55,11 +58,18 @@ export default class RecordPanel extends ViewComponent {
             this.pageIndex--;
             if (this.pageIndex < 1) {
                 this.pageIndex = 1;
+                this.getGateProxy().toast("已经在第一页了");
+                return;
             }
+            this.isLastPage = false;
             this.getRecoldLog(this.pageIndex);
         });
 
         this.downPageBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            if (this.isLastPage) {
+                this.getGateProxy().toast("已经最后一页了");
+                return;
+            }
             this.pageIndex++;
             this.getRecoldLog(this.pageIndex);
         });
@@ -67,6 +77,10 @@ export default class RecordPanel extends ViewComponent {
 
     public getConfigProxy() {
         return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
+    }
+
+    public getGateProxy() {
+        return <GateProxy>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
     }
 
     public getLocalCacheDataProxy() {
@@ -99,6 +113,7 @@ export default class RecordPanel extends ViewComponent {
 
             if (!data || data.length < this.pageCount) {
                 this.pageIndex = this.beforePageIndex;
+                this.isLastPage = true;
             }
         }, (err) => {
         }, HttpUtil.METHOD_POST, param);
