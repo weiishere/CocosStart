@@ -17,6 +17,7 @@ import MyPlayerItem from "./MyPlayerItem"
 import PageCommand from "../../Util/PageCommand";
 import { ConfigProxy } from "../../Proxy/ConfigProxy";
 
+
 const { ccclass, property } = cc._decorator;
 
 @ccclass

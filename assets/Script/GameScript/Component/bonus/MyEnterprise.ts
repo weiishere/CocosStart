@@ -15,7 +15,7 @@ import { ConfigProxy } from "../../Proxy/ConfigProxy";
 import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
 import { HttpUtil } from "../../Util/HttpUtil";
 import PageCommand from "../../Util/PageCommand";
-
+import { getUserOrderInfo } from './MyBonus';
 const { ccclass, property } = cc._decorator;
 
 @ccclass

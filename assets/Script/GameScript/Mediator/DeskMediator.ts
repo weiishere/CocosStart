@@ -122,10 +122,10 @@ export class DeskMediator extends BaseMediator {
 
     public async handleNotification(notification: INotification) {
 
-        const gameData = this.getDeskProxy().getGameData();
-        const deskData = this.getDeskProxy().getDeskData();
-        console.log('gameData', gameData);
-        console.log('deskData', deskData);
+        // const gameData = this.getDeskProxy().getGameData();
+        // const deskData = this.getDeskProxy().getDeskData();
+        // console.log('gameData', gameData);
+        // console.log('deskData', deskData);
 
         switch (notification.getName()) {
             case CommandDefine.InitDeskPanel:
@@ -232,6 +232,7 @@ export class DeskMediator extends BaseMediator {
                 break;
             case CommandDefine.ExitDeskPanel:
                 this.deskPanel.destroy();
+                //this.view && this.view.destroy();
                 break;
             case CommandDefine.LicensingCardPush://发牌
                 this.DeskPanelViewScript.updateRoomInfo();

@@ -294,6 +294,7 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.CloseLoadingPanel,
             CommandDefine.OpenBonusIndex,
             CommandDefine.OpenUpdatePromptAlert,
+            CommandDefine.closeLoginPanel
         ];
     }
 
@@ -408,9 +409,9 @@ export class GatePanelMediator extends BaseMediator {
                 this.scrollMsgNode.getComponent('ScrollMsgNode').createContent('抵制不良游戏，拒绝盗版游戏，注意自我保护，谨防受骗上当，适度游戏益脑，沉迷游戏伤身，合理安排时间，享受健康生活', 300);
                 break;
             case CommandDefine.OpenLoadingPanel:
-                this.loadingPanel = new cc.Node('loading');
+                this.loadingPanel = new cc.Node('Loading');
                 const label = this.loadingPanel.addComponent(cc.Label);
-                label.string = "loading";
+                label.string = "Loading";
                 cc.find("Canvas").addChild(this.loadingPanel);
                 break;
             case CommandDefine.CloseLoadingPanel:
@@ -422,7 +423,9 @@ export class GatePanelMediator extends BaseMediator {
                 const bonusIndex = cc.loader.getRes(PrefabDefine.BonusIndex);
                 this.viewComponent.addChild(cc.instantiate(bonusIndex))
                 break;
-
+            case CommandDefine.closeLoginPanel:
+                cc.find('Canvas/phoneLoginAlert').destroy();
+                break;
         }
     }
 }

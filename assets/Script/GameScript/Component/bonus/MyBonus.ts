@@ -16,6 +16,20 @@ import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
 import { ConfigProxy } from "../../Proxy/ConfigProxy";
 const { ccclass, property } = cc._decorator;
 
+/**获取用户信息 */
+export const getUserOrderInfo = (callBack) => {
+    let bonusUrl = (<ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config)).bonusUrl;
+    let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
+    HttpUtil.send(bonusUrl + `/api/v1/account/get?userName=${localCacheDataProxy.getLoginData().userName}`, res => {
+        if (res.code === 200) {
+            callBack(res);
+        } else {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
+        }
+    }, (err) => {
+        Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '数据服务未响应', toastOverlay: true }, '');
+    }, HttpUtil.METHOD_GET, {})
+}
 
 @ccclass
 export default class MyBonus extends ViewComponent {
@@ -44,25 +58,17 @@ export default class MyBonus extends ViewComponent {
     }
 
     bindUI() {
-        let bonusUrl = this.getConfigProxy().bonusUrl;
         this.loading = this.node.getChildByName('loading');
-        let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
-        //判断是不是盟主
-        HttpUtil.send(bonusUrl + `/api/v1/account/get?userName=${localCacheDataProxy.getLoginData().userName}`, res => {
-            if (res.code === 200) {
-                this.node.getChildByName("bg").getChildByName("bg2_hl").active = true;
-                this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_2").active = true;
-                this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_4").active = true;
-                if (res.data.accountType === 666) {
-                    this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_1").active = true;
-                    this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_3").active = true;
-                }
-            } else {
-                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
+        getUserOrderInfo((res) => {
+            //判断是不是盟主
+            this.node.getChildByName("bg").getChildByName("bg2_hl").active = true;
+            this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_2").active = true;
+            this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_4").active = true;
+            if (res.data.accountType === 666) {
+                this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_1").active = true;
+                this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_3").active = true;
             }
-        }, (err) => {
-            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '数据服务未响应', toastOverlay: true }, '');
-        }, HttpUtil.METHOD_GET, {})
+        });
     }
 
     bindEvent() {
@@ -125,6 +131,7 @@ export default class MyBonus extends ViewComponent {
         let bonusUrl = this.getConfigProxy().bonusUrl;
         //提取红利
         this.extractBonus_btn.on(cc.Node.EventType.TOUCH_END, () => {
+            if (this.node.getChildByName("bg").getChildByName("bg2_hl").getChildByName("hlye_value").getComponent(cc.Label).string === '0') return;
             let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
             HttpUtil.send(bonusUrl + '/api/v1/capital/add/withdrawal?serialType=3&amount=0&userName=' + localCacheDataProxy.getLoginData().userName, res => {
                 this.loading.active = false;

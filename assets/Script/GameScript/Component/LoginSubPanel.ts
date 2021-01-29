@@ -116,8 +116,8 @@ export class LoginSubPanel extends ViewComponent {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '新注册玩家请输入邀请码', toastOverlay: false }, '');
             return;
         }
-
         this.dispatchCustomEvent(GateEventDefine.LOGIN_BTN_EVENT, new PhoneRegisterOrLoginData(phoneNo, code, inviteCode));
+        
     }
     public cancle(): void {
         // cc.tween(this.root).to(0.2, { scale: 1.0, opacity: 50 }, { easing: 'sineOut' }).call(()=>{

@@ -13,6 +13,7 @@ import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
 import { UserOfflineData } from '../GameData/UserOfflineData';
 import { LoginAfterHttpUtil } from '../Util/LoginAfterHttpUtil';
 import { ResponseCode } from "../GameConst/ResponseCode";
+import Facade from "../../Framework/care/Facade";
 
 
 export class GateProxy extends BaseProxy {
@@ -67,6 +68,7 @@ export class GateProxy extends BaseProxy {
         HttpUtil.send(url, (response) => {
             if (response.hd === "success") {
                 this.loginAfterHandle(response.bd);
+                Facade.Instance.sendNotification(CommandDefine.closeLoginPanel, '', '')
             } else {
                 // 返回错误码，提示用户
                 let errorCode = parseInt(response.bd);

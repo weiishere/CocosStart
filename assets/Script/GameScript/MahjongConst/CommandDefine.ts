@@ -56,5 +56,6 @@ export enum CommandDefine {
     OpenEntrustPanel = "OpenEntrustPanel",
     OpenBonusIndex = "OpenBonusIndex",
     OpenChatBox = "OpenChatBox",
-    ShowDeskChatMsg = "ShowDeskChatMsg"
+    ShowDeskChatMsg = "ShowDeskChatMsg",
+    closeLoginPanel = "closeLoginPanel"
 }

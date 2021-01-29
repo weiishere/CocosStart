@@ -92,8 +92,8 @@ export default class LeaderEnterprise extends ViewComponent {
                         const myEnterPriseItemNode: cc.Node = cc.instantiate(myEnterPriseItem);
                         myEnterPriseItemNode.getChildByName("name").getComponent(cc.Label).string = element.nickName;
                         myEnterPriseItemNode.getChildByName("playerId").getComponent(cc.Label).string = element.userName;
-                        myEnterPriseItemNode.getChildByName("playNum").getComponent(cc.Label).string = "今日总贡献：" + (+element.todayPay).toFixed(2);
-                        myEnterPriseItemNode.getChildByName("regTime").getComponent(cc.Label).string = "累计总贡献：" + (+element.totalPay).toFixed(2);
+                        myEnterPriseItemNode.getChildByName("playNum").getComponent(cc.Label).string = "今日总贡献：" + (+element.todayDividend).toFixed(2);
+                        myEnterPriseItemNode.getChildByName("regTime").getComponent(cc.Label).string = "累计总贡献：" + (+element.totalDividend).toFixed(2);
                         this.scrollViewContent.addChild(myEnterPriseItemNode);
                     });
                 });
