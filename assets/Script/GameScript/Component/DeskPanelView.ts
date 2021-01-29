@@ -233,7 +233,7 @@ export default class DeskPanelView extends ViewComponent {
         this.cardChooseAlert = this.node.getChildByName('cardChooseAlert');
         this.deskOpreationIconWrap = this.node.getChildByName("deskOpreationIcon");
         this.charNotice = this.node.getChildByName("desk").getChildByName("charNotice");
-        this.charNotice.opacity =0;
+        this.charNotice.opacity = 0;
         //#region 其他玩家事件提醒
         this.gameEventWarn.touchWarn = this.gameEventView.getChildByName("peng_2x");
         this.gameEventWarn.huWarn = this.gameEventView.getChildByName("hu_2x");
@@ -406,10 +406,7 @@ export default class DeskPanelView extends ViewComponent {
                     (card.getComponent("CardItemView") as CardItemView).setMainHide(true);
                 }).start();
                 index++;
-                console.log(index);
-                if (index === this.mainCardListPanel.children.length - 1) {
-                    effectDone();
-                }
+                if (index === this.mainCardListPanel.children.length - 1) { effectDone(); }
             }, 0.2, this.mainCardListPanel.children.length - 1)
         }
     }
@@ -538,6 +535,9 @@ export default class DeskPanelView extends ViewComponent {
                 self.showCardEvent(cardNumber);
             });
             _card.setStress(true);
+            _handCard.opacity = 0;
+            _handCard.setPosition(0, 50);
+            cc.tween(_handCard).to(0.1, { opacity: 255, position: cc.v3(0, 0) }).start();
             const _mayHuCard = self.getData().gameData.myCards.mayHuCards.find(item => item.putCard === _card.cardNumber);
             if (_mayHuCard) _card.setHuCard(_mayHuCard);
         }
@@ -839,8 +839,8 @@ export default class DeskPanelView extends ViewComponent {
             cardsChoose.map(item => {
                 const card = this.addCardToNode(cardListWrap, item, "mine", 'setUp', {
                     purAddNode: node => {
-                        node.setScale(0.8, 0.8);
-                        node.setPosition(cc.v2(0, 15));
+                        //node.setScale(0.8, 0.8);
+                        node.setPosition(cc.v2(0, -20));
                         (node.getComponent("CardItemView") as CardItemView).setStress(true);
                     },
                     touchEndCallback: function () {

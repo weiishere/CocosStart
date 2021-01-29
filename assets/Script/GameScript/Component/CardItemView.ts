@@ -153,11 +153,11 @@ export default class CardItemView extends cc.Component {
                 cc.fadeTo(0.4, 255),
                 cc.callFunc(() => { })));
 
-        if (stress) {
+        if (stress === undefined || stress === true) {
             cardChoose.active = true;
             cardChoose.runAction(_action1);
         } else {
-            stress && (cardChoose.active = false);
+            cardChoose.active = false;
         }
 
     }

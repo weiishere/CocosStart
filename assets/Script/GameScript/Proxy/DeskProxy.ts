@@ -192,11 +192,9 @@ export class DeskProxy extends BaseProxy {
                 }, 800);
             } else if (this.getGameData().myCards.status.isBaoQingHu && !dymjS2CPlayerGet.nextStep.oprts) {
                 const arr = this.getGameData().myCards.curCardList.filter(card => this.getGameData().myCards.disableCard.some(item => item === card) ? false : true);
-                if (arr.length === 0) {
-                    (<DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj)).putMahkjong(dymjS2CPlayerGet.getMjValue);
-                } else {
-                    (<DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj)).putMahkjong(arr[0]);
-                }
+                window.setTimeout(() => {
+                    (<DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj)).putMahkjong(arr.length === 0 ? dymjS2CPlayerGet.getMjValue : arr[0]);
+                }, 800);
             }
         } else {
             console.log('dymjS2CPlayerGet.getMjValue', dymjS2CPlayerGet.getMjValue);
@@ -618,7 +616,7 @@ export class DeskProxy extends BaseProxy {
                     mayHuCards: [],
                     status: {
                         isHadHu: huCard > 0,
-                        isBaoQingHu: isBaoHu,
+                        isBaoQingHu: isBaoQingHu,
                         isBaoHu: isBaoHu
                     }
                 }
@@ -653,7 +651,7 @@ export class DeskProxy extends BaseProxy {
                         status: {
                             /**对家是否已经胡牌 */
                             isHadHu: huCard > 0,
-                            isBaoQingHu: isBaoHu,
+                            isBaoQingHu: isBaoQingHu,
                             /** 是否报胡 */
                             isBaoHu: isBaoHu
                         }

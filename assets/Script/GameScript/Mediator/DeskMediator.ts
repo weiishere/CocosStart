@@ -227,6 +227,7 @@ export class DeskMediator extends BaseMediator {
                 this.sendNotification(CommandDefine.ShowCenterEffect, { isMe: undefined });
                 this.DeskPanelViewScript.updatedDeskAiming();
                 this.DeskPanelViewScript.updateOtherCurCardList();
+                this.DeskPanelViewScript.updateCountDown();
                 this.DeskPanelViewScript.updateMyCurCardList(() => {
                     this.DeskPanelViewScript.updateHandCardAndHuCard();
                     this.DeskPanelViewScript.updateOutCard();
