@@ -10,7 +10,7 @@ import { ConfigProxy } from "../Proxy/ConfigProxy";
 export default class BaseMediator extends Mediator {
     public view: cc.Node = null;
 
-    public constructor(mediatorName: string = null, viewComponent: any = null) {
+    public constructor(mediatorName: string = null, viewComponent: cc.Node = null) {
         super(mediatorName, viewComponent);
     }
 

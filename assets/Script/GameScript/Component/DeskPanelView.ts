@@ -18,6 +18,7 @@ import { GateCommand } from "../Command/GateCommand";
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { DeskPanelViewEventDefine } from "../GameConst/Event/DeskPanelViewEventDefine";
 import { MsgObj } from "./ChatBox";
+import { PrefabDefine } from "../MahjongConst/PrefabDefine";
 
 @ccclass
 export default class DeskPanelView extends ViewComponent {
@@ -595,7 +596,7 @@ export default class DeskPanelView extends ViewComponent {
                 if (partner.partnerCards.isHandCard) {
                     this.addCardToNode(this.frontHandCard, this.isSuper ? partner.partnerCards.handCard : 0, "front", 'setUp', {
                         purAddNode: node => {
-                            (node.getComponent("CardItemView") as CardItemView).setStress();//选中
+                            (node.getComponent("CardItemView") as CardItemView).setStress(false);//选中
                         }
                     });
                 }
@@ -970,9 +971,14 @@ export default class DeskPanelView extends ViewComponent {
                 cc.tween(this.charNotice).to(0.1, { position: cc.v3(this.charNotice.x, this.charNotice.y - 30), opacity: 0 }).call(() => { this.charNotice.opacity = 0; }).start();
             }, 3000);
         }).start();
-
     }
-
+    /**打开刷新层 */
+    openReloadPanel() {
+        cc.loader.loadRes(PrefabDefine.ReloadPanel, cc.Prefab, (err, item) => {
+            const reloadPanel = cc.instantiate(item);
+            cc.find("Canvas").addChild(reloadPanel);
+        })
+    }
     start() {
 
     }

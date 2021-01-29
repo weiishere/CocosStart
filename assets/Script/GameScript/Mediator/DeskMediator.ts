@@ -85,7 +85,8 @@ export class DeskMediator extends BaseMediator {
             CommandDefine.EntrustNotice,
             CommandDefine.OpenEntrustPanel,
             CommandDefine.OpenChatBox,
-            CommandDefine.ShowDeskChatMsg
+            CommandDefine.ShowDeskChatMsg,
+            CommandDefine.WebSocketReconnect
         ];
     }
 
@@ -331,6 +332,15 @@ export class DeskMediator extends BaseMediator {
             case CommandDefine.ShowDeskChatMsg:
                 const { msgContent } = notification.getBody();
                 this.DeskPanelViewScript.openChatMsgNotice(JSON.parse(msgContent));
+                break;
+            case CommandDefine.WebSocketReconnect://重连
+                this.sendNotification(CommandDefine.OpenToast, { content: "准备重连" })
+                // location.reload();
+                // this.sendNotification(CommandDefine.OpenToast, { content: '开始重连' });
+                // window.setTimeout(() => { 
+                //     this.DeskPanelViewScript.openReloadPanel();
+                // }, 2000)
+                this.getDymjProxy().loginGame(this.getDeskProxy().getDeskData().gameSetting.roomId);
                 break;
         }
     }
