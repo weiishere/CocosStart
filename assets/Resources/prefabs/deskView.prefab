@@ -21830,7 +21830,9 @@
     "cardItem": {
       "__uuid__": "7b8ee160-f215-490c-8b26-9d84db23caeb"
     },
-    "maskWrap": null,
+    "maskWrap": {
+      "__id__": 513
+    },
     "_id": ""
   },
   {
