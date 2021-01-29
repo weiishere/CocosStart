@@ -140,80 +140,81 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript = this.deskPanel.getComponent('DeskPanelView') as DeskPanelView;
                 this.getDeskProxy().updateDeskInfo(notification.getBody().dymjS2CEnterRoom);
                 this.DeskPanelViewScript.updateRoomInfo();
-                this.DeskPanelViewScript.bindDskOpreationEvent(node => {
-                    if (node.name === 'exitIcon') {
-                        //退出房间
-                        const { playerList } = this.getDeskProxy().repository.deskData;
-                        if (playerList.length === 1) {
-                            this.getDymjProxy().logout();
-                            this.sendNotification(CommandDefine.ExitDeskPanel);
-                        } else {
-                            this.sendNotification(CommandDefine.OpenToast, { content: '抱歉，牌局未完成，请勿退出牌局' });
-                        }
-                    } else if (node.name === 'recordIcon') {
-                        // if (this.dymjGameResult) {
-                        //     this.openRecordAlter(this.dymjGameResult);
-                        // } else {
-                        //     this.sendNotification(CommandDefine.OpenToast, { content: '抱歉，暂无对战记录~' });
-                        // }
-                        this.sendNotification(CommandDefine.OpenRecordDetailList, this.roundMark, "");
-                    } else if (node.name === 'helpIcon') {
-                        this.DeskPanelViewScript.openHelperAlert();
-                    } else if (node.name === 'setIcon') {
-                        this.sendNotification(CommandDefine.OpenSetting);
-                    } else if (node.name === 'chatIcon') {
-                        this.sendNotification(CommandDefine.OpenChatBox);
-                    }
-                });
-                /**出牌事件 */
-                this.DeskPanelViewScript.bindShowCardEvent(cardNumber => {
-                    this.sendNotification(CommandDefine.ShowCard, { cardNumber })
-                });
-                this.DeskPanelViewScript.bindGameOpreationEvent((node, correlationInfoData) => {
-                    if (node.name === "bar") {
-                        //杠
-                        this.DeskPanelViewScript.updateChooseCardsAndHandler(card => { this.getDymjProxy().operation(DymjOperationType.GANG, card); });
-                    } else if (node.name === "touch") {
-                        //碰
-                        this.getDymjProxy().operation(DymjOperationType.PENG, (correlationInfoData.peng as DymjPeng).mjValue);
-                    } else if (node.name === 'hu') {
-                        //胡
-                        if (correlationInfoData.hu.isTianHu) {
-                            //天胡
-                            this.getDymjProxy().operation(DymjOperationType.TING, 0);
-                        } else {
-                            this.getDymjProxy().operation(DymjOperationType.HU, (correlationInfoData.hu as DymjHu).mjValue);
-                        }
-
-                    } else if (node.name === 'baoHu') {
-                        //一般报胡
-                        if (this.getDeskProxy().repository.gameData.myCards.cardsChoose.length === 0) {
-                            //有可能是没有摸牌的情况下报牌
-                            this.getDymjProxy().operation(DymjOperationType.TING, 0);
-                        } else {
-                            this.DeskPanelViewScript.updateChooseCardsAndHandler(card => { this.getDymjProxy().operation(DymjOperationType.TING, card); });
-                        }
-                    } else if (node.name === 'baoQingHu') {
-                        //报请胡
-                        if (this.getDeskProxy().repository.gameData.myCards.cardsChoose.length === 0) {
-                            //有可能是没有摸牌的情况下报牌
-                            this.getDymjProxy().operation(DymjOperationType.TING, 0);
-                        } else {
-                            this.DeskPanelViewScript.updateChooseCardsAndHandler(card => { this.getDymjProxy().operation(DymjOperationType.TING, card); });
-                        }
-                    } else if (node.name === 'qingHu') {
-                        //请胡
-                        //this.sendNotification(CommandDefine.ShowCard, { cardNumber: (correlationInfoData.qingHu as DymjHu).mjValue, isQingHu: true })
-                        this.getDymjProxy().operation(DymjOperationType.QING_HU, (correlationInfoData.qingHu as DymjHu).mjValue);
-                    } else if (node.name === 'pass') {
-                        //过
-                        this.getDymjProxy().operation(DymjOperationType.XIAO, 0);
-                    }
-                });
 
                 // 如果是重连，在这里发送准备消息
                 if (isReconnect) {
                     this.getDymjProxy().ready();
+                } else {
+                    this.DeskPanelViewScript.bindDskOpreationEvent(node => {
+                        if (node.name === 'exitIcon') {
+                            //退出房间
+                            const { playerList } = this.getDeskProxy().repository.deskData;
+                            if (playerList.length === 1) {
+                                this.getDymjProxy().logout();
+                                this.sendNotification(CommandDefine.ExitDeskPanel);
+                            } else {
+                                this.sendNotification(CommandDefine.OpenToast, { content: '抱歉，牌局未完成，请勿退出牌局' });
+                            }
+                        } else if (node.name === 'recordIcon') {
+                            // if (this.dymjGameResult) {
+                            //     this.openRecordAlter(this.dymjGameResult);
+                            // } else {
+                            //     this.sendNotification(CommandDefine.OpenToast, { content: '抱歉，暂无对战记录~' });
+                            // }
+                            this.sendNotification(CommandDefine.OpenRecordDetailList, this.roundMark, "");
+                        } else if (node.name === 'helpIcon') {
+                            this.DeskPanelViewScript.openHelperAlert();
+                        } else if (node.name === 'setIcon') {
+                            this.sendNotification(CommandDefine.OpenSetting);
+                        } else if (node.name === 'chatIcon') {
+                            this.sendNotification(CommandDefine.OpenChatBox);
+                        }
+                    });
+                    /**出牌事件 */
+                    this.DeskPanelViewScript.bindShowCardEvent(cardNumber => {
+                        this.sendNotification(CommandDefine.ShowCard, { cardNumber })
+                    });
+                    this.DeskPanelViewScript.bindGameOpreationEvent((node, correlationInfoData) => {
+                        if (node.name === "bar") {
+                            //杠
+                            this.DeskPanelViewScript.updateChooseCardsAndHandler(card => { this.getDymjProxy().operation(DymjOperationType.GANG, card); });
+                        } else if (node.name === "touch") {
+                            //碰
+                            this.getDymjProxy().operation(DymjOperationType.PENG, (correlationInfoData.peng as DymjPeng).mjValue);
+                        } else if (node.name === 'hu') {
+                            //胡
+                            if (correlationInfoData.hu.isTianHu) {
+                                //天胡
+                                this.getDymjProxy().operation(DymjOperationType.TING, 0);
+                            } else {
+                                this.getDymjProxy().operation(DymjOperationType.HU, (correlationInfoData.hu as DymjHu).mjValue);
+                            }
+
+                        } else if (node.name === 'baoHu') {
+                            //一般报胡
+                            if (this.getDeskProxy().repository.gameData.myCards.cardsChoose.length === 0) {
+                                //有可能是没有摸牌的情况下报牌
+                                this.getDymjProxy().operation(DymjOperationType.TING, 0);
+                            } else {
+                                this.DeskPanelViewScript.updateChooseCardsAndHandler(card => { this.getDymjProxy().operation(DymjOperationType.TING, card); });
+                            }
+                        } else if (node.name === 'baoQingHu') {
+                            //报请胡
+                            if (this.getDeskProxy().repository.gameData.myCards.cardsChoose.length === 0) {
+                                //有可能是没有摸牌的情况下报牌
+                                this.getDymjProxy().operation(DymjOperationType.TING, 0);
+                            } else {
+                                this.DeskPanelViewScript.updateChooseCardsAndHandler(card => { this.getDymjProxy().operation(DymjOperationType.TING, card); });
+                            }
+                        } else if (node.name === 'qingHu') {
+                            //请胡
+                            //this.sendNotification(CommandDefine.ShowCard, { cardNumber: (correlationInfoData.qingHu as DymjHu).mjValue, isQingHu: true })
+                            this.getDymjProxy().operation(DymjOperationType.QING_HU, (correlationInfoData.qingHu as DymjHu).mjValue);
+                        } else if (node.name === 'pass') {
+                            //过
+                            this.getDymjProxy().operation(DymjOperationType.XIAO, 0);
+                        }
+                    });
                 }
                 break;
             case CommandDefine.OpenRecordAlter:

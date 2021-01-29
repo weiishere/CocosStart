@@ -925,15 +925,14 @@ export default class DeskPanelView extends ViewComponent {
         if (this.maskWrap.active) {
             return;
         }
-        const tuoguanBtu = this.maskWrap.getChildByName('cancleTuoGuan');
         this.maskWrap.active = true;
-        tuoguanBtu.once(cc.Node.EventType.TOUCH_START, () => {
-            Facade.Instance.sendNotification(CommandDefine.Entrust, { command: false }, '');
-            cc.tween(tuoguanBtu).to(0.1, { position: cc.v3(0, -5) }).to(0.1, { position: cc.v3(0, 5) }).call(() => {
-                this.closeEntrustMask();
-            }).start();
-        }, this);
     }
+
+    cancleTuoGuanClick() {
+        Facade.Instance.sendNotification(CommandDefine.Entrust, { command: false }, '');
+        this.closeEntrustMask();
+    }
+
     /**关闭托管蒙版 */
     closeEntrustMask(): void {
         this.maskWrap.active = false;
