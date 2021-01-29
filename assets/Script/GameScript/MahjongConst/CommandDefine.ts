@@ -8,6 +8,7 @@ export enum CommandDefine {
     WebSocketReconnect = "WebSocketReconnect",
     CheckLoginState = "CheckLoginState",
     OpenLoginPanel = "OpenLoginPanel",
+    OpenUpdatePromptAlert = "OpenUpdatePromptAlert",
     ShowHeaderPanel = "ShowHeaderPanel",
     OpenToast = "OpenToast",
     OpenDeskList = "OpenDeskList",

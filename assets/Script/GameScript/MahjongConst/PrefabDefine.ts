@@ -13,6 +13,7 @@ export enum PrefabDefine {
     /** 结算面板 */
     RecordAlert = "prefabs/recordAlert",
     RecordDetailList = "prefabs/recordDetailList",
+    UpdatePromptAlert = "prefabs/updatePromptAlert",
     /** 个人中心 */
     MyCenter = "prefabs/myCenter",
     ShareAlert = "prefabs/shareAlert",

@@ -23,7 +23,8 @@ export class ConfigProxy extends BaseProxy {
                 return;
             }
 
-            let configUrl = res.json.configUrl + "?l=" + Math.random();
+            const versionUrl = res.json.version;
+            const configUrl = res.json.configUrl + "?l=" + Math.random();
 
             HttpUtil.send(configUrl, (response, request, url) => {
                 this._facadeUrl = response.facadeUrl;
@@ -32,12 +33,36 @@ export class ConfigProxy extends BaseProxy {
                 this._shareUrl = response.shareUrl;
                 this._bonusUrl = response.bonusUrl;
 
-                this.facade.sendNotification(CommandDefine.GateCommand, null, NotificationTypeDefine.CheckLogin);
+
+                if (this.versionCompare(versionUrl, response.version)) {
+                    // cc.sys.openURL(this._shareUrl);
+                    this.facade.sendNotification(CommandDefine.OpenUpdatePromptAlert, this._shareUrl, "");
+                } else {
+                    this.facade.sendNotification(CommandDefine.GateCommand, null, NotificationTypeDefine.CheckLogin);
+                }
             }, (errorCode, request, state, url) => {
                 // tips.string = "配置文件获取失败!";
                 console.log("login err: ", errorCode);
             }, HttpUtil.METHOD_GET);
         });
+    }
+
+    private versionCompare(localVersion: string, removeVersion: string) {
+        let localVersions = localVersion.split(".");
+        let removeVersions = removeVersion.split(".");
+        if (parseInt(removeVersions[0]) > parseInt(localVersions[0])) {
+            return true;
+        } else if (parseInt(removeVersions[0]) == parseInt(localVersions[0])) {
+            if (parseInt(removeVersions[1]) > parseInt(localVersions[1])) {
+                return true;
+            } else if (parseInt(removeVersions[1]) == parseInt(localVersions[1])) {
+                if (parseInt(removeVersions[2]) > parseInt(localVersions[2])) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public get facadeUrl(): string {
