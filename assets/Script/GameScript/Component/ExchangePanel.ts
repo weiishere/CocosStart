@@ -177,7 +177,7 @@ export default class ExchangePanel extends ViewComponent {
             this.exchangeLogTitleUpdate();
             this.logNode.active = true;
             for (let index = 0; index < 10; index++) {
-                this.addLogContent();
+                // this.addLogContent();
             }
         } else if (event.target.name === "convert") {
             this.convertNode.active = true;

@@ -210,6 +210,25 @@ export class GatePanelMediator extends BaseMediator {
         let script = <MyCenter>this.giveAwatPanelNode.getComponent("GiveAwayPanel");
     }
 
+    private openUpdatePromptAlert(downloadUrl: string) {
+        let updatePromptAlertSource = cc.loader.getRes(PrefabDefine.UpdatePromptAlert, cc.Prefab);
+        if (!updatePromptAlertSource) {
+            cc.loader.loadRes(PrefabDefine.UpdatePromptAlert, cc.Prefab, (error, resources) => {
+                let updatePromptAlertNode = cc.instantiate(resources);
+                this.viewComponent.addChild(updatePromptAlertNode);
+
+                let script = updatePromptAlertNode.getComponent("UpdatePromptAlert");
+                script.init(downloadUrl);
+            });
+        } else {
+            let updatePromptAlertNode = cc.instantiate(updatePromptAlertSource);
+            this.viewComponent.addChild(updatePromptAlertNode);
+
+            let script = updatePromptAlertNode.getComponent("UpdatePromptAlert");
+            script.init(downloadUrl);
+        }
+    }
+
     /** 切换账号 */
     private changeUserHandle() {
         // 暂停音乐
@@ -274,6 +293,7 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.OpenLoadingPanel,
             CommandDefine.CloseLoadingPanel,
             CommandDefine.OpenBonusIndex,
+            CommandDefine.OpenUpdatePromptAlert,
         ];
     }
 
@@ -296,6 +316,9 @@ export class GatePanelMediator extends BaseMediator {
                 break;
             case CommandDefine.AudioCommand:
                 this.musciHandle(notification);
+                break;
+            case CommandDefine.OpenUpdatePromptAlert:
+                this.openUpdatePromptAlert(notification.getBody());
                 break;
             case CommandDefine.OpenLoginPanel:
                 // 登录打开了就不在处理了

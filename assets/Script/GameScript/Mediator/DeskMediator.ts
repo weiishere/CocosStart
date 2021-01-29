@@ -334,7 +334,7 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.openChatMsgNotice(JSON.parse(msgContent));
                 break;
             case CommandDefine.WebSocketReconnect://重连
-                this.sendNotification(CommandDefine.OpenToast, { content: "准备重连" })
+                // this.sendNotification(CommandDefine.OpenToast, { content: "准备重连" })
                 // location.reload();
                 // this.sendNotification(CommandDefine.OpenToast, { content: '开始重连' });
                 // window.setTimeout(() => { 
