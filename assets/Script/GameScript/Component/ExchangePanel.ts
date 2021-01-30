@@ -6,6 +6,7 @@ import { ConfigProxy } from '../Proxy/ConfigProxy';
 import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
 import { CommandDefine } from '../MahjongConst/CommandDefine';
 import { LoginAfterHttpUtil } from '../Util/LoginAfterHttpUtil';
+import { GateProxy } from '../Proxy/GateProxy';
 
 const { ccclass, property } = cc._decorator;
 
@@ -26,6 +27,18 @@ export default class ExchangePanel extends ViewComponent {
     closeBtn: cc.Node = null;
     @property(cc.Node)
     getVerifyBtn: cc.Node = null;
+    @property(cc.Node)
+    pageNextBtn: cc.Node = null;
+    @property(cc.Node)
+    pageUpBtn: cc.Node = null;
+    @property(cc.Label)
+    tipsLabel: cc.Label = null;
+
+    /** 查询的url */
+    findUrl: string = "";
+    pageIndex: number = 1;
+    isLastPage: boolean = false;
+    pageSize: number = 10;
 
     protected bindUI(): void {
     }
@@ -36,6 +49,25 @@ export default class ExchangePanel extends ViewComponent {
 
         this.buyListClick();
         this.verifyClick();
+
+        this.pageNextBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            if (this.isLastPage) {
+                return;
+            }
+
+            this.pageIndex++;
+            this.findLog(this.pageIndex);
+        });
+
+        this.pageUpBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            this.pageIndex--;
+            if (this.pageIndex < 1) {
+                this.pageIndex = 1;
+                return;
+            }
+            this.isLastPage = false;
+            this.findLog(this.pageIndex);
+        });
     }
 
     private verifyClick() {
@@ -110,6 +142,7 @@ export default class ExchangePanel extends ViewComponent {
         this.goldBuyList.active = false;
         this.logNode.active = false;
         this.convertNode.active = false;
+        this.tipsLabel.node.active = false;
     }
 
     /**
@@ -135,12 +168,11 @@ export default class ExchangePanel extends ViewComponent {
      * 添加记录
      */
     addLogContent(timeStr, typeStr, moneyStr, statusStr) {
-        // this.logContentContainer.removeAllChildren();
         let node = cc.instantiate(this.logContentItem);
         node.active = true;
         node.x = 0;
         node.y = 0;
-        // this.updateLogContent(node, "");
+        this.updateLogContent(node, timeStr, typeStr, moneyStr, statusStr);
         this.logContentContainer.addChild(node);
     }
 
@@ -169,6 +201,57 @@ export default class ExchangePanel extends ViewComponent {
         this.updateLogTitle("兑换时间", "兑换方式", "兑换金额");
     }
 
+    getConfirProxy() {
+        return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
+    }
+
+    getGateProxy() {
+        return <GateProxy>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
+    }
+
+    updatePageBtn(active) {
+        // this.pageNextBtn.active = active;
+        // this.pageUpBtn.active = active;
+    }
+
+    /**
+     * 查询充值记录
+     * @param pageIndex 
+     */
+    findLog(pageIndex: number) {
+        this.logContentContainer.removeAllChildren();
+        let param = {
+            pageSize: this.pageSize,
+            pageIndex: pageIndex
+        }
+
+        let facadeUrl = this.getConfirProxy().facadeUrl;
+        LoginAfterHttpUtil.send(facadeUrl + this.findUrl, (response) => {
+            if (response.hd === "success") {
+                let length = response.bd.content.length;
+                if (length === 0) {
+                    this.tipsLabel.node.active = true;
+                    this.tipsLabel.string = "没有记录";
+                    return;
+                }
+                this.updatePageBtn(true);
+                if (length < this.pageSize) {
+                    this.isLastPage = true;
+                }
+
+                for (const value of response.bd.content) {
+                    this.addLogContent(value.createTime, "支付宝", value.amount, value.status === 0 ? "成功" : "失败");
+                }
+            } else {
+                this.getGateProxy().toast("获取记录失败！");
+                this.updatePageBtn(false);
+            }
+        }, (err) => {
+            this.getGateProxy().toast("获取记录失败！");
+            this.updatePageBtn(false);
+        }, HttpUtil.METHOD_POST, param);
+    }
+
     menuClick(event) {
         this.hideNode();
         if (event.target.name === "goldBuyItem") {
@@ -176,14 +259,21 @@ export default class ExchangePanel extends ViewComponent {
         } else if (event.target.name === "exchangeLogItem") {
             this.exchangeLogTitleUpdate();
             this.logNode.active = true;
-            for (let index = 0; index < 10; index++) {
-                // this.addLogContent();
-            }
+
+            this.findUrl = "/exchange/exchangeLog";
+            this.pageIndex = 1;
+            this.isLastPage = false;
+            this.findLog(this.pageIndex);
         } else if (event.target.name === "convert") {
             this.convertNode.active = true;
         } else if (event.target.name === "convertLog") {
             this.convertLogTitleUpdate();
             this.logNode.active = true;
+
+            this.findUrl = "/exchange/withdrawalLog";
+            this.pageIndex = 1;
+            this.isLastPage = false;
+            this.findLog(this.pageIndex);
         }
     }
 
