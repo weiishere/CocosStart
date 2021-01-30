@@ -24,6 +24,10 @@ export default class Game extends cc.Component {
 
     onLoad() {
         ApplicationGlobal.GatePanel = this.node;
+        // 让屏幕不息屏，一直常亮，虽然找到Device，但是打包之后运行是没有问题的
+        if(CC_JSB){
+            jsb.Device.setKeepScreenOn(true);
+        }
     }
 
     start() {
