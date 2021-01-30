@@ -386,7 +386,7 @@ export class DeskProxy extends BaseProxy {
                 partnerCard.partnerCards.barCard.push(burObj);
             } else if (dymjGameOperation.oprtType === DymjOperationType.HU) {
                 partnerCard.partnerCards.hadHuCard = dymjGameOperation.hu.mjValue;
-                _deskEventName = 'hu'
+                _deskEventName = dymjGameOperation.hu.huType === 1 ? 'zimo' : 'hu';
                 _deskEventCorrelationInfoData = dymjGameOperation.hu;
                 giveCard = dymjGameOperation.hu.mjValue;
             } else if (dymjGameOperation.oprtType === DymjOperationType.TING) {

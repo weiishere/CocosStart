@@ -144,6 +144,7 @@ export class DeskMediator extends BaseMediator {
                 // 如果是重连，在这里发送准备消息
                 if (isReconnect) {
                     this.getDymjProxy().ready();
+                    this.sendNotification(CommandDefine.ReStartGamePush);
                 } else {
                     this.DeskPanelViewScript.bindDskOpreationEvent(node => {
                         if (node.name === 'exitIcon') {
@@ -300,7 +301,7 @@ export class DeskMediator extends BaseMediator {
                 break;
             case CommandDefine.ShowMyEventPush://通知本方有事件
                 this.DeskPanelViewScript.updateMyOperationBtu();
-                this.playEventSound(notification.getBody().eventName);
+                //this.playEventSound(notification.getBody().eventName);
                 break;
             case CommandDefine.ShowCard://本方出牌
                 const { cardNumber, isQingHu } = notification.getBody();

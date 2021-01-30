@@ -1182,7 +1182,7 @@
     "_enabled": true,
     "_string": "",
     "returnType": 0,
-    "maxLength": 6,
+    "maxLength": 3,
     "_tabIndex": 0,
     "editingDidBegan": [],
     "textChanged": [],
@@ -2017,7 +2017,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        150,
+        60,
         0,
         0,
         0,
@@ -2182,7 +2182,7 @@
     "_N$handle": {
       "__id__": 53
     },
-    "_N$progress": 1,
+    "_N$progress": 0.7,
     "_id": ""
   },
   {
