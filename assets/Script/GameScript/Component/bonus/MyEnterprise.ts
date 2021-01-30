@@ -152,8 +152,8 @@ export default class MyEnterprise extends ViewComponent {
                         const enterPriseItemNode: cc.Node = cc.instantiate(myEnterpriseItem);
                         enterPriseItemNode.getChildByName("name").getComponent(cc.Label).string = element.nickName;
                         enterPriseItemNode.getChildByName("playerId").getComponent(cc.Label).string = element.userName;
-                        enterPriseItemNode.getChildByName("playNum").getComponent(cc.Label).string = "今日总贡献：" + (+element.todayPay).toFixed(2);
-                        enterPriseItemNode.getChildByName("regTime").getComponent(cc.Label).string = "累计总贡献：" + (+element.totalPay).toFixed(2);
+                        enterPriseItemNode.getChildByName("playNum").getComponent(cc.Label).string = "今日总贡献：" + (+element.todayDividend).toFixed(2);
+                        enterPriseItemNode.getChildByName("regTime").getComponent(cc.Label).string = "累计总贡献：" + (+element.totalDividend).toFixed(2);
                         this.scrollView.addChild(enterPriseItemNode);
                     });
                 });
