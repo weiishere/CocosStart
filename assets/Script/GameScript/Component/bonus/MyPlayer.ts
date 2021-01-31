@@ -35,7 +35,7 @@ export default class MyPlayer extends ViewComponent {
 
     // onLoad () {}
     private loading: cc.Node = null;
-    private pageSize: number = 2;
+    private pageSize: number = 20;
     // private currentPage: number = 1;
     // private pageCount: number = 0;
     private firstPageNode: cc.Node;

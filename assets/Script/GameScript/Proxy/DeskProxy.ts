@@ -119,6 +119,7 @@ export class DeskProxy extends BaseProxy {
         })
         this.getGameData().eventData.gameEventData.deskGameEvent.eventName = 'gameBegin';
         this.getDeskData().gameSetting.gameRoundNum = dymjS2CBeginDealData.currentGameCount;
+        this.getDeskData().gameSetting.roomId = +dymjS2CBeginDealData.deskNo;
         this.sendNotification(CommandDefine.LicensingCardPush);
     }
     private doEventData(oprts: Array<DymjOperation>) {
