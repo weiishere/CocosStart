@@ -227,6 +227,7 @@ export class DeskMediator extends BaseMediator {
                 // 结束就立马关闭托管面板
                 this.DeskPanelViewScript.closeEntrustMask();
                 this.DeskPanelViewScript.updatePlayerHeadView();
+                
                 break;
             case CommandDefine.RefreshPlayerPush:
                 this.DeskPanelViewScript && this.DeskPanelViewScript.updatePlayerHeadView();

@@ -863,9 +863,8 @@ export default class DeskPanelView extends ViewComponent {
         this.scheduleCallBack = function () {
             let t = +countDownNum.string;
             if (t >= 0) countDownNum.string = (--t) + '';
-            if (t === 1) {
+            if (t === 0) {
                 Facade.Instance.sendNotification(CommandDefine.Entrust, { command: true }, '');
-                //this.openEntrustMask();
             }
         }
         this.schedule(this.scheduleCallBack, 1);

@@ -487,59 +487,8 @@ export class DeskProxy extends BaseProxy {
         dymjGameResult.players.forEach(player => {
             this.repository.deskData.playerList.find(item => item.playerId === player.userName).playerGold = player.credit;
         })
+        
         this.sendNotification(CommandDefine.OpenRecordAlter, dymjGameResult);
-
-        // let recordType: RecordType = {
-        //     roundIndex: dymjGameResult.currentGameCount,
-        //     gameRoundArr: []
-        // }
-        // dymjGameResult.players.forEach(v => {
-        //     let winlossScore = this.getResultWinloss(dymjGameResult.list, v.azimuth);
-        //     let playerInfo = this.getPlayerByGameIndex(v.azimuth);
-        //     let winType = "";
-        //     if (v.huValues && v.huValues.length > 0) {
-        //         if (v.huValues[0].type === 0) {
-        //             winType = "炮胡";
-        //         } else if (v.huValues[0].type === 1) {
-        //             winType = "自摸";
-        //         } else if (v.huValues[0].type === 2) {
-        //             winType = "抢杠";
-        //         }
-        //     }
-
-        //     let barCardList = [];
-
-        //     v.gangValues.forEach(v => {
-        //         barCardList.push(v.value);
-        //     });
-
-        //     let huCardList = [];
-        //     v.huValues.forEach(v => {
-        //         huCardList.push(v.value);
-        //     });
-
-        //     let desc = this.getResultDesc(dymjGameResult.list);
-        //     let gameRound = {
-        //         /**玩家ID */
-        //         playerId: playerInfo.playerId,
-        //         /**胡牌类型 */
-        //         winType: winType,
-        //         /**描述 */
-        //         desc: "",
-        //         /** 牌组 */
-        //         cardList: {
-        //             carCardList: v.shouValues,
-        //             touchCardList: v.pengValues,
-        //             barCardList: barCardList,
-        //             huCardList: huCardList,
-        //         },
-        //         /**输赢分数 */
-        //         score: winlossScore,
-        //     }
-
-        //     recordType.gameRoundArr.push(gameRound);
-        // });
-        // this.getDeskData().roundRecordArr.push(recordType);
     }
 
     /**
