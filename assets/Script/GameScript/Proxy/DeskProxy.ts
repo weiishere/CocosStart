@@ -89,6 +89,7 @@ export class DeskProxy extends BaseProxy {
      * 开始游戏，发牌
      */
     beginGame(dymjS2CBeginDealData: DymjS2CBeginDealData) {
+        this.clearGameData();//发牌之前先清理gameData
         let loginData = this.getLocalCacheDataProxy().getLoginData();
         this.getGameData().countDownTime = dymjS2CBeginDealData.time;//倒计时
         const self = this;
@@ -451,10 +452,7 @@ export class DeskProxy extends BaseProxy {
     updatePlayerGold(dymjUpdateUserCredit: DymjUpdateUserCredit) {
 
     }
-
-    /** 游戏结束 */
-    gameOver(dymjGameResult: DymjGameResult) {
-        this.getGameData().eventData.gameEventData.deskGameEvent.eventName = 'gameEnd';
+    private clearGameData() {
         //清空数据
         const _partnerCardsList = JSON.parse(JSON.stringify(this.repository.gameData.partnerCardsList));
         (_partnerCardsList as Array<PartnerCard>).forEach(item => {
@@ -479,6 +477,12 @@ export class DeskProxy extends BaseProxy {
         });
         this.repository.gameData = JSON.parse(JSON.stringify(this.dataBackup.gameData));//Object.assign({}, this.dataBackup.gameData);
         this.repository.gameData.partnerCardsList = _partnerCardsList;
+    }
+
+    /** 游戏结束 */
+    gameOver(dymjGameResult: DymjGameResult) {
+        this.getGameData().eventData.gameEventData.deskGameEvent.eventName = 'gameEnd';
+        this.clearGameData();
         //更新用户金币
         dymjGameResult.players.forEach(player => {
             this.repository.deskData.playerList.find(item => item.playerId === player.userName).playerGold = player.credit;
@@ -663,7 +667,11 @@ export class DeskProxy extends BaseProxy {
         });
 
         this.getDeskData().playerList = playerList;
-
+        if(!dymjGameReconnData.isReady){
+            //说明断线重连处于两局之间，需要清理数据
+            this.clearGameData();
+            (<DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj)).goOn();
+        }
         this.sendNotification(CommandDefine.ReStartGamePush, null);
     }
 
