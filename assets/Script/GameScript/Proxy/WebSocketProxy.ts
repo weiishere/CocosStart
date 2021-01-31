@@ -411,7 +411,6 @@ export class WebSockerProxy extends Proxy {
 
     onWebSocketError(event: Event) {
         cc.log("onWebSocketError", event);
-        this.loginData = null;
     }
 
     addModuleProxy(moduleProxy: ModuleProxy) {
