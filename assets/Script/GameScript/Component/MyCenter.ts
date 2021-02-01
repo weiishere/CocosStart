@@ -98,6 +98,33 @@ export default class MyCenter extends ViewComponent {
         this.phoneNoLabel.string = loginData.phoneNo;
         this.inviteCodeLabel.string = inviteCode;
         SpriteLoadUtil.loadSprite(this.headSprite, loginData.head);
+
+        this.getInviteCode();
+    }
+
+    public getFacadeUrl(): string {
+        return this.getConfigProxy().facadeUrl;
+    }
+
+    private getInviteCode() {
+        if (this.getLocalCacheDataProxy().getInviteCode()) {
+            return;
+        }
+        let param = {
+            userName: this.getLocalCacheDataProxy().getLoginData().userName,
+        }
+        let url = this.getFacadeUrl() + "/user/getInviteCode";
+        LoginAfterHttpUtil.send(url, (response) => {
+            if (response) {
+                this.getLocalCacheDataProxy().setInviteCode(response);
+                this.inviteCodeLabel.string = response;
+            } else {
+                this.getLocalCacheDataProxy().setInviteCode("");
+            }
+        }, (err) => {
+            this.getGateProxy().toast("获取邀请码失败！");
+            this.getLocalCacheDataProxy().setInviteCode("");
+        }, HttpUtil.METHOD_POST, param);
     }
 
     getConfigProxy() {

@@ -94,9 +94,9 @@ export default class ExchangePanel extends ViewComponent {
             let token = localCacheDataProxy.getUserToken();
             let url = configProxy.facadeUrl + "exchange/alipayGiveOut";
             let param = {
-                alipayAccount,
-                alipayName,
-                gold
+                alipayAccount: alipayAccount,
+                alipayName: alipayName,
+                gold: gold
             }
             LoginAfterHttpUtil.send(url, (response) => {
                 if (response.hd === "success") {
@@ -270,7 +270,11 @@ export default class ExchangePanel extends ViewComponent {
                 }
 
                 for (const value of response.bd.content) {
-                    this.addLogContent(value.createTime, "支付宝", value.amount, value.status === 0 ? "成功" : "失败");
+                    let type = "支付宝";
+                    if (value.serialType === 1) {
+                        type = "银行卡转账"
+                    }
+                    this.addLogContent(value.createTime, type, Math.abs(value.amount), value.status === 1 ? "成功" : "失败");
                 }
             } else {
                 this.getGateProxy().toast("获取记录失败！");
