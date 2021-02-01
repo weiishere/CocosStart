@@ -5,7 +5,14 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
+import Facade from "../../Framework/care/Facade";
+import { ProxyDefine } from "../MahjongConst/ProxyDefine";
+import { ConfigProxy } from "../Proxy/ConfigProxy";
+import { GateProxy } from "../Proxy/GateProxy";
+import { LocalCacheDataProxy } from "../Proxy/LocalCacheDataProxy";
 import { ErrorCorrectLevel, QRCode } from "../ts/index";
+import { HttpUtil } from "../Util/HttpUtil";
+import { LoginAfterHttpUtil } from "../Util/LoginAfterHttpUtil";
 
 const { ccclass, property } = cc._decorator;
 
@@ -32,6 +39,8 @@ export default class ShareAlert extends cc.Component {
 
     loadData(inviteCode, shareUrl: string) {
         this.inviteCodeLabel.string = "邀请码：" + inviteCode;
+        
+        this.getInviteCode();
 
         this.graphics.fillColor = cc.Color.BLACK;
         let qrcode = new QRCode();
@@ -55,6 +64,44 @@ export default class ShareAlert extends cc.Component {
                 }
             }
         }
+    }
+
+
+    getConfigProxy() {
+        return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
+    }
+
+    getLocalCacheDataProxy() {
+        return <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
+    }
+
+    getGateProxy() {
+        return <GateProxy>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
+    }
+
+    public getFacadeUrl(): string {
+        return this.getConfigProxy().facadeUrl;
+    }
+
+    private getInviteCode() {
+        if (this.getLocalCacheDataProxy().getInviteCode()) {
+            return;
+        }
+        let param = {
+            userName: this.getLocalCacheDataProxy().getLoginData().userName,
+        }
+        let url = this.getFacadeUrl() + "/user/getInviteCode";
+        LoginAfterHttpUtil.send(url, (response) => {
+            if (response) {
+                this.getLocalCacheDataProxy().setInviteCode(response);
+                this.inviteCodeLabel.string = response;
+            } else {
+                this.getLocalCacheDataProxy().setInviteCode("");
+            }
+        }, (err) => {
+            this.getGateProxy().toast("获取邀请码失败！");
+            this.getLocalCacheDataProxy().setInviteCode("");
+        }, HttpUtil.METHOD_POST, param);
     }
 
     // update (dt) {}
