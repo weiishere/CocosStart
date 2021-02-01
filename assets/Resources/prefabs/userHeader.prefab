@@ -623,7 +623,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 97.76,
+      "width": 91.76,
       "height": 20
     },
     "_anchorPoint": {
@@ -684,7 +684,7 @@
       "__uuid__": "5d743df7-44b8-47ce-8f74-033ad2d7a1f2"
     },
     "_isSystemFontUsed": false,
-    "_spacingX": -1,
+    "_spacingX": -2,
     "_batchAsBitmap": false,
     "_styleFlags": 0,
     "_underlineHeight": 0,

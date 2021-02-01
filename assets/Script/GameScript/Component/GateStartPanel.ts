@@ -53,7 +53,7 @@ export default class GateStartPanel extends ViewComponent {
         mahjongNode.runAction(_action);
 
         const exchangeNode = this.root.getChildByName("gameBg3").getChildByName("gameItem3");
-        const _action3 = cc.repeatForever(cc.sequence(cc.scaleTo(1.2, 1.05), cc.scaleTo(1.2, 0.95), cc.callFunc(() => { })));
+        const _action3 = cc.repeatForever(cc.sequence(cc.scaleTo(1.2, 1.02), cc.scaleTo(1.2, 0.98), cc.callFunc(() => { })));
         exchangeNode.runAction(_action3);
     }
 

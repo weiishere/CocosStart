@@ -99,6 +99,11 @@ export default class ExtractRecord extends ViewComponent {
                             this.scrollViewContent2.addChild(extractRecordItemNode);
                         }
                     });
+                    if (res.data.content.length === 0) {
+
+                        this.scrollViewContent1.addChild(this.initNoRecoreNode());
+                        this.scrollViewContent2.addChild(this.initNoRecoreNode());
+                    }
                 });
             } else {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
@@ -107,7 +112,13 @@ export default class ExtractRecord extends ViewComponent {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '数据服务未响应', toastOverlay: true }, '');
         }, HttpUtil.METHOD_GET, {})
     }
-
+    initNoRecoreNode(): cc.Node {
+        const node = new cc.Node('noRecord');
+        const label = node.addComponent(cc.Label);
+        label.fontSize = 24;
+        label.string = '无记录';
+        return node;
+    }
     start() {
         this.httpRequest(1);
     }
