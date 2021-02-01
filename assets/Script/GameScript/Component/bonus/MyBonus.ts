@@ -35,6 +35,15 @@ export const getUserOrderInfo = (callBack) => {
     }, HttpUtil.METHOD_GET, {})
 }
 
+
+export const initNoRecoreNode = (): cc.Node => {
+    const node = new cc.Node('noRecord');
+    const label = node.addComponent(cc.Label);
+    label.fontSize = 24;
+    label.string = '无记录';
+    return node;
+}
+
 @ccclass
 export default class MyBonus extends ViewComponent {
 

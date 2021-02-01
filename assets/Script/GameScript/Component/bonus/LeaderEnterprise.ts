@@ -16,6 +16,8 @@ import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
 import MyPlayerItem from "./MyPlayerItem"
 import PageCommand from "../../Util/PageCommand";
 import { ConfigProxy } from "../../Proxy/ConfigProxy";
+import { initNoRecoreNode } from './MyBonus';
+import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
 
 const { ccclass, property } = cc._decorator;
 
@@ -68,7 +70,7 @@ export default class LeaderEnterprise extends ViewComponent {
             this._closeCallBack();
         }, this);
     }
-    
+
     getConfigProxy() {
         return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
     }
@@ -94,8 +96,12 @@ export default class LeaderEnterprise extends ViewComponent {
                         myEnterPriseItemNode.getChildByName("playerId").getComponent(cc.Label).string = element.userName;
                         myEnterPriseItemNode.getChildByName("playNum").getComponent(cc.Label).string = "今日总贡献：" + (+element.todayDividend).toFixed(2);
                         myEnterPriseItemNode.getChildByName("regTime").getComponent(cc.Label).string = "累计总贡献：" + (+element.totalDividend).toFixed(2);
+                        SpriteLoadUtil.loadSprite(myEnterPriseItemNode.getChildByName("userHead").getComponent(cc.Sprite), element.headUrl);
                         this.scrollViewContent.addChild(myEnterPriseItemNode);
                     });
+                    if (res.data.list.length === 0) {
+                        this.scrollViewContent.addChild(initNoRecoreNode());
+                    }
                 });
             } else {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');

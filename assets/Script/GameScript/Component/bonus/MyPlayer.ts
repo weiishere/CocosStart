@@ -16,7 +16,8 @@ import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
 import MyPlayerItem from "./MyPlayerItem"
 import PageCommand from "../../Util/PageCommand";
 import { ConfigProxy } from "../../Proxy/ConfigProxy";
-
+import { initNoRecoreNode } from './MyBonus';
+import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
 
 const { ccclass, property } = cc._decorator;
 
@@ -101,9 +102,13 @@ export default class MyPlayer extends ViewComponent {
                         myPlayerItemNode.getChildByName("ww_mzicon").active = element.accountType === 666;//是否显示盟主
                         myPlayerItemNode.getChildByName("regTime").getComponent(cc.Label).string = element.createDate;
                         myPlayerItemNode.getChildByName("ww_sq").active = (userOrderInfo.accountType === 666 || userOrderInfo.accountType === 888);//element.accountType === 666;//是否显示分配比例按钮
-                            (myPlayerItemNode.getComponent('MyPlayerItem') as MyPlayerItem).init(element);
+                        (myPlayerItemNode.getComponent('MyPlayerItem') as MyPlayerItem).init(element);
+                        SpriteLoadUtil.loadSprite(myPlayerItemNode.getChildByName("head").getComponent(cc.Sprite), element.headUrl);
                         this.scrollViewContent.addChild(myPlayerItemNode);
                     });
+                    if (res.data.list.length === 0) {
+                        this.scrollViewContent.addChild(initNoRecoreNode());
+                    }
                 });
             } else {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');

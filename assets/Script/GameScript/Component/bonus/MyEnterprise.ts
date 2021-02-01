@@ -11,11 +11,12 @@ import { ApplicationGlobal } from "../../MahjongConst/ApplicationGlobal";
 import { CommandDefine } from "../../MahjongConst/CommandDefine";
 import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
 import { ProxyDefine } from "../../MahjongConst/ProxyDefine";
+import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
 import { ConfigProxy } from "../../Proxy/ConfigProxy";
 import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
 import { HttpUtil } from "../../Util/HttpUtil";
 import PageCommand from "../../Util/PageCommand";
-import { getUserOrderInfo } from './MyBonus';
+import { getUserOrderInfo, initNoRecoreNode } from './MyBonus';
 const { ccclass, property } = cc._decorator;
 
 @ccclass
@@ -154,8 +155,12 @@ export default class MyEnterprise extends ViewComponent {
                         enterPriseItemNode.getChildByName("playerId").getComponent(cc.Label).string = element.userName;
                         enterPriseItemNode.getChildByName("playNum").getComponent(cc.Label).string = "今日总贡献：" + (+element.todayDividend).toFixed(2);
                         enterPriseItemNode.getChildByName("regTime").getComponent(cc.Label).string = "累计总贡献：" + (+element.totalDividend).toFixed(2);
+                        SpriteLoadUtil.loadSprite(enterPriseItemNode.getChildByName("userHead").getComponent(cc.Sprite), element.headUrl);
                         this.scrollView.addChild(enterPriseItemNode);
                     });
+                    if (res.data.list.length === 0) {
+                        this.scrollView.addChild(initNoRecoreNode());
+                    }
                 });
             } else {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');

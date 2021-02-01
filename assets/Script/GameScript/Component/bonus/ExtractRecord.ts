@@ -15,6 +15,7 @@ import { CommandDefine } from "../../MahjongConst/CommandDefine";
 import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
 import PageCommand from "../../Util/PageCommand";
 import { ConfigProxy } from "../../Proxy/ConfigProxy";
+import {initNoRecoreNode} from './MyBonus';
 
 const { ccclass, property } = cc._decorator;
 
@@ -101,8 +102,8 @@ export default class ExtractRecord extends ViewComponent {
                     });
                     if (res.data.content.length === 0) {
 
-                        this.scrollViewContent1.addChild(this.initNoRecoreNode());
-                        this.scrollViewContent2.addChild(this.initNoRecoreNode());
+                        this.scrollViewContent1.addChild(initNoRecoreNode());
+                        this.scrollViewContent2.addChild(initNoRecoreNode());
                     }
                 });
             } else {
@@ -112,13 +113,7 @@ export default class ExtractRecord extends ViewComponent {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '数据服务未响应', toastOverlay: true }, '');
         }, HttpUtil.METHOD_GET, {})
     }
-    initNoRecoreNode(): cc.Node {
-        const node = new cc.Node('noRecord');
-        const label = node.addComponent(cc.Label);
-        label.fontSize = 24;
-        label.string = '无记录';
-        return node;
-    }
+    
     start() {
         this.httpRequest(1);
     }
