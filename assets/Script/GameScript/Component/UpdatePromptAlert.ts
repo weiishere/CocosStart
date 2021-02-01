@@ -20,6 +20,7 @@ export default class Setting extends ViewComponent {
     openUrlBtn: cc.Node = null;
 
     shareUrl: string;
+    iosDownUrl: string;
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
@@ -34,15 +35,17 @@ export default class Setting extends ViewComponent {
                 cc.sys.openURL(this.shareUrl);//安卓下载链接
             } else if (cc.sys.os === cc.sys.OS_IOS) {
                 //IOS下载链接
+                cc.sys.openURL(this.iosDownUrl);
             }
-            
+
         });
     }
 
     start() {
 
     }
-    init(shareUrl: string) {
+    init(shareUrl: string, iosDownUrl: string) {
         this.shareUrl = shareUrl;
+        this.iosDownUrl = iosDownUrl;
     }
 }
