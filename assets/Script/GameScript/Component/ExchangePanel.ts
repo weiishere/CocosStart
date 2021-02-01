@@ -36,6 +36,8 @@ export default class ExchangePanel extends ViewComponent {
 
     @property(cc.Node)
     ConvertBtn: cc.Node = null;
+    @property(cc.Node)
+    rechargeValue: cc.Node = null;
 
 
     /** 查询的url */
@@ -45,13 +47,14 @@ export default class ExchangePanel extends ViewComponent {
     pageSize: number = 10;
 
     protected bindUI(): void {
+        this.goldBuyList.removeAllChildren();
+        this.getRechargeValues();
     }
     protected bindEvent(): void {
         this.closeBtn.on(cc.Node.EventType.TOUCH_END, () => {
             this.node.destroy();
         });
 
-        this.buyListClick();
         this.verifyClick();
 
         this.pageNextBtn.on(cc.Node.EventType.TOUCH_END, () => {
@@ -136,18 +139,6 @@ export default class ExchangePanel extends ViewComponent {
         });
     }
 
-    private buyListClick() {
-        this.goldBuyList.children.forEach((value: cc.Node) => {
-            value.on(cc.Node.EventType.TOUCH_END, (event) => {
-                let panel = event.target as cc.Node
-                let label = panel.getChildByName("GoldLabel").getComponent(cc.Label);
-                cc.log(label.string);
-
-                this.exchange(label.string);
-            });
-        })
-    }
-
     private exchange(gold) {
         let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         let configProxy: ConfigProxy = <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
@@ -160,7 +151,9 @@ export default class ExchangePanel extends ViewComponent {
         }
         LoginAfterHttpUtil.send(url, (response) => {
             if (response.hd === "success") {
-                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '充值成功', toastOverlay: true }, '');
+                // 跳转页面
+                cc.sys.openURL(response.bd);
+                // Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '充值成功', toastOverlay: true }, '');
             }
         }, (err) => {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '充值失败' + err, toastOverlay: true }, '');
@@ -286,6 +279,36 @@ export default class ExchangePanel extends ViewComponent {
         }, (err) => {
             this.getGateProxy().toast("获取记录失败！");
             this.updatePageBtn(false);
+        }, HttpUtil.METHOD_POST, param);
+    }
+
+    /**
+     * 获得充值列表
+     */
+    getRechargeValues() {
+        let param = {
+        }
+        let facadeUrl = this.getConfirProxy().facadeUrl;
+        LoginAfterHttpUtil.send(facadeUrl + "/exchange/getRechargeValues", (response) => {
+            if (response.hd === "success") {
+                for (const value of response.bd) {
+                    let rechargeNode = cc.instantiate(this.rechargeValue);
+                    rechargeNode.x = 0;
+                    rechargeNode.y = 0;
+                    rechargeNode.active = true;
+                    let label = rechargeNode.getChildByName("GoldLabel").getComponent(cc.Label);
+                    label.string = value;
+
+                    this.goldBuyList.addChild(rechargeNode);
+                    rechargeNode.on(cc.Node.EventType.TOUCH_END, (event) => {
+                        this.exchange(label.string);
+                    });
+                }
+            } else {
+                this.getGateProxy().toast("获得支付列表失败！");
+            }
+        }, (err) => {
+            this.getGateProxy().toast("获得支付列表失败！");
         }, HttpUtil.METHOD_POST, param);
     }
 
