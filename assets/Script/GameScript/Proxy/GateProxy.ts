@@ -130,9 +130,12 @@ export class GateProxy extends BaseProxy {
         LoginAfterHttpUtil.send(url, (response) => {
             if (response) {
                 this.getLocalCacheDataProxy().setInviteCode(response);
+            } else {
+                this.getLocalCacheDataProxy().setInviteCode("");
             }
         }, (err) => {
             this.toast("获取邀请码失败！");
+            this.getLocalCacheDataProxy().setInviteCode("");
         }, HttpUtil.METHOD_POST, param);
     }
 
