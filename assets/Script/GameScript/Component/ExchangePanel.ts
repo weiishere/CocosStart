@@ -270,11 +270,24 @@ export default class ExchangePanel extends ViewComponent {
                 }
 
                 for (const value of response.bd.content) {
+                    let status = "";
                     let type = "支付宝";
                     if (value.serialType === 1) {
                         type = "银行卡转账"
+
+                        if (value.status === 1) {
+                            status = "已支付";
+                        } else if (value.status === 0) {
+                            status = "待支付";
+                        }
+                    } else {
+                        if (value.status === 1) {
+                            status = "已兑换";
+                        } else if (value.status === 0) {
+                            status = "待兑换";
+                        }
                     }
-                    this.addLogContent(value.createTime, type, Math.abs(value.amount), value.status === 1 ? "成功" : "失败");
+                    this.addLogContent(value.createTime, type, Math.abs(value.amount), status);
                 }
             } else {
                 this.getGateProxy().toast("获取记录失败！");
