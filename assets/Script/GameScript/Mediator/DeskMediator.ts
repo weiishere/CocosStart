@@ -140,7 +140,7 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript = this.deskPanel.getComponent('DeskPanelView') as DeskPanelView;
                 this.getDeskProxy().updateDeskInfo(notification.getBody().dymjS2CEnterRoom);
                 this.DeskPanelViewScript.updateRoomInfo();
-
+                this.DeskPanelViewScript.updatedDeskAiming();
                 // 如果是重连，在这里发送准备消息
                 if (isReconnect) {
                     this.getDymjProxy().ready();
