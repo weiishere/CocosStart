@@ -22,8 +22,8 @@ export default class AllotSetting extends ViewComponent {
     @property(cc.Node)
     CloseBtu: cc.Node = null;
 
-    @property(cc.Node)
-    TextSet: cc.Node = null;
+    @property(cc.EditBox)
+    TextSet: cc.EditBox = null;
 
     @property(cc.Node)
     SureBtu: cc.Node = null;
@@ -39,7 +39,8 @@ export default class AllotSetting extends ViewComponent {
 
     private data = null;
     private loading: cc.Node = null
-
+    private lastRemailRatio: number = 0;
+    private remailRatio: number = 0;
     // onLoad () {}
     public init(data) {
         this.data = data;
@@ -47,6 +48,18 @@ export default class AllotSetting extends ViewComponent {
     bindUI() {
         this.loading = this.node.getChildByName('loading');
         this.loading.active = true;
+        this.Slider.node.on('slide', (data) => {
+            //console.log(data.progress);
+            const p = data.progress.toFixed(2);
+            this.TextSet.string = (p * 100).toFixed(0) + '';
+            this.node.getChildByName("biliValue").getComponent(cc.Label).string = (+(1 - p) * 100).toFixed(0) + '%';
+        });
+        this.TextSet.node.on('text-changed', (data) => {
+            //console.log(data.string);
+            this.Slider.progress = (data.string / 100);
+            this.node.getChildByName("biliValue").getComponent(cc.Label).string = +((100 - data.string)).toFixed(2) + '%';
+        });
+
     }
 
     getConfigProxy() {
@@ -59,7 +72,14 @@ export default class AllotSetting extends ViewComponent {
         this.loading.active = true;
         let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         this.SureBtu.on(cc.Node.EventType.TOUCH_END, () => {
-            HttpUtil.send(bonusUrl + `/api/v1/account/update/leader?loginUser=${localCacheDataProxy.getLoginData().userName}&targetUser=${this.data.userName}&bonus=${this.TextSet.getComponent(cc.EditBox).string}`, res => {
+            const num = +this.TextSet.getComponent(cc.EditBox).string;
+            // if(isNaN(num)){ }
+            const param = {
+                loginUser: localCacheDataProxy.getLoginData().userName,
+                targetUser: this.data.userName,
+                bonus: num / 100
+            }
+            HttpUtil.send(bonusUrl + `/api/v1/account/${this.data.accountType === 666 ? 'update' : 'add'}/leader`, res => {
                 this.loading.active = false;
                 if (res.code === 200) {
                     Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '操作已完成', toastOverlay: true }, '');
@@ -68,11 +88,11 @@ export default class AllotSetting extends ViewComponent {
                 }
             }, (err) => {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '数据服务未响应', toastOverlay: true }, '');
-            }, HttpUtil.METHOD_GET, {})
+            }, HttpUtil.METHOD_POST, param)
         }, true);
         //取消
         this.CancleBtu.on(cc.Node.EventType.TOUCH_END, () => {
-            this.destroy();
+            this.node.destroy();
         }, true);
     }
     start() {
@@ -88,12 +108,15 @@ export default class AllotSetting extends ViewComponent {
         let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         //${/*localCacheDataProxy.getLoginData().userName*/}
         this.loading.active = true;
-        HttpUtil.send(bonusUrl + `/api/v1/account/leader?userName=${localCacheDataProxy.getLoginData().userName}`, res => {
+        HttpUtil.send(bonusUrl + `/api/v1/account/leader?userName=${this.data.userName}`, res => {
             this.loading.active = false;
             if (res.code === 200) {
-                const remail = (1 - res.data).toFixed(2);
-                this.node.getChildByName("biliValue").getComponent(cc.Label).string = +remail * 100 + "%";
-                this.TextSet.getComponent(cc.EditBox).placeholder = `请输入分配到的百分比(<${+remail * 100}%)`;
+                this.lastRemailRatio = res.data;
+                this.remailRatio = +(1 - res.data).toFixed(2);
+                this.node.getChildByName("biliValue").getComponent(cc.Label).string = (this.remailRatio * 100).toFixed(2) + "%";
+                this.TextSet.placeholder = ``;
+                this.TextSet.string = (+(1 - this.remailRatio).toFixed(2) * 100) + '';
+                this.Slider.progress = +(1 - this.remailRatio).toFixed(2);
             } else {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
             }

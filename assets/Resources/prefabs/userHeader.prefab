@@ -335,7 +335,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 150,
+      "width": 160,
       "height": 35.28
     },
     "_anchorPoint": {
@@ -347,7 +347,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        146.748,
+        156.462,
         27.375,
         0,
         0,
@@ -450,8 +450,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 130.3,
-      "height": 28
+      "width": 136.2,
+      "height": 32.2
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -462,8 +462,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        149.197,
-        -21.111,
+        152.1,
+        -20.1,
         0,
         0,
         0,
@@ -514,8 +514,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 19.3,
-      "height": 19.8
+      "width": 21,
+      "height": 21
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -526,8 +526,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -51.9,
-        -0.079,
+        -52.329,
+        0.064,
         0,
         0,
         0,
@@ -623,7 +623,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 80.24,
+      "width": 97.76,
       "height": 20
     },
     "_anchorPoint": {
@@ -677,14 +677,14 @@
     "_dstBlendFactor": 771,
     "_string": "0000000",
     "_N$string": "0000000",
-    "_fontSize": 16,
+    "_fontSize": 18,
     "_lineHeight": 20,
     "_enableWrapText": true,
     "_N$file": {
       "__uuid__": "5d743df7-44b8-47ce-8f74-033ad2d7a1f2"
     },
     "_isSystemFontUsed": false,
-    "_spacingX": -2,
+    "_spacingX": -1,
     "_batchAsBitmap": false,
     "_styleFlags": 0,
     "_underlineHeight": 0,
@@ -797,8 +797,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        304.399,
-        24.931,
+        331.111,
+        29.743,
         0,
         0,
         0,

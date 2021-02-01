@@ -1893,8 +1893,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        0,
-        0,
+        -6.318,
+        1.053,
         0,
         0,
         0,
@@ -5801,7 +5801,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 150,
+      "width": 180,
       "height": 37.8
     },
     "_anchorPoint": {
@@ -5853,8 +5853,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "开户银行：",
-    "_N$string": "开户银行：",
+    "_string": "支付宝账号：",
+    "_N$string": "支付宝账号：",
     "_fontSize": 30,
     "_lineHeight": 30,
     "_enableWrapText": true,
@@ -6311,8 +6311,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "请输入开户银行",
-    "_N$string": "请输入开户银行",
+    "_string": "请输入支付宝账号",
+    "_N$string": "请输入支付宝账号",
     "_fontSize": 20,
     "_lineHeight": 25,
     "_enableWrapText": false,
@@ -6377,7 +6377,7 @@
     "_enabled": true,
     "_string": "",
     "returnType": 0,
-    "maxLength": 8,
+    "maxLength": 30,
     "_tabIndex": 0,
     "editingDidBegan": [],
     "textChanged": [],
@@ -6513,7 +6513,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 150,
+      "width": 180,
       "height": 37.8
     },
     "_anchorPoint": {
@@ -6565,8 +6565,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "开户姓名：",
-    "_N$string": "开户姓名：",
+    "_string": "支付宝姓名：",
+    "_N$string": "支付宝姓名：",
     "_fontSize": 30,
     "_lineHeight": 30,
     "_enableWrapText": true,
@@ -7023,8 +7023,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "请输入开户姓名",
-    "_N$string": "请输入开户姓名",
+    "_string": "请输入支付宝姓名",
+    "_N$string": "请输入支付宝姓名",
     "_fontSize": 20,
     "_lineHeight": 25,
     "_enableWrapText": false,
@@ -7089,7 +7089,7 @@
     "_enabled": true,
     "_string": "",
     "returnType": 0,
-    "maxLength": 8,
+    "maxLength": 20,
     "_tabIndex": 0,
     "editingDidBegan": [],
     "textChanged": [],
@@ -9903,6 +9903,9 @@
     },
     "tipsLabel": {
       "__id__": 140
+    },
+    "ConvertBtn": {
+      "__id__": 235
     },
     "_id": ""
   },

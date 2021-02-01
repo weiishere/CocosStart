@@ -121,32 +121,33 @@ export default class ChatBox extends ViewComponent {
 
         if (order === 'face') {
             for (let i = 1; i <= 25; i++) {
-                cc.loader.loadRes(`textures/desk/face/face(${i})`, cc.Texture2D, (err, item) => {
-                    const nodeWrap = new cc.Node('faceWrap');
-                    nodeWrap.width = nodeWrap.height = 60;
-                    const layout = nodeWrap.addComponent(cc.Layout);
-                    layout.type = cc.Layout.Type.HORIZONTAL;
+                const item = cc.loader.getRes(`textures/desk/face/face(${i})`, cc.Texture2D);
+                //cc.loader.loadRes(`textures/desk/face/face(${i})`, cc.Texture2D, (err, item) => {
+                const nodeWrap = new cc.Node('faceWrap');
+                nodeWrap.width = nodeWrap.height = 60;
+                const layout = nodeWrap.addComponent(cc.Layout);
+                layout.type = cc.Layout.Type.HORIZONTAL;
 
-                    const btu2 = nodeWrap.addComponent(cc.Button);
-                    btu2.transition = cc.Button.Transition.COLOR;
-                    btu2.pressedColor = new cc.Color(0, 255, 0);
+                const btu2 = nodeWrap.addComponent(cc.Button);
+                btu2.transition = cc.Button.Transition.COLOR;
+                btu2.pressedColor = new cc.Color(0, 255, 0);
 
-                    const node = new cc.Node('face');
-                    const face = node.addComponent(cc.Sprite);
-                    face.spriteFrame = new cc.SpriteFrame(item);
-                    node.scale = 0.15;
+                const node = new cc.Node('face');
+                const face = node.addComponent(cc.Sprite);
+                face.spriteFrame = new cc.SpriteFrame(item);
+                node.scale = 0.15;
 
-                    nodeWrap.addChild(node);
+                nodeWrap.addChild(node);
 
-                    const btu = node.addComponent(cc.Button);
-                    btu.transition = cc.Button.Transition.SCALE;
-                    btu.zoomScale = 0.9;
+                const btu = node.addComponent(cc.Button);
+                btu.transition = cc.Button.Transition.SCALE;
+                btu.zoomScale = 0.9;
 
-                    this.chatListWrap.addChild(nodeWrap);
-                    node.on(cc.Node.EventType.TOUCH_END, () => {
-                        this.send(i);
-                    }, this);
-                });
+                this.chatListWrap.addChild(nodeWrap);
+                node.on(cc.Node.EventType.TOUCH_END, () => {
+                    this.send(i);
+                }, this);
+                //});
             }
         } else {
             this.msgList.forEach(item => {

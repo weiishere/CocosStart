@@ -34,6 +34,10 @@ export default class ExchangePanel extends ViewComponent {
     @property(cc.Label)
     tipsLabel: cc.Label = null;
 
+    @property(cc.Node)
+    ConvertBtn: cc.Node = null;
+
+
     /** 查询的url */
     findUrl: string = "";
     pageIndex: number = 1;
@@ -67,6 +71,39 @@ export default class ExchangePanel extends ViewComponent {
             }
             this.isLastPage = false;
             this.findLog(this.pageIndex);
+        });
+
+        this.ConvertBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
+            const getEditBox = (nodeName): cc.Node => this.node.getChildByName("ConvertNode").getChildByName(nodeName).getChildByName("EditBox");
+            const alipayAccount = getEditBox('BankName').getComponent(cc.EditBox).string;
+            const alipayName = getEditBox('AccountName').getComponent(cc.EditBox).string;
+            let gold = getEditBox('ConvertMoney').getComponent(cc.EditBox).string || 0;
+            if (!alipayAccount || !alipayName || !+gold) {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '您输入的提现信息有误，请修改！', toastOverlay: true }, '');
+                return;
+            }
+            if (localCacheDataProxy.getLoginData().gold < +gold) {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '您的余额不足！', toastOverlay: true }, '');
+                return;
+            }
+            let configProxy: ConfigProxy = <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
+            let token = localCacheDataProxy.getUserToken();
+            let url = configProxy.facadeUrl + "exchange/alipayGiveOut";
+            let param = {
+                alipayAccount,
+                alipayName,
+                gold
+            }
+            LoginAfterHttpUtil.send(url, (response) => {
+                if (response.hd === "success") {
+                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '兑换成功', toastOverlay: true }, '');
+                } else {
+                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '对不起，兑换失败', toastOverlay: true }, '');
+                }
+            }, (err) => {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '参数异常：' + err, toastOverlay: true }, '');
+            }, HttpUtil.METHOD_POST, param);
         });
     }
 

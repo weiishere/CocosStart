@@ -278,6 +278,10 @@ export default class DeskPanelView extends ViewComponent {
         }, this);
 
         this.dispatchCustomEvent(DeskPanelViewEventDefine.DeskPanelViewOnLoadComplate, null);
+        //预加载表情
+        for (let i = 1; i <= 25; i++) {
+            cc.loader.loadRes(`textures/desk/face/face(${i})`, cc.Texture2D, (err, item) => { });
+        }
     }
     bindEvent(): void { }
     /**绑定游戏操作事件（杠碰胡等） */
@@ -919,10 +923,10 @@ export default class DeskPanelView extends ViewComponent {
                 face_chat.getComponent(cc.Sprite).spriteFrame = new cc.SpriteFrame(item);
             })
         }
-        console.log(this.charNotice.width);
+        //console.log(this.charNotice.width);
         cc.tween(this.charNotice).to(0.1, { position: cc.v3(this.charNotice.x, this.charNotice.y + 30), opacity: 255 }).call(() => {
             this.timer = window.setTimeout(() => {
-                cc.tween(this.charNotice).to(0.1, { position: cc.v3(this.charNotice.x, this.charNotice.y - 30), opacity: 0 }).call(() => { this.charNotice.opacity = 0; }).start();
+                this.charNotice && cc.tween(this.charNotice).to(0.1, { position: cc.v3(this.charNotice.x, this.charNotice.y - 30), opacity: 0 }).call(() => { this.charNotice.opacity = 0; }).start();
             }, 3000);
         }).start();
     }

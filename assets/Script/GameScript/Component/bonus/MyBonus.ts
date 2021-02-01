@@ -22,6 +22,10 @@ export const getUserOrderInfo = (callBack) => {
     let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
     HttpUtil.send(bonusUrl + `/api/v1/account/get?userName=${localCacheDataProxy.getLoginData().userName}`, res => {
         if (res.code === 200) {
+            window.localStorage['userOrderInfo'] = JSON.stringify(res.data);
+            /*accountType: 1
+            inviteCode: "6043388"
+            privilege: 1*/
             callBack(res);
         } else {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
@@ -64,7 +68,7 @@ export default class MyBonus extends ViewComponent {
             this.node.getChildByName("bg").getChildByName("bg2_hl").active = true;
             this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_2").active = true;
             this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_4").active = true;
-            if (res.data.accountType === 666) {
+            if (res.data.accountType === 666 || res.data.accountType === 888) {
                 this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_1").active = true;
                 this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_3").active = true;
             }

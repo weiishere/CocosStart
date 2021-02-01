@@ -1067,8 +1067,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 240,
-      "height": 50.4
+      "width": 600,
+      "height": 113
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1119,10 +1119,10 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "有版本更新！",
-    "_N$string": "有版本更新！",
-    "_fontSize": 40,
-    "_lineHeight": 40,
+    "_string": "您当前使用的版本不是最新版，为保证最佳的\n游戏体验，请下载最新版本并更新！",
+    "_N$string": "您当前使用的版本不是最新版，为保证最佳的\n游戏体验，请下载最新版本并更新！",
+    "_fontSize": 30,
+    "_lineHeight": 50,
     "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,

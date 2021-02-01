@@ -90,6 +90,7 @@ export default class MyPlayer extends ViewComponent {
                 // const p = parseInt((res.data.totalNum / this.pageSize) + '');
                 // this.pageCount = (res.data.totalNum % this.pageSize) > 0 ? (p + 1) : p;
                 this.pageCommand.init(res.data.totalNum, this.pageSize);
+                const userOrderInfo = JSON.parse(window.localStorage['userOrderInfo']);
                 cc.loader.loadRes(PrefabDefine.MyPlayerItem, cc.Prefab, (err, myPlayerItem) => {
                     this.node.getChildByName("bg3_hl").getChildByName("playerNum").getComponent(cc.Label).string = "您目前的玩家数量：" + res.data.totalNum;
                     res.data.list.forEach(element => {
@@ -99,8 +100,8 @@ export default class MyPlayer extends ViewComponent {
                         myPlayerItemNode.getChildByName("playNum").getComponent(cc.Label).string = element.gameNum;
                         myPlayerItemNode.getChildByName("ww_mzicon").active = element.accountType === 666;//是否显示盟主
                         myPlayerItemNode.getChildByName("regTime").getComponent(cc.Label).string = element.createDate;
-                        myPlayerItemNode.getChildByName("ww_sq").active = element.accountType === 666;//是否显示分配比例按钮
-                        (myPlayerItemNode.getComponent('MyPlayerItem') as MyPlayerItem).init(element);
+                        myPlayerItemNode.getChildByName("ww_sq").active = (userOrderInfo.accountType === 666 || userOrderInfo.accountType === 888);//element.accountType === 666;//是否显示分配比例按钮
+                            (myPlayerItemNode.getComponent('MyPlayerItem') as MyPlayerItem).init(element);
                         this.scrollViewContent.addChild(myPlayerItemNode);
                     });
                 });
