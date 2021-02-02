@@ -51,7 +51,7 @@ export class ConfigProxy extends BaseProxy {
             // this._port = "80";
             // this.currentRemoteIp = "139.9.242.13";
 
-            if (otherUrl) {
+            if (otherUrl && this._port) {
                 this.resOtherUrl(otherUrl);
             } else {
                 this.loadLocalConfig(this._configUrl);
