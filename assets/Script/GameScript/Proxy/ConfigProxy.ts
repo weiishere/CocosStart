@@ -67,7 +67,7 @@ export class ConfigProxy extends BaseProxy {
     public resOtherUrl(url) {
         HttpUtil.send(url, (response) => {
             this._ips = response.ip;
-            this._shareUrl = response.url;
+            this._shareUrl = response.url[0];
             if (!this._ips || this._ips.length === 0) {
                 this.getGateProxy().toast("没有配置！");
                 return;
@@ -91,7 +91,9 @@ export class ConfigProxy extends BaseProxy {
             this._facadeUrl = this.replaceUrl(response.facadeUrl, this.currentRemoteIp + ":" + this._port);
             this._ggwUrl = this.replaceUrl(response.ggwUrl, this.currentRemoteIp + ":" + this._port);
             this._staticUrl = this.replaceUrl(response.staticUrl, this.currentRemoteIp + ":" + this._port);
-            this._shareUrl = this.replaceUrl(response.shareUrl, this.currentRemoteIp + ":" + this._port);
+            if (!this._shareUrl) {
+                this._shareUrl = this.replaceUrl(response.shareUrl, this.currentRemoteIp + ":" + this._port);
+            }
             this._bonusUrl = this.replaceUrl(response.bonusUrl, this.currentRemoteIp + ":" + this._port);
             this._iosDownUrl = this.replaceUrl(response.iosDownUrl, this.currentRemoteIp + ":" + this._port);
             this._serviceUrl = response.serviceUrl;
