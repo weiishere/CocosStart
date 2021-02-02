@@ -12,6 +12,7 @@ import { ProxyDefine } from "../MahjongConst/ProxyDefine"
 import { CommandDefine } from "../MahjongConst/CommandDefine"
 import { GateProxy } from "../Proxy/GateProxy";
 import { DymjMusicManager } from '../Other/DymjMusicManager';
+import { ConfigProxy } from "../Proxy/ConfigProxy";
 
 @ccclass
 export default class GateStartPanel extends ViewComponent {
@@ -28,6 +29,8 @@ export default class GateStartPanel extends ViewComponent {
     logBtn: cc.Node = null;
     @property(cc.Node)
     bonusBtn: cc.Node = null;
+    @property(cc.Node)
+    serviceBtn: cc.Node = null;
 
     private mahjongEntrance: cc.Node;
     private pdkEntrance: cc.Node;
@@ -101,7 +104,16 @@ export default class GateStartPanel extends ViewComponent {
         this.bonusBtn.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenBonusIndex, null, '');
         });
+
+        this.serviceBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            cc.sys.openURL(this.getConfigProxy().serviceUrl);
+        });
     }
+
+    getConfigProxy() {
+        return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
+    }
+
     // onLoad () {
     // }
 

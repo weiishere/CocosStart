@@ -12,6 +12,7 @@ export class ConfigProxy extends BaseProxy {
     private _bonusUrl: string;
     private _shareUrl: string;
     private _iosDownUrl: string;
+    private _serviceUrl: string;
 
     public constructor(proxyName: string = null, data: any = null) {
         super(proxyName, data);
@@ -34,6 +35,7 @@ export class ConfigProxy extends BaseProxy {
                 this._shareUrl = response.shareUrl;
                 this._bonusUrl = response.bonusUrl;
                 this._iosDownUrl = response.iosDownUrl;
+                this._serviceUrl = response.serviceUrl;
 
                 if (this.versionCompare(versionUrl, response.version)) {
                     this.facade.sendNotification(CommandDefine.OpenUpdatePromptAlert, this._shareUrl, "");
@@ -85,5 +87,8 @@ export class ConfigProxy extends BaseProxy {
     }
     public get iosDownUrl(): string {
         return this._iosDownUrl;
+    }
+    public get serviceUrl(): string {
+        return this._serviceUrl;
     }
 }
