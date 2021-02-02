@@ -1,4 +1,7 @@
 {
+	"otherUrl": "https://ziyunge-obs.obs.cn-southwest-2.myhuaweicloud.com/gate.json",
+	"port": "8700",
+	"configName": "/config/config1.json",
 	"configUrl": "http://139.9.242.13/config/config.json",
 	"version": "0.0.9"
 }
