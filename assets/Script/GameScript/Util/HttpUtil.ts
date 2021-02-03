@@ -1,4 +1,5 @@
 import { SHA1 } from './Sha1';
+import md5 from './MD5';
 
 export class HttpUtil {
     static METHOD_POST: string = 'POST';
@@ -244,6 +245,10 @@ export class HttpUtil {
         }
         */
 
+        //const token = md5(parseInt((new Date().getTime() / 10000) + '') * 10000 + ".ziyungeSecret");
+        // const s = parseInt((new Date().getTime() / 10000) + '') * 10000 + ".ziyungeSecret";
+        // console.log(md5(s));
+        // debugger
 
         pXHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
