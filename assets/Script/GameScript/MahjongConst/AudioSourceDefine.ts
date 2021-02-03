@@ -1,3 +1,3 @@
 export enum AudioSourceDefine {
-    BackMusic = "audio/BACK_MUSIC",
+    BackMusic = "audio/BACK_MUSIC2",
 }
