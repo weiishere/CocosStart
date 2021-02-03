@@ -1,3 +1,5 @@
+import { SHA1 } from './Sha1';
+import md5 from './MD5';
 
 export class HttpUtil {
     static METHOD_POST: string = 'POST';
@@ -105,7 +107,7 @@ export class HttpUtil {
      * @param isAsync           是否异步请求
      * @constructor
      */
-    static send(url:string, resultCb:Function, failCb:Function, method, requestData=undefined, acctName='', acctToken='', isAsync = true) {
+    static send(url: string, resultCb: Function, failCb: Function, method, requestData = undefined, acctName = '', acctToken = '', isAsync = true) {
         if (!url) {
             cc.log('HTTP URL is null');
 
@@ -242,6 +244,11 @@ export class HttpUtil {
             cc.log(`http request>>>\nmethod:${method}\nurl:${url}\naccName:${acctName}\naccToken:${acctToken}\nparam:${param}`);
         }
         */
+
+        //const token = md5(parseInt((new Date().getTime() / 10000) + '') * 10000 + ".ziyungeSecret");
+        // const s = parseInt((new Date().getTime() / 10000) + '') * 10000 + ".ziyungeSecret";
+        // console.log(md5(s));
+        // debugger
 
         pXHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 

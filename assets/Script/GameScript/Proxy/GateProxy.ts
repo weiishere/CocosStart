@@ -14,6 +14,8 @@ import { UserOfflineData } from '../GameData/UserOfflineData';
 import { LoginAfterHttpUtil } from '../Util/LoginAfterHttpUtil';
 import { ResponseCode } from "../GameConst/ResponseCode";
 import Facade from "../../Framework/care/Facade";
+import { SHA1 } from "../Util/Sha1";
+import md5 from "../Util/MD5";
 
 
 export class GateProxy extends BaseProxy {
@@ -45,6 +47,7 @@ export class GateProxy extends BaseProxy {
         let url = this.getFacadeUrl() + "/code/register";
         let param = {
             phoneNo: phoneNo,
+            token: md5(new Date(parseInt((new Date().getTime() / 10000) + '') * 10000) + ".ziyungeSecret")
         }
         HttpUtil.send(url, (response) => {
             if (response.hd === "success") {
