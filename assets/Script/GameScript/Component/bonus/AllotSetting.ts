@@ -15,6 +15,7 @@ import { ProxyDefine } from "../../MahjongConst/ProxyDefine";
 import { ConfigProxy } from "../../Proxy/ConfigProxy";
 import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
 import { HttpUtil } from "../../Util/HttpUtil";
+import { getUserOrderInfo, initNoRecoreNode } from './MyBonus';
 
 @ccclass
 export default class AllotSetting extends ViewComponent {
@@ -79,16 +80,18 @@ export default class AllotSetting extends ViewComponent {
                 targetUser: this.data.userName,
                 bonus: num / 100
             }
-            HttpUtil.send(bonusUrl + `/api/v1/account/${this.data.accountType === 666 ? 'update' : 'add'}/leader`, res => {
-                this.loading.active = false;
-                if (res.code === 200) {
-                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '操作已完成', toastOverlay: true }, '');
-                } else {
-                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
-                }
-            }, (err) => {
-                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '数据服务未响应', toastOverlay: true }, '');
-            }, HttpUtil.METHOD_POST, param)
+            getUserOrderInfo(this.data.userName, ({ data }) => {
+                HttpUtil.send(bonusUrl + `/api/v1/account/${data.accountType === 666 ? 'update' : 'add'}/leader`, res => {
+                    this.loading.active = false;
+                    if (res.code === 200) {
+                        Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '操作已完成', toastOverlay: true }, '');
+                    } else {
+                        Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
+                    }
+                }, (err) => {
+                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '数据服务未响应', toastOverlay: true }, '');
+                }, HttpUtil.METHOD_POST, param)
+            });
         }, true);
         //取消
         this.CancleBtu.on(cc.Node.EventType.TOUCH_END, () => {

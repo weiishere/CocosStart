@@ -17,12 +17,12 @@ import { ConfigProxy } from "../../Proxy/ConfigProxy";
 const { ccclass, property } = cc._decorator;
 
 /**获取用户信息 */
-export const getUserOrderInfo = (callBack) => {
+export const getUserOrderInfo = (targetId?, callBack?) => {
     let bonusUrl = (<ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config)).bonusUrl;
     let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
-    HttpUtil.send(bonusUrl + `/api/v1/account/get?userName=${localCacheDataProxy.getLoginData().userName}`, res => {
+    HttpUtil.send(bonusUrl + `/api/v1/account/get?userName=${targetId || localCacheDataProxy.getLoginData().userName}`, res => {
         if (res.code === 200) {
-            window.localStorage['userOrderInfo'] = JSON.stringify(res.data);
+            if (!targetId) window.localStorage['userOrderInfo'] = JSON.stringify(res.data);
             /*accountType: 1
             inviteCode: "6043388"
             privilege: 1*/
@@ -72,7 +72,7 @@ export default class MyBonus extends ViewComponent {
 
     bindUI() {
         this.loading = this.node.getChildByName('loading');
-        getUserOrderInfo((res) => {
+        getUserOrderInfo(undefined, (res) => {
             //判断是不是盟主
             this.node.getChildByName("bg").getChildByName("bg2_hl").active = true;
             this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_2").active = true;
