@@ -1,6 +1,6 @@
 {
 	"otherUrl": "https://ziyunge.daoynly.com/gate.json",
-	"port": "",
+	"port": "8700",
 	"configName": "/config/config1.json",
 	"configUrl": "http://127.0.0.1/config/config.json",
 	"version": "0.0.2"
