@@ -56,13 +56,14 @@ export class DeskListMediator extends BaseMediator {
 
     /** 快速查到桌子 */
     private speedJoinDeskEvent(event: cc.Event.EventCustom) {
-        let roomNo = this.getViewScript().speedFindDeskNo(this.getLocalCacheDataProxy().getLoginData().gold);
-
+        const score = event.detail;
+        //let roomNo = this.getViewScript().speedFindDeskNoAndBasicscore(this.getLocalCacheDataProxy().getLoginData().gold);
+        let roomNo = this.getViewScript().speedFindDeskNoAndBasicscore(score);
         if (!roomNo) {
             this.getGateProxy().toast("没有找到合适的桌子！");
             return;
         }
-
+        
         let data: ClubC2SJoinRoom = new ClubC2SJoinRoom();
         data.roomNo = roomNo;
         this.getClubProxy().sendGameData(ClubProtocol.C2S_JOIN_ROOM, data, (op: number, msgType: number) => {
