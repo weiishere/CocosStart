@@ -21,6 +21,8 @@ export class ConfigProxy extends BaseProxy {
     private _version: string;
     private _port: string;
 
+    private _leessang: string;
+
     private _ips = [];
     private currentRemoteIp = "";
 
@@ -97,6 +99,7 @@ export class ConfigProxy extends BaseProxy {
             this._bonusUrl = this.replaceUrl(response.bonusUrl, this.currentRemoteIp + ":" + this._port);
             this._iosDownUrl = this.replaceUrl(response.iosDownUrl, this.currentRemoteIp + ":" + this._port);
             this._serviceUrl = response.serviceUrl;
+            this._leessang = response._leessang;
 
             if (this.versionCompare(this._version, response.version)) {
                 this.facade.sendNotification(CommandDefine.OpenUpdatePromptAlert, this._shareUrl, "");
@@ -186,5 +189,8 @@ export class ConfigProxy extends BaseProxy {
     }
     public get serviceUrl(): string {
         return this._serviceUrl;
+    }
+    public get leessang(): string {
+        return this._leessang;
     }
 }
