@@ -45,9 +45,10 @@ export class GateProxy extends BaseProxy {
 
     public getVerifyCode(phoneNo: string, callBack: any) {
         let url = this.getFacadeUrl() + "/code/register";
+        let dd = new Date(parseInt((new Date().getTime() / 10000) + '') * 10000).getTime() + ".ziyungeSecret";
         let param = {
             phoneNo: phoneNo,
-            token: md5(new Date(parseInt((new Date().getTime() / 10000) + '') * 10000) + ".ziyungeSecret")
+            token: md5(dd)
         }
         HttpUtil.send(url, (response) => {
             if (response.hd === "success") {

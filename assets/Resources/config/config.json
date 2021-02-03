@@ -2,6 +2,11 @@
 	"otherUrl": "https://ziyunge.daoynly.com/gate.json",
 	"port": "",
 	"configName": "/config/config1.json",
+<<<<<<< HEAD
 	"configUrl": "http://139.9.242.13/config/config.json",
 	"version": "0.0.9"
+=======
+	"configUrl": "http://127.0.0.1/config/config.json",
+	"version": "0.0.2"
+>>>>>>> 22793fda6bf4d0d9e852605be4e84d1e76e712c8
 }
