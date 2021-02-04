@@ -166,6 +166,8 @@ export class WebSockerProxy extends Proxy {
                 this.getGateProxy().toast("你的账号被别人登录，强制你下线");
                 this.sendNotification(CommandDefine.ForcedOffline, null);
                 break;
+            case OperationDefine.NOTICE_UPDATE:
+                break;
             case OperationDefine.GGW2C_Heartbeat:
                 this.send({ op: OperationDefine.GGW2C_Heartbeat });
                 break;

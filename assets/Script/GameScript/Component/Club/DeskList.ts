@@ -7,6 +7,7 @@ import { S2CClubRoomSitDown } from '../../GameData/Club/s2c/S2CClubRoomSitDown';
 import { S2CClubRoomStandUp } from '../../GameData/Club/s2c/S2CClubRoomStandUp';
 import { S2CClubPushRoomRound } from '../../GameData/Club/s2c/S2CClubPushRoomRound';
 import { DeskListEventDefine } from '../../GameConst/Event/DeskListEventDefine';
+import { PrefabDefine } from '../../MahjongConst/PrefabDefine';
 
 const { ccclass, property } = cc._decorator;
 
@@ -20,14 +21,19 @@ export default class DeskList extends ViewComponent {
     dymjDesk: cc.Prefab = null;
     @property(cc.Node)
     deskContainer: cc.Node = null;
+    @property(cc.Node)
+    chooseSpeedPanel: cc.Node = null;
 
     waitHandleDesk = [];
-
+    private basicScoreList: Array<number> = [];
     start() {
 
     }
 
     protected bindUI(): void {
+        this.node.on(cc.Node.EventType.TOUCH_END, () => {
+            this.closeChooseSpeedPanel();
+        }, this);
     }
     protected bindEvent(): void {
         this.quitClubBtn.on(cc.Node.EventType.TOUCH_END, () => {
@@ -35,10 +41,36 @@ export default class DeskList extends ViewComponent {
         });
 
         this.kuaiSuBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            this.dispatchCustomEvent(DeskListEventDefine.SpeedJoinDeskEvent, null);
+            this.openChooseSpeedPanel((score) => {
+                //console.log(score);
+                this.dispatchCustomEvent(DeskListEventDefine.SpeedJoinDeskEvent, score);
+            })
+
         });
     }
+    closeChooseSpeedPanel() {
+        if (this.chooseSpeedPanel.opacity === 0) return;
+        cc.tween(this.chooseSpeedPanel).to(0.05, { opacity: 0, position: cc.v3(this.chooseSpeedPanel.x, this.chooseSpeedPanel.y) }).call(() => { }).start();
+    }
+    openChooseSpeedPanel(clickHandler) {
+        this.chooseSpeedPanel.opacity = 0;
+        this.chooseSpeedPanel.setPosition(cc.v3(this.chooseSpeedPanel.x, this.chooseSpeedPanel.y + 30));
+        cc.loader.loadRes(PrefabDefine.ScoreChooseBtu, cc.Prefab, (err, chooseScoreBtu) => {
+            this.chooseSpeedPanel.getChildByName("panel").removeAllChildren();
+            this.basicScoreList.forEach(item => {
+                const _chooseScoreBtu: cc.Node = cc.instantiate(chooseScoreBtu);
+                _chooseScoreBtu.getChildByName("Label").getComponent(cc.Label).string = item + '底分';
+                this.chooseSpeedPanel.getChildByName("panel").addChild(_chooseScoreBtu);
+                _chooseScoreBtu.on(cc.Node.EventType.TOUCH_END, () => {
+                    clickHandler(item);
+                    this.closeChooseSpeedPanel();
+                }, this);
+                cc.tween(this.chooseSpeedPanel).to(0.1, { opacity: 255, position: cc.v3(this.chooseSpeedPanel.x, this.chooseSpeedPanel.y - 30) }).call(() => { }).start();
+            });
 
+        });
+
+    }
     loadDeskList(s2CJoinClubInfo: S2CJoinClubInfo) {
         if (!s2CJoinClubInfo) {
             return;
@@ -49,7 +81,12 @@ export default class DeskList extends ViewComponent {
         for (const roomInfo of s2CJoinClubInfo.roomInfos) {
             this.addDeskNode(roomInfo);
         }
-
+        for (const deskNode of this.deskContainer.children) {
+            let script = deskNode.getComponent("DymjDesk") as DymjDesk;
+            this.basicScoreList.push(script.basicScore);
+        }
+        this.basicScoreList = Array.from(new Set(this.basicScoreList));
+        this.basicScoreList.sort((a, b) => a - b)
         this.sortDesk();
     }
 
@@ -176,6 +213,32 @@ export default class DeskList extends ViewComponent {
 
         return desks[0].getComponent("DymjDesk").roomNo;
     }
+/**
+     * 根据底分查到桌子
+     * @param myGold 
+     */
+    speedFindDeskNoAndBasicscore(score: number) {
+        let desks = [];
+        for (const deskNode of this.deskContainer.children) {
+            let script = <DymjDesk>deskNode.getComponent("DymjDesk");
+            if (score === script.basicScore && script.getSitDownCount() < 2) {
+                desks.push(deskNode);
+            }
+        }
+
+        if (desks.length === 0) {
+            return null;
+        }
+
+        desks.sort((a, b) => {
+            let script1 = <DymjDesk>a.getComponent("DymjDesk");
+            let script2 = <DymjDesk>b.getComponent("DymjDesk");
+            return script1.getSitDownCount() - script2.getSitDownCount();
+        })
+
+        return desks[0].getComponent("DymjDesk").roomNo;
+    }
+
 
     testAddDesk() {
         let desk = cc.instantiate(this.dymjDesk);

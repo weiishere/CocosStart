@@ -55,6 +55,11 @@ export enum OperationDefine {
 	USER_GOLD_CHANGE = 11,
 
 	/**
+	 * 公告更新
+	 */
+	NOTICE_UPDATE = 12,
+
+	/**
 	 * 俱乐部服务
 	 */
 	CLUB_SERVICE = 10000,
