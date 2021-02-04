@@ -61,7 +61,7 @@ export default class GiveAwayPanel extends ViewComponent {
                                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '玩家头像获取失败' }, '');
                             } else {
                                 this.giveAwayUserHead.active = true;
-                                this.giveAwayUserHead.getComponent(cc.Sprite).spriteFrame = new cc.SpriteFrame(item)
+                                this.giveAwayUserHead.getComponent(cc.Sprite).spriteFrame = new cc.SpriteFrame(item);
                             }
                         });
                     } else {

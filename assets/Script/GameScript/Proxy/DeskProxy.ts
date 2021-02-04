@@ -218,18 +218,6 @@ export class DeskProxy extends BaseProxy {
             if (dymjS2CShowOperation.oprts) {
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
                 this.doEventData(dymjS2CShowOperation.oprts);
-                // dymjS2CShowOperation.oprts.forEach(op => {
-                //     if (op.oprtType === DymjOperationType.GANG) {
-                //         this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("bar");
-                //         this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.gang;
-                //     } else if (op.oprtType === DymjOperationType.HU) {
-                //         this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("hu");
-                //         this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.hu;
-                //     } else if (op.oprtType === DymjOperationType.PENG) {
-                //         this.getGameData().eventData.gameEventData.myGameEvent.eventName.push("touch");
-                //         this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = op.peng;
-                //     }
-                // });
             }
             this.sendNotification(CommandDefine.ShowMyEventPush, { eventName: this.getGameData().eventData.gameEventData.myGameEvent.eventName });
         }

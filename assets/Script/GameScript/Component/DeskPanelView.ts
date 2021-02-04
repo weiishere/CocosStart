@@ -213,7 +213,7 @@ export default class DeskPanelView extends ViewComponent {
 
         //#region 玩家操作按钮节点
         this.opreationBtus.ready_btu = this.opreationArea.getChildByName("ready");
-        this.opreationBtus.show_btu = this.opreationArea.getChildByName("show");
+        this.opreationBtus.show_btu = this.node.getChildByName("show");
         this.opreationBtus.bar_btu = this.opreationArea.getChildByName("bar");
         this.opreationBtus.touch_btu = this.opreationArea.getChildByName("touch");
         this.opreationBtus.hu_btu = this.opreationArea.getChildByName("hu");
