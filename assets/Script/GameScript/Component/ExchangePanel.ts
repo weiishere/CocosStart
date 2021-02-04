@@ -10,6 +10,7 @@ import { GateProxy } from '../Proxy/GateProxy';
 
 const { ccclass, property } = cc._decorator;
 
+
 @ccclass
 export default class ExchangePanel extends ViewComponent {
 
@@ -100,9 +101,9 @@ export default class ExchangePanel extends ViewComponent {
             }
             LoginAfterHttpUtil.send(url, (response) => {
                 if (response.hd === "success") {
-                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '兑换成功', toastOverlay: true }, '');
+                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '兑换已成功提交，预计30分钟内到账，请关注！', toastOverlay: true }, '');
                 } else {
-                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '对不起，兑换失败', toastOverlay: true }, '');
+                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '对不起，兑换失败！', toastOverlay: true }, '');
                 }
             }, (err) => {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '参数异常：' + err, toastOverlay: true }, '');
@@ -183,7 +184,17 @@ export default class ExchangePanel extends ViewComponent {
      * @param moneyStr 
      * @param statusStr 
      */
-    updateLogContent(cotnent: cc.Node, timeStr, typeStr, moneyStr, statusStr) {
+    updateLogContent(cotnent: cc.Node, flowNo, timeStr, typeStr, moneyStr, statusStr) {
+        let flowNoLabel = cotnent.getChildByName("orderIdLabel").getComponent(cc.Label);
+        flowNoLabel.string = flowNo;
+        //cotnent.getChildByName("orderIdLabel").getComponent(cc.EditBox).string = flowNo;
+        cotnent.getChildByName("orderIdLabel").getChildByName("copyBtn").on(cc.Node.EventType.TOUCH_END, (event) => {
+            //console.log(flowNo);
+            if (CC_JSB) {
+                (<any>jsb).copyTextToClipboard(flowNo);
+                this.getGateProxy().toast("流水/订单号复制成功");
+            }
+        });
         let timeLabel = cotnent.getChildByName("TimeLabel").getComponent(cc.Label);
         timeLabel.string = timeStr;
         let typeLabel = cotnent.getChildByName("TypeLabel").getComponent(cc.Label);
@@ -192,17 +203,20 @@ export default class ExchangePanel extends ViewComponent {
         moneyLabel.string = "￥" + moneyStr;
         let statusLabel = cotnent.getChildByName("StatusLabel").getComponent(cc.Label);
         statusLabel.string = statusStr;
+        if (statusStr === '兑换失败') {
+            statusLabel.node.color = new cc.Color(255, 0, 0);
+        }
     }
 
     /**
      * 添加记录
      */
-    addLogContent(timeStr, typeStr, moneyStr, statusStr) {
+    addLogContent(flowNo, timeStr, typeStr, moneyStr, statusStr) {
         let node = cc.instantiate(this.logContentItem);
         node.active = true;
         node.x = 0;
         node.y = 0;
-        this.updateLogContent(node, timeStr, typeStr, moneyStr, statusStr);
+        this.updateLogContent(node, flowNo, timeStr, typeStr, moneyStr, statusStr);
         this.logContentContainer.addChild(node);
     }
 
@@ -285,9 +299,11 @@ export default class ExchangePanel extends ViewComponent {
                             status = "已兑换";
                         } else if (value.status === 0) {
                             status = "待兑换";
+                        } else if (value.status === -1) {
+                            status = "兑换失败";
                         }
                     }
-                    this.addLogContent(value.createTime, type, Math.abs(value.amount), status);
+                    this.addLogContent(value.flowNo, value.createTime, type, Math.abs(value.amount), status);
                 }
             } else {
                 this.getGateProxy().toast("获取记录失败！");

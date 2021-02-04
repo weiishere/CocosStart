@@ -26,10 +26,10 @@ export const getUserOrderInfo = (targetId?, callBack?) => {
             /*accountType: 1
             inviteCode: "6043388"
             privilege: 1*/
-            callBack(res);
         } else {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
         }
+        callBack(res);
     }, (err) => {
         Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '数据服务未响应', toastOverlay: true }, '');
     }, HttpUtil.METHOD_GET, {})

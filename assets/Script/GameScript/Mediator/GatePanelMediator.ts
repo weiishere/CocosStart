@@ -17,6 +17,7 @@ import { UserGold } from '../GameData/UserGold';
 import { WebSockerProxy } from '../Proxy/WebSocketProxy';
 import MyCenter from '../Component/MyCenter';
 import RecordDetailList from "../Component/RecordDetailList";
+import NoticeAlert from "../Component/NoticeAlert";
 
 export class GatePanelMediator extends BaseMediator {
     //private gatePanelView: GatePanelView = null;
@@ -59,6 +60,7 @@ export class GatePanelMediator extends BaseMediator {
     protected inAdvanceLoadFiles(): string[] {
         return [
             PrefabDefine.ToastPanel,
+            PrefabDefine.NoticeAlert,
             PrefabDefine.PromptWindow,
             PrefabDefine.ScrollMsgNode,
             PrefabDefine.UserInfoPanel,
@@ -294,7 +296,8 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.CloseLoadingPanel,
             CommandDefine.OpenBonusIndex,
             CommandDefine.OpenUpdatePromptAlert,
-            CommandDefine.closeLoginPanel
+            CommandDefine.closeLoginPanel,
+            CommandDefine.OpenNoticeAlert
         ];
     }
 
@@ -357,7 +360,13 @@ export class GatePanelMediator extends BaseMediator {
                 const script = (_toastPrefab as cc.Node).getComponent('Toast');
                 script.show(content, () => this.toastActive = false);
                 break;
-
+            case CommandDefine.OpenNoticeAlert:
+                const noticeContent = notification.getBody().content;
+                const closeCallback = notification.getBody().callback;
+                const noticeAlertPrefab: cc.Node = cc.instantiate(cc.loader.getRes(PrefabDefine.NoticeAlert, cc.Prefab));
+                this.viewComponent.addChild(noticeAlertPrefab);
+                (noticeAlertPrefab.getComponent('NoticeAlert') as NoticeAlert).show(noticeContent, closeCallback);
+                break;
             case CommandDefine.OpenSetting:
                 this.openSetting(notification.getBody());
                 break;
@@ -408,6 +417,14 @@ export class GatePanelMediator extends BaseMediator {
                 this.scrollMsgNode.setPosition(cc.v2(30, 233));
                 this.scrollMsgNode.getComponent('ScrollMsgNode').createContent('系统公告：' + this.getConfigProxy().leessang, 300);
                 //this.scrollMsgNode.getComponent('ScrollMsgNode').createContent('抵制不良游戏，拒绝盗版游戏，注意自我保护，谨防受骗上当，适度游戏益脑，沉迷游戏伤身，合理安排时间，享受健康生活', 300);
+                
+                if (!cc.sys.localStorage.getItem('today') || (cc.sys.localStorage.getItem('today') !== ((new Date()).getDate() + ''))) {
+                    this.sendNotification(CommandDefine.OpenNoticeAlert, {
+                        content: this.getConfigProxy().leessang, callback: () => {
+                            cc.sys.localStorage.setItem("today", (new Date()).getDate());
+                        }
+                    });
+                }
                 break;
             case CommandDefine.OpenLoadingPanel:
                 this.loadingPanel = new cc.Node('Loading');

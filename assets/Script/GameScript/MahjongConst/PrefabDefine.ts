@@ -29,5 +29,6 @@ export enum PrefabDefine {
     AllotSettingAlert = "prefabs/bonus/allotSettingAlert",
     ChatBox = "prefabs/chatBox",
     ReloadPanel = "prefabs/markReloadBg",
-    ScoreChooseBtu = "prefabs/scoreChooseBtu"
+    ScoreChooseBtu = "prefabs/scoreChooseBtu",
+    NoticeAlert = "prefabs/noticePromptAlert"
 }

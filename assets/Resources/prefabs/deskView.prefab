@@ -10348,7 +10348,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1624,
+      "width": 1384,
       "height": 110
     },
     "_anchorPoint": {
@@ -10360,7 +10360,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        0,
+        286.72,
         -143.365,
         0,
         0,
@@ -10424,7 +10424,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -760,
+        -640,
         0,
         0,
         0,
@@ -10533,7 +10533,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -596,
+        -476,
         0,
         0,
         0,
@@ -10642,7 +10642,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -432,
+        -312,
         0,
         0,
         0,
@@ -10751,7 +10751,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -267.5,
+        -147.5,
         0,
         0,
         0,
@@ -10860,7 +10860,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -103,
+        17,
         0,
         0,
         0,
@@ -10969,7 +10969,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        61,
+        181,
         0,
         0,
         0,
@@ -11078,7 +11078,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        228,
+        348,
         0,
         0,
         0,
@@ -11187,7 +11187,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        384,
+        504,
         102.108,
         0,
         0,
@@ -11265,7 +11265,7 @@
       "__id__": 250
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 276
@@ -11405,7 +11405,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        768.5,
+        648.5,
         0,
         0,
         0,
@@ -11485,7 +11485,7 @@
     "_enabled": true,
     "_layoutSize": {
       "__type__": "cc.Size",
-      "width": 1624,
+      "width": 1384,
       "height": 110
     },
     "_resize": 1,
@@ -11523,7 +11523,7 @@
     "_top": 0,
     "_bottom": 0,
     "_verticalCenter": 0,
-    "_horizontalCenter": 0,
+    "_horizontalCenter": 286.72,
     "_isAbsLeft": true,
     "_isAbsRight": true,
     "_isAbsTop": true,

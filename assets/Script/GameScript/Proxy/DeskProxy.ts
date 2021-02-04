@@ -279,6 +279,7 @@ export class DeskProxy extends BaseProxy {
                 givePlayer = this.getPlayerByGameIndex(dymjGameOperation.peng.playerAzimuth);
                 giveCard = dymjGameOperation.peng.mjValue;
                 this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();//去掉引碰者出牌
+                this.getGameData().eventData.gameEventData.myGameEvent.eventName = ['show'];
             } else if (dymjGameOperation.oprtType === DymjOperationType.GANG) {
                 const barType: BarType = { barCard: dymjGameOperation.gang.mjValues[0], barType: dymjGameOperation.gang.gangType as 0 | 1 | 2 };
                 this.getGameData().myCards.barCard.push(barType);
@@ -289,6 +290,7 @@ export class DeskProxy extends BaseProxy {
                 if (barType.barType === 1) {
                     this.getGameData().myCards.touchCard = this.getGameData().myCards.touchCard.filter(item => item !== giveCard);
                 }
+                this.getGameData().eventData.gameEventData.myGameEvent.eventName = ['show'];
             } else if (dymjGameOperation.oprtType === DymjOperationType.HU) {
                 _deskEventCorrelationInfoData = correlationInfoData = dymjGameOperation.hu;
                 this.getGameData().myCards.hadHuCard = dymjGameOperation.hu.mjValue;
@@ -361,14 +363,14 @@ export class DeskProxy extends BaseProxy {
                     } else {
                         this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();
                     }
-                } else if (dymjGameOperation.gang.gangType === 1) {
+                } else if (dymjGameOperation.gang.gangType === 1) { 
                     //抢杠
                     partnerCard.partnerCards.isHandCard = false;
                     partnerCard.partnerCards.handCard = 0;
                     if (this.isMy(givePlayer.playerId)) {
                         this.getGameData().myCards.outCardList.pop();
                     } else {
-                        this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();
+                        this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop(); 
                     }
                     const partnerCards = this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards;
                     partnerCards.touchCard = partnerCards.touchCard.filter(item => item !== giveCard);
@@ -386,6 +388,7 @@ export class DeskProxy extends BaseProxy {
                 partnerCard.partnerCards.barCard.push(burObj);
             } else if (dymjGameOperation.oprtType === DymjOperationType.HU) {
                 partnerCard.partnerCards.hadHuCard = dymjGameOperation.hu.mjValue;
+                partnerCard.partnerCards.handCard = 0;
                 _deskEventName = dymjGameOperation.hu.huType === 1 ? 'zimo' : 'hu';
                 _deskEventCorrelationInfoData = dymjGameOperation.hu;
                 giveCard = dymjGameOperation.hu.mjValue;
@@ -487,7 +490,7 @@ export class DeskProxy extends BaseProxy {
         dymjGameResult.players.forEach(player => {
             this.repository.deskData.playerList.find(item => item.playerId === player.userName).playerGold = player.credit;
         })
-        
+
         this.sendNotification(CommandDefine.OpenRecordAlter, dymjGameResult);
     }
 
@@ -616,7 +619,7 @@ export class DeskProxy extends BaseProxy {
         });
 
         this.getDeskData().playerList = playerList;
-        if(!dymjGameReconnData.isReady){
+        if (!dymjGameReconnData.isReady) {
             //说明断线重连处于两局之间，需要清理数据
             this.clearGameData();
             (<DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj)).goOn();

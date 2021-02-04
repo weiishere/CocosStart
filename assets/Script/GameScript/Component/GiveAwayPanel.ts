@@ -9,6 +9,7 @@ import { LoginAfterHttpUtil } from '../Util/LoginAfterHttpUtil';
 import { ResponseCode } from '../GameConst/ResponseCode';
 import { GateProxy } from '../Proxy/GateProxy';
 import { DateUtil } from '../Util/DateUtil';
+import { getUserOrderInfo } from './bonus/MyBonus';
 
 const { ccclass, property } = cc._decorator;
 
@@ -31,6 +32,10 @@ export default class GiveAwayPanel extends ViewComponent {
     toUserNameEditBox: cc.EditBox = null;
     @property(cc.EditBox)
     goldEditBox: cc.EditBox = null;
+    @property(cc.Label)
+    giveAwayUserInfo: cc.Label = null;
+    @property(cc.Node)
+    giveAwayUserHead: cc.Node = null;
 
     protected bindUI(): void {
         this.updateGoldEditBoxPlaceholder();
@@ -42,6 +47,32 @@ export default class GiveAwayPanel extends ViewComponent {
 
         this.giveAwayBtn.on(cc.Node.EventType.TOUCH_END, () => {
             this.giveAway();
+        });
+
+        this.toUserNameEditBox.node.on('editing-did-ended', (event) => {
+            this.giveAwayUserInfo.node.color = new cc.Color(215, 215, 215);
+            this.giveAwayUserHead.active = false;
+            if (event.string.length === 7) {
+                getUserOrderInfo(event.string, (res) => {
+                    if (res.code === 200) {
+                        this.giveAwayUserInfo.string = res.data.nickName;
+                        cc.loader.load(res.data.headUrl, (error, item) => {
+                            if (error) {
+                                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '玩家头像获取失败' }, '');
+                            } else {
+                                this.giveAwayUserHead.active = true;
+                                this.giveAwayUserHead.getComponent(cc.Sprite).spriteFrame = new cc.SpriteFrame(item)
+                            }
+                        });
+                    } else {
+
+                        this.giveAwayUserInfo.string = '无此玩家，请检查';
+                        this.giveAwayUserInfo.node.color = new cc.Color(255, 0, 0);
+                    }
+                });
+            } else {
+                this.giveAwayUserInfo.string = '---';
+            }
         });
     }
 
@@ -169,7 +200,7 @@ export default class GiveAwayPanel extends ViewComponent {
         // typeLabel.string = userStr;
         let moneyLabel = cotnent.getChildByName("MoneyLabel").getComponent(cc.Label);
         moneyLabel.string = moneyStr;
-        
+
         if (moneyStr >= 0) {
             typeLabel.string = userStr + " 赠送给我";
             let color = cc.color().fromHEX("#FF0000")
