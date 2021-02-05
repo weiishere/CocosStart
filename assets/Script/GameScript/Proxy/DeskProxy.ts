@@ -136,7 +136,7 @@ export class DeskProxy extends BaseProxy {
                 _correlationInfoData['peng'] = op.peng;
             } else if (op.oprtType === DymjOperationType.HU) {
                 _eventName.push("hu");
-                this.getGameData().eventData.deskEventData.eventName = "otherQingHu";
+                if (op.hu.isQingHu) this.getGameData().eventData.deskEventData.eventName = "otherQingHu";
                 _correlationInfoData['hu'] = op.hu;
             } else if (op.oprtType === DymjOperationType.PUT) {
                 _eventName.push("show");
