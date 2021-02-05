@@ -212,7 +212,7 @@ export class GatePanelMediator extends BaseMediator {
         let script = <MyCenter>this.giveAwatPanelNode.getComponent("GiveAwayPanel");
     }
 
-    private openUpdatePromptAlert(downloadUrl: string) {
+    private openUpdatePromptAlert(downloadUrl: any) {
         let updatePromptAlertSource = cc.loader.getRes(PrefabDefine.UpdatePromptAlert, cc.Prefab);
         if (!updatePromptAlertSource) {
             cc.loader.loadRes(PrefabDefine.UpdatePromptAlert, cc.Prefab, (error, resources) => {
@@ -417,7 +417,7 @@ export class GatePanelMediator extends BaseMediator {
                 this.scrollMsgNode.setPosition(cc.v2(30, 233));
                 this.scrollMsgNode.getComponent('ScrollMsgNode').createContent('系统公告：' + this.getConfigProxy().leessang, 300);
                 //this.scrollMsgNode.getComponent('ScrollMsgNode').createContent('抵制不良游戏，拒绝盗版游戏，注意自我保护，谨防受骗上当，适度游戏益脑，沉迷游戏伤身，合理安排时间，享受健康生活', 300);
-                
+
                 if (!cc.sys.localStorage.getItem('today') || (cc.sys.localStorage.getItem('today') !== ((new Date()).getDate() + ''))) {
                     this.sendNotification(CommandDefine.OpenNoticeAlert, {
                         content: this.getConfigProxy().leessang, callback: () => {

@@ -44,7 +44,7 @@ export default class Setting extends ViewComponent {
     start() {
 
     }
-    init(shareUrl: string, iosDownUrl: string) {
+    init({ shareUrl, iosDownUrl }) {
         this.shareUrl = shareUrl;
         this.iosDownUrl = iosDownUrl;
     }

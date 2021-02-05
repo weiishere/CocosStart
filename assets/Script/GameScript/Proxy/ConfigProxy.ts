@@ -102,7 +102,7 @@ export class ConfigProxy extends BaseProxy {
             this._leessang = response.leessang;
 
             if (this.versionCompare(this._version, response.version)) {
-                this.facade.sendNotification(CommandDefine.OpenUpdatePromptAlert, this._shareUrl, "");
+                this.facade.sendNotification(CommandDefine.OpenUpdatePromptAlert, { shareUrl: this._shareUrl, iosDownUrl: this._iosDownUrl }, "");
             } else {
                 this.facade.sendNotification(CommandDefine.GateCommand, null, NotificationTypeDefine.CheckLogin);
             }

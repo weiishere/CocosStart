@@ -70,7 +70,6 @@ export default class ScrollMsgNode extends cc.Component {
                 this.contentIndex = this.contentIndex === this.contentArr.length - 1 ? 0 : (this.contentIndex + 1);
                 this.label.string = this.contentArr[this.contentIndex];//.shift();
                 //需要先更新标签的宽度，不然下一帧才更新，这里取到的值就会是原来的值，导致宽度计算错误
-                //debugger
                 this.label['_forceUpdateRenderData'](true);
                 this.label.node.setPosition(this.startPos);
                 let distance: number = this.label.node.width + this.label.node.parent.width;
