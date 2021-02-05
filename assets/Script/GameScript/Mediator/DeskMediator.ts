@@ -227,7 +227,7 @@ export class DeskMediator extends BaseMediator {
                 // 结束就立马关闭托管面板
                 this.DeskPanelViewScript.closeEntrustMask();
                 this.DeskPanelViewScript.updatePlayerHeadView();
-                
+
                 break;
             case CommandDefine.RefreshPlayerPush:
                 this.DeskPanelViewScript && this.DeskPanelViewScript.updatePlayerHeadView();
@@ -303,7 +303,7 @@ export class DeskMediator extends BaseMediator {
                 break;
             case CommandDefine.ShowMyEventPush://通知本方有事件
                 this.DeskPanelViewScript.updateMyOperationBtu();
-                //this.playEventSound(notification.getBody().eventName);
+                notification.getBody().isZhuaQinghu && this.playEventSound('qingHu');//有可能是对方请胡，自己要抓请胡，需要语音提示
                 break;
             case CommandDefine.ShowCard://本方出牌
                 const { cardNumber, isQingHu } = notification.getBody();

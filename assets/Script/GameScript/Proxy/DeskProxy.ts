@@ -136,6 +136,7 @@ export class DeskProxy extends BaseProxy {
                 _correlationInfoData['peng'] = op.peng;
             } else if (op.oprtType === DymjOperationType.HU) {
                 _eventName.push("hu");
+                this.getGameData().eventData.deskEventData.eventName = "otherQingHu";
                 _correlationInfoData['hu'] = op.hu;
             } else if (op.oprtType === DymjOperationType.PUT) {
                 _eventName.push("show");
@@ -219,7 +220,9 @@ export class DeskProxy extends BaseProxy {
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
                 this.doEventData(dymjS2CShowOperation.oprts);
             }
-            this.sendNotification(CommandDefine.ShowMyEventPush, { eventName: this.getGameData().eventData.gameEventData.myGameEvent.eventName });
+            const isZhuaQinghu = this.getGameData().eventData.deskEventData.eventName === 'otherQingHu' ? true : false;
+            this.getGameData().eventData.deskEventData.eventName = '';
+            this.sendNotification(CommandDefine.ShowMyEventPush, { eventName: this.getGameData().eventData.gameEventData.myGameEvent.eventName, isZhuaQinghu });
         }
     }
 
@@ -351,14 +354,14 @@ export class DeskProxy extends BaseProxy {
                     } else {
                         this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();
                     }
-                } else if (dymjGameOperation.gang.gangType === 1) { 
+                } else if (dymjGameOperation.gang.gangType === 1) {
                     //抢杠
                     partnerCard.partnerCards.isHandCard = false;
                     partnerCard.partnerCards.handCard = 0;
                     if (this.isMy(givePlayer.playerId)) {
                         this.getGameData().myCards.outCardList.pop();
                     } else {
-                        this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop(); 
+                        this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();
                     }
                     const partnerCards = this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards;
                     partnerCards.touchCard = partnerCards.touchCard.filter(item => item !== giveCard);

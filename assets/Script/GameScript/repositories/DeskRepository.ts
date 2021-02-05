@@ -127,7 +127,7 @@ export type GameData = {
         /**桌面事件 */
         deskEventData: {
             /**桌面事件名称 */
-            eventName: '' | 'gameBegin' | 'gameEnd' | 'faceAction' | 'playerIn' | 'playerOut' | 'playerReady' | 'playerOffline' | 'playerOnline' | 'notice' | 'roundGameBegin' | 'roundGameEnd'
+            eventName: '' | 'gameBegin' | 'gameEnd' | 'faceAction' | 'playerIn' | 'playerOut' | 'playerReady' | 'playerOffline' | 'playerOnline' | 'notice' | 'roundGameBegin' | 'roundGameEnd' | 'otherQingHu'
             /**桌面事件相关信息 */
             correlationInfoData?: any
         },
