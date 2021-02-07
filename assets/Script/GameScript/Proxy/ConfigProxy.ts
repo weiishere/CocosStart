@@ -194,6 +194,9 @@ export class ConfigProxy extends BaseProxy {
     public get serviceUrl(): string {
         return this._serviceUrl;
     }
+    public get rechargeServiceUrl(): string {
+        return this._rechargeServiceUrl;
+    }
     public get leessang(): string {
         return this._leessang;
     }
