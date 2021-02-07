@@ -15,6 +15,7 @@ export class ConfigProxy extends BaseProxy {
     private _shareUrl: string;
     private _iosDownUrl: string;
     private _serviceUrl: string;
+    private _rechargeServiceUrl: string;
     private _configUrl: string;
 
     private _configName: string;
@@ -99,6 +100,7 @@ export class ConfigProxy extends BaseProxy {
             this._bonusUrl = this.replaceUrl(response.bonusUrl, this.currentRemoteIp + ":" + this._port);
             this._iosDownUrl = this.replaceUrl(response.iosDownUrl, this.currentRemoteIp + ":" + this._port);
             this._serviceUrl = response.serviceUrl;
+            this._rechargeServiceUrl = response.rechargeServiceUrl;
             this._leessang = response.leessang;
 
             if (this.versionCompare(this._version, response.version)) {
@@ -128,6 +130,7 @@ export class ConfigProxy extends BaseProxy {
             this._bonusUrl = this.replaceUrl(response.bonusUrl, this.currentRemoteIp + ":" + this._port);
             this._iosDownUrl = this.replaceUrl(response.iosDownUrl, this.currentRemoteIp + ":" + this._port);
             this._serviceUrl = response.serviceUrl;
+            this._rechargeServiceUrl = response.rechargeServiceUrl;
             this._leessang = response.leessang;
 
             if (this.versionCompare(this._version, response.version)) {
