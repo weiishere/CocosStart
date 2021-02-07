@@ -233,6 +233,7 @@ export class DeskMediator extends BaseMediator {
                 this.DeskPanelViewScript && this.DeskPanelViewScript.updatePlayerHeadView();
                 break;
             case CommandDefine.ExitDeskPanel:
+                this.getDeskProxy().getDeskData().gameSetting.roomId = 0;
                 this.deskPanel.destroy();
                 //this.view && this.view.destroy();
                 break;
@@ -354,7 +355,9 @@ export class DeskMediator extends BaseMediator {
                 // window.setTimeout(() => { 
                 //     this.DeskPanelViewScript.openReloadPanel();
                 // }, 2000)
-                this.getDymjProxy().loginGame(this.getDeskProxy().getDeskData().gameSetting.roomId, true);
+                if (this.getDeskProxy().getDeskData().gameSetting.roomId) {
+                    this.getDymjProxy().loginGame(this.getDeskProxy().getDeskData().gameSetting.roomId, true);
+                }
                 break;
         }
     }

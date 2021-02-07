@@ -245,12 +245,14 @@ export default class ExchangePanel extends ViewComponent {
         this.updateLogTitle("兑换时间", "兑换方式", "兑换金额");
     }
 
-    getConfirProxy() {
-        return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
-    }
+     
 
     getGateProxy() {
         return <GateProxy>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
+    }
+
+    getConfigProxy() {
+        return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
     }
 
     updatePageBtn(active) {
@@ -269,7 +271,7 @@ export default class ExchangePanel extends ViewComponent {
             pageIndex: pageIndex
         }
 
-        let facadeUrl = this.getConfirProxy().facadeUrl;
+        let facadeUrl = this.getConfigProxy().facadeUrl;
         LoginAfterHttpUtil.send(facadeUrl + this.findUrl, (response) => {
             if (response.hd === "success") {
                 let length = response.bd.content.length;
@@ -315,13 +317,14 @@ export default class ExchangePanel extends ViewComponent {
         }, HttpUtil.METHOD_POST, param);
     }
 
+    
     /**
      * 获得充值列表
      */
     getRechargeValues() {
         let param = {
         }
-        let facadeUrl = this.getConfirProxy().facadeUrl;
+        let facadeUrl = this.getConfigProxy().facadeUrl;
         LoginAfterHttpUtil.send(facadeUrl + "/exchange/getRechargeValues", (response) => {
             if (response.hd === "success") {
                 for (const value of response.bd) {
@@ -334,7 +337,12 @@ export default class ExchangePanel extends ViewComponent {
 
                     this.goldBuyList.addChild(rechargeNode);
                     rechargeNode.on(cc.Node.EventType.TOUCH_END, (event) => {
-                        this.exchange(label.string);
+                        if (/^[0-9]+.?[0-9]$/.test(label.string)) {
+                            cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
+                        } else {
+                            this.exchange(label.string);
+                        }
+                        
                     });
                 }
             } else {
