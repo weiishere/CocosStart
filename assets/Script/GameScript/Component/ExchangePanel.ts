@@ -333,25 +333,28 @@ export default class ExchangePanel extends ViewComponent {
                     rechargeNode.x = 0;
                     rechargeNode.y = 0;
                     rechargeNode.active = true;
-                    let label = rechargeNode.getChildByName("GoldLabel").getComponent(cc.Label);
-                    label.string = value;
+                    if (value === 0) {
+                        this.goldBuyList.addChild(this.vipExchange);
+                        this.vipExchange.on(cc.Node.EventType.TOUCH_END, (event) => {
+                            //const rechargeServiceUrl = this.getConfigProxy();
+                            cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
+                        });
+                    } else {
+                        let label = rechargeNode.getChildByName("GoldLabel").getComponent(cc.Label);
+                        label.string = value;
 
-                    this.goldBuyList.addChild(rechargeNode);
-                    rechargeNode.on(cc.Node.EventType.TOUCH_END, (event) => {
-                        this.exchange(label.string);
-                        // if (/^[0-9]+.?[0-9]$/.test(label.string)) {
-                        //     cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
-                        // } else {
-                        //     this.exchange(label.string);
-                        // }
-                    });
-
+                        this.goldBuyList.addChild(rechargeNode);
+                        rechargeNode.on(cc.Node.EventType.TOUCH_END, (event) => {
+                            this.exchange(label.string);
+                            // if (/^[0-9]+.?[0-9]$/.test(label.string)) {
+                            //     cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
+                            // } else {
+                            //     this.exchange(label.string);
+                            // }
+                        });
+                    }
                 }
-                this.goldBuyList.addChild(this.vipExchange);
-                this.vipExchange.on(cc.Node.EventType.TOUCH_END, (event) => {
-                    const rechargeServiceUrl = this.getConfigProxy();
-                    cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
-                });
+
             } else {
                 this.getGateProxy().toast("获得支付列表失败！");
             }
