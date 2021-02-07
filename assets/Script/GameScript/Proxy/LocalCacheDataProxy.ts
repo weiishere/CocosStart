@@ -1,6 +1,6 @@
 import { LoginData } from '../GameData/LoginData';
 import Proxy from '../../Framework/patterns/proxy/Proxy';
-export class LocalCacheDataProxy extends Proxy {
+export class LocalCacheDataProxy extends Proxy{
     static LOGIN_DATA: string = "LOGIN_DATA";
     static TOKEN: string = "TOKEN";
     static INVITE_CODE: string = "INVITE_CODE";

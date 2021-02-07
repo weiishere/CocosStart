@@ -39,7 +39,8 @@ export default class ExchangePanel extends ViewComponent {
     ConvertBtn: cc.Node = null;
     @property(cc.Node)
     rechargeValue: cc.Node = null;
-
+    @property(cc.Node)
+    vipExchange: cc.Node = null;
 
     /** 查询的url */
     findUrl: string = "";
@@ -78,7 +79,7 @@ export default class ExchangePanel extends ViewComponent {
         });
 
         this.ConvertBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
+            let localCacheDataProxy = <LocalCacheDataProxy><unknown>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
             const getEditBox = (nodeName): cc.Node => this.node.getChildByName("ConvertNode").getChildByName(nodeName).getChildByName("EditBox");
             const alipayAccount = getEditBox('BankName').getComponent(cc.EditBox).string;
             const alipayName = getEditBox('AccountName').getComponent(cc.EditBox).string;
@@ -141,7 +142,7 @@ export default class ExchangePanel extends ViewComponent {
     }
 
     private exchange(gold) {
-        let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
+        let localCacheDataProxy = <LocalCacheDataProxy><unknown>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         let configProxy: ConfigProxy = <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
 
         let token = localCacheDataProxy.getUserToken();
@@ -245,10 +246,10 @@ export default class ExchangePanel extends ViewComponent {
         this.updateLogTitle("兑换时间", "兑换方式", "兑换金额");
     }
 
-     
+
 
     getGateProxy() {
-        return <GateProxy>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
+        return <GateProxy><unknown>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
     }
 
     getConfigProxy() {
@@ -317,7 +318,7 @@ export default class ExchangePanel extends ViewComponent {
         }, HttpUtil.METHOD_POST, param);
     }
 
-    
+
     /**
      * 获得充值列表
      */
@@ -337,20 +338,27 @@ export default class ExchangePanel extends ViewComponent {
 
                     this.goldBuyList.addChild(rechargeNode);
                     rechargeNode.on(cc.Node.EventType.TOUCH_END, (event) => {
-                        if (/^[0-9]+.?[0-9]$/.test(label.string)) {
-                            cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
-                        } else {
-                            this.exchange(label.string);
-                        }
-                        
+                        this.exchange(label.string);
+                        // if (/^[0-9]+.?[0-9]$/.test(label.string)) {
+                        //     cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
+                        // } else {
+                        //     this.exchange(label.string);
+                        // }
                     });
+
                 }
+                this.goldBuyList.addChild(this.vipExchange);
+                this.vipExchange.on(cc.Node.EventType.TOUCH_END, (event) => {
+                    const rechargeServiceUrl = this.getConfigProxy();
+                    cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
+                });
             } else {
                 this.getGateProxy().toast("获得支付列表失败！");
             }
         }, (err) => {
             this.getGateProxy().toast("获得支付列表失败！");
         }, HttpUtil.METHOD_POST, param);
+
     }
 
     menuClick(event) {
