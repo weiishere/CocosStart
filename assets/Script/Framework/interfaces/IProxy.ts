@@ -1,3 +1,11 @@
+/*
+ * @Author: weishere.huang
+ * @Date: 2021-02-07 20:03:14
+ * @LastEditTime: 2021-02-08 23:22:09
+ * @LastEditors: weishere.huang
+ * @Description: 
+ * @~~
+ */
 /**
  * PureMVC Proxy 接口定义。
  * 
@@ -9,7 +17,6 @@
  * 封装与用于获取和保留模型数据的本地或远程服务的操作交互
  */
 export interface IProxy {
-    serviceUrl: ConfigProxy;
     /**
      * @description 获取proxy的名称
      * @returns {string} 名称

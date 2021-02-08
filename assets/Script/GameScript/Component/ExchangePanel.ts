@@ -249,7 +249,7 @@ export default class ExchangePanel extends ViewComponent {
 
 
     getGateProxy() {
-        return <GateProxy><unknown>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
+        return <GateProxy>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
     }
 
     getConfigProxy() {
