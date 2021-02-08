@@ -57,6 +57,7 @@ export default class DeskPanelView extends ViewComponent {
     private showOutCard: cc.Node;
     private charNotice: cc.Node;
     private timer: number;
+    private timer2: number
 
     private scheduleCallBack: () => void;
     private cardChooseAlert: cc.Node;
@@ -662,10 +663,18 @@ export default class DeskPanelView extends ViewComponent {
         });
 
         if (eventName.length !== 0 && eventName.indexOf('show') === -1 && eventName.indexOf('ready') === -1) {
-            this.effectAction(this.opreationBtus.pass_btu, 'show', {}, () => {
-
-            })
-            //this.opreationBtus.pass_btu.active = true;
+            this.opreationBtus.pass_btu.active = true;
+        }
+        const activeBtu = this.opreationArea.children.filter(item => { if (item.active) { item.setPosition(0, -50), item.opacity = 0; return true; } else { return false; } });
+        if (activeBtu.length !== 0) {
+            window.clearTimeout(this.timer2);
+            this.timer2 = window.setTimeout(() => {
+                let index = 0;
+                this.schedule(() => {
+                    cc.tween(activeBtu[index]).to(0.2, { position: cc.v3(0, 15), opacity: 255, scale: 1 }, { easing: 'easeBackInOut' }).to(0.08, { position: cc.v3(0, 0) }).call(() => { }).start();
+                    index++;
+                }, 0.3, activeBtu.length - 1);
+            }, 300);
         }
     }
     /**更新其他玩家事件提醒 */

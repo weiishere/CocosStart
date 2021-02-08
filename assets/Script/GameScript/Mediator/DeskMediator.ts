@@ -59,11 +59,11 @@ export class DeskMediator extends BaseMediator {
         ];
     }
     public getDeskProxy(): DeskProxy {
-        return <DeskProxy>this.facade.retrieveProxy(ProxyDefine.Desk);
+        return <DeskProxy><unknown>this.facade.retrieveProxy(ProxyDefine.Desk);
     }
 
     public getDymjProxy(): DymjProxy {
-        return <DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj);
+        return <DymjProxy><unknown>this.facade.retrieveProxy(ProxyDefine.Dymj);
     }
     public listNotificationInterests(): string[] {
         return [
