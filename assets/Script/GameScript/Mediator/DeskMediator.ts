@@ -318,7 +318,7 @@ export class DeskMediator extends BaseMediator {
                 break;
             case CommandDefine.ShowCardEffect://显示打出的牌
                 const body = notification.getBody();
-                this.DeskPanelViewScript.showCardAlert(body.gameIndex, body.cardNumber)
+                this.DeskPanelViewScript.showCardAlert(body.gameIndex, body.cardNumber);
                 break;
             case CommandDefine.OpenEntrustPanel://打开托管提示面板
                 this.DeskPanelViewScript && this.DeskPanelViewScript.openEntrustMask();

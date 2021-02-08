@@ -58,7 +58,7 @@ export default class DeskPanelView extends ViewComponent {
     private charNotice: cc.Node;
     private timer: number;
     private timer2: number
-
+    private showCardEndPosition: { x: number, y: number }
     private scheduleCallBack: () => void;
     private cardChooseAlert: cc.Node;
     private gameEventWarn: { touchWarn: cc.Node, huWarn: cc.Node, burWarn: cc.Node, xiayuWarn: cc.Node, zimoWarn: cc.Node, gameBeginWarn: cc.Node } = {
@@ -131,7 +131,11 @@ export default class DeskPanelView extends ViewComponent {
     reSetOpreationBtu() {
         for (let i in this.opreationBtus) {
             if (this.opreationBtus[i] instanceof cc.Node) {
-                (this.opreationBtus[i] as cc.Node).active = false;
+                const _node = (this.opreationBtus[i] as cc.Node);
+                _node.active = false;
+                _node.setPosition(cc.v3(0, 0));
+                _node.opacity = 0;
+                _node.scale = 1;
             }
         }
     }
@@ -199,7 +203,7 @@ export default class DeskPanelView extends ViewComponent {
         this.outCardList = this.node.getChildByName("myJobNode").getChildByName("outCardList");
         this.opreationArea = this.node.getChildByName("opreationArea");
         this.gameEventView = this.node.getChildByName("gameEventView");
-        this.myShowCardWrap = this.node.getChildByName("myJobNode").getChildByName("showCard");
+        this.myShowCardWrap = this.node.getChildByName("showCard");
         this.frontShowCardWrap = this.node.getChildByName("frontJobNode").getChildByName("showCard");
         //#endregionthis.node.getChildByName("myJobNode")
 
@@ -390,15 +394,19 @@ export default class DeskPanelView extends ViewComponent {
             if (cardScript.isActive) {
                 cardScript.bindExtractionUp((cardNumber: number) => { });
             }
-            cardScript.bindLaunch((node) => {
-                console.log("出牌", node);
+            cardScript.bindLaunch((node: cc.Node, position) => {
+                //console.log("出牌", node);
                 this.showOutCard = node;
                 const cardNumber = ((node as cc.Node).getComponent('CardItemView') as CardItemView).cardNumber;
+                //node.active = false;//隐藏出牌，避免观感上的卡顿
+                this.showCardEndPosition = { x: position.x, y: position.y };
+                this.showCardAlert(undefined, cardNumber);//意思是不管返回了，放手就出s牌
                 self.showCardEvent(cardNumber);
             })
             this.mainCardList.push(card);
         });
         if (effectDone) {
+            this.reSetOpreationBtu();
             this.mainCardListPanel.children.forEach(item => {
                 item.setPosition(0, 50);
                 item.opacity = 0;
@@ -535,9 +543,10 @@ export default class DeskPanelView extends ViewComponent {
                 }
             });
             const _card = (_handCard.getComponent("CardItemView") as CardItemView);
-            _card.bindLaunch((node) => {
-                console.log(node);
-                const cardNumber = ((node as cc.Node).getComponent('CardItemView') as CardItemView).cardNumber
+            _card.bindLaunch((node, position) => {
+                this.showCardEndPosition = { x: position.x, y: position.y };
+                const cardNumber = ((node as cc.Node).getComponent('CardItemView') as CardItemView).cardNumber;
+                this.showCardAlert(undefined, cardNumber);//意思是不管返回了，放手就出牌
                 self.showCardEvent(cardNumber);
             });
             _card.setStress(true);
@@ -648,6 +657,7 @@ export default class DeskPanelView extends ViewComponent {
     /**更新操作按钮组 */
     updateMyOperationBtu(): void {
         this.reSetOpreationBtu();
+        this.timer2 && window.clearTimeout(this.timer2);
         const eventName = this.getData().gameData.eventData.gameEventData.myGameEvent.eventName;
         eventName.forEach(item => {
             switch (item) {
@@ -665,16 +675,19 @@ export default class DeskPanelView extends ViewComponent {
         if (eventName.length !== 0 && eventName.indexOf('show') === -1 && eventName.indexOf('ready') === -1) {
             this.opreationBtus.pass_btu.active = true;
         }
-        const activeBtu = this.opreationArea.children.filter(item => { if (item.active) { item.setPosition(0, -50), item.opacity = 0; return true; } else { return false; } });
+        const activeBtu = this.opreationArea.children.filter(item => { if (item.active) { item.setPosition(0, -50); item.opacity = 0; return true; } else { return false; } });
         if (activeBtu.length !== 0) {
+
             window.clearTimeout(this.timer2);
             this.timer2 = window.setTimeout(() => {
                 let index = 0;
                 this.schedule(() => {
-                    cc.tween(activeBtu[index]).to(0.2, { position: cc.v3(0, 15), opacity: 255, scale: 1 }, { easing: 'easeBackInOut' }).to(0.08, { position: cc.v3(0, 0) }).call(() => { }).start();
+                    cc.tween(activeBtu[index]).to(0.2, { position: cc.v3(0, 15), opacity: 255 }, { easing: 'easeBackInOut' }).to(0.08, { position: cc.v3(0, 0) }).call(() => { }).start();
                     index++;
                 }, 0.3, activeBtu.length - 1);
+                window.clearTimeout(this.timer2);
             }, 300);
+
         }
     }
     /**更新其他玩家事件提醒 */
@@ -836,17 +849,27 @@ export default class DeskPanelView extends ViewComponent {
     }
     /**展示打出的牌 */
     showCardAlert(gameIndex: number, cardNumber: number): void {
-        if (this.isMe(gameIndex)) {
+
+        if (gameIndex === undefined || this.isMe(gameIndex)) {
+            console.log(this.showCardEndPosition);
             const _card = this.addCardToNode(this.myShowCardWrap, cardNumber, "mine", "setUp", {
                 purAddNode: node => (node.getComponent('CardItemView') as CardItemView).setStress(true)
             });
-            _card.active = false;
+            //_card.active = false;
             //this.showOutCard && _card.setPosition(this.showOutCard.position.x, this.showOutCard.position.y + 40);
-            this.effectAction(_card, 'show', {
-                moveBy: { x: 0, y: 50 }
-            }, () => {
+            const cha = this.showCardEndPosition ? (this.showCardEndPosition.x - cc.view.getVisibleSize().width / 2 > 0 ? -39 : 39) : 0;
+            const cha2 = 0;//this.showCardEndPosition ? (this.showCardEndPosition.y - cc.view.getVisibleSize().height / 2 > 0 ? -59 : 59) : 0;
+            this.showCardEndPosition && _card.setPosition(this.showCardEndPosition.x - cc.view.getVisibleSize().width / 2 + cha, this.showCardEndPosition.y - cc.view.getVisibleSize().height / 2 + cha2);
+            // this.effectAction(_card, 'show', {
+            //     moveBy: { x: 0, y: 50 }
+            // }, () => {
+            //     this.scheduleOnce(() => this.myShowCardWrap.removeAllChildren(), 1.5);
+            // });
+            const action = cc.sequence(cc.moveTo(0.2, 0, 0), cc.callFunc(() => {
                 this.scheduleOnce(() => this.myShowCardWrap.removeAllChildren(), 1.5);
-            });
+                this.showCardEndPosition = null;//有可能下次是自动出牌，不然会获取到上次放手的位置
+            })).easing(cc.easeOut(3.0));
+            _card.runAction(action);
         } else {
             const _card = this.addCardToNode(this.frontShowCardWrap, cardNumber, "mine", "setUp", {
                 purAddNode: node => (node.getComponent('CardItemView') as CardItemView).setStress(true)

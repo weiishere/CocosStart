@@ -444,7 +444,8 @@ export class DeskProxy extends BaseProxy {
             partnerCard.partnerCards.isHandCard = false;
             partnerCard.partnerCards.handCard = 0;
         }
-        this.sendNotification(CommandDefine.ShowCardEffect, { gameIndex: dymjS2COpPutRsp.playerAzimuth, cardNumber: dymjS2COpPutRsp.putMjValue });
+        //暂时这里只显示对家的出票，为了游戏流畅性，玩家出牌在放手后就调用（其他地方），而不等返回了
+        if (!this.isMy(this.getPlayerByGameIndex(dymjS2COpPutRsp.playerAzimuth).playerId)) this.sendNotification(CommandDefine.ShowCardEffect, { gameIndex: dymjS2COpPutRsp.playerAzimuth, cardNumber: dymjS2COpPutRsp.putMjValue });
         this.sendNotification(CommandDefine.ShowCardPush, { playerInfo, showCard: dymjS2COpPutRsp.putMjValue });
     }
 
