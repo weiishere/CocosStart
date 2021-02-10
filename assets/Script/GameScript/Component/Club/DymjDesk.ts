@@ -30,6 +30,7 @@ export default class DymjDesk extends ViewComponent {
     protected bindUI(): void {
     }
     protected bindEvent(): void {
+        
         this.node.on(cc.Node.EventType.TOUCH_END, this.deskClickEvent.bind(this));
     }
 

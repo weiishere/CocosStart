@@ -673,7 +673,7 @@ export default class DeskPanelView extends ViewComponent {
                 this.schedule(() => {
                     cc.tween(activeBtu[index]).to(0.2, { position: cc.v3(0, 15), opacity: 255, scale: 1 }, { easing: 'easeBackInOut' }).to(0.08, { position: cc.v3(0, 0) }).call(() => { }).start();
                     index++;
-                }, 0.3, activeBtu.length - 1);
+                }, 0.2, activeBtu.length - 1);
             }, 300);
         }
     }
