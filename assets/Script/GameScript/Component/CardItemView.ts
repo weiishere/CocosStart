@@ -116,7 +116,7 @@ export default class CardItemView extends cc.Component {
     public isStress = false;
     public isDisable = true;
     public mayHuCards: MayHuCard = null;
-    private launch: () => void;
+    private launch: (node: cc.Node, position: any) => void;
     /**抽出牌 */
     private extractionUp: (cardNumber: number) => void;
     private cardDir: Array<String> = ['', 'wan1', 'wan2', 'wan3', 'wan4', 'wan5', 'wan6', 'wan7', 'wan8', 'wan9', 'tong1', 'tong2', 'tong3', 'tong4', 'tong5', 'tong6', 'tong7', 'tong8', 'tong9', 'tiao1', 'tiao2', 'tiao3', 'tiao4', 'tiao5', 'tiao6', 'tiao7', 'tiao8', 'tiao9']
@@ -196,7 +196,7 @@ export default class CardItemView extends cc.Component {
         this.mayHuCardWrap && (this.mayHuCardWrap.active = false);
     }
     /**绑定出牌事件 */
-    public bindLaunch(launch) {
+    public bindLaunch(launch: (node: cc.Node, position: any) => void) {
         this.launch = launch;
     }
     bindEvent(touchEndCallback: (node: cc.Node) => void): void {
@@ -288,7 +288,7 @@ export default class CardItemView extends cc.Component {
             if (this.isActive) {
                 //需要拖远点才能打出，不然需要恢复原位，或者抽出状态下却不是拖拽状态需要打出
                 if ((location.y - this.dragStartPosition.y > 80 && this.isDrag) || !this.isDrag) {
-                    this.isActive && this.launch && this.launch.call(this, this.node);
+                    this.isActive && this.launch && this.launch.call(this, this.node, touchEvent.getLocation());
                 } else {
                     cc.tween(this.node).to(0.1, { position: cc.v3(0, 0) }).start();
                 }

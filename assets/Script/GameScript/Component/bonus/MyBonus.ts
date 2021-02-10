@@ -44,6 +44,7 @@ export const initNoRecoreNode = (): cc.Node => {
     return node;
 }
 
+
 @ccclass
 export default class MyBonus extends ViewComponent {
 
@@ -64,7 +65,7 @@ export default class MyBonus extends ViewComponent {
     extractBonus_btn: cc.Node = null;
 
     private loading: cc.Node = null;
-
+    private isInited = true;
 
     getConfigProxy() {
         return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
@@ -144,12 +145,22 @@ export default class MyBonus extends ViewComponent {
         let bonusUrl = this.getConfigProxy().bonusUrl;
         //提取红利
         this.extractBonus_btn.on(cc.Node.EventType.TOUCH_END, () => {
-            if (this.node.getChildByName("bg").getChildByName("bg2_hl").getChildByName("hlye_value").getComponent(cc.Label).string === '0') return;
+            if (!this.isInited) {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '红利处理中，请勿连续操作，请稍后~', toastOverlay: true }, '');
+                return;
+            };
+            this.isInited = false;
+            if (+this.node.getChildByName("bg").getChildByName("bg2_hl").getChildByName("hlye_value").getComponent(cc.Label).string === 0) {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '暂无可提取红利，操作取消~' }, '');
+                this.isInited = true;
+                return;
+            };
             let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
             HttpUtil.send(bonusUrl + '/api/v1/capital/add/withdrawal?serialType=3&amount=0&userName=' + localCacheDataProxy.getLoginData().userName, res => {
                 this.loading.active = false;
+                this.isInited = true;
                 if (res.code === 200) {
-                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '提取红利成功~', toastOverlay: true }, '');
+                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '提取红利成功~' }, '');
                     this.httpRequest();
                 } else {
                     Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');

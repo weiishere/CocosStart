@@ -1,3 +1,11 @@
+/*
+ * @Author: weishere.huang
+ * @Date: 2021-02-05 10:59:52
+ * @LastEditTime: 2021-02-10 22:00:38
+ * @LastEditors: weishere.huang
+ * @Description: 
+ * @~~
+ */
 // Learn TypeScript:
 //  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
 // Learn Attribute:
@@ -31,11 +39,14 @@ export default class Setting extends ViewComponent {
             this.node.destroy();
         });
         this.openUrlBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            debugger
             if (cc.sys.os === cc.sys.OS_ANDROID) {
                 cc.sys.openURL(this.shareUrl);//安卓下载链接
             } else if (cc.sys.os === cc.sys.OS_IOS) {
                 //IOS下载链接
-                cc.sys.openURL(this.iosDownUrl);
+                cc.sys.openURL(this.iosDownUrl || this.shareUrl);
+            } else {
+                cc.sys.openURL(this.shareUrl);
             }
 
         });

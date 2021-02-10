@@ -190,12 +190,12 @@ export class DeskProxy extends BaseProxy {
             this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
             if (this.getGameData().myCards.status.isBaoHu && !dymjS2CPlayerGet.nextStep.oprts) {
                 window.setTimeout(() => {
-                    (<DymjProxy><unknown>this.facade.retrieveProxy(ProxyDefine.Dymj)).putMahkjong(dymjS2CPlayerGet.getMjValue);
+                    (<DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj)).putMahkjong(dymjS2CPlayerGet.getMjValue);
                 }, 800);
             } else if (this.getGameData().myCards.status.isBaoQingHu && !dymjS2CPlayerGet.nextStep.oprts) {
                 const arr = this.getGameData().myCards.curCardList.filter(card => this.getGameData().myCards.disableCard.some(item => item === card) ? false : true);
                 window.setTimeout(() => {
-                    (<DymjProxy><unknown>this.facade.retrieveProxy(ProxyDefine.Dymj)).putMahkjong(arr.length === 0 ? dymjS2CPlayerGet.getMjValue : arr[0]);
+                    (<DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj)).putMahkjong(arr.length === 0 ? dymjS2CPlayerGet.getMjValue : arr[0]);
                 }, 800);
             }
         } else {
@@ -444,7 +444,8 @@ export class DeskProxy extends BaseProxy {
             partnerCard.partnerCards.isHandCard = false;
             partnerCard.partnerCards.handCard = 0;
         }
-        this.sendNotification(CommandDefine.ShowCardEffect, { gameIndex: dymjS2COpPutRsp.playerAzimuth, cardNumber: dymjS2COpPutRsp.putMjValue });
+        //暂时这里只显示对家的出票，为了游戏流畅性，玩家出牌在放手后就调用（其他地方），而不等返回了
+        if (!this.isMy(this.getPlayerByGameIndex(dymjS2COpPutRsp.playerAzimuth).playerId)) this.sendNotification(CommandDefine.ShowCardEffect, { gameIndex: dymjS2COpPutRsp.playerAzimuth, cardNumber: dymjS2COpPutRsp.putMjValue });
         this.sendNotification(CommandDefine.ShowCardPush, { playerInfo, showCard: dymjS2COpPutRsp.putMjValue });
     }
 
@@ -619,7 +620,7 @@ export class DeskProxy extends BaseProxy {
         if (!dymjGameReconnData.isReady) {
             //说明断线重连处于两局之间，需要清理数据
             this.clearGameData();
-            (<DymjProxy><unknown>this.facade.retrieveProxy(ProxyDefine.Dymj)).goOn();
+            (<DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj)).goOn();
         }
         this.sendNotification(CommandDefine.ReStartGamePush, null);
     }
