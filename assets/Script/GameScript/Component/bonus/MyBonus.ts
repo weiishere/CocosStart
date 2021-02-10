@@ -150,7 +150,11 @@ export default class MyBonus extends ViewComponent {
                 return;
             };
             this.isInited = false;
-            if (this.node.getChildByName("bg").getChildByName("bg2_hl").getChildByName("hlye_value").getComponent(cc.Label).string === '0') return;
+            if (+this.node.getChildByName("bg").getChildByName("bg2_hl").getChildByName("hlye_value").getComponent(cc.Label).string === 0) {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '暂无可提取红利，操作取消~' }, '');
+                this.isInited = true;
+                return;
+            };
             let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
             HttpUtil.send(bonusUrl + '/api/v1/capital/add/withdrawal?serialType=3&amount=0&userName=' + localCacheDataProxy.getLoginData().userName, res => {
                 this.loading.active = false;
