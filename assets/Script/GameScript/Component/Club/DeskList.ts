@@ -49,10 +49,12 @@ export default class DeskList extends ViewComponent {
         });
     }
     closeChooseSpeedPanel() {
+        this.chooseSpeedPanel.active = false;
         if (this.chooseSpeedPanel.opacity === 0) return;
         cc.tween(this.chooseSpeedPanel).to(0.05, { opacity: 0, position: cc.v3(this.chooseSpeedPanel.x, this.chooseSpeedPanel.y) }).call(() => { }).start();
     }
     openChooseSpeedPanel(clickHandler) {
+        this.chooseSpeedPanel.active = true;
         this.chooseSpeedPanel.opacity = 0;
         this.chooseSpeedPanel.setPosition(cc.v3(this.chooseSpeedPanel.x, this.chooseSpeedPanel.y + 30));
         cc.loader.loadRes(PrefabDefine.ScoreChooseBtu, cc.Prefab, (err, chooseScoreBtu) => {
