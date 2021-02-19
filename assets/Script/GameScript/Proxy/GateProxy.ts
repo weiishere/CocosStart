@@ -115,6 +115,8 @@ export class GateProxy extends BaseProxy {
                     this.toast("用户名或者密码错误！");
                 } else if (errorCode === ServerCode.PWD_ERROR) {
                     this.toast("用户名或者密码错误！");
+                } else if (errorCode === ResponseCode.USER_DISABLE) {
+                    this.toast(loginData.userName + " 你的账号被锁定，请联系客服或者上级代理！");
                 } else if (errorCode === ResponseCode.USER_NOT_EXIST) {
                     this.toast("账号不存在，请重新注册！");
 
