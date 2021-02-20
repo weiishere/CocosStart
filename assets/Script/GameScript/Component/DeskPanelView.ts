@@ -203,7 +203,7 @@ export default class DeskPanelView extends ViewComponent {
         this.outCardList = this.node.getChildByName("myJobNode").getChildByName("outCardList");
         this.opreationArea = this.node.getChildByName("opreationArea");
         this.gameEventView = this.node.getChildByName("gameEventView");
-        this.myShowCardWrap = this.node.getChildByName("myJobNode").getChildByName("showCard");
+        this.myShowCardWrap = this.node.getChildByName("showCard");
         this.frontShowCardWrap = this.node.getChildByName("frontJobNode").getChildByName("showCard");
         //#endregionthis.node.getChildByName("myJobNode")
 

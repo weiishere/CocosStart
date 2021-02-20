@@ -27,7 +27,10 @@
         "__id__": 66
       },
       {
-        "__id__": 250
+        "__id__": 248
+      },
+      {
+        "__id__": 251
       },
       {
         "__id__": 253
@@ -2351,15 +2354,12 @@
       },
       {
         "__id__": 70
-      },
-      {
-        "__id__": 247
       }
     ],
     "_active": true,
     "_components": [],
     "_prefab": {
-      "__id__": 249
+      "__id__": 247
     },
     "_opacity": 255,
     "_color": {
@@ -10209,77 +10209,6 @@
     "sync": false
   },
   {
-    "__type__": "cc.Node",
-    "_name": "showCard",
-    "_objFlags": 0,
-    "_parent": {
-      "__id__": 66
-    },
-    "_children": [],
-    "_active": true,
-    "_components": [],
-    "_prefab": {
-      "__id__": 248
-    },
-    "_opacity": 255,
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "_contentSize": {
-      "__type__": "cc.Size",
-      "width": 0,
-      "height": 0
-    },
-    "_anchorPoint": {
-      "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
-    },
-    "_trs": {
-      "__type__": "TypedArray",
-      "ctor": "Float64Array",
-      "array": [
-        0,
-        238.251,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1
-      ]
-    },
-    "_eulerAngles": {
-      "__type__": "cc.Vec3",
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "_skewX": 0,
-    "_skewY": 0,
-    "_is3DNode": false,
-    "_groupIndex": 0,
-    "groupIndex": 0,
-    "_id": ""
-  },
-  {
-    "__type__": "cc.PrefabInfo",
-    "root": {
-      "__id__": 1
-    },
-    "asset": {
-      "__uuid__": "cf0929b9-d581-4413-8f00-b5aa4dee1efe"
-    },
-    "fileId": "28SiA5l0FBU7ktcR8uUKBD",
-    "sync": false
-  },
-  {
     "__type__": "cc.PrefabInfo",
     "root": {
       "__id__": 1
@@ -10301,11 +10230,11 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 251
+        "__id__": 249
       }
     ],
     "_prefab": {
-      "__id__": 252
+      "__id__": 250
     },
     "_opacity": 255,
     "_color": {
@@ -10359,7 +10288,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 250
+      "__id__": 248
     },
     "_enabled": true,
     "_materials": [
@@ -10397,6 +10326,77 @@
       "__uuid__": "cf0929b9-d581-4413-8f00-b5aa4dee1efe"
     },
     "fileId": "8aFiCE0shNB5HTZCyn5a3u",
+    "sync": false
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "showCard",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 1
+    },
+    "_children": [],
+    "_active": true,
+    "_components": [],
+    "_prefab": {
+      "__id__": 252
+    },
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 0,
+      "height": 0
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_trs": {
+      "__type__": "TypedArray",
+      "ctor": "Float64Array",
+      "array": [
+        2,
+        -41.799,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "_eulerAngles": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_is3DNode": false,
+    "_groupIndex": 0,
+    "groupIndex": 0,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.PrefabInfo",
+    "root": {
+      "__id__": 1
+    },
+    "asset": {
+      "__uuid__": "cf0929b9-d581-4413-8f00-b5aa4dee1efe"
+    },
+    "fileId": "e8W9MkQRFN140dxJC+iqKD",
     "sync": false
   },
   {
