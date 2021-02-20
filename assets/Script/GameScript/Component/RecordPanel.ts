@@ -133,7 +133,7 @@ export default class RecordPanel extends ViewComponent {
         // 详情按钮事件
         recordItemObj.getChildByName("detailBtn").on(cc.Node.EventType.TOUCH_END, () => {
             this.openRecordDetailList(data.roomRoundNo);
-        });
+        }); 
 
         let playerInfoNode = recordItemObj.getChildByName("playerInfo");
         data.roomPlayerCreditDtos.forEach(v => {
@@ -162,6 +162,8 @@ export default class RecordPanel extends ViewComponent {
         playerItemObj.active = true;
         let nicknameLabel = playerItemObj.getChildByName("nickname").getComponent(cc.Label);
         nicknameLabel.string = playerData.nickname;
+        let playerIdLabel = playerItemObj.getChildByName("id").getComponent(cc.Label);
+        playerIdLabel.string = "ID：" + playerData.userName;
         let winlossLabel = playerItemObj.getChildByName("winloss").getComponent(cc.Label);
         if (playerData.credit >= 0) {
             let color = cc.color().fromHEX("#FF0000")

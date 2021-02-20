@@ -64,7 +64,7 @@ export class ConfigProxy extends BaseProxy {
     }
 
     public getGateProxy() {
-        return <GateProxy>this.facade.retrieveProxy(ProxyDefine.Gate);
+        return <GateProxy><unknown>this.facade.retrieveProxy(ProxyDefine.Gate);
     }
 
     public resOtherUrl(url) {

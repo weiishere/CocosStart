@@ -2,6 +2,7 @@ import { LocalCacheDataProxy } from './LocalCacheDataProxy';
 import { LoginData } from '../GameData/LoginData';
 import { OperationDefine } from '../GameConst/OperationDefine';
 import Proxy from '../../Framework/patterns/proxy/Proxy';
+import BaseProxy from "./BaseProxy";
 import Facade from '../../Framework/care/Facade';
 import { ProxyDefine } from '../MahjongConst/ProxyDefine';
 import { CommandDefine } from '../MahjongConst/CommandDefine';
@@ -108,11 +109,11 @@ export class WebSockerProxy extends Proxy {
     }
 
     getLocalCacheDataProxy(): LocalCacheDataProxy {
-        return <LocalCacheDataProxy>this.facade.retrieveProxy(ProxyDefine.LocalCacheData);
+        return <LocalCacheDataProxy><unknown>this.facade.retrieveProxy(ProxyDefine.LocalCacheData);
     }
 
     getGateProxy(): GateProxy {
-        return <GateProxy>this.facade.retrieveProxy(ProxyDefine.Gate);
+        return <GateProxy><unknown>this.facade.retrieveProxy(ProxyDefine.Gate);
     }
 
     onWebSocketOpen(event: Event) {

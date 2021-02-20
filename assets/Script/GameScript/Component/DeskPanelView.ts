@@ -203,7 +203,7 @@ export default class DeskPanelView extends ViewComponent {
         this.outCardList = this.node.getChildByName("myJobNode").getChildByName("outCardList");
         this.opreationArea = this.node.getChildByName("opreationArea");
         this.gameEventView = this.node.getChildByName("gameEventView");
-        this.myShowCardWrap = this.node.getChildByName("showCard");
+        this.myShowCardWrap = this.node.getChildByName("myJobNode").getChildByName("showCard");
         this.frontShowCardWrap = this.node.getChildByName("frontJobNode").getChildByName("showCard");
         //#endregionthis.node.getChildByName("myJobNode")
 
@@ -350,6 +350,7 @@ export default class DeskPanelView extends ViewComponent {
                 }
             }
             headWrap.getChildByName("nickName").getComponent(cc.Label).string = player.playerName;//昵称
+            headWrap.getChildByName("uid").getComponent(cc.Label).string = player.playerId;//ID
             headWrap.getChildByName("goldView").getChildByName("myGlod").getComponent(cc.Label).string = player.playerGold + '';//金币
             cc.loader.load(player.playerHeadImg, (error, item) => {
                 if (error) {
