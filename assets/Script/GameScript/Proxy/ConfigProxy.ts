@@ -38,28 +38,36 @@ export class ConfigProxy extends BaseProxy {
     }
 
     public loadConfig(): void {
+
         cc.loader.loadRes("config/config", cc.JsonAsset, (err, res) => {
             if (err) {
                 // tips.string = "加载本地配置文件失败！";
                 return;
             }
-            this._version = res.json.version;
-            this._configUrl = res.json.configUrl;
-            this._configName = res.json.configName;
-            this._port = res.json.port;
 
-            let otherUrl = res.json.otherUrl;
-            // otherUrl = "";
-            // this.isOther = true;
-            // this._port = "80";
-            // this.currentRemoteIp = "139.9.242.13";
+            cc.loader.loadRes("config/config_" + res.json.profile, cc.JsonAsset, (err, res) => {
+                if (err) {
+                    // tips.string = "加载本地配置文件失败！";
+                    return;
+                }
 
-            if (otherUrl && this._port) {
-                this.resOtherUrl(otherUrl);
-            } else {
-                this.loadLocalConfig(this._configUrl);
-            }
+                this._version = res.json.version;
+                this._configUrl = res.json.configUrl;
+                this._configName = res.json.configName;
+                this._port = res.json.port;
 
+                let otherUrl = res.json.otherUrl;
+                // otherUrl = "";
+                // this.isOther = true;
+                // this._port = "80";
+                // this.currentRemoteIp = "139.9.242.13";
+
+                if (otherUrl && this._port) {
+                    this.resOtherUrl(otherUrl);
+                } else {
+                    this.loadLocalConfig(this._configUrl);
+                }
+            });
         });
     }
 
