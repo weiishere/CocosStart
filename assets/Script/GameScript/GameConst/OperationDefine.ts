@@ -60,6 +60,11 @@ export enum OperationDefine {
 	NOTICE_UPDATE = 12,
 
 	/**
+	 * 锁定强制用户下线
+	 */
+	LOCK_ForceOffline = 13,
+
+	/**
 	 * 俱乐部服务
 	 */
 	CLUB_SERVICE = 10000,

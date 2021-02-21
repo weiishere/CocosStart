@@ -167,6 +167,10 @@ export class WebSockerProxy extends Proxy {
                 this.getGateProxy().toast("你的账号被别人登录，强制你下线");
                 this.sendNotification(CommandDefine.ForcedOffline, null);
                 break;
+            case OperationDefine.LOCK_ForceOffline:
+                this.getGateProxy().toast("你的账号被禁用了，请联系客服或者上级代理");
+                this.sendNotification(CommandDefine.ForcedOffline, null);
+                break;
             case OperationDefine.NOTICE_UPDATE:
                 if (JSON.parse(dt.content).type === 1) {
                     this.sendNotification(CommandDefine.OpenNoticeAlert, {
