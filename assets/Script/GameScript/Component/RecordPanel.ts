@@ -128,6 +128,10 @@ export default class RecordPanel extends ViewComponent {
 
         let roomNoLabel = recordItemObj.getChildByName("roomNoLabel").getComponent(cc.Label);
         roomNoLabel.string = "房间号：" + data.roomNo;
+
+        let anteLabel = recordItemObj.getChildByName("anteLabel").getComponent(cc.Label);
+        anteLabel.string = "底分：" + data.anteStr;
+
         let timeLabel = recordItemObj.getChildByName("timeLabel").getComponent(cc.Label);
         timeLabel.string = data.endTime;
         // 详情按钮事件
