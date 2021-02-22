@@ -116,6 +116,9 @@ export class DymjProxy extends ModuleProxy {
             this.getDeskProxy().updateDeskEvent(dymjGameOperation);
         } else if (msgType === DymjProtocol.S_UPDATE_PLAYERS_CREDIT) {   //推送玩家分数变化
             let dymjUpdateUserCredit: DymjUpdateUserCredit = <DymjUpdateUserCredit>content;
+            dymjUpdateUserCredit.players.forEach(v => {
+                v.azimuth -= 1;
+            });
             this.getDeskProxy().updatePlayerGold(dymjUpdateUserCredit);
         } else if (msgType === DymjProtocol.S_Game_Reconn) {   //推送玩家重连的数据
             let dymjGameReconnData: DymjGameReconnData = <DymjGameReconnData>content;

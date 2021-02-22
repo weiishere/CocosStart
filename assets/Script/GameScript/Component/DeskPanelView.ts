@@ -741,7 +741,7 @@ export default class DeskPanelView extends ViewComponent {
                 }
                 const newNode = new cc.Node('glodChange');
                 const label = newNode.addComponent(cc.Label);
-                label.string = playerChangeGold < 0 ? '-' + playerChangeGold : '+' + playerChangeGold;
+                label.string = playerChangeGold < 0 ? '' + playerChangeGold : '+' + playerChangeGold;
                 label.fontSize = 46;
                 newNode.color = new cc.Color(240, 240, 75, 255);
                 headWrap.addChild(newNode);
