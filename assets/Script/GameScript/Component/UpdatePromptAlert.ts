@@ -39,7 +39,6 @@ export default class Setting extends ViewComponent {
             this.node.destroy();
         });
         this.openUrlBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            debugger
             if (cc.sys.os === cc.sys.OS_ANDROID) {
                 cc.sys.openURL(this.shareUrl);//安卓下载链接
             } else if (cc.sys.os === cc.sys.OS_IOS) {

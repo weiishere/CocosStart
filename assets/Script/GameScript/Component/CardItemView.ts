@@ -24,7 +24,7 @@ export default class CardItemView extends cc.Component {
     mainHideCardbg: cc.SpriteFrame = null;//玩家背对主牌
 
     @property(cc.SpriteFrame)
-    hideLeftCardbg: cc.SpriteFrame = null;//左对手隐藏牌
+    hideLeftCardbg: cc.SpriteFrame = null;//左对手隐藏牌 
 
     @property(cc.SpriteFrame)
     hideFrontCardbg: cc.SpriteFrame = null;//对面对手隐藏牌

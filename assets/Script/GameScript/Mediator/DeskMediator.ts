@@ -86,7 +86,8 @@ export class DeskMediator extends BaseMediator {
             CommandDefine.OpenEntrustPanel,
             CommandDefine.OpenChatBox,
             CommandDefine.ShowDeskChatMsg,
-            CommandDefine.WebSocketReconnect
+            CommandDefine.WebSocketReconnect,
+            CommandDefine.ChangePlayerGold
         ];
     }
 
@@ -122,10 +123,10 @@ export class DeskMediator extends BaseMediator {
 
     public async handleNotification(notification: INotification) {
 
-        const gameData = this.getDeskProxy().getGameData();
-        const deskData = this.getDeskProxy().getDeskData();
-        console.log('gameData', gameData);
-        console.log('deskData', deskData);
+        // const gameData = this.getDeskProxy().getGameData();
+        // const deskData = this.getDeskProxy().getDeskData();
+        // console.log('gameData', gameData);
+        // console.log('deskData', deskData);
 
         switch (notification.getName()) {
             case CommandDefine.InitDeskPanel:
@@ -358,6 +359,10 @@ export class DeskMediator extends BaseMediator {
                 if (this.getDeskProxy().getDeskData().gameSetting.roomId) {
                     this.getDymjProxy().loginGame(this.getDeskProxy().getDeskData().gameSetting.roomId, true);
                 }
+                break;
+            case CommandDefine.ChangePlayerGold://金币变化
+                this.facade.sendNotification(CommandDefine.RefreshPlayerPush, {}, '');
+                this.DeskPanelViewScript.showPlayerGlodChange();
                 break;
         }
     }

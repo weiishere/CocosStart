@@ -19,6 +19,7 @@ import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { DeskPanelViewEventDefine } from "../GameConst/Event/DeskPanelViewEventDefine";
 import { MsgObj } from "./ChatBox";
 import { PrefabDefine } from "../MahjongConst/PrefabDefine";
+import MyPlayer from "./bonus/MyPlayer";
 
 @ccclass
 export default class DeskPanelView extends ViewComponent {
@@ -61,6 +62,7 @@ export default class DeskPanelView extends ViewComponent {
     private showCardEndPosition: { x: number, y: number }
     private scheduleCallBack: () => void;
     private cardChooseAlert: cc.Node;
+    private isAllowShowCard = true;//是否允许出牌
     private gameEventWarn: { touchWarn: cc.Node, huWarn: cc.Node, burWarn: cc.Node, xiayuWarn: cc.Node, zimoWarn: cc.Node, gameBeginWarn: cc.Node } = {
         touchWarn: null,
         huWarn: null,
@@ -114,7 +116,7 @@ export default class DeskPanelView extends ViewComponent {
     }
     isMe(index?, playerId?): boolean {
         const { userName } = this.getSelfPlayer();
-        if (index !== false) {
+        if (index !== undefined && index !== false) {
             const player = this.getPlayerByIndex(index);
             if (player) {
                 return this.getPlayerByIndex(index).playerId === userName;
@@ -360,8 +362,8 @@ export default class DeskPanelView extends ViewComponent {
                 }
             });
         });
-
     }
+
     /**更新桌面信息 */
     // updateDeskInfo(): void {
     //     const { gameRoundNum, totalRound, baseScore, fanTime } = this.getData().deskData.gameSetting;
@@ -397,6 +399,10 @@ export default class DeskPanelView extends ViewComponent {
             }
             cardScript.bindLaunch((node: cc.Node, position) => {
                 //console.log("出牌", node);
+                if (this.isAllowShowCard === false) {
+                    node.setPosition(cc.v3(0, 0, 0));
+                    return;
+                }
                 this.showOutCard = node;
                 const cardNumber = ((node as cc.Node).getComponent('CardItemView') as CardItemView).cardNumber;
                 //node.active = false;//隐藏出牌，避免观感上的卡顿
@@ -660,6 +666,7 @@ export default class DeskPanelView extends ViewComponent {
         this.reSetOpreationBtu();
         this.timer2 && window.clearTimeout(this.timer2);
         const eventName = this.getData().gameData.eventData.gameEventData.myGameEvent.eventName;
+        this.isAllowShowCard = true;
         eventName.forEach(item => {
             switch (item) {
                 case 'touch': this.opreationBtus.touch_btu.active = true; break;
@@ -672,13 +679,12 @@ export default class DeskPanelView extends ViewComponent {
                 case 'tingQingHu': this.opreationBtus.baoQingHu_btu.active = true; break;
             }
         });
-
         if (eventName.length !== 0 && eventName.indexOf('show') === -1 && eventName.indexOf('ready') === -1) {
             this.opreationBtus.pass_btu.active = true;
         }
         const activeBtu = this.opreationArea.children.filter(item => { if (item.active) { item.setPosition(0, -50); item.opacity = 0; return true; } else { return false; } });
         if (activeBtu.length !== 0) {
-
+            this.isAllowShowCard = false;
             window.clearTimeout(this.timer2);
             this.timer2 = window.setTimeout(() => {
                 let index = 0;
@@ -719,6 +725,28 @@ export default class DeskPanelView extends ViewComponent {
                     effectDone();
                 }).start();
             }, 1);
+        });
+    }
+    /**显示金币变化 */
+    showPlayerGlodChange() {
+        const myHeadNode = this.node.getChildByName("headList").getChildByName("myHead");
+        const frontHeadNode = this.node.getChildByName("headList").getChildByName("frontHead");
+        this.getData().deskData.playerList.forEach(({ playerId, playerChangeGold }) => {
+            let headWrap: cc.Node;
+            if (playerChangeGold !== 0) {
+                if (this.isMe(false, playerId)) {
+                    headWrap = myHeadNode;
+                } else {
+                    headWrap = frontHeadNode;
+                }
+                const newNode = new cc.Node('glodChange');
+                const label = newNode.addComponent(cc.Label);
+                label.string = playerChangeGold < 0 ? '-' + playerChangeGold : '+' + playerChangeGold;
+                label.fontSize = 46;
+                newNode.color = new cc.Color(240, 240, 75, 255);
+                headWrap.addChild(newNode);
+                cc.tween(newNode).to(0.5, { position: cc.v3(0, 120, 0) }).to(1, { position: cc.v3(0, 120, 0) }).to(0.5, { opacity: 0 }).call(() => { newNode.destroy(); }).start();
+            }
         });
     }
     /**获取outCard数据最后一个添加（考虑到性能没有做重刷） */

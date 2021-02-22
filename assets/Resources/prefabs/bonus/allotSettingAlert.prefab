@@ -146,7 +146,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 502,
+      "width": 595,
       "height": 342
     },
     "_anchorPoint": {
@@ -271,8 +271,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -3.838,
-        161.873,
+        11.162,
+        164.873,
         0,
         0,
         0,
@@ -596,7 +596,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        123.892,
+        125.892,
         75.579,
         0,
         0,
@@ -667,7 +667,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "New Label",
+    "_name": "titleLabel",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
@@ -692,8 +692,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 220,
-      "height": 50.4
+      "width": 293.32,
+      "height": 30.24
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -704,8 +704,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -103.188,
-        22.112,
+        -107.188,
+        23.112,
         0,
         0,
         0,
@@ -744,10 +744,10 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "分配到该盟主的百分比：",
-    "_N$string": "分配到该盟主的百分比：",
+    "_string": "分配到该盟主的百分比(不低于)：",
+    "_N$string": "分配到该盟主的百分比(不低于)：",
     "_fontSize": 20,
-    "_lineHeight": 40,
+    "_lineHeight": 24,
     "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,
@@ -812,7 +812,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        195.853,
+        243.853,
         23.165,
         0,
         0,
@@ -918,7 +918,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 181,
+      "width": 164,
       "height": 49
     },
     "_anchorPoint": {
@@ -930,7 +930,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        93,
+        141,
         22,
         0,
         0,
@@ -985,7 +985,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 181,
+      "width": 164,
       "height": 49
     },
     "_anchorPoint": {
@@ -1262,7 +1262,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 179,
+      "width": 162,
       "height": 49
     },
     "_anchorPoint": {
@@ -1274,7 +1274,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -88.5,
+        -80,
         24.5,
         0,
         0,
@@ -1457,7 +1457,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -87.131,
+        -88.131,
         -101.9,
         0,
         0,
@@ -1749,7 +1749,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        88.617,
+        87.617,
         -101.9,
         0,
         0,
@@ -2041,7 +2041,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -4,
+        -5,
         -35,
         0,
         0,
@@ -2436,7 +2436,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        235,
+        287,
         146,
         0,
         0,
@@ -2613,7 +2613,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        0,
+        -3,
         0,
         0,
         0,

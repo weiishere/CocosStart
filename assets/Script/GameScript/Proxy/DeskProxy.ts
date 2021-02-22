@@ -50,6 +50,7 @@ export class DeskProxy extends BaseProxy {
             let playerInfo: PlayerInfo = {
                 playerId: p.username,
                 playerGold: p.credit,
+                playerChangeGold: 0,
                 playerHeadImg: p.head,
                 playerName: p.nickname,
                 master: false,
@@ -451,7 +452,21 @@ export class DeskProxy extends BaseProxy {
 
     /** 更新玩家金币 */
     updatePlayerGold(dymjUpdateUserCredit: DymjUpdateUserCredit) {
-
+        dymjUpdateUserCredit.players.forEach(updatePlayer => {
+            const player = this.getPlayerByGameIndex(updatePlayer.azimuth);
+            if (player) {
+                const deskPlayer = this.getDeskData().playerList.find(item => item.playerId === player.playerId);
+                if (deskPlayer) {
+                    deskPlayer.playerGold = updatePlayer.credit;
+                    deskPlayer.playerChangeGold = updatePlayer.changeCredit;
+                }
+            }
+        });
+        this.sendNotification(CommandDefine.ChangePlayerGold);
+        //恢复
+        window.setTimeout(() => {
+            this.getDeskData().playerList.forEach(item => item.playerChangeGold = 0);
+        }, 2000);
     }
     private clearGameData() {
         //清空数据
@@ -509,6 +524,7 @@ export class DeskProxy extends BaseProxy {
                 playerId: player.playerInfo.username,
                 gameIndex: player.playerInfo.azimuth,
                 playerGold: player.playerInfo.credit,
+                playerChangeGold: 0,
                 playerGender: 0,
                 playerHeadImg: player.playerInfo.head,
                 playerName: player.playerInfo.nickname,

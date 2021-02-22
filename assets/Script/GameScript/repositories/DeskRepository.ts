@@ -5,6 +5,8 @@ export type PlayerInfo = {
     gameIndex: number,
     /**玩家金币 */
     playerGold: number,
+    /**玩家金币变化量 */
+    playerChangeGold: number,
     /**玩家性别 */
     playerGender: number,
     /**玩家头像 */
