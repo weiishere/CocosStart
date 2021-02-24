@@ -75,6 +75,16 @@ export enum OperationDefine {
 	DA_YI_ER_REN_MAHJONG = 11000,
 
 	/**
+	 * 血战到底
+	 */
+	XUE_ZHAN_DAO_DI = 12000,
+
+	/**
+	 * 推筒子
+	 */
+	TUI_TONG_ZI = 13000,
+
+	/**
 	 * 对战牛牛
 	 */
 	DUI_ZHAN_NIU_NIU = 45000,
