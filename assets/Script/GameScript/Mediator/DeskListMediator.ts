@@ -63,7 +63,7 @@ export class DeskListMediator extends BaseMediator {
             this.getGateProxy().toast("没有找到合适的桌子！");
             return;
         }
-        
+
         let data: ClubC2SJoinRoom = new ClubC2SJoinRoom();
         data.roomNo = roomNo;
         this.getClubProxy().sendGameData(ClubProtocol.C2S_JOIN_ROOM, data, (op: number, msgType: number) => {
@@ -87,7 +87,9 @@ export class DeskListMediator extends BaseMediator {
     }
 
     protected inAdvanceLoadFiles(): string[] {
-        return [];
+        return [
+            PrefabDefine.XzddDesk
+        ];
     }
 
     public listNotificationInterests(): string[] {

@@ -12,4 +12,5 @@ export class RoomPlayerCredit {
     nickname: string;
     head: string;
     isOwner: boolean;
+    seatNo: number;
 }

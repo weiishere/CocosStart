@@ -4,14 +4,14 @@ import { ProxyDefine } from '../MahjongConst/ProxyDefine';
 import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
 import { ConfigProxy } from '../Proxy/ConfigProxy';
 import { RoomPlayLog } from '../GameData/RoomPlayLog';
-import RecordDetail from './RecordDetail';
-import { PlayerRecordData } from './RecordDetail';
 import { RecorDetailData } from './RecordDetailList';
 import { DymjGameResult } from '../GameData/Dymj/s2c/DymjGameResult';
 import { DymjGameUIResultItem } from '../GameData/Dymj/s2c/DymjGameUIResultItem';
 import { CommandDefine } from '../MahjongConst/CommandDefine';
 import { DymjProxy } from '../Proxy/DymjProxy';
 import { DymjGangHuTypeValue } from '../GameData/Dymj/s2c/DymjGangHuTypeValue';
+import { PrefabDefine } from '../MahjongConst/PrefabDefine';
+import BaseRecordDetail, { PlayerRecordData } from './Record/BaseRecordDetail';
 
 const { ccclass, property } = cc._decorator;
 
@@ -26,8 +26,6 @@ export default class RecordAlert extends ViewComponent {
     closeBtn: cc.Node = null;
     @property(cc.Label)
     countdownLabel: cc.Label = null;
-    @property(cc.Prefab)
-    recordDetail: cc.Prefab = null;
 
 
     protected bindUI(): void {
@@ -220,8 +218,8 @@ export default class RecordAlert extends ViewComponent {
     }
 
     createRecordDetailItem(recorDetailData: RecorDetailData, totalLength: number) {
-        let recordDetailNode = cc.instantiate(this.recordDetail);
-        let script = <RecordDetail>recordDetailNode.getComponent("RecordDetail");
+        let recordDetailNode = cc.instantiate(cc.loader.getRes(PrefabDefine.DymjRecordDetail, cc.Prefab));
+        let script = <BaseRecordDetail>recordDetailNode.getComponent(BaseRecordDetail);
         recordDetailNode.y = 66;
         script.loadData(false, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount, totalLength, recorDetailData.playerData);
         this.node.addChild(recordDetailNode);

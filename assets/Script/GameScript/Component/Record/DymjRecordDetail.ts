@@ -1,41 +1,18 @@
-import ViewComponent from '../Base/ViewComponent';
-import { SpriteLoadUtil } from '../Other/SpriteLoadUtil';
-import { LoginAfterHttpUtil } from '../Util/LoginAfterHttpUtil';
-import Facade from '../../Framework/care/Facade';
-import { ProxyDefine } from '../MahjongConst/ProxyDefine';
-import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
-import { ConfigProxy } from '../Proxy/ConfigProxy';
-import { HttpUtil } from '../Util/HttpUtil';
-import { GameRecordInfo } from '../GameData/GameRecordInfo';
-import { RoomPlayerCredit } from '../GameData/RoomPlayerCredit';
-import CardItemView from './CardItemView';
+import Facade from '../../../Framework/care/Facade';
+import ViewComponent from '../../Base/ViewComponent';
+import { ProxyDefine } from '../../MahjongConst/ProxyDefine';
+import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
+import { ConfigProxy } from '../../Proxy/ConfigProxy';
+import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
+import CardItemView from '../CardItemView';
+import BaseRecordDetail, { PlayerRecordData } from './BaseRecordDetail';
 const { ccclass, property } = cc._decorator;
 
-export type PlayerRecordData = {
-    userName: string,
-    head: string,
-    nickname: string,
-    huPaiName: string,
-    winloss: number,
-    pengValues: number[],
-    gangValues: number[],
-    shouValues: number[],
-    huValues: number[]
-}
-
 @ccclass
-export default class RecordDetail extends ViewComponent {
+export default class RecordDetail extends BaseRecordDetail {
 
-    @property(cc.Node)
-    bg: cc.Node = null;
     @property(cc.Node)
     recordInfo: cc.Node = null;
-    @property(cc.Label)
-    roomNoLabel: cc.Label = null;
-    @property(cc.Label)
-    roundLabel: cc.Label = null;
-    @property(cc.Label)
-    timeLabel: cc.Label = null;
     @property(cc.Prefab)
     cardItemPrefab: cc.Prefab = null;
 
@@ -223,5 +200,4 @@ export default class RecordDetail extends ViewComponent {
         return cardItemPrefab;
     }
 
-    // update (dt) {}
 }

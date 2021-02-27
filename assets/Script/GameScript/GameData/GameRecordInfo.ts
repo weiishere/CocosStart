@@ -11,4 +11,5 @@ export class GameRecordInfo {
     /** 房主 */
     ownerNickname: string;
     roomRoundNo: string;
+    gameSubClass: number;
 }

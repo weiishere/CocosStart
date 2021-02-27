@@ -8,6 +8,8 @@ import { S2CClubRoomStandUp } from '../../GameData/Club/s2c/S2CClubRoomStandUp';
 import { S2CClubPushRoomRound } from '../../GameData/Club/s2c/S2CClubPushRoomRound';
 import { DeskListEventDefine } from '../../GameConst/Event/DeskListEventDefine';
 import { PrefabDefine } from '../../MahjongConst/PrefabDefine';
+import BaseDesk from './BaseDesk';
+import { GameNoDefine } from '../../GameConst/GameNoDefine';
 
 const { ccclass, property } = cc._decorator;
 
@@ -84,7 +86,7 @@ export default class DeskList extends ViewComponent {
             this.addDeskNode(roomInfo);
         }
         for (const deskNode of this.deskContainer.children) {
-            let script = deskNode.getComponent("DymjDesk") as DymjDesk;
+            let script = deskNode.getComponent(BaseDesk) as BaseDesk;
             this.basicScoreList.push(script.basicScore);
         }
         this.basicScoreList = Array.from(new Set(this.basicScoreList));
@@ -100,11 +102,21 @@ export default class DeskList extends ViewComponent {
         if (this.getDeskNode(roomInfo.roomNo)) {
             return;
         }
-        let desk = cc.instantiate(this.dymjDesk);
+        let desk = this.createDeskPrefab(roomInfo.gameSubClass);
         this.deskContainer.addChild(desk);
 
-        let script = <DymjDesk>desk.getComponent("DymjDesk");
+        let script = <BaseDesk>desk.getComponent(BaseDesk);
         script.initData(roomInfo);
+    }
+
+    createDeskPrefab(gameSubClass: number) {
+        if (gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+            return cc.instantiate(this.dymjDesk);
+        } else if (gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI) {
+            let xzddDeskPrefab = cc.loader.getRes(PrefabDefine.XzddDesk, cc.Prefab);
+            return cc.instantiate(xzddDeskPrefab);
+        }
+        return null;
     }
 
     deteleDesk(roomNo: number) {
@@ -121,8 +133,8 @@ export default class DeskList extends ViewComponent {
 
     sortDesk() {
         this.deskContainer.children.sort((d1, d2) => {
-            let script1 = <DymjDesk>d1.getComponent("DymjDesk");
-            let script2 = <DymjDesk>d2.getComponent("DymjDesk");
+            let script1 = <BaseDesk>d1.getComponent(BaseDesk);
+            let script2 = <BaseDesk>d2.getComponent(BaseDesk);
 
             // 根据座位人数排序
             let res = script2.getSitDownCount() - script1.getSitDownCount();
@@ -135,8 +147,8 @@ export default class DeskList extends ViewComponent {
 
     changeDeskAfterSort() {
         this.deskContainer.children.sort((d1, d2) => {
-            let script1 = <DymjDesk>d1.getComponent("DymjDesk");
-            let script2 = <DymjDesk>d2.getComponent("DymjDesk");
+            let script1 = <BaseDesk>d1.getComponent(BaseDesk);
+            let script2 = <BaseDesk>d2.getComponent(BaseDesk);
 
             // 根据座位人数排序
             let res = script2.getSitDownCount() - script1.getSitDownCount();
@@ -179,9 +191,9 @@ export default class DeskList extends ViewComponent {
         deskScript.setRoundCount(s2CClubPushRoomRound.roundCount, s2CClubPushRoomRound.gameCount);
     }
 
-    getDeskNode(roomNo: number): DymjDesk {
+    getDeskNode(roomNo: number): BaseDesk {
         for (const deskNode of this.deskContainer.children) {
-            let script = deskNode.getComponent("DymjDesk");
+            let script = deskNode.getComponent(BaseDesk);
             if (script.roomNo == roomNo) {
                 return script;
             }
@@ -197,7 +209,7 @@ export default class DeskList extends ViewComponent {
     speedFindDeskNo(myGold: number) {
         let desks = [];
         for (const deskNode of this.deskContainer.children) {
-            let script = <DymjDesk>deskNode.getComponent("DymjDesk");
+            let script = <BaseDesk>deskNode.getComponent(BaseDesk);
             if (myGold >= script.enterLimit && script.getSitDownCount() < 2) {
                 desks.push(deskNode);
             }
@@ -208,21 +220,21 @@ export default class DeskList extends ViewComponent {
         }
 
         desks.sort((a, b) => {
-            let script1 = <DymjDesk>a.getComponent("DymjDesk");
-            let script2 = <DymjDesk>b.getComponent("DymjDesk");
+            let script1 = <BaseDesk>a.getComponent(BaseDesk);
+            let script2 = <BaseDesk>b.getComponent(BaseDesk);
             return script1.getSitDownCount() - script2.getSitDownCount();
         })
 
-        return desks[0].getComponent("DymjDesk").roomNo;
+        return desks[0].getComponent(BaseDesk).roomNo;
     }
-/**
-     * 根据底分查到桌子
-     * @param myGold 
-     */
+    /**
+         * 根据底分查到桌子
+         * @param myGold 
+         */
     speedFindDeskNoAndBasicscore(score: number) {
         let desks = [];
         for (const deskNode of this.deskContainer.children) {
-            let script = <DymjDesk>deskNode.getComponent("DymjDesk");
+            let script = <BaseDesk>deskNode.getComponent(BaseDesk);
             if (score === script.basicScore && script.getSitDownCount() < 2) {
                 desks.push(deskNode);
             }
@@ -233,12 +245,12 @@ export default class DeskList extends ViewComponent {
         }
 
         desks.sort((a, b) => {
-            let script1 = <DymjDesk>a.getComponent("DymjDesk");
-            let script2 = <DymjDesk>b.getComponent("DymjDesk");
+            let script1 = <BaseDesk>a.getComponent(BaseDesk);
+            let script2 = <BaseDesk>b.getComponent(BaseDesk);
             return script1.getSitDownCount() - script2.getSitDownCount();
         })
 
-        return desks[0].getComponent("DymjDesk").roomNo;
+        return desks[0].getComponent(BaseDesk).roomNo;
     }
 
 

@@ -4,17 +4,11 @@ import { DeskListEventDefine } from '../../GameConst/Event/DeskListEventDefine';
 import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
 import BaseDesk from './BaseDesk';
 import { GameNoDefine } from '../../GameConst/GameNoDefine';
-// Learn TypeScript:
-//  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
-export default class DymjDesk extends BaseDesk {
+export default class XzddDesk extends BaseDesk {
 
     @property(cc.Label)
     anteLabel: cc.Label = null;
@@ -24,10 +18,15 @@ export default class DymjDesk extends BaseDesk {
     head1: cc.Sprite = null;
     @property(cc.Sprite)
     head2: cc.Sprite = null;
+    @property(cc.Sprite)
+    head3: cc.Sprite = null;
+    @property(cc.Sprite)
+    head4: cc.Sprite = null;
 
     protected bindUI(): void {
     }
     protected bindEvent(): void {
+
         this.node.on(cc.Node.EventType.TOUCH_END, this.deskClickEvent.bind(this));
     }
 
@@ -63,6 +62,8 @@ export default class DymjDesk extends BaseDesk {
     getSitDownCount() {
         let count = this.head1.node.active ? 1 : 0;
         count += this.head2.node.active ? 1 : 0;
+        count += this.head3.node.active ? 1 : 0;
+        count += this.head4.node.active ? 1 : 0;
         return count;
     }
 
@@ -70,8 +71,12 @@ export default class DymjDesk extends BaseDesk {
         let headSprite: cc.Sprite = null;
         if (seatNo === 1) {
             headSprite = this.head1;
-        } else {
+        } else if (seatNo === 2) {
             headSprite = this.head2;
+        } else if (seatNo === 3) {
+            headSprite = this.head3;
+        } else if (seatNo === 4) {
+            headSprite = this.head4;
         }
 
         headSprite.node.active = true;
@@ -85,8 +90,12 @@ export default class DymjDesk extends BaseDesk {
         let headSprite: cc.Sprite = null;
         if (seatNo === 1) {
             headSprite = this.head1;
-        } else {
+        } else if (seatNo === 2) {
             headSprite = this.head2;
+        } else if (seatNo === 3) {
+            headSprite = this.head3;
+        } else if (seatNo === 4) {
+            headSprite = this.head4;
         }
 
         let nicknameLabel = headSprite.node.getChildByName("Nickname").getComponent(cc.Label);

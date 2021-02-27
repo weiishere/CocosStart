@@ -9,9 +9,9 @@ import { HttpUtil } from '../Util/HttpUtil';
 import { GameRecordInfo } from '../GameData/GameRecordInfo';
 import { RoomPlayerCredit } from '../GameData/RoomPlayerCredit';
 import { RoomPlayLog } from '../GameData/RoomPlayLog';
-import RecordDetail from './RecordDetail';
-import { PlayerRecordData } from './RecordDetail';
 import { DateUtil } from '../Util/DateUtil';
+import { PrefabDefine } from '../MahjongConst/PrefabDefine';
+import BaseRecordDetail, { PlayerRecordData } from './Record/BaseRecordDetail';
 
 const { ccclass, property } = cc._decorator;
 
@@ -31,8 +31,6 @@ export default class RecordDetailList extends ViewComponent {
     closeBtn: cc.Node = null;
     @property(cc.Node)
     remarkLabel: cc.Node = null;
-    @property(cc.Prefab)
-    recordDetail: cc.Prefab = null;
 
 
     protected bindUI(): void {
@@ -108,8 +106,8 @@ export default class RecordDetailList extends ViewComponent {
     }
 
     createRecordDetailItem(recorDetailData: RecorDetailData, totalLength: number) {
-        let recordDetailNode = cc.instantiate(this.recordDetail);
-        let script = <RecordDetail>recordDetailNode.getComponent("RecordDetail");
+        let recordDetailNode = cc.instantiate(cc.loader.getRes(PrefabDefine.DymjRecordDetail, cc.Prefab));
+        let script = <BaseRecordDetail>recordDetailNode.getComponent(BaseRecordDetail);
         this.recordContent.addChild(recordDetailNode);
 
         script.loadData(true, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount,

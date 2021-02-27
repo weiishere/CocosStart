@@ -11,6 +11,9 @@ import { RoomPlayerCredit } from '../GameData/RoomPlayerCredit';
 import RecordDetailList from './RecordDetailList';
 import { CommandDefine } from '../MahjongConst/CommandDefine';
 import { GateProxy } from '../Proxy/GateProxy';
+import { GameNoDefine } from '../GameConst/GameNoDefine';
+import { PrefabDefine } from '../MahjongConst/PrefabDefine';
+import BaseRecord from './Record/BaseRecord';
 // Learn TypeScript:
 //  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
 // Learn Attribute:
@@ -100,7 +103,8 @@ export default class RecordPanel extends ViewComponent {
             pageCount: this.pageCount,
         }
         LoginAfterHttpUtil.send(url, (response) => {
-            let data: GameRecordInfo[] = <GameRecordInfo[]>response;
+            this.isLastPage = response.currentPage >= response.totalPages;
+            let data: GameRecordInfo[] = <GameRecordInfo[]>response.data;
             if (data && data.length > 0) {
                 this.recordTipsLabel.active = false;
                 data.forEach(v => {
@@ -123,65 +127,24 @@ export default class RecordPanel extends ViewComponent {
      * 创建记录项
      */
     createRecordItem(data: GameRecordInfo) {
-        let recordItemObj = cc.instantiate(this.recordItem);
-        recordItemObj.active = true;
-
-        let roomNoLabel = recordItemObj.getChildByName("roomNoLabel").getComponent(cc.Label);
-        roomNoLabel.string = "房间号：" + data.roomNo;
-
-        let anteLabel = recordItemObj.getChildByName("anteLabel").getComponent(cc.Label);
-        anteLabel.string = "底分：" + data.anteStr;
-
-        let timeLabel = recordItemObj.getChildByName("timeLabel").getComponent(cc.Label);
-        timeLabel.string = data.endTime;
-        // 详情按钮事件
-        recordItemObj.getChildByName("detailBtn").on(cc.Node.EventType.TOUCH_END, () => {
-            this.openRecordDetailList(data.roomRoundNo);
-        }); 
-
-        let playerInfoNode = recordItemObj.getChildByName("playerInfo");
-        data.roomPlayerCreditDtos.forEach(v => {
-            let palyerItem = this.createPlayerItem(v);
-            playerInfoNode.addChild(palyerItem);
-        });
-
+        let recordItemObj = this.getRecordPrefab(data.gameSubClass);
         this.recordContent.addChild(recordItemObj);
+
+        let recordScript = recordItemObj.getComponent(BaseRecord);
+        recordScript.initData(data);
     }
 
-    private openRecordDetailList(roomRoundNo: string) {
-        // let recordDetailListNode = cc.instantiate(this.recordDetailList);
-        // this.root.addChild(recordDetailListNode);
-        // let recordRetailListScript = <RecordDetailList>recordDetailListNode.getComponent("RecordDetailList");
-        // recordRetailListScript.loadData(roomRoundNo);
-
-        Facade.Instance.sendNotification(CommandDefine.OpenRecordDetailList, roomRoundNo, "");
-    }
-
-    /**
-     * 创建用户项
-     */
-    createPlayerItem(playerData: RoomPlayerCredit) {
-        let playerItemObj = cc.instantiate(this.playerItem);
-        let head = playerData.head;
-        playerItemObj.active = true;
-        let nicknameLabel = playerItemObj.getChildByName("nickname").getComponent(cc.Label);
-        nicknameLabel.string = playerData.nickname;
-        let playerIdLabel = playerItemObj.getChildByName("id").getComponent(cc.Label);
-        playerIdLabel.string = "ID：" + playerData.userName;
-        let winlossLabel = playerItemObj.getChildByName("winloss").getComponent(cc.Label);
-        if (playerData.credit >= 0) {
-            let color = cc.color().fromHEX("#FF0000")
-            winlossLabel.node.color = color;
-            winlossLabel.string = "+" + playerData.credit;
-        } else {
-            let color = cc.color().fromHEX("#008567")
-            winlossLabel.node.color = color;
-            winlossLabel.string = playerData.credit + "";
+    getRecordPrefab(gameSubClass: number): cc.Node {
+        let data = null;
+        if (gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+            data = cc.loader.getRes(PrefabDefine.DymjRecordItem, cc.Prefab);
         }
-        let headSprite = playerItemObj.getChildByName("head").getComponent(cc.Sprite);
 
-        SpriteLoadUtil.loadSprite(headSprite, head);
-        return playerItemObj;
+        if (!data) {
+            return;
+        }
+
+        return cc.instantiate(data);
     }
 
     // update (dt) {}

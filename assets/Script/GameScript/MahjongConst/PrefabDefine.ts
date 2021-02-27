@@ -14,6 +14,9 @@ export enum PrefabDefine {
     RecordAlert = "prefabs/recordAlert",
     RecordDetailList = "prefabs/recordDetailList",
     UpdatePromptAlert = "prefabs/updatePromptAlert",
+    XzddDesk = "prefabs/club/xzddDesk",
+    DymjRecordItem = "prefabs/record/dymjRecordItem",
+    DymjRecordDetail = "prefabs/record/dymjRecordDetail",
     /** 个人中心 */
     MyCenter = "prefabs/myCenter",
     ShareAlert = "prefabs/shareAlert",
