@@ -22,6 +22,8 @@ export default class Setting extends ViewComponent {
     closeBtn: cc.Node = null;
     @property(cc.Node)
     changeUser: cc.Node = null;
+    @property(cc.Label)
+    versionLabel: cc.Label = null;
 
     // LIFE-CYCLE CALLBACKS:
 
@@ -40,11 +42,14 @@ export default class Setting extends ViewComponent {
     start() {
 
     }
-    init(isPauseMusic: boolean, isPauseEffect: boolean, isShowChangeUserBtn: boolean = true) {
+
+    init(isPauseMusic: boolean, isPauseEffect: boolean, isShowChangeUserBtn: boolean = true, version: string = "") {
         this.musicToggle.isChecked = !isPauseMusic;
         this.effectToggle.isChecked = !isPauseEffect;
 
         this.changeUser.active = isShowChangeUserBtn;
+        this.versionLabel.string = "V." + version;
+        // this.versionLabel.node.active = isShowChangeUserBtn;
     }
 
     musicOnOff() {

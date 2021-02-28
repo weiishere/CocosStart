@@ -178,6 +178,10 @@ export class ConfigProxy extends BaseProxy {
         return false;
     }
 
+    public get version(): string {
+        return this._version;
+    }
+
     public get facadeUrl(): string {
         return this._facadeUrl;
     }

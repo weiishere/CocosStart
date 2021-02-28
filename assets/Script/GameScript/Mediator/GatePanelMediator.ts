@@ -137,7 +137,7 @@ export class GatePanelMediator extends BaseMediator {
         this.viewComponent.addChild(this.settingPrefab);
 
         let settingScript = this.settingPrefab.getComponent("Setting");
-        settingScript.init(this.musicManager.isPauseMusic, this.musicManager.isPauseEffect, isShowChangeUserBtn);
+        settingScript.init(this.musicManager.isPauseMusic, this.musicManager.isPauseEffect, isShowChangeUserBtn, this.getConfigProxy().version);
     }
 
     private musciHandle(notification: INotification): void {
