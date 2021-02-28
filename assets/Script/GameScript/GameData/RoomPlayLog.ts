@@ -15,4 +15,5 @@ export class RoomPlayLog {
     nickname: string;
 
     winloss: number;
+    seatNo: number;
 }

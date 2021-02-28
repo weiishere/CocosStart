@@ -18,6 +18,7 @@ import { DymjGameResult } from "../GameData/Dymj/s2c/DymjGameResult";
 import { DymjMusicManager } from '../Other/DymjMusicManager';
 import { DeskPanelViewEventDefine } from "../GameConst/Event/DeskPanelViewEventDefine";
 import ChatBox, { MsgObj } from "../Component/ChatBox";
+import { GameNoDefine } from "../GameConst/GameNoDefine";
 
 export class DeskMediator extends BaseMediator {
 
@@ -99,7 +100,7 @@ export class DeskMediator extends BaseMediator {
         this.recordAlterNode = <cc.Node>cc.instantiate(recordAlterResource);
         this.view.addChild(this.recordAlterNode);
         let script = this.recordAlterNode.getComponent("RecordAlert");
-        script.buildData(data);
+        script.buildData(data, GameNoDefine.DA_YI_ER_REN_MAHJONG);
     }
 
     public playEventSound(eventName: DeskEventName, cardNumber?: number) {

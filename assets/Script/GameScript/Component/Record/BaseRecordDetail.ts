@@ -12,6 +12,7 @@ export type PlayerRecordData = {
     head: string,
     nickname: string,
     huPaiName: string,
+    seatNo: number;
     winloss: number,
     pengValues: number[],
     gangValues: number[],

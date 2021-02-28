@@ -12,10 +12,12 @@ import { RoomPlayLog } from '../GameData/RoomPlayLog';
 import { DateUtil } from '../Util/DateUtil';
 import { PrefabDefine } from '../MahjongConst/PrefabDefine';
 import BaseRecordDetail, { PlayerRecordData } from './Record/BaseRecordDetail';
+import { GameNoDefine } from '../GameConst/GameNoDefine';
 
 const { ccclass, property } = cc._decorator;
 
 export type RecorDetailData = {
+    gameSubClass: number;
     roomNo: number;
     currentGameCount: number;
     playerData: Array<PlayerRecordData>;
@@ -75,6 +77,7 @@ export default class RecordDetailList extends ViewComponent {
             let recorDetailData: RecorDetailData = playLog.get(v.gameNo);
             if (!recorDetailData) {
                 recorDetailData = {
+                    gameSubClass: v.gameSubClass,
                     currentGameCount: v.gameNum,
                     roomNo: v.roomNo,
                     gameTime: DateUtil.dateFormat(DateUtil.DATE_FORMAT, date),
@@ -93,6 +96,7 @@ export default class RecordDetailList extends ViewComponent {
                 huPaiName: gameParam.huPaiName,
                 userName: v.userName,
                 nickname: v.nickname,
+                seatNo: v.seatNo,
                 head: v.head,
                 winloss: v.winloss
             }
@@ -105,8 +109,21 @@ export default class RecordDetailList extends ViewComponent {
         }
     }
 
+    getRecordPrefab(gameSubClass: number): cc.Node {
+        let data = null;
+        if (gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+            data = cc.loader.getRes(PrefabDefine.DymjRecordDetail, cc.Prefab);
+        }
+
+        if (!data) {
+            return;
+        }
+
+        return cc.instantiate(data);
+    }
+
     createRecordDetailItem(recorDetailData: RecorDetailData, totalLength: number) {
-        let recordDetailNode = cc.instantiate(cc.loader.getRes(PrefabDefine.DymjRecordDetail, cc.Prefab));
+        let recordDetailNode = this.getRecordPrefab(recorDetailData.gameSubClass);
         let script = <BaseRecordDetail>recordDetailNode.getComponent(BaseRecordDetail);
         this.recordContent.addChild(recordDetailNode);
 

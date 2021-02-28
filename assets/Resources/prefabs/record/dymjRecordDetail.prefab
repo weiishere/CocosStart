@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "recordDetail",
+    "_name": "dymjRecordDetail",
     "_objFlags": 0,
     "_parent": null,
     "_children": [

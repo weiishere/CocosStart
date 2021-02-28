@@ -12,6 +12,7 @@ import { DymjProxy } from '../Proxy/DymjProxy';
 import { DymjGangHuTypeValue } from '../GameData/Dymj/s2c/DymjGangHuTypeValue';
 import { PrefabDefine } from '../MahjongConst/PrefabDefine';
 import BaseRecordDetail, { PlayerRecordData } from './Record/BaseRecordDetail';
+import { GameNoDefine } from '../GameConst/GameNoDefine';
 
 const { ccclass, property } = cc._decorator;
 
@@ -80,10 +81,18 @@ export default class RecordAlert extends ViewComponent {
         }, 1, time - 1);
     }
 
-    getResultDesc(list: DymjGameUIResultItem[]) {
+    /**
+     * 获得玩家的胡牌信息
+     * @param list 
+     * @param azimuth 
+     */
+    getResultDesc(list: DymjGameUIResultItem[], azimuth: number) {
         for (const value of list) {
-            if (value.itemType === 6 || value.itemType === 7) {
-                return value.name;
+            if ((azimuth === 0 && value.azimuth1 > 0) || (azimuth === 1 && value.azimuth2 > 0) ||
+                (azimuth === 2 && value.azimuth3 > 0) || (azimuth === 3 && value.azimuth4 > 0)) {
+                if (value.itemType === 6 || value.itemType === 7) {
+                    return value.name;
+                }
             }
         }
 
@@ -140,8 +149,9 @@ export default class RecordAlert extends ViewComponent {
         return 0;
     }
 
-    buildData(dymjGameResult: DymjGameResult) {
+    buildData(dymjGameResult: DymjGameResult, gameSubClass: number = GameNoDefine.DA_YI_ER_REN_MAHJONG) {
         let recorDetailData: RecorDetailData = {
+            gameSubClass: gameSubClass,
             roomNo: dymjGameResult.roomNo,
             currentGameCount: dymjGameResult.currentGameCount,
             playerData: []
@@ -162,8 +172,8 @@ export default class RecordAlert extends ViewComponent {
         this.startNextRoundBtnCountdown(dymjGameResult.time);
 
         // 最后胡牌的牌型
-        let huPaiName = this.getResultDesc(dymjGameResult.list);
         dymjGameResult.players.forEach(v => {
+            let huPaiName = this.getResultDesc(dymjGameResult.list, v.azimuth);
             let winlossScore = this.getResultWinloss(dymjGameResult.list, v.azimuth);
             let shouValues = [];
             let pengValues = [];
@@ -207,6 +217,7 @@ export default class RecordAlert extends ViewComponent {
                 huPaiName: huPaiNameTmp,
                 userName: v.userName,
                 nickname: v.nickname,
+                seatNo: v.azimuth,
                 head: v.head,
                 winloss: winlossScore
             }
