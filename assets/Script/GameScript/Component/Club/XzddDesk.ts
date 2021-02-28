@@ -1,6 +1,4 @@
-import ViewComponent from '../../Base/ViewComponent';
 import { S2CClubRoomInfoBase } from '../../GameData/Club/s2c/S2CClubRoomInfoBase';
-import { DeskListEventDefine } from '../../GameConst/Event/DeskListEventDefine';
 import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
 import BaseDesk from './BaseDesk';
 import { GameNoDefine } from '../../GameConst/GameNoDefine';
@@ -22,21 +20,6 @@ export default class XzddDesk extends BaseDesk {
     head3: cc.Sprite = null;
     @property(cc.Sprite)
     head4: cc.Sprite = null;
-
-    protected bindUI(): void {
-    }
-    protected bindEvent(): void {
-
-        this.node.on(cc.Node.EventType.TOUCH_END, this.deskClickEvent.bind(this));
-    }
-
-    deskClickEvent() {
-        this.dispatchCustomEvent(DeskListEventDefine.JoinDeskEvent, this.roomNo);
-    }
-
-    start() {
-
-    }
 
     initData(s2CClubRoomInfoBase: S2CClubRoomInfoBase) {
         this.roomNo = s2CClubRoomInfoBase.roomNo;

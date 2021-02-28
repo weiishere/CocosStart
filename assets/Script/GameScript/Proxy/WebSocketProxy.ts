@@ -15,6 +15,7 @@ import { UserGold } from '../GameData/UserGold';
 import { DymjProxy } from './DymjProxy';
 import { GateProxy } from './GateProxy';
 import { ResponseCode } from '../GameConst/ResponseCode';
+import { XzddProxy } from './XzddProxy';
 
 class WebSocketData {
     gsData: any;
@@ -461,5 +462,6 @@ export class WebSockerProxy extends Proxy {
         // 默认注册俱乐部代理
         this.addModuleProxy(new ClubProxy(ProxyDefine.Club));
         this.addModuleProxy(new DymjProxy(ProxyDefine.Dymj));
+        this.addModuleProxy(new XzddProxy(ProxyDefine.Xzdd));
     }
 }

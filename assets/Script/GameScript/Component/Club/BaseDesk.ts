@@ -1,4 +1,5 @@
 import ViewComponent from '../../Base/ViewComponent';
+import { DeskListEventDefine } from '../../GameConst/Event/DeskListEventDefine';
 import { S2CClubRoomInfoBase } from '../../GameData/Club/s2c/S2CClubRoomInfoBase';
 
 const { ccclass, property } = cc._decorator;
@@ -13,9 +14,11 @@ export default class BaseDesk extends ViewComponent {
     protected bindUI(): void {
     }
     protected bindEvent(): void {
+        this.node.on(cc.Node.EventType.TOUCH_END, this.deskClickEvent.bind(this));
     }
 
     deskClickEvent() {
+        this.dispatchCustomEvent(DeskListEventDefine.JoinDeskEvent, this.roomNo);
     }
 
     start() {

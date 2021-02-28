@@ -20,6 +20,7 @@ import { UserGold } from '../GameData/UserGold';
 import { GameNoDefine } from "../GameConst/GameNoDefine";
 import { DymjProxy } from "../Proxy/DymjProxy";
 import { GateProxy } from '../Proxy/GateProxy';
+import { XzddProxy } from "../Proxy/XzddProxy";
 
 export class DeskListMediator extends BaseMediator {
 
@@ -80,6 +81,10 @@ export class DeskListMediator extends BaseMediator {
 
     public getDymjProxy(): DymjProxy {
         return <DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj);
+    }
+
+    public getXzddProxy(): XzddProxy {
+        return <XzddProxy>this.facade.retrieveProxy(ProxyDefine.Xzdd);
     }
 
     protected isLoadAfterShowPrefavSource(): boolean {
@@ -162,7 +167,11 @@ export class DeskListMediator extends BaseMediator {
             let s2CClubJoinRoom: S2CClubJoinRoom = notification.getBody();
             console.log("准备进入到 ", s2CClubJoinRoom.roomNo);
 
-            this.getDymjProxy().loginGame(s2CClubJoinRoom.roomNo);
+            if (s2CClubJoinRoom.gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+                this.getDymjProxy().loginGame(s2CClubJoinRoom.roomNo);
+            } else if (s2CClubJoinRoom.gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI) {
+                this.getXzddProxy().loginGame(s2CClubJoinRoom.roomNo);
+            }
         } else if (notification.getType() === NotificationTypeDefine.ClubShutdown) {
             this.destroyView();
         }
