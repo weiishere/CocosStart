@@ -20,6 +20,8 @@ export default class GiveAwayPanel extends ViewComponent {
     giveAwayInfo: cc.Node = null;
     @property(cc.Node)
     logNode: cc.Node = null;
+    @property(cc.ScrollView)
+    logScrollView: cc.ScrollView = null;
     @property(cc.Node)
     logContentItem: cc.Node = null;
     @property(cc.Node)
@@ -36,7 +38,16 @@ export default class GiveAwayPanel extends ViewComponent {
     giveAwayUserInfo: cc.Label = null;
     @property(cc.Node)
     giveAwayUserHead: cc.Node = null;
+    @property(cc.Label)
+    tipsLabel: cc.Label = null;
+    @property(cc.Node)
+    backPage: cc.Node = null;
+    @property(cc.Node)
+    nextPage: cc.Node = null;
 
+    _totalPage: number = -1;
+    _pageIndex: number = 0;
+    _pageSize: number = 20;
     protected bindUI(): void {
         this.updateGoldEditBoxPlaceholder();
     }
@@ -47,6 +58,24 @@ export default class GiveAwayPanel extends ViewComponent {
 
         this.giveAwayBtn.on(cc.Node.EventType.TOUCH_END, () => {
             this.giveAway();
+        });
+
+        this.backPage.on(cc.Node.EventType.TOUCH_END, () => {
+            if (this._pageIndex <= 1) {
+                this.sendToast("已经是第一页了");
+                return;
+            }
+            this._pageIndex--;
+            this.getGiveAwayLogs();
+        });
+
+        this.nextPage.on(cc.Node.EventType.TOUCH_END, () => {
+            if (this._totalPage >= 0 && this._pageIndex >= this._totalPage) {
+                this.sendToast("已经是最后一页了");
+                return;
+            }
+            this._pageIndex++;
+            this.getGiveAwayLogs();
         });
 
         this.toUserNameEditBox.node.on('editing-did-ended', (event) => {
@@ -90,6 +119,10 @@ export default class GiveAwayPanel extends ViewComponent {
 
     private updateGoldEditBoxPlaceholder() {
         // this.goldEditBox.placeholder = "可赠送金币 " + this.getLocalCacheDataProxy().getLoginData().gold.toFixed(0);
+    }
+
+    private sendToast(msg: string) {
+        Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: msg, toastOverlay: true }, '');
     }
 
     private giveAway() {
@@ -139,22 +172,34 @@ export default class GiveAwayPanel extends ViewComponent {
     }
 
     private getGiveAwayLogs() {
+        this.logScrollView.scrollToTop(0.01);
         let url = this.getConfigProxy().facadeUrl + "exchange/getGiveAwayLog";
 
         let param = {
+            pageIndex: this._pageIndex,
+            pageSize: this._pageSize
         }
 
         this.logContentContainer.removeAllChildren();
         LoginAfterHttpUtil.send(url, (response) => {
             if (response.hd === "success") {
                 this.loadGiveAwayLog(response.bd);
+            } else {
+                this.tipsLabel.string = "获取赠送记录失败";
             }
         }, (err) => {
+            this.tipsLabel.string = "获取赠送记录失败";
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '获取赠送记录失败', toastOverlay: true }, '');
         }, HttpUtil.METHOD_POST, param);
     }
 
-    private loadGiveAwayLog(datas: any) {
+    private loadGiveAwayLog(result: any) {
+        this._totalPage = result.totalPages;
+        let datas = result.data;
+        if (datas.length === 0) {
+            this.tipsLabel.string = "没有赠送记录";
+            return;
+        }
         let userName = this.getLocalCacheDataProxy().getLoginData().userName;
         for (let index = 0; index < datas.length; index++) {
             const logsData = datas[index];
@@ -163,8 +208,8 @@ export default class GiveAwayPanel extends ViewComponent {
 
             let node = cc.instantiate(this.logContentItem);
             node.active = true;
-            node.x = 0;
-            node.y = 0;
+            // node.x = 0;
+            // node.y = 0;
             let statusStr = "";
             let giveAwayScore = logsData.giveAwayScore;
             let giveAwayName = "";
@@ -238,7 +283,9 @@ export default class GiveAwayPanel extends ViewComponent {
         if (event.target.name === "giveAway") {
             this.giveAwayInfo.active = true;
         } else if (event.target.name === "giveAwayLog") {
+            this.tipsLabel.string = "";
             this.logNode.active = true;
+            this._pageIndex = 1;
             this.getGiveAwayLogs();
         }
     }
