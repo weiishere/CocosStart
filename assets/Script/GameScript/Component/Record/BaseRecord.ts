@@ -19,6 +19,7 @@ export default class BaseRecord extends ViewComponent {
 
     /** 游戏局数 */
     roomRoundNo: string = null;
+    myUserName: string = null;
 
     protected bindUI(): void {
     }
@@ -32,7 +33,8 @@ export default class BaseRecord extends ViewComponent {
     deskClickEvent() {
     }
 
-    initData(data: GameRecordInfo) {
+    initData(data: GameRecordInfo, userName: string) {
+        this.myUserName = userName;
         this.gameNoLabel.string = GameNoDefine.getGameName(data.gameSubClass);
         this.roomRoundNo = data.roomRoundNo;
         this.roomNoLabel.string = `房间号：${data.roomNo}`;

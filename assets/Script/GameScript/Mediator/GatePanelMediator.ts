@@ -74,6 +74,7 @@ export class GatePanelMediator extends BaseMediator {
             PrefabDefine.GiveAwayPanel,
             PrefabDefine.BonusIndex,
             PrefabDefine.DymjRecordItem,
+            PrefabDefine.XzddRecordItem,
             PrefabDefine.DymjRecordDetail,
             PrefabDefine.XdzzRecordDetail,
         ];

@@ -94,11 +94,16 @@ export default class RecordPanel extends ViewComponent {
         this.getRecoldLog(this.pageIndex);
     }
 
+    getMyUserName() {
+        return this.getLocalCacheDataProxy().getLoginData().userName;
+    }
+
     getRecoldLog(pageIndex: number) {
+        let userName = this.getMyUserName();
         this.recordContent.removeAllChildren();
         let url = this.getConfigProxy().facadeUrl + "record/getTodayGameRecordInfos";
         let param = {
-            userName: this.getLocalCacheDataProxy().getLoginData().userName,
+            userName: userName,
             pageIndex: pageIndex,
             pageCount: this.pageCount,
         }
@@ -108,7 +113,7 @@ export default class RecordPanel extends ViewComponent {
             if (data && data.length > 0) {
                 this.recordTipsLabel.active = false;
                 data.forEach(v => {
-                    this.createRecordItem(v);
+                    this.createRecordItem(v, userName);
                 })
                 this.beforePageIndex = this.pageIndex;
             } else {
@@ -126,18 +131,20 @@ export default class RecordPanel extends ViewComponent {
     /**
      * 创建记录项
      */
-    createRecordItem(data: GameRecordInfo) {
+    createRecordItem(data: GameRecordInfo, userName: string) {
         let recordItemObj = this.getRecordPrefab(data.gameSubClass);
         this.recordContent.addChild(recordItemObj);
 
         let recordScript = recordItemObj.getComponent(BaseRecord);
-        recordScript.initData(data);
+        recordScript.initData(data, userName);
     }
 
     getRecordPrefab(gameSubClass: number): cc.Node {
         let data = null;
         if (gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
             data = cc.loader.getRes(PrefabDefine.DymjRecordItem, cc.Prefab);
+        } else if (gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI) {
+            data = cc.loader.getRes(PrefabDefine.XzddRecordItem, cc.Prefab);
         }
 
         if (!data) {

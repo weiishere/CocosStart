@@ -30,9 +30,17 @@ export default class DymjRecord extends BaseRecord {
     deskClickEvent() {
     }
 
-    initData(data: GameRecordInfo) {
-        super.initData(data);
+    initData(data: GameRecordInfo, userName: string) {
+        super.initData(data, userName);
         this.anteLabel.string = `底注：${data.anteStr}`;
+
+        // 把自己排序放在前面
+        data.roomPlayerCreditDtos.sort((a, b) => {
+            let a1 = a.userName === userName ? 0 : 1;
+            let b1 = b.userName === userName ? 0 : 1;
+
+            return a1 - b1;
+        })
 
         let playerInfoNode = this.node.getChildByName("playerInfo");
         data.roomPlayerCreditDtos.forEach(v => {
