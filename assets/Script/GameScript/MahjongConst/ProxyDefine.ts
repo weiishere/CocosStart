@@ -6,5 +6,6 @@ export enum ProxyDefine {
     Club = "Club",
     Dymj = "Dymj",
     Xzdd = "Xzdd",
+    TuiTongZi = "TuiTongZi",
     Desk = "Desk"
 }

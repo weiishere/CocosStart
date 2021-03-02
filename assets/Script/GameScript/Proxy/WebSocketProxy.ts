@@ -16,6 +16,7 @@ import { DymjProxy } from './DymjProxy';
 import { GateProxy } from './GateProxy';
 import { ResponseCode } from '../GameConst/ResponseCode';
 import { XzddProxy } from './XzddProxy';
+import { TuiTongZiProxy } from './TuiTongZiProxy';
 
 class WebSocketData {
     gsData: any;
@@ -463,5 +464,6 @@ export class WebSockerProxy extends Proxy {
         this.addModuleProxy(new ClubProxy(ProxyDefine.Club));
         this.addModuleProxy(new DymjProxy(ProxyDefine.Dymj));
         this.addModuleProxy(new XzddProxy(ProxyDefine.Xzdd));
+        this.addModuleProxy(new TuiTongZiProxy(ProxyDefine.TuiTongZi));
     }
 }
