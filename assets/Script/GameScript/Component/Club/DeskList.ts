@@ -103,6 +103,10 @@ export default class DeskList extends ViewComponent {
             return;
         }
         let desk = this.createDeskPrefab(roomInfo.gameSubClass);
+        if (!desk) {
+            return;
+        }
+        
         this.deskContainer.addChild(desk);
 
         let script = <BaseDesk>desk.getComponent(BaseDesk);
