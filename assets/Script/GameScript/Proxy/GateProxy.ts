@@ -8,6 +8,7 @@ import { ServerCode } from '../GameConst/ServerCode';
 import { WebSockerProxy } from './WebSocketProxy';
 import { LoginData } from '../GameData/LoginData';
 import { ClubProxy } from './ClubProxy';
+import {TuiTongZiProxy} from './TuiTongZiProxy';
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
 import { UserOfflineData } from '../GameData/UserOfflineData';
@@ -37,6 +38,10 @@ export class GateProxy extends BaseProxy {
 
     public getClubProxy(): ClubProxy {
         return <ClubProxy>this.facade.retrieveProxy(ProxyDefine.Club);
+    }
+
+    public getTuiTongZiProxy(): TuiTongZiProxy {
+        return <TuiTongZiProxy>this.facade.retrieveProxy(ProxyDefine.TuiTongZi);
     }
 
     public getFacadeUrl(): string {
@@ -169,6 +174,10 @@ export class GateProxy extends BaseProxy {
     private connectWebSocket(): void {
         let ggwUrl = this.getConfigProxy().ggwUrl;
         this.getWebSocketProxy().connect(ggwUrl);
+    }
+
+    public joinTuiTongZi(): void {
+        this.getTuiTongZiProxy().loginGame();
     }
 
     public joinClub(): void {

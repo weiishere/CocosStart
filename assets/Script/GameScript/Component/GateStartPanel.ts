@@ -11,6 +11,7 @@ import Facade from "../../Framework/care/Facade";
 import { ProxyDefine } from "../MahjongConst/ProxyDefine"
 import { CommandDefine } from "../MahjongConst/CommandDefine"
 import { GateProxy } from "../Proxy/GateProxy";
+import { TuiTongZiProxy } from "../Proxy/TuiTongZiProxy";
 import { DymjMusicManager } from '../Other/DymjMusicManager';
 import { ConfigProxy } from "../Proxy/ConfigProxy";
 
@@ -69,7 +70,11 @@ export default class GateStartPanel extends ViewComponent {
             node.on(cc.Node.EventType.TOUCH_START, (eventData, item) => {
                 const _action = cc.sequence(cc.scaleTo(0.1, 1.1), cc.scaleTo(0.1, 1), cc.callFunc(() => { }));
                 eventData.target.runAction(_action);
-                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '游戏开发中，敬请期待...', toastOverlay: false }, '');
+                if (node.name === 'game_ebg') {
+                    (Facade.Instance.retrieveProxy(ProxyDefine.Gate) as GateProxy).joinTuiTongZi();
+                } else {
+                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '游戏开发中，敬请期待...', toastOverlay: false }, '');
+                }
             }, this, true);
         });
 
