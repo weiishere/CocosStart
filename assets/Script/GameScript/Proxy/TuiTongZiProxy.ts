@@ -110,6 +110,16 @@ export class TuiTongZiProxy extends ModuleProxy {
             this.getGateProxy().toast("你的局数下庄");
         } else if (errorCode === TuiTongZiErrorCode.MONEY_STORTAGE_DOWN_BANKER) {
             this.getGateProxy().toast("你的余额不足下庄");
+        } else if (errorCode === TuiTongZiErrorCode.NOT_BET) {
+            this.getGateProxy().toast("当前不能下注");
+        } else if (errorCode === TuiTongZiErrorCode.EXCEED_CAN_BET_MONEY) {
+            this.getGateProxy().toast("没有可下注的金额了");
+        } else if (errorCode === TuiTongZiErrorCode.PLAYER_CASH_STORTAGE) {
+            this.getGateProxy().toast("余额不足");
+        }
+
+        if (msgType === TuiTongZiProtocol.C2S_PLAYER_LOGIN || msgType === TuiTongZiProtocol.C2S_JOIN_ROOM) {
+            this.isJoinRoom = false;
         }
 
         return true;
@@ -128,11 +138,13 @@ export class TuiTongZiProxy extends ModuleProxy {
             this.getGateProxy().toast("不能重复进入房间");
             return;
         }
+        this.isJoinRoom = true;
         let c2sPlayerLogin: C2SPlayerLogin = new C2SPlayerLogin();
         c2sPlayerLogin.playerName = this.getUserName();
         c2sPlayerLogin.token = this.getLocalCacheDataProxy().getUserToken();
 
         this.sendGameData(TuiTongZiProtocol.C2S_PLAYER_LOGIN, c2sPlayerLogin, (op: number, msgType: number) => {
+            this.isJoinRoom = false;
         });
     }
 
@@ -151,6 +163,7 @@ export class TuiTongZiProxy extends ModuleProxy {
         let c2SJoinRoom: C2SJoinRoom = new C2SJoinRoom();
         c2SJoinRoom.machineId = roomNo;
         this.sendGameData(TuiTongZiProtocol.C2S_JOIN_ROOM, c2SJoinRoom, (op: number, msgType: number) => {
+            this.isJoinRoom = false;
         });
     }
 
