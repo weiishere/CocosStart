@@ -120,8 +120,7 @@ export class TuiTongZiProxy extends ModuleProxy {
     }
 
     sendHeartbeat() {
-        this.sendGameData(TuiTongZiProtocol.S2C_HEARTBEAT, null, (op: number, msgType: number) => {
-        });
+        this.sendGameData(TuiTongZiProtocol.S2C_HEARTBEAT, null);
     }
 
     loginGame() {

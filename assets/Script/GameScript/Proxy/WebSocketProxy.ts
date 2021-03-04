@@ -372,13 +372,12 @@ export class WebSockerProxy extends Proxy {
             if (sendMsgData.time <= 0) {
                 this.waitResultData.delete(key);
 
-
-                let networkMsg = "";
-                if (this.__webSocket.readyState) {
-                    networkMsg = " 当前 ws readyState: " + this.__webSocket.readyState + ", OPEN: " + WebSocket.OPEN + ", isopen : " + (WebSocket.OPEN == this.__webSocket.readyState);
-                }
-
-                this.getGateProxy().toast("连接服务器超时，请检查您的网络是否正常！" + networkMsg);
+                // let networkMsg = "";
+                // if (this.__webSocket.readyState) {
+                //     networkMsg = " 当前 ws readyState: " + this.__webSocket.readyState + ", OPEN: " + WebSocket.OPEN + ", isopen : " + (WebSocket.OPEN == this.__webSocket.readyState);
+                // }
+                // this.getGateProxy().toast("连接服务器超时，请检查您的网络是否正常！" + networkMsg);
+                this.getGateProxy().toast(`连接服务器超时，请检查您的网络是否正常！op: ${sendMsgData.op}, msgtype: ${sendMsgData.msgType}`);
                 this.handleTimeoutMsg(sendMsgData);
             }
             sendMsgData.time--;
@@ -415,7 +414,7 @@ export class WebSockerProxy extends Proxy {
         if (sendMsgData.timeOutCallback) {
             sendMsgData.timeOutCallback(sendMsgData.op, sendMsgData.msgType);
             // 提示某个消息已经超时了
-            this.getGateProxy().toast("连接服务器超时，请检查您的网络是否正常！");
+            // this.getGateProxy().toast("连接服务器超时，请检查您的网络是否正常！");
         }
     }
 
