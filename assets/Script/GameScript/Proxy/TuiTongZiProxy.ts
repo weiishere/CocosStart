@@ -1,6 +1,7 @@
 import { ModuleProxy } from './ModuleProxy';
 import { OperationDefine } from '../GameConst/OperationDefine';
 import { CommandDefine } from '../MahjongConst/CommandDefine';
+import { CommandDefine as TuiTongZiDefineConst } from '../TuiTongZiConst/CommandDefine';
 import { ProxyDefine } from '../MahjongConst/ProxyDefine';
 import { DeskProxy } from './DeskProxy';
 import { TuiTongZiProtocol } from '../Protocol/TuiTongZiProtocol';
@@ -53,6 +54,7 @@ export class TuiTongZiProxy extends ModuleProxy {
         } else if (msgType === TuiTongZiProtocol.C2S_JOIN_ROOM) {
             let s2CEnterRoom: S2CEnterRoom = <S2CEnterRoom>content;
             this.isJoinRoom = true;
+            this.sendNotification(TuiTongZiDefineConst.OpenTTZDeskPanel);
         } else if (msgType === TuiTongZiProtocol.C2S_UP_BANKER) {
         } else if (msgType === TuiTongZiProtocol.C2S_DOWN_BANKER) {
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_BANKER_CHANGE_TO_HALL) {
