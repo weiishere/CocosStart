@@ -1,3 +1,11 @@
+/*
+ * @Author: weishere.huang
+ * @Date: 2021-03-05 17:55:35
+ * @LastEditTime: 2021-03-05 18:05:38
+ * @LastEditors: weishere.huang
+ * @Description: 
+ * @~~
+ */
 export type UserInfo = {
     uid: string,
     nickName: string,
@@ -8,10 +16,9 @@ export type UserInfo = {
     openId: string
 }
 export type SubAreaData = {
-    cards: Array<number>,
+    cards: { frist: number, second: number },
     glods: Array<{ userInfo: UserInfo, amount: number }>,
-    history: Array<number>,
-    allAmount: number,
+    history: Array<number>
 }
 
 export class TTZDeskRepository {
@@ -29,6 +36,8 @@ export class TTZDeskRepository {
         masterData: {
             cards: Array<number>
         },
+        /**剩余可下注量 */
+        reaminGlad: number,
         subData: {
             shun: SubAreaData,
             qian: SubAreaData,
