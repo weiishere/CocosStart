@@ -21,7 +21,6 @@ export class TTZDeskProxy extends BaseProxy {
     /**初始化自己玩家用户 */
     updateSelfPlayerData(player: DeskPlayer): void {
         this.repository.deskData.playerList.mySelf = this.createUserInfo(player);
-        this.facade.sendNotification(CommandDefine.RefreshSelfPlayerPush, {}, '');
     }
 
     isMy(userName: string): boolean {

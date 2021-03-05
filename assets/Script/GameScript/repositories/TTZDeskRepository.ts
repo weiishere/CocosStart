@@ -91,7 +91,16 @@ export class TTZDeskRepository {
 
     public deskData: DeskData = {
         playerList: {
-            mySelf: null,
+            mySelf: {
+                uid: '',
+                nickName: '',
+                gender: 0,
+                headImg: '',
+                score: 0,
+                phone: '',
+                openId: '',
+                seatNo: 0
+            },
             subPlayer: [],
             masterPlayer: [],
             applyMasterPlayer: [],

@@ -82,6 +82,7 @@ export class TuiTongZiMediator extends BaseMediator {
 
                     }
                 });
+                this.sendNotification(CommandDefine.RefreshSelfPlayerPush)
                 break;
             case CommandDefine.RefreshSelfPlayerPush:
                 this.TTZDeskViewScript.updatePlayerHead();
