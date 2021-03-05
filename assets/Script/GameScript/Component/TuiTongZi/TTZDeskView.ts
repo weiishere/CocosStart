@@ -11,7 +11,7 @@ import PlayerHead from "./PlayerHead";
 import { PrefabDefine } from "../../TuiTongZiConst/PrefabDefine";
 import Facade from "../../../Framework/care/Facade";
 import { ProxyDefine } from "../../TuiTongZiConst/ProxyDefine";
-import { TuiTongZiProxy } from "../../Proxy/TTZDeskProxy";
+import { TTZDeskProxy } from "../../Proxy/TTZDeskProxy";
 
 @ccclass
 export default class TTZDeskView extends ViewComponent {
@@ -73,7 +73,7 @@ export default class TTZDeskView extends ViewComponent {
 
     }
     getData(): TTZDeskRepository {
-        return (Facade.Instance.retrieveProxy(ProxyDefine.TTZDesk) as TuiTongZiProxy).repository;
+        return (Facade.Instance.retrieveProxy(ProxyDefine.TTZDesk) as TTZDeskProxy).repository;
     }
     //设置发光
     setLight(node: cc.Node, isLight?: boolean, option?: { isFlicker?: boolean, keepTime?: number }) {

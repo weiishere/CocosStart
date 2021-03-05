@@ -3,6 +3,7 @@ export enum CommandDefine {
     RefreshPlayerPush = 'RefreshPlayerPush',
     LicensingCardPush = 'LicensingCardPush',
     PlayerPutAntePush = 'PlayerPutAntePush',
+    RefreshSelfPlayerPush = 'RefreshSelfPlayerPush',
     OpenCard = 'OpenCard',
     ShowResult = 'ShowResult',
     GetWinGlod = 'GetWinGlod',
