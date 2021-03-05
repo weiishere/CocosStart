@@ -634,7 +634,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "heagInfoBg",
+    "_name": "glodInfo",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
@@ -973,8 +973,12 @@
       "__id__": 1
     },
     "_enabled": true,
-    "label": null,
-    "text": "hello",
+    "nickName": {
+      "__id__": 14
+    },
+    "glodInfo": {
+      "__id__": 17
+    },
     "_id": ""
   },
   {

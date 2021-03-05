@@ -13,11 +13,11 @@ import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
 @ccclass
 export default class PlayerHead extends ViewComponent {
 
-    @property(cc.Label)
-    label: cc.Label = null;
+    @property(cc.Node)
+    nickName: cc.Label;
 
-    @property
-    text: string = 'hello';
+    @property(cc.Node)
+    glodInfo: cc.Label;
 
     private playerId: string = '';
     private playerName: string = '玩家';
@@ -34,13 +34,13 @@ export default class PlayerHead extends ViewComponent {
     bindUI() {
 
     }
-    init(id: string, headImg: string, glod?: number, name?: string, percent?: number): void {
+    init(id: string, headImg: string, layout: 'landscape' | 'vertical' | 'simple', glod?: number, name?: string, percent?: number): void {
         const playerHead = this.node.getChildByName('playerHead');
         const head = playerHead.getChildByName('head');
         const baifenbi = playerHead.getChildByName('headLine').getChildByName('baifenbi');
         const touming = playerHead.getChildByName('headLine').getChildByName('touming');
         const playerName = playerHead.getChildByName('playerName');
-        const amount = playerHead.getChildByName('heagInfoBg').getChildByName('amount');
+        const amount = playerHead.getChildByName('glodInfo').getChildByName('amount');
         SpriteLoadUtil.loadSprite(head.getComponent(cc.Sprite), headImg);
         this.playerId = id;
         if (percent) {
@@ -57,8 +57,18 @@ export default class PlayerHead extends ViewComponent {
         if (glod) {
             amount.getComponent(cc.Label).string = glod + '';
         } else {
-            playerHead.getChildByName('heagInfoBg').active = false;
+            playerHead.getChildByName('glodInfo').active = false;
         }
+        if (layout === 'landscape') {
+            //横向
+            if (name) {
+
+            }
+        }
+    }
+    /**显示输赢数目 */
+    showGlodResult() {
+        
     }
     start() {
 

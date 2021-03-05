@@ -3,6 +3,7 @@ import { INotification } from "../../Framework/interfaces/INotification";
 import Command from "../../Framework/patterns/command/Command";
 import { GatePanelMediator } from "../Mediator/GatePanelMediator";
 import { MediatorDefine } from "../MahjongConst/MediatorDefine";
+import { MediatorDefine as TTZMediatorDefine } from "../TuiTongZiConst/MediatorDefine";
 import { ApplicationGlobal } from "../MahjongConst/ApplicationGlobal"
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { ProxyDefine } from "../MahjongConst/ProxyDefine";
@@ -16,6 +17,7 @@ import { ConfigProxy } from "../Proxy/ConfigProxy";
 import { ClubProxy } from '../Proxy/ClubProxy';
 import { DeskListMediator } from '../Mediator/DeskListMediator';
 import { DeskMediator } from '../Mediator/DeskMediator';
+import { TuiTongZiMediator } from '../Mediator/TuiTongZiMediator';
 
 export class StartupCommand extends Command {
     public execute(notification: INotification): void {
@@ -28,6 +30,7 @@ export class StartupCommand extends Command {
         Facade.Instance.registerMediator(new GatePanelMediator(MediatorDefine.GatePanel, ApplicationGlobal.GatePanel));
         Facade.Instance.registerMediator(new DeskListMediator(MediatorDefine.DeskList, ApplicationGlobal.GatePanel));
         Facade.Instance.registerMediator(new DeskMediator(MediatorDefine.Desk, ApplicationGlobal.GatePanel));
+        Facade.Instance.registerMediator(new TuiTongZiMediator(TTZMediatorDefine.TTZDeskPanel, ApplicationGlobal.GatePanel));
 
         /**放到command的notification命令或逻辑注意一个原则：可能会被其他view重用，不然尽量放到mediator中 */
         Facade.Instance.registerCommand(CommandDefine.GateCommand, GateCommand);
