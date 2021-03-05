@@ -24,6 +24,7 @@ import { S2CPushMultiplayerBet } from '../GameData/TuiTongZi/s2c/S2CPushMultipla
 import { ProxyDefine } from '../TuiTongZiConst/ProxyDefine';
 import { TTZDeskProxy } from './TTZDeskProxy';
 import { DeskPlayer } from '../GameData/TuiTongZi/s2c/DeskPlayer';
+import { RoomInfo } from '../GameData/TuiTongZi/s2c/RoomInfo';
 
 /**
  * 推筒子消息数据代理类
@@ -31,6 +32,7 @@ import { DeskPlayer } from '../GameData/TuiTongZi/s2c/DeskPlayer';
 export class TuiTongZiProxy extends ModuleProxy {
 
     isJoinRoom: boolean = false;
+    roomInfo: RoomInfo;
     public constructor(proxyName: string = null, data: any = null) {
         super(proxyName, data);
     }
@@ -41,6 +43,13 @@ export class TuiTongZiProxy extends ModuleProxy {
 
     getTTZDeskProxy() {
         return <TTZDeskProxy>this.facade.retrieveProxy(ProxyDefine.TTZDesk);
+    }
+
+    setJoinRoom(isJoinRoom: boolean) {
+        this.isJoinRoom = isJoinRoom;
+        if (!this.isJoinRoom) {
+            this.roomInfo = null;
+        }
     }
 
     handle(msgType: number, content: any, errorCode: number): void {
@@ -55,10 +64,10 @@ export class TuiTongZiProxy extends ModuleProxy {
             this.sendHeartbeat();
         } else if (msgType === TuiTongZiProtocol.C2S_PLAYER_LOGIN_OUT) {
             // 退出游戏成功返回
-            this.isJoinRoom = false;
+            this.setJoinRoom(false);
         } else if (msgType === TuiTongZiProtocol.C2S_JOIN_ROOM) {
             let s2CEnterRoom: S2CEnterRoom = <S2CEnterRoom>content;
-            this.isJoinRoom = true;
+            this.setJoinRoom(true);
 
             this.getTTZDeskProxy().updateSelfPlayerData(this.getDeskPlayer(s2CEnterRoom.players, this.getUserName()));
             this.getTTZDeskProxy().initPlayerData(s2CEnterRoom.players);
@@ -144,7 +153,7 @@ export class TuiTongZiProxy extends ModuleProxy {
         }
 
         if (msgType === TuiTongZiProtocol.C2S_PLAYER_LOGIN || msgType === TuiTongZiProtocol.C2S_JOIN_ROOM) {
-            this.isJoinRoom = false;
+            this.setJoinRoom(false);
         }
 
         return true;
@@ -163,22 +172,23 @@ export class TuiTongZiProxy extends ModuleProxy {
             this.getGateProxy().toast("不能重复进入房间");
             return;
         }
-        this.isJoinRoom = true;
+        this.setJoinRoom(true);
         let c2sPlayerLogin: C2SPlayerLogin = new C2SPlayerLogin();
         c2sPlayerLogin.playerName = this.getUserName();
         c2sPlayerLogin.token = this.getLocalCacheDataProxy().getUserToken();
 
         this.sendGameData(TuiTongZiProtocol.C2S_PLAYER_LOGIN, c2sPlayerLogin, (op: number, msgType: number) => {
-            this.isJoinRoom = false;
+            this.setJoinRoom(false);
         });
     }
 
     selectRoom(s2CPlayerLogin: S2CPlayerLogin) {
         let roomNo: number = 0;
+        this.roomInfo = s2CPlayerLogin.brHallDeskList.rooms[0];
         if (s2CPlayerLogin.offlineData) {
             roomNo = s2CPlayerLogin.offlineData.machineId;
         } else {
-            roomNo = s2CPlayerLogin.brHallDeskList.rooms[0].id;
+            roomNo = this.roomInfo.id;
         }
 
         this.joinRoom(roomNo);
@@ -188,7 +198,7 @@ export class TuiTongZiProxy extends ModuleProxy {
         let c2SJoinRoom: C2SJoinRoom = new C2SJoinRoom();
         c2SJoinRoom.machineId = roomNo;
         this.sendGameData(TuiTongZiProtocol.C2S_JOIN_ROOM, c2SJoinRoom, (op: number, msgType: number) => {
-            this.isJoinRoom = false;
+            this.setJoinRoom(false);
         });
     }
 
@@ -222,7 +232,7 @@ export class TuiTongZiProxy extends ModuleProxy {
     }
 
     serverShutDown(): void {
-        this.isJoinRoom = false;
+        this.setJoinRoom(false);
         this.getGateProxy().toast("游戏服务暂停了");
         this.sendNotification(CommandDefine.ExitDeskPanel, {}, '');
     }
