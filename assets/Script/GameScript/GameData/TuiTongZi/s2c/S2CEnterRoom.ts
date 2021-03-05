@@ -6,22 +6,34 @@ import { PlayerBet } from "./PlayerBet";
 import { RoomInfo } from "./RoomInfo";
 
 export class S2CEnterRoom {
+    /** 房间号 */
     machineId: number;
     deskNo: string;
     limit: number;
+    /** 所有玩家信息 */
     players: DeskPlayer[];
+    /** 规则 */
     oddstable: OddsTable[];
+    /** 总的玩家人数 */
     playerNums: number;
+    /** 玩家当前余额 */
     money: number;
+    /** 等待上庄列表 */
     bankerWaitList: BankerQueuePlayer[];
+    /** 坐庄玩家列表 */
     bankerPlayer: DeskBankerPlayer[];
+    /** 上庄限制 */
     upBankerLimit: number;
     /** 玩家已下注金额 */
     restoreAllPlayerBetVals: PlayerBet[];
+    /** 游戏状态 对应 TuiTongZiRoomGameStatus */
     status: number;
     roundNo: string;
+    /** 骰子点数 */
     dicePoints: number[];
-    minContinueTakeBankerMoney;
+    /** 下庄条件 */
+    minContinueTakeBankerMoney:number;
+    /** 最大赔率 */
     maxOdds: number;
     /** 标识当前玩法是单人, 还是多人当庄 0：表示单人 1：表示多人 */
     bankerType: number;
