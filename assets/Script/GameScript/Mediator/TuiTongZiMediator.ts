@@ -3,7 +3,7 @@ import { INotification } from "../../Framework/interfaces/INotification";
 import Mediator from "../../Framework/patterns/mediator/Mediator";
 import BaseMediator from "../Mediator/BaseMediator"
 import { PrefabDefine as TuiTongZiPrefabDefine } from "../TuiTongZiConst/PrefabDefine";
-import { CommandDefine as TuiTongZiCommandDefine } from "../TuiTongZiConst/CommandDefine";
+import { CommandDefine } from "../TuiTongZiConst/CommandDefine";
 import TTZDeskView from "../Component/TuiTongZi/TTZDeskView";
 
 export class TuiTongZiMediator extends BaseMediator {
@@ -26,20 +26,21 @@ export class TuiTongZiMediator extends BaseMediator {
 
     public listNotificationInterests(): string[] {
         return [
-            TuiTongZiCommandDefine.OpenTTZDeskPanel,
-            TuiTongZiCommandDefine.RefreshPlayerPush,
-            TuiTongZiCommandDefine.LicensingCardPush,
-            TuiTongZiCommandDefine.PlayerPutAntePush,
-            TuiTongZiCommandDefine.OpenCard,
-            TuiTongZiCommandDefine.ShowResult,
-            TuiTongZiCommandDefine.GetWinGlod,
-            TuiTongZiCommandDefine.ClearDesk
+            CommandDefine.OpenTTZDeskPanel,
+            CommandDefine.RefreshSelfPlayerPush,
+            CommandDefine.RefreshPlayerPush,
+            CommandDefine.LicensingCardPush,
+            CommandDefine.PlayerPutAntePush,
+            CommandDefine.OpenCard,
+            CommandDefine.ShowResult,
+            CommandDefine.GetWinGlod,
+            CommandDefine.ClearDesk
         ];
     }
 
     public async handleNotification(notification: INotification) {
         switch (notification.getName()) {
-            case TuiTongZiCommandDefine.OpenTTZDeskPanel:
+            case CommandDefine.OpenTTZDeskPanel:
                 await this.init();
                 this.TTZDeskView = this.viewComponent.getChildByName('tuitongzi_Desk');
                 this.TTZDeskViewScript = this.TTZDeskView.getComponent('TTZDeskView') as TTZDeskView;
@@ -81,26 +82,31 @@ export class TuiTongZiMediator extends BaseMediator {
 
                     }
                 });
+                this.sendNotification(CommandDefine.RefreshSelfPlayerPush)
                 break;
-            case TuiTongZiCommandDefine.RefreshPlayerPush:
+            case CommandDefine.RefreshSelfPlayerPush:
+                this.TTZDeskViewScript.updatePlayerHead();
+                //刷新玩家自己
+                break;
+            case CommandDefine.RefreshPlayerPush:
                 //刷新玩家
                 break;
-            case TuiTongZiCommandDefine.LicensingCardPush:
+            case CommandDefine.LicensingCardPush:
                 //发牌
                 break;
-            case TuiTongZiCommandDefine.PlayerPutAntePush:
+            case CommandDefine.PlayerPutAntePush:
                 //玩家下注
                 break;
-            case TuiTongZiCommandDefine.OpenCard:
+            case CommandDefine.OpenCard:
                 //翻牌（比牌）
                 break;
-            case TuiTongZiCommandDefine.ShowResult:
+            case CommandDefine.ShowResult:
                 //显示输赢结果
                 break;
-            case TuiTongZiCommandDefine.GetWinGlod:
+            case CommandDefine.GetWinGlod:
                 //显示筹码流向，流向玩家
                 break;
-            case TuiTongZiCommandDefine.ClearDesk:
+            case CommandDefine.ClearDesk:
                 //清理桌面，准备下一局
                 break;
         }

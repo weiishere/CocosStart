@@ -69,7 +69,7 @@ export class TuiTongZiProxy extends ModuleProxy {
         } else if (msgType === TuiTongZiProtocol.C2S_JOIN_ROOM) {
             let s2CEnterRoom: S2CEnterRoom = <S2CEnterRoom>content;
             this.setJoinRoom(true);
-
+            this.sendNotification(TuiTongZiDefineConst.OpenTTZDeskPanel);
             this.getTTZDeskProxy().updateSelfPlayerData(this.getDeskPlayer(s2CEnterRoom.players, this.getUserName()));
             this.getTTZDeskProxy().initPlayerData(s2CEnterRoom.players);
             this.getTTZDeskProxy().updateApplyMasterPlayer(s2CEnterRoom.bankerPlayer);
@@ -77,7 +77,7 @@ export class TuiTongZiProxy extends ModuleProxy {
             this.getTTZDeskProxy().updateCardDataList(s2CEnterRoom.spokers);
             this.getTTZDeskProxy().initHistory(this.roomInfo.historyList);
 
-            this.sendNotification(TuiTongZiDefineConst.OpenTTZDeskPanel);
+            
         } else if (msgType === TuiTongZiProtocol.C2S_UP_BANKER) {
         } else if (msgType === TuiTongZiProtocol.C2S_DOWN_BANKER) {
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_BANKER_CHANGE_TO_HALL) {

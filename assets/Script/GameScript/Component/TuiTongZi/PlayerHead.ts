@@ -35,7 +35,7 @@ export default class PlayerHead extends ViewComponent {
 
     }
     init(id: string, headImg: string, layout: 'landscape' | 'vertical' | 'simple', glod?: number, name?: string, percent?: number): void {
-        const playerHead = this.node.getChildByName('playerHead');
+        const playerHead = this.node;
         const head = playerHead.getChildByName('head');
         const baifenbi = playerHead.getChildByName('headLine').getChildByName('baifenbi');
         const touming = playerHead.getChildByName('headLine').getChildByName('touming');
@@ -68,7 +68,7 @@ export default class PlayerHead extends ViewComponent {
     }
     /**显示输赢数目 */
     showGlodResult() {
-        
+
     }
     start() {
 

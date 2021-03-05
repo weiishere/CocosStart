@@ -5,6 +5,7 @@ import { DeskPlayer } from "../GameData/TuiTongZi/s2c/DeskPlayer";
 import { DeskBankerPlayer } from "../GameData/TuiTongZi/s2c/DeskBankerPlayer";
 import { S2CPushBetInfo } from "../GameData/TuiTongZi/s2c/S2CPushBetInfo";
 import { PlayerBet } from "../GameData/TuiTongZi/s2c/PlayerBet";
+import { CommandDefine } from "../TuiTongZiConst/CommandDefine";
 import { HistoryItem } from "../GameData/TuiTongZi/s2c/HistoryItem";
 
 export class TTZDeskProxy extends BaseProxy {
@@ -35,10 +36,9 @@ export class TTZDeskProxy extends BaseProxy {
             }
             subPlayer.push(this.createUserInfo(deskPlayer));
         }
-
         this.repository.deskData.playerList.subPlayer = subPlayer;
     }
-
+    /**添加玩家 */
     createUserInfo(deskPlayer: DeskPlayer): UserInfo {
         let userInfo: UserInfo = {
             uid: deskPlayer.name,
