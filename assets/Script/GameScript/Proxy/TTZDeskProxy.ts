@@ -5,6 +5,7 @@ import { DeskPlayer } from "../GameData/TuiTongZi/s2c/DeskPlayer";
 import { DeskBankerPlayer } from "../GameData/TuiTongZi/s2c/DeskBankerPlayer";
 import { S2CPushBetInfo } from "../GameData/TuiTongZi/s2c/S2CPushBetInfo";
 import { PlayerBet } from "../GameData/TuiTongZi/s2c/PlayerBet";
+import { HistoryItem } from "../GameData/TuiTongZi/s2c/HistoryItem";
 
 export class TTZDeskProxy extends BaseProxy {
     public repository: TTZDeskRepository;
@@ -265,6 +266,17 @@ export class TTZDeskProxy extends BaseProxy {
                 }
             }
         }
+    }
+
+    initHistory(historyItems: HistoryItem[]) {
+        this.repository.gameData.historys = historyItems;
+    }
+
+    addHistory(historyItem: HistoryItem) {
+        if (this.repository.gameData.historys.length >= 20) {
+            this.repository.gameData.historys.shift();
+        }
+        this.repository.gameData.historys.push(historyItem);
     }
 
     getGameData(): GameData {
