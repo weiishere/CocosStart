@@ -115,7 +115,7 @@ export class TuiTongZiProxy extends ModuleProxy {
             } else {
                 this.getTTZDeskProxy().updateGameStateStr("停止下注");
             }
-        } else if (msgType === TuiTongZiProtocol.S2C_PUSH_ROOM_POKER) { //推送房间牌数据
+        } else if (msgType === TuiTongZiProtocol.S2C_PUSH_ROOM_POKER) { //推送本局的结算结果
             let s2CPushRoomPoker: S2CPushRoomPoker = <S2CPushRoomPoker>content;
             this.getTTZDeskProxy().updateGameStateStr("比牌中");
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_CREDIT_UPDATE) {  //推送玩家分数变化
