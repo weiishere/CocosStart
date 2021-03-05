@@ -1,3 +1,5 @@
+import { HistoryItem } from "../GameData/TuiTongZi/s2c/HistoryItem"
+
 /*
  * @Author: weishere.huang
  * @Date: 2021-03-05 17:55:35
@@ -19,7 +21,6 @@ export type UserInfo = {
 export type SubAreaData = {
     cards: { frist: { card: number, isShow: boolean }, second: { card: number, isShow: boolean } },
     glods: Array<{ userInfo: UserInfo, amount: number }>,
-    history: Array<number>,
     totalGold: number
 }
 
@@ -44,6 +45,7 @@ export type GameData = {
         qian: SubAreaData,
         wei: SubAreaData
     },
+    historys: HistoryItem[];
     myAnteData: {
         shun: number,
         qian: number,
@@ -64,22 +66,20 @@ export class TTZDeskRepository {
             shun: {
                 cards: { frist: { card: 0, isShow: false }, second: { card: 0, isShow: false } },
                 glods: [],
-                history: [],
                 totalGold: 0
             },
             qian: {
                 cards: { frist: { card: 0, isShow: false }, second: { card: 0, isShow: false } },
                 glods: [],
-                history: [],
                 totalGold: 0
             },
             wei: {
                 cards: { frist: { card: 0, isShow: false }, second: { card: 0, isShow: false } },
                 glods: [],
-                history: [],
                 totalGold: 0
             }
         },
+        historys: [],
         myAnteData: {
             shun: 0,
             qian: 0,

@@ -6,6 +6,7 @@ import { DeskBankerPlayer } from "../GameData/TuiTongZi/s2c/DeskBankerPlayer";
 import { S2CPushBetInfo } from "../GameData/TuiTongZi/s2c/S2CPushBetInfo";
 import { PlayerBet } from "../GameData/TuiTongZi/s2c/PlayerBet";
 import { CommandDefine } from "../TuiTongZiConst/CommandDefine";
+import { HistoryItem } from "../GameData/TuiTongZi/s2c/HistoryItem";
 
 export class TTZDeskProxy extends BaseProxy {
     public repository: TTZDeskRepository;
@@ -20,7 +21,7 @@ export class TTZDeskProxy extends BaseProxy {
     /**初始化自己玩家用户 */
     updateSelfPlayerData(player: DeskPlayer): void {
         this.repository.deskData.playerList.mySelf = this.createUserInfo(player);
-        this.facade.sendNotification(CommandDefine.RefreshPlayerPush, {}, '');
+        this.facade.sendNotification(CommandDefine.RefreshSelfPlayerPush, {}, '');
     }
 
     isMy(userName: string): boolean {
@@ -266,6 +267,17 @@ export class TTZDeskProxy extends BaseProxy {
                 }
             }
         }
+    }
+
+    initHistory(historyItems: HistoryItem[]) {
+        this.repository.gameData.historys = historyItems;
+    }
+
+    addHistory(historyItem: HistoryItem) {
+        if (this.repository.gameData.historys.length >= 20) {
+            this.repository.gameData.historys.shift();
+        }
+        this.repository.gameData.historys.push(historyItem);
     }
 
     getGameData(): GameData {

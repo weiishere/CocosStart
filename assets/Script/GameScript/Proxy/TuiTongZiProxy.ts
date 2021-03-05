@@ -25,6 +25,7 @@ import { ProxyDefine } from '../TuiTongZiConst/ProxyDefine';
 import { TTZDeskProxy } from './TTZDeskProxy';
 import { DeskPlayer } from '../GameData/TuiTongZi/s2c/DeskPlayer';
 import { RoomInfo } from '../GameData/TuiTongZi/s2c/RoomInfo';
+import { S2CPushRoomResultToHall } from '../GameData/TuiTongZi/s2c/S2CPushRoomResultToHall';
 
 /**
  * 推筒子消息数据代理类
@@ -74,6 +75,7 @@ export class TuiTongZiProxy extends ModuleProxy {
             this.getTTZDeskProxy().updateApplyMasterPlayer(s2CEnterRoom.bankerPlayer);
             this.getTTZDeskProxy().initAnteData(s2CEnterRoom.restoreAllPlayerBetVals);
             this.getTTZDeskProxy().updateCardDataList(s2CEnterRoom.spokers);
+            this.getTTZDeskProxy().initHistory(this.roomInfo.historyList);
 
             this.sendNotification(TuiTongZiDefineConst.OpenTTZDeskPanel);
         } else if (msgType === TuiTongZiProtocol.C2S_UP_BANKER) {
@@ -107,6 +109,9 @@ export class TuiTongZiProxy extends ModuleProxy {
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_MULTIPLAYER_BET) {
             let s2CPushMultiplayerBet: S2CPushMultiplayerBet = <S2CPushMultiplayerBet>content;
             this.getTTZDeskProxy().updateAnteData(s2CPushMultiplayerBet.betInfos);
+        } else if (msgType === TuiTongZiProtocol.S2C_PUSH_DESK_WAIT_BET_COUNTDOWN) {
+            let s2CPushRoomResultToHall: S2CPushRoomResultToHall = <S2CPushRoomResultToHall>content;
+            this.getTTZDeskProxy().addHistory(s2CPushRoomResultToHall.history);
         }
     }
 
