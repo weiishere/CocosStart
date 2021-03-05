@@ -76,8 +76,9 @@ export class TuiTongZiProxy extends ModuleProxy {
             this.getTTZDeskProxy().initAnteData(s2CEnterRoom.restoreAllPlayerBetVals);
             this.getTTZDeskProxy().updateCardDataList(s2CEnterRoom.spokers);
             this.getTTZDeskProxy().initHistory(this.roomInfo.historyList);
+            this.getTTZDeskProxy().updateWaitBankerList(s2CEnterRoom.bankerWaitList);
 
-            
+
         } else if (msgType === TuiTongZiProtocol.C2S_UP_BANKER) {
         } else if (msgType === TuiTongZiProtocol.C2S_DOWN_BANKER) {
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_BANKER_CHANGE_TO_HALL) {
@@ -121,8 +122,9 @@ export class TuiTongZiProxy extends ModuleProxy {
             let s2CBetUpdateMoney: S2CBetUpdateMoney = <S2CBetUpdateMoney>content;
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_SEAT_CHANGE) {   //推送座位变化
             let s2CRoomSeatChange: S2CRoomSeatChange = <S2CRoomSeatChange>content;
-        } else if (msgType === TuiTongZiProtocol.S2C_PUSH_BANKER_QUEUE_LIST) {  //推送牌堆上庄的玩家列表
+        } else if (msgType === TuiTongZiProtocol.S2C_PUSH_BANKER_QUEUE_LIST) {  //推送排队上庄的玩家列表
             let s2CWaitBankerPlayer: S2CWaitBankerPlayer = <S2CWaitBankerPlayer>content;
+            this.getTTZDeskProxy().updateWaitBankerList(s2CWaitBankerPlayer.bankerWaitList);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_DOWN_BANKER) {
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_DEAL) {
             let s2CPushDeal: S2CPushDeal = <S2CPushDeal>content;

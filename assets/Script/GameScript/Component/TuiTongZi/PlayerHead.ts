@@ -14,10 +14,10 @@ import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
 export default class PlayerHead extends ViewComponent {
 
     @property(cc.Node)
-    nickName: cc.Label;
+    nickName: cc.Label = null;
 
     @property(cc.Node)
-    glodInfo: cc.Label;
+    glodInfo: cc.Label = null;
 
     private playerId: string = '';
     private playerName: string = '玩家';
