@@ -280,6 +280,10 @@ export class TTZDeskProxy extends BaseProxy {
         this.repository.gameData.historys.push(historyItem);
     }
 
+    updateGameStateStr(str: string) {
+        this.repository.gameData.stateStr = str;
+    }
+
     getGameData(): GameData {
         return this.repository.gameData;
     }

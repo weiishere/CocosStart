@@ -50,7 +50,8 @@ export type GameData = {
         shun: number,
         qian: number,
         wei: number
-    }
+    },
+    stateStr: string
 }
 
 
@@ -84,7 +85,8 @@ export class TTZDeskRepository {
             shun: 0,
             qian: 0,
             wei: 0
-        }
+        },
+        stateStr: ""
     }
 
     public deskData: DeskData = {
