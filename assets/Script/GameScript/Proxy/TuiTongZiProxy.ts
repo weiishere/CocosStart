@@ -2,8 +2,6 @@ import { ModuleProxy } from './ModuleProxy';
 import { OperationDefine } from '../GameConst/OperationDefine';
 import { CommandDefine } from '../MahjongConst/CommandDefine';
 import { CommandDefine as TuiTongZiDefineConst } from '../TuiTongZiConst/CommandDefine';
-import { ProxyDefine } from '../MahjongConst/ProxyDefine';
-import { DeskProxy } from './DeskProxy';
 import { TuiTongZiProtocol } from '../Protocol/TuiTongZiProtocol';
 import { GameServerCode } from '../GameConst/GameServerCode';
 import { C2SPlayerLogin } from '../GameData/TuiTongZi/c2s/C2SPlayerLogin';
@@ -23,6 +21,9 @@ import { S2CRoomSeatChange } from '../GameData/TuiTongZi/s2c/S2CRoomSeatChange';
 import { S2CWaitBankerPlayer } from '../GameData/TuiTongZi/s2c/S2CWaitBankerPlayer';
 import { S2CPushDeal } from '../GameData/TuiTongZi/s2c/S2CPushDeal';
 import { S2CPushMultiplayerBet } from '../GameData/TuiTongZi/s2c/S2CPushMultiplayerBet';
+import { ProxyDefine } from '../TuiTongZiConst/ProxyDefine';
+import { TTZDeskProxy } from './TTZDeskProxy';
+import { DeskPlayer } from '../GameData/TuiTongZi/s2c/DeskPlayer';
 
 /**
  * 推筒子消息数据代理类
@@ -36,6 +37,10 @@ export class TuiTongZiProxy extends ModuleProxy {
 
     getOp(): number {
         return OperationDefine.TUI_TONG_ZI;
+    }
+
+    getTTZDeskProxy() {
+        return <TTZDeskProxy>this.facade.retrieveProxy(ProxyDefine.TTZDesk);
     }
 
     handle(msgType: number, content: any, errorCode: number): void {
@@ -54,6 +59,13 @@ export class TuiTongZiProxy extends ModuleProxy {
         } else if (msgType === TuiTongZiProtocol.C2S_JOIN_ROOM) {
             let s2CEnterRoom: S2CEnterRoom = <S2CEnterRoom>content;
             this.isJoinRoom = true;
+
+            this.getTTZDeskProxy().updateSelfPlayerData(this.getDeskPlayer(s2CEnterRoom.players, this.getUserName()));
+            this.getTTZDeskProxy().initPlayerData(s2CEnterRoom.players);
+            this.getTTZDeskProxy().updateApplyMasterPlayer(s2CEnterRoom.bankerPlayer);
+            this.getTTZDeskProxy().initAnteData(s2CEnterRoom.restoreAllPlayerBetVals);
+            this.getTTZDeskProxy().updateCardDataList(s2CEnterRoom.spokers);
+
             this.sendNotification(TuiTongZiDefineConst.OpenTTZDeskPanel);
         } else if (msgType === TuiTongZiProtocol.C2S_UP_BANKER) {
         } else if (msgType === TuiTongZiProtocol.C2S_DOWN_BANKER) {
@@ -61,8 +73,11 @@ export class TuiTongZiProxy extends ModuleProxy {
             let s2CPushBankerChange: S2CPushBankerChange = <S2CPushBankerChange>content;
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_PLAYER_JOIN_ROOM) {
             let s2CPushJoinRoom: S2CPushJoinRoom = <S2CPushJoinRoom>content;
+            this.getTTZDeskProxy().addPlayerData(s2CPushJoinRoom.players);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_PLAYER_QUIT_ROOM) {
             let s2CQuitRoom: S2CQuitRoom = <S2CQuitRoom>content;
+            this.getTTZDeskProxy().removePlayerData(s2CQuitRoom.playerNames);
+
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_REST_COUNTDOWN) {
             let s2CPushCountDown: S2CPushCountDown = <S2CPushCountDown>content;
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_BANKER_PLAYER) {
@@ -82,7 +97,17 @@ export class TuiTongZiProxy extends ModuleProxy {
             let s2CPushDeal: S2CPushDeal = <S2CPushDeal>content;
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_MULTIPLAYER_BET) {
             let s2CPushMultiplayerBet: S2CPushMultiplayerBet = <S2CPushMultiplayerBet>content;
+            this.getTTZDeskProxy().updateAnteData(s2CPushMultiplayerBet.betInfos);
         }
+    }
+
+    getDeskPlayer(players: DeskPlayer[], userName: string) {
+        for (const deskPlayer of players) {
+            if (deskPlayer.name === userName) {
+                return deskPlayer;
+            }
+        }
+        return null;
     }
 
     errorCodeHandle(msgType: number, errorCode: number) {
@@ -203,10 +228,6 @@ export class TuiTongZiProxy extends ModuleProxy {
     }
 
     onRegister() {
-    }
-
-    getDeskProxy() {
-        return <DeskProxy>this.facade.retrieveProxy(ProxyDefine.Desk);
     }
 
 }

@@ -7,6 +7,7 @@ import { MediatorDefine as TTZMediatorDefine } from "../TuiTongZiConst/MediatorD
 import { ApplicationGlobal } from "../MahjongConst/ApplicationGlobal"
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { ProxyDefine } from "../MahjongConst/ProxyDefine";
+import { ProxyDefine as ttzProxyDefine } from "../TuiTongZiConst/ProxyDefine";
 import { GateProxy } from "../Proxy/GateProxy";
 import { DeskProxy } from "../Proxy/DeskProxy";
 import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine"
@@ -18,6 +19,7 @@ import { ClubProxy } from '../Proxy/ClubProxy';
 import { DeskListMediator } from '../Mediator/DeskListMediator';
 import { DeskMediator } from '../Mediator/DeskMediator';
 import { TuiTongZiMediator } from '../Mediator/TuiTongZiMediator';
+import { TTZDeskProxy } from "../Proxy/TTZDeskProxy";
 
 export class StartupCommand extends Command {
     public execute(notification: INotification): void {
@@ -26,6 +28,7 @@ export class StartupCommand extends Command {
         Facade.Instance.registerProxy(new LocalCacheDataProxy(ProxyDefine.LocalCacheData));
         Facade.Instance.registerProxy(new ConfigProxy(ProxyDefine.Config));
         Facade.Instance.registerProxy(new DeskProxy(ProxyDefine.Desk));
+        Facade.Instance.registerProxy(new TTZDeskProxy(ttzProxyDefine.TTZDesk));
 
         Facade.Instance.registerMediator(new GatePanelMediator(MediatorDefine.GatePanel, ApplicationGlobal.GatePanel));
         Facade.Instance.registerMediator(new DeskListMediator(MediatorDefine.DeskList, ApplicationGlobal.GatePanel));

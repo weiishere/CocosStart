@@ -13,19 +13,21 @@ export type UserInfo = {
     headImg: string,
     score: Number,
     phone: string,
-    openId: string
+    openId: string,
+    seatNo: number
 }
 export type SubAreaData = {
     cards: { frist: { card: number, isShow: boolean }, second: { card: number, isShow: boolean } },
     glods: Array<{ userInfo: UserInfo, amount: number }>,
-    history: Array<number>
+    history: Array<number>,
+    totalGold: number
 }
 
 export type DeskData = {
     playerList: {
         mySelf: UserInfo,
         subPlayer: Array<UserInfo>,
-        masterPlayer: Array<{ userInfo: UserInfo, percent: number }>,
+        masterPlayer: Array<{ userInfo: UserInfo, percent: string }>,
         applyMasterPlayer: Array<UserInfo>,
     },
     deskId: string
@@ -33,7 +35,7 @@ export type DeskData = {
 export type GameData = {
     state: number,
     masterData: {
-        cards: Array<number>
+        cards: { frist: { card: number, isShow: boolean }, second: { card: number, isShow: boolean } },
     },
     /**剩余可下注量 */
     reaminGlad: number,
@@ -41,6 +43,11 @@ export type GameData = {
         shun: SubAreaData,
         qian: SubAreaData,
         wei: SubAreaData
+    },
+    myAnteData: {
+        shun: number,
+        qian: number,
+        wei: number
     }
 }
 
@@ -49,26 +56,34 @@ export class TTZDeskRepository {
     public gameData: GameData = {
         state: 0,
         masterData: {
-            cards: []
+            cards: { frist: { card: 1, isShow: true }, second: { card: 1, isShow: false } }
         },
         /**剩余可下注量 */
         reaminGlad: 0,
         subData: {
             shun: {
-                cards: { frist: { card: 0, isShow: false }, second: { card: 0, isShow: false }  },
+                cards: { frist: { card: 0, isShow: false }, second: { card: 0, isShow: false } },
                 glods: [],
-                history: []
+                history: [],
+                totalGold: 0
             },
             qian: {
                 cards: { frist: { card: 0, isShow: false }, second: { card: 0, isShow: false } },
                 glods: [],
-                history: []
+                history: [],
+                totalGold: 0
             },
             wei: {
                 cards: { frist: { card: 0, isShow: false }, second: { card: 0, isShow: false } },
                 glods: [],
-                history: []
+                history: [],
+                totalGold: 0
             }
+        },
+        myAnteData: {
+            shun: 0,
+            qian: 0,
+            wei: 0
         }
     }
 
