@@ -16,7 +16,7 @@ export type UserInfo = {
     openId: string
 }
 export type SubAreaData = {
-    cards: { frist: { card: number, isShow: false }, second: { card: number, isShow: false } },
+    cards: { frist: { card: number, isShow: boolean }, second: { card: number, isShow: boolean } },
     glods: Array<{ userInfo: UserInfo, amount: number }>,
     history: Array<number>
 }
@@ -55,17 +55,17 @@ export class TTZDeskRepository {
         reaminGlad: 0,
         subData: {
             shun: {
-                cards: { frist: 0, second: 0 },
+                cards: { frist: { card: 0, isShow: false }, second: { card: 0, isShow: false }  },
                 glods: [],
                 history: []
             },
             qian: {
-                cards: { frist: 0, second: 0 },
+                cards: { frist: { card: 0, isShow: false }, second: { card: 0, isShow: false } },
                 glods: [],
                 history: []
             },
             wei: {
-                cards: { frist: 0, second: 0 },
+                cards: { frist: { card: 0, isShow: false }, second: { card: 0, isShow: false } },
                 glods: [],
                 history: []
             }
