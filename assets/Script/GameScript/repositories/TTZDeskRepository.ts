@@ -21,27 +21,64 @@ export type SubAreaData = {
     history: Array<number>
 }
 
-export class TTZDeskRepository {
-    deskData: {
-        playerList: {
-            mySelf: UserInfo,
-            subPlayer: Array<UserInfo>,
-            masterPlayer: Array<{ userInfo: UserInfo, percent: number }>,
-            applyMasterPlayer: Array<UserInfo>,
-        },
-        deskId: string
+export type DeskData = {
+    playerList: {
+        mySelf: UserInfo,
+        subPlayer: Array<UserInfo>,
+        masterPlayer: Array<{ userInfo: UserInfo, percent: number }>,
+        applyMasterPlayer: Array<UserInfo>,
+    },
+    deskId: string
+}
+export type GameData = {
+    state: number,
+    masterData: {
+        cards: Array<number>
+    },
+    /**剩余可下注量 */
+    reaminGlad: number,
+    subData: {
+        shun: SubAreaData,
+        qian: SubAreaData,
+        wei: SubAreaData
     }
-    gameData: {
-        state: number,
+}
+
+
+export class TTZDeskRepository {
+    public gameData: GameData = {
+        state: 0,
         masterData: {
-            cards: Array<number>
+            cards: []
         },
         /**剩余可下注量 */
-        reaminGlad: number,
+        reaminGlad: 0,
         subData: {
-            shun: SubAreaData,
-            qian: SubAreaData,
-            wei: SubAreaData
+            shun: {
+                cards: { frist: 0, second: 0 },
+                glods: [],
+                history: []
+            },
+            qian: {
+                cards: { frist: 0, second: 0 },
+                glods: [],
+                history: []
+            },
+            wei: {
+                cards: { frist: 0, second: 0 },
+                glods: [],
+                history: []
+            }
         }
+    }
+
+    public deskData: DeskData = {
+        playerList: {
+            mySelf: null,
+            subPlayer: [],
+            masterPlayer: [],
+            applyMasterPlayer: [],
+        },
+        deskId: '000000'
     }
 }

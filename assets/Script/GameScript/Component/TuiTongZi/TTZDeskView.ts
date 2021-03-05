@@ -6,8 +6,12 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 import ViewComponent from "../../Base/ViewComponent";
 const { ccclass, property } = cc._decorator;
+import { GameData, DeskData, TTZDeskRepository } from "../../repositories/TTZDeskRepository"
 import PlayerHead from "./PlayerHead";
 import { PrefabDefine } from "../../TuiTongZiConst/PrefabDefine";
+import Facade from "../../../Framework/care/Facade";
+import { ProxyDefine } from "../../TuiTongZiConst/ProxyDefine";
+import { TuiTongZiProxy } from "../../Proxy/TTZDeskProxy";
 
 @ccclass
 export default class TTZDeskView extends ViewComponent {
@@ -68,6 +72,9 @@ export default class TTZDeskView extends ViewComponent {
     start() {
 
     }
+    getData(): TTZDeskRepository {
+        return (Facade.Instance.retrieveProxy(ProxyDefine.TTZDesk) as TuiTongZiProxy).repository;
+    }
     //设置发光
     setLight(node: cc.Node, isLight?: boolean, option?: { isFlicker?: boolean, keepTime?: number }) {
         const _option = Object.assign({ isFlicker: false, keepTime: 0 }, option || {});
@@ -97,9 +104,10 @@ export default class TTZDeskView extends ViewComponent {
     /**刷新头像 */
     updatePlayerHead() {
         //设置玩家自己头像
+        const selfPlayer = this.getData().deskData.playerList.mySelf;
         cc.loader.loadRes(PrefabDefine.PlayerHead, cc.Prefab, (err, head) => {
             const playerHead: cc.Node = cc.instantiate(head);
-            //(playerHead.getComponent("PlayerHead") as PlayerHead).init();
+            (playerHead.getComponent("PlayerHead") as PlayerHead).init(selfPlayer.uid, selfPlayer.headImg, "landscape");
             this.myHeader.addChild(playerHead);
         })
     }
