@@ -16,7 +16,7 @@ export type UserInfo = {
     openId: string
 }
 export type SubAreaData = {
-    cards: { frist: number, second: number },
+    cards: { frist: { card: number, isShow: false }, second: { card: number, isShow: false } },
     glods: Array<{ userInfo: UserInfo, amount: number }>,
     history: Array<number>
 }
