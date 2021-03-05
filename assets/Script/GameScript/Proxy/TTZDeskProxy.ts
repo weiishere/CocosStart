@@ -3,7 +3,7 @@ import { TTZDeskRepository, GameData, DeskData } from '../repositories/TTZDeskRe
 import { ConfigProxy } from './ConfigProxy';
 
 export class TuiTongZiProxy extends BaseProxy {
-    private repository: TTZDeskRepository;
+    public repository: TTZDeskRepository;
     private dataBackup: { gameData: GameData, deskData: DeskData } = null;
 
 
@@ -32,7 +32,7 @@ export class TuiTongZiProxy extends BaseProxy {
     updateAnteDate(): void {
 
     }
-    
+
     getGameData(): GameData {
         return this.repository.gameData;
     }
