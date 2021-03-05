@@ -114,20 +114,20 @@ export class TuiTongZiProxy extends ModuleProxy {
             } else {
                 this.getTTZDeskProxy().updateGameStateStr("停止下注");
             }
-        } else if (msgType === TuiTongZiProtocol.S2C_PUSH_ROOM_POKER) {
+        } else if (msgType === TuiTongZiProtocol.S2C_PUSH_ROOM_POKER) { //推送房间牌数据
             let s2CPushRoomPoker: S2CPushRoomPoker = <S2CPushRoomPoker>content;
             this.getTTZDeskProxy().updateGameStateStr("比牌中");
-        } else if (msgType === TuiTongZiProtocol.S2C_PUSH_CREDIT_UPDATE) {
+        } else if (msgType === TuiTongZiProtocol.S2C_PUSH_CREDIT_UPDATE) {  //推送玩家分数变化
             let s2CBetUpdateMoney: S2CBetUpdateMoney = <S2CBetUpdateMoney>content;
-        } else if (msgType === TuiTongZiProtocol.S2C_PUSH_SEAT_CHANGE) {
+        } else if (msgType === TuiTongZiProtocol.S2C_PUSH_SEAT_CHANGE) {   //推送座位变化
             let s2CRoomSeatChange: S2CRoomSeatChange = <S2CRoomSeatChange>content;
-        } else if (msgType === TuiTongZiProtocol.S2C_PUSH_BANKER_QUEUE_LIST) {
+        } else if (msgType === TuiTongZiProtocol.S2C_PUSH_BANKER_QUEUE_LIST) {  //推送牌堆上庄的玩家列表
             let s2CWaitBankerPlayer: S2CWaitBankerPlayer = <S2CWaitBankerPlayer>content;
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_DOWN_BANKER) {
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_DEAL) {
             let s2CPushDeal: S2CPushDeal = <S2CPushDeal>content;
             this.getTTZDeskProxy().updateGameStateStr("发牌中");
-        } else if (msgType === TuiTongZiProtocol.S2C_PUSH_MULTIPLAYER_BET) {
+        } else if (msgType === TuiTongZiProtocol.S2C_PUSH_MULTIPLAYER_BET) {    //推送玩家下注
             let s2CPushMultiplayerBet: S2CPushMultiplayerBet = <S2CPushMultiplayerBet>content;
             this.getTTZDeskProxy().updateAnteData(s2CPushMultiplayerBet.betInfos);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_DESK_WAIT_BET_COUNTDOWN) {
