@@ -319,6 +319,13 @@ export class TTZDeskProxy extends BaseProxy {
         this.repository.deskData.playerList.applyMasterPlayer = users;
     }
 
+    /**
+     * 游戏开牌结果数据
+     */
+    gameResult() {
+
+    }
+
     getGameData(): GameData {
         return this.repository.gameData;
     }
