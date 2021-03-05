@@ -82,21 +82,41 @@ export class TuiTongZiProxy extends ModuleProxy {
         } else if (msgType === TuiTongZiProtocol.C2S_DOWN_BANKER) {
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_BANKER_CHANGE_TO_HALL) {
             let s2CPushBankerChange: S2CPushBankerChange = <S2CPushBankerChange>content;
+            this.getTTZDeskProxy().updateApplyMasterPlayer(s2CPushBankerChange.deskBankerPlayer);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_PLAYER_JOIN_ROOM) {
             let s2CPushJoinRoom: S2CPushJoinRoom = <S2CPushJoinRoom>content;
             this.getTTZDeskProxy().addPlayerData(s2CPushJoinRoom.players);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_PLAYER_QUIT_ROOM) {
             let s2CQuitRoom: S2CQuitRoom = <S2CQuitRoom>content;
             this.getTTZDeskProxy().removePlayerData(s2CQuitRoom.playerNames);
-
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_REST_COUNTDOWN) {
             let s2CPushCountDown: S2CPushCountDown = <S2CPushCountDown>content;
+            let countdown = "";
+            if (s2CPushCountDown.countdown > 9) {
+                countdown = "" + s2CPushCountDown.countdown;
+            } else {
+                countdown = "0" + s2CPushCountDown.countdown;
+            }
+            this.getTTZDeskProxy().updateGameStateStr("等待开始" + countdown);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_BANKER_PLAYER) {
             let s2CPushBankerChange: S2CPushBankerChange = <S2CPushBankerChange>content;
+            this.getTTZDeskProxy().updateApplyMasterPlayer(s2CPushBankerChange.deskBankerPlayer);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_BET_COUNTDOWN) {
             let s2CPushCountDown: S2CPushCountDown = <S2CPushCountDown>content;
+            if (s2CPushCountDown.countdown >= 1) {
+                let countdown = "";
+                if (s2CPushCountDown.countdown > 9) {
+                    countdown = "" + s2CPushCountDown.countdown;
+                } else {
+                    countdown = "0" + s2CPushCountDown.countdown;
+                }
+                this.getTTZDeskProxy().updateGameStateStr("开始下注" + countdown);
+            } else {
+                this.getTTZDeskProxy().updateGameStateStr("停止下注");
+            }
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_ROOM_POKER) {
             let s2CPushRoomPoker: S2CPushRoomPoker = <S2CPushRoomPoker>content;
+            this.getTTZDeskProxy().updateGameStateStr("比牌中");
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_CREDIT_UPDATE) {
             let s2CBetUpdateMoney: S2CBetUpdateMoney = <S2CBetUpdateMoney>content;
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_SEAT_CHANGE) {
@@ -106,6 +126,7 @@ export class TuiTongZiProxy extends ModuleProxy {
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_DOWN_BANKER) {
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_DEAL) {
             let s2CPushDeal: S2CPushDeal = <S2CPushDeal>content;
+            this.getTTZDeskProxy().updateGameStateStr("发牌中");
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_MULTIPLAYER_BET) {
             let s2CPushMultiplayerBet: S2CPushMultiplayerBet = <S2CPushMultiplayerBet>content;
             this.getTTZDeskProxy().updateAnteData(s2CPushMultiplayerBet.betInfos);
