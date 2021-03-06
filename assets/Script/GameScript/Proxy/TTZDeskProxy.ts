@@ -120,7 +120,7 @@ export class TTZDeskProxy extends BaseProxy {
     updateCardDataList(pokers: string[]): void {
         for (let index = 0; index < 4; index++) {
             let start = index * 2;
-            let end = start + 1;
+            let end = start + 2;
 
             if (index === 0) {
                 let positionPokers = pokers.slice(start, end);

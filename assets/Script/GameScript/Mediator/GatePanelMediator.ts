@@ -75,6 +75,7 @@ export class GatePanelMediator extends BaseMediator {
             PrefabDefine.BonusIndex,
             PrefabDefine.DymjRecordItem,
             PrefabDefine.XzddRecordItem,
+            PrefabDefine.TuiTongZiRecordItem,
             PrefabDefine.DymjRecordDetail,
             PrefabDefine.XdzzRecordDetail,
         ];

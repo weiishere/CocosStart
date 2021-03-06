@@ -26,6 +26,8 @@ export default class TuiTongZiRecord extends BaseRecord {
     weiBetLabel: cc.Label = null;
     @property(cc.Prefab)
     cardItemPrefab: cc.Prefab = null;
+    @property(cc.Node)
+    bankerIconNode: cc.Node = null;
 
     protected bindUI(): void {
     }
@@ -48,13 +50,42 @@ export default class TuiTongZiRecord extends BaseRecord {
         this.loadResultNode(roomPlayaerCreditDto);
     }
 
+    /**
+     * 创建用户项
+     */
+    createPlayerItem(playerData: RoomPlayerCredit) {
+        let playerItemObj = this.getPlayerItem();
+        let head = playerData.head;
+        playerItemObj.active = true;
+        let nicknameLabel = playerItemObj.getChildByName("nickname").getComponent(cc.Label);
+        nicknameLabel.string = playerData.nickname;
+        let playerIdLabel = playerItemObj.getChildByName("id").getComponent(cc.Label);
+        playerIdLabel.string = "ID：" + playerData.userName;
+        let winlossLabel = playerItemObj.getChildByName("winloss").getComponent(cc.Label);
+        if (playerData.credit >= 0) {
+            let color = cc.color().fromHEX("#FF0000")
+            winlossLabel.node.color = color;
+            winlossLabel.string = "+" + playerData.credit;
+        } else {
+            let color = cc.color().fromHEX("#008567")
+            winlossLabel.node.color = color;
+            winlossLabel.string = playerData.credit + "";
+        }
+        let headSprite = playerItemObj.getChildByName("head").getComponent(cc.Sprite);
+
+        SpriteLoadUtil.loadSprite(headSprite, head);
+        return playerItemObj;
+    }
+
     loadResultNode(roomPlayaerCreditDto: RoomPlayerCredit) {
+        this.bankerIconNode.active = roomPlayaerCreditDto.bankerCount > 0;
+
         let playLogParam: TuiTongZiPlayLogParam = JSON.parse(roomPlayaerCreditDto.extraParam);
 
         // 加载结果
         for (let i = 0; i < 4; i++) {
             let start = i * 2;
-            let end = start + 1;
+            let end = start + 2;
             let positionPokers = playLogParam.pokers.slice(start, end);
             this.loadPositionNode(i, positionPokers);
         }
@@ -87,6 +118,7 @@ export default class TuiTongZiRecord extends BaseRecord {
 
     loadPositionNode(index: number, positionPokers: string[]) {
         let positionNodeNew = cc.instantiate(this.positionNode);
+        positionNodeNew.active = true;
         this.resultNode.addChild(positionNodeNew);
 
         let positionNameLabel = positionNodeNew.getChildByName("positionNameLabel").getComponent(cc.Label);
@@ -101,9 +133,9 @@ export default class TuiTongZiRecord extends BaseRecord {
         }
 
         let cardItemNode = cc.instantiate(this.cardItemPrefab);
-        positionNodeNew.x = -4;
-        positionNodeNew.y = 0;
-        positionNodeNew.scale = 0.8
+        cardItemNode.x = -4;
+        cardItemNode.y = 0;
+        cardItemNode.scale = 0.8
         positionNodeNew.addChild(cardItemNode);
 
         let cardItemView: CardItemView = cardItemNode.getComponent("CardItemView");
@@ -111,9 +143,9 @@ export default class TuiTongZiRecord extends BaseRecord {
 
 
         cardItemNode = cc.instantiate(this.cardItemPrefab);
-        positionNodeNew.x = 58;
-        positionNodeNew.y = 0;
-        positionNodeNew.scale = 0.8
+        cardItemNode.x = 58;
+        cardItemNode.y = 0;
+        cardItemNode.scale = 0.8
         positionNodeNew.addChild(cardItemNode);
 
         cardItemView = cardItemNode.getComponent("CardItemView");

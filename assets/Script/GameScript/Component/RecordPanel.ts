@@ -145,6 +145,8 @@ export default class RecordPanel extends ViewComponent {
             data = cc.loader.getRes(PrefabDefine.DymjRecordItem, cc.Prefab);
         } else if (gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI) {
             data = cc.loader.getRes(PrefabDefine.XzddRecordItem, cc.Prefab);
+        } else if (gameSubClass === GameNoDefine.TUI_TONG_ZI) {
+            data = cc.loader.getRes(PrefabDefine.TuiTongZiRecordItem, cc.Prefab);
         }
 
         if (!data) {
