@@ -118,6 +118,7 @@ export class TuiTongZiProxy extends ModuleProxy {
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_ROOM_POKER) { //推送本局的结算结果
             let s2CPushRoomPoker: S2CPushRoomPoker = <S2CPushRoomPoker>content;
             this.getTTZDeskProxy().updateGameStateStr("比牌中");
+            this.getTTZDeskProxy().gameResult(s2CPushRoomPoker);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_CREDIT_UPDATE) {  //推送玩家分数变化
             let s2CBetUpdateMoney: S2CBetUpdateMoney = <S2CBetUpdateMoney>content;
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_SEAT_CHANGE) {   //推送座位变化
@@ -166,6 +167,8 @@ export class TuiTongZiProxy extends ModuleProxy {
             this.getGateProxy().toast("上庄排队的人数满了");
         } else if (errorCode === TuiTongZiErrorCode.NO_MEET_UP_BANKER_CONDITION) {
             this.getGateProxy().toast("余额不足，不能上庄");
+        } else if (errorCode === TuiTongZiErrorCode.NOT_REPEAT_UP_BANKER) {
+            this.getGateProxy().toast("已经上庄了，不能重复上庄");
         } else if (errorCode === TuiTongZiErrorCode.WAIT_IDLE_DOWN_BANKER) {
             this.getGateProxy().toast("下庄成功，等待休息时下庄");
         } else if (errorCode === TuiTongZiErrorCode.CONTINUE_BANKER_COUNT_FULL) {

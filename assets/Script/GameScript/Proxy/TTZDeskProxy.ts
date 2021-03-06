@@ -8,6 +8,7 @@ import { PlayerBet } from "../GameData/TuiTongZi/s2c/PlayerBet";
 import { CommandDefine } from "../TuiTongZiConst/CommandDefine";
 import { HistoryItem } from "../GameData/TuiTongZi/s2c/HistoryItem";
 import { BankerQueuePlayer } from "../GameData/TuiTongZi/s2c/BankerQueuePlayer";
+import { S2CPushRoomPoker } from "../GameData/TuiTongZi/s2c/S2CPushRoomPoker";
 
 export class TTZDeskProxy extends BaseProxy {
     public repository: TTZDeskRepository;
@@ -320,9 +321,10 @@ export class TTZDeskProxy extends BaseProxy {
     }
 
     /**
-     * 游戏开牌结果数据
+     * 游戏结果
+     * @param s2CPushRoomPoker 结算数据
      */
-    gameResult() {
+    gameResult(s2CPushRoomPoker: S2CPushRoomPoker) {
 
     }
 
