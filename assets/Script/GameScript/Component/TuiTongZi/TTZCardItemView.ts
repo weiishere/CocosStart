@@ -43,7 +43,7 @@ export default class TTZCardItemView extends ViewComponent {
     tong9: cc.SpriteFrame = null;
 
     @property(cc.Node)
-    cardNumberNode: cc.Node;
+    cardNumberNode: cc.Node = null;
 
     private cardNumber = 0;
     bindEvent() {

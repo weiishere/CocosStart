@@ -17,6 +17,7 @@ export enum PrefabDefine {
     XzddDesk = "prefabs/club/xzddDesk",
     DymjRecordItem = "prefabs/record/dymjRecordItem",
     XzddRecordItem = "prefabs/record/xzddRecordItem",
+    TuiTongZiRecordItem = "prefabs/record/tuiTongZiRecordItem",
     DymjRecordDetail = "prefabs/record/dymjRecordDetail",
     XdzzRecordDetail = "prefabs/record/xzddRecordDetail",
     /** 个人中心 */

@@ -7,6 +7,8 @@ import { S2CPushBetInfo } from "../GameData/TuiTongZi/s2c/S2CPushBetInfo";
 import { PlayerBet } from "../GameData/TuiTongZi/s2c/PlayerBet";
 import { CommandDefine } from "../TuiTongZiConst/CommandDefine";
 import { HistoryItem } from "../GameData/TuiTongZi/s2c/HistoryItem";
+import { BankerQueuePlayer } from "../GameData/TuiTongZi/s2c/BankerQueuePlayer";
+import { S2CPushRoomPoker } from "../GameData/TuiTongZi/s2c/S2CPushRoomPoker";
 
 export class TTZDeskProxy extends BaseProxy {
     public repository: TTZDeskRepository;
@@ -121,7 +123,7 @@ export class TTZDeskProxy extends BaseProxy {
     updateCardDataList(pokers: string[]): void {
         for (let index = 0; index < 4; index++) {
             let start = index * 2;
-            let end = start + 1;
+            let end = start + 2;
 
             if (index === 0) {
                 let positionPokers = pokers.slice(start, end);
@@ -216,17 +218,17 @@ export class TTZDeskProxy extends BaseProxy {
                 let betValList = betInfo.betValList;
                 for (const betVal of betValList) {
                     if (betVal.betType === 0) {
-                        this.repository.gameData.subData.qian.glods.push({ userInfo: userInfo, amount: betVal.betVal });
-                        this.repository.gameData.subData.qian.totalGold += betVal.betVal;
-
-                        if (this.isMy(userInfo.uid)) {
-                            this.repository.gameData.myAnteData.qian += betVal.betVal;
-                        }
-                    } else if (betVal.betType === 1) {
                         this.repository.gameData.subData.shun.glods.push({ userInfo: userInfo, amount: betVal.betVal });
                         this.repository.gameData.subData.shun.totalGold += betVal.betVal;
+
                         if (this.isMy(userInfo.uid)) {
                             this.repository.gameData.myAnteData.shun += betVal.betVal;
+                        }
+                    } else if (betVal.betType === 1) {
+                        this.repository.gameData.subData.qian.glods.push({ userInfo: userInfo, amount: betVal.betVal });
+                        this.repository.gameData.subData.qian.totalGold += betVal.betVal;
+                        if (this.isMy(userInfo.uid)) {
+                            this.repository.gameData.myAnteData.qian += betVal.betVal;
                         }
                     } else if (betVal.betType === 2) {
                         this.repository.gameData.subData.wei.glods.push({ userInfo: userInfo, amount: betVal.betVal });
@@ -240,28 +242,37 @@ export class TTZDeskProxy extends BaseProxy {
         }
     }
 
-    /**下注数据更新 */
+    /**
+     * 更新玩家下注数据
+     * @param betInfos 
+     */
     updateAnteData(betInfos: S2CPushBetInfo[]): void {
         for (const betInfo of betInfos) {
             let userInfo = this.getUserInfo(betInfo.playerName);
             if (userInfo) {
                 let betValList = betInfo.betValList;
                 for (const betVal of betValList) {
-                    if (betVal.betType === 0) {
-                        this.repository.gameData.subData.qian.glods.push({ userInfo: userInfo, amount: betVal.betVal });
-                        this.repository.gameData.subData.qian.totalGold += betVal.betVal;
-                        if (this.isMy(userInfo.uid)) {
-                            this.repository.gameData.myAnteData.qian += betVal.betVal;
-                        }
-                    } else if (betVal.betType === 1) {
+                    if (betVal.betType === 0) { //顺门的下注
                         this.repository.gameData.subData.shun.glods.push({ userInfo: userInfo, amount: betVal.betVal });
+                        // 累计这个位置的总的下注
                         this.repository.gameData.subData.shun.totalGold += betVal.betVal;
+                        // 累计自己的下注数据
                         if (this.isMy(userInfo.uid)) {
                             this.repository.gameData.myAnteData.shun += betVal.betVal;
                         }
-                    } else if (betVal.betType === 2) {
+                    } else if (betVal.betType === 1) {//迁门的下注
+                        this.repository.gameData.subData.qian.glods.push({ userInfo: userInfo, amount: betVal.betVal });
+                        // 累计这个位置的总的下注
+                        this.repository.gameData.subData.qian.totalGold += betVal.betVal;
+                        // 累计自己的下注数据
+                        if (this.isMy(userInfo.uid)) {
+                            this.repository.gameData.myAnteData.qian += betVal.betVal;
+                        }
+                    } else if (betVal.betType === 2) {//尾门的下注
                         this.repository.gameData.subData.wei.glods.push({ userInfo: userInfo, amount: betVal.betVal });
+                        // 累计这个位置的总的下注
                         this.repository.gameData.subData.wei.totalGold += betVal.betVal;
+                        // 累计自己的下注数据
                         if (this.isMy(userInfo.uid)) {
                             this.repository.gameData.myAnteData.wei += betVal.betVal;
                         }
@@ -271,10 +282,18 @@ export class TTZDeskProxy extends BaseProxy {
         }
     }
 
+    /**
+     * 初始化历史记录
+     * @param historyItems 
+     */
     initHistory(historyItems: HistoryItem[]) {
         this.repository.gameData.historys = historyItems;
     }
 
+    /**
+     * 添加历史记录
+     * @param historyItem 
+     */
     addHistory(historyItem: HistoryItem) {
         if (this.repository.gameData.historys.length >= 20) {
             this.repository.gameData.historys.shift();
@@ -282,8 +301,34 @@ export class TTZDeskProxy extends BaseProxy {
         this.repository.gameData.historys.push(historyItem);
     }
 
+    /**
+     * 更新游戏状态字符串
+     * @param str 
+     */
     updateGameStateStr(str: string) {
         this.repository.gameData.stateStr = str;
+    }
+
+    /**
+     * 更新等待排队的庄家列表
+     */
+    updateWaitBankerList(bankerWaitList: BankerQueuePlayer[]) {
+        let users = [];
+        for (const bankerQueuePlayer of bankerWaitList) {
+            let userInfo = this.getUserInfo(bankerQueuePlayer.name);
+            if (userInfo) {
+                users.push(userInfo);
+            }
+        }
+        this.repository.deskData.playerList.applyMasterPlayer = users;
+    }
+
+    /**
+     * 游戏结果
+     * @param s2CPushRoomPoker 结算数据
+     */
+    gameResult(s2CPushRoomPoker: S2CPushRoomPoker) {
+
     }
 
     getGameData(): GameData {
