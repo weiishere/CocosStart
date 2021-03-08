@@ -158,7 +158,7 @@ export class TTZDeskProxy extends BaseProxy {
                     this.repository.gameData.subData.qian.cards.second.card = 0;
                     this.repository.gameData.subData.qian.cards.second.isShow = false;
                 }
-            } else if (index === 2) {
+            } else if (index === 3) {
                 let positionPokers = pokers.slice(start, end);
                 this.repository.gameData.subData.wei.cards.frist.card = this.convertMahjongValue(parseInt(positionPokers[0]));
                 this.repository.gameData.subData.wei.cards.frist.isShow = true;
@@ -171,6 +171,7 @@ export class TTZDeskProxy extends BaseProxy {
                 }
             }
         }
+        this.facade.sendNotification(CommandDefine.RefreshCardPush, null, '');
     }
 
     /**

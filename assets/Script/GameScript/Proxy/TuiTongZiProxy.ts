@@ -117,6 +117,7 @@ export class TuiTongZiProxy extends ModuleProxy {
             }
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_ROOM_POKER) { //推送本局的结算结果
             let s2CPushRoomPoker: S2CPushRoomPoker = <S2CPushRoomPoker>content;
+            this.getTTZDeskProxy().updateCardDataList(s2CPushRoomPoker.pokers);
             this.getTTZDeskProxy().updateGameStateStr("比牌中");
             this.getTTZDeskProxy().gameResult(s2CPushRoomPoker);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_CREDIT_UPDATE) {  //推送玩家分数变化
@@ -130,6 +131,8 @@ export class TuiTongZiProxy extends ModuleProxy {
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_DEAL) {
             let s2CPushDeal: S2CPushDeal = <S2CPushDeal>content;
             this.getTTZDeskProxy().updateGameStateStr("发牌中");
+            
+            this.getTTZDeskProxy().updateCardDataList(s2CPushDeal.spokers);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_MULTIPLAYER_BET) {    //推送玩家下注
             let s2CPushMultiplayerBet: S2CPushMultiplayerBet = <S2CPushMultiplayerBet>content;
             this.getTTZDeskProxy().updateAnteData(s2CPushMultiplayerBet.betInfos);

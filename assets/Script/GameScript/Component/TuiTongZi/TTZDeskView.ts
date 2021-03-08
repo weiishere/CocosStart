@@ -12,6 +12,7 @@ import { PrefabDefine } from "../../TuiTongZiConst/PrefabDefine";
 import Facade from "../../../Framework/care/Facade";
 import { ProxyDefine } from "../../TuiTongZiConst/ProxyDefine";
 import { TTZDeskProxy } from "../../Proxy/TTZDeskProxy";
+import TTZCardItemView from "./TTZCardItemView";
 
 @ccclass
 export default class TTZDeskView extends ViewComponent {
@@ -35,6 +36,9 @@ export default class TTZDeskView extends ViewComponent {
     chip_50: cc.Node = null;
     @property(cc.Node)
     chip_100: cc.Node = null;
+
+    @property(cc.Prefab)
+    cardItem: cc.Prefab = null;
     // onLoad () {}
     bindUI() {
         this.deskOpreationIconWrap = this.node.getChildByName("deskOpreationIconWrap");
@@ -164,7 +168,7 @@ export default class TTZDeskView extends ViewComponent {
             const playerHead: cc.Node = cc.instantiate(head);
             (playerHead.getComponent("PlayerHead") as PlayerHead).init(selfPlayer.uid, selfPlayer.headImg, "landscape", selfPlayer.score, selfPlayer.nickName);
             this.myHeader.addChild(playerHead);
-        })
+        });
     }
     /**刷新闲家玩家列表 */
     updateSubPlayerList() {
@@ -214,8 +218,29 @@ export default class TTZDeskView extends ViewComponent {
     }
     /**刷新牌组 */
     updateCardView() {
+        const getCardItem = (parent: cc.Node, index: number, { card, isShow }, position: cc.Vec3): TTZCardItemView => {
+            let _node: cc.Node;
+            if (parent.children[index]) {
+                const item = cc.instantiate(this.cardItem);
+                parent.addChild(item);
+                item.position = position;
+                item.scale = 0.8;
+                _node = item;
+            } else { _node = parent.children[index] }
+            const script = _node.getComponent(TTZCardItemView) as TTZCardItemView;
+            if (isShow) {
+                script.overTurn(card);
+            } else {
+                script.reset();
+            }
+            return script;
+        }
         //首先刷新庄家牌组
         const { frist, second } = this.getData().gameData.masterData.cards;
+        const masterCard_1 = getCardItem(this.node.getChildByName('masterWrap').getChildByName('zjbg'), 0, frist, cc.v3(-30, 0, 0));
+        const masterCard_2 = getCardItem(this.node.getChildByName('masterWrap').getChildByName('zjbg'), 1, second, cc.v3(30, 0, 0));
+
+
         //刷新闲家牌组
     }
 }

@@ -68,6 +68,10 @@ export default class TTZCardItemView extends ViewComponent {
                 this.cardNumberNode.active = true;
             }).start();
     }
+    /**复位（盖住） */
+    reset() {
+        this.cardNumberNode.getComponent(cc.Sprite).spriteFrame = this.faceCardhide;
+    }
     start() {
 
     }

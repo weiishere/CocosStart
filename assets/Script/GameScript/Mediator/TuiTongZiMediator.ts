@@ -37,7 +37,8 @@ export class TuiTongZiMediator extends BaseMediator {
             CommandDefine.OpenCard,
             CommandDefine.ShowResult,
             CommandDefine.GetWinGlod,
-            CommandDefine.ClearDesk
+            CommandDefine.ClearDesk,
+            CommandDefine.RefreshCardPush
         ];
     }
     public getTZDeskProxy(): TTZDeskProxy {
@@ -96,6 +97,7 @@ export class TuiTongZiMediator extends BaseMediator {
                 this.sendNotification(CommandDefine.RefreshSelfPlayerPush);
                 this.sendNotification(CommandDefine.RefreshPlayerPush);
                 this.sendNotification(CommandDefine.RefreshMasterPlayerPush);
+                this.sendNotification(CommandDefine.RefreshCardPush);
                 break;
             case CommandDefine.RefreshSelfPlayerPush:
                 this.TTZDeskViewScript.updatePlayerHead();
@@ -107,8 +109,12 @@ export class TuiTongZiMediator extends BaseMediator {
                 break;
             case CommandDefine.RefreshMasterPlayerPush:
                 //刷新拼庄玩家
-                
+
                 this.TTZDeskViewScript && this.TTZDeskViewScript.updateSMasterPlayerList();
+                break;
+            case CommandDefine.RefreshCardPush:
+                this.TTZDeskViewScript && this.TTZDeskViewScript.updateCardView();
+                //发牌
                 break;
             case CommandDefine.LicensingCardPush:
                 //发牌

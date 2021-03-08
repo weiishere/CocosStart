@@ -8,5 +8,6 @@ export enum CommandDefine {
     OpenCard = 'OpenCard',
     ShowResult = 'ShowResult',
     GetWinGlod = 'GetWinGlod',
-    ClearDesk = 'ClearDesk'
+    ClearDesk = 'ClearDesk',
+    RefreshCardPush = 'RefreshCardPush'
 }
