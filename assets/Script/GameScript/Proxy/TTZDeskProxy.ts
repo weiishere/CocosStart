@@ -329,7 +329,7 @@ export class TTZDeskProxy extends BaseProxy {
      * @param s2CPushRoomPoker 结算数据
      */
     gameResult(s2CPushRoomPoker: S2CPushRoomPoker) {
-
+        this.updateCardDataList(s2CPushRoomPoker.pokers);
     }
 
     getGameData(): GameData {
