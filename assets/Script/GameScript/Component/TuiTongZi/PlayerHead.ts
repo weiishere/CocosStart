@@ -34,7 +34,7 @@ export default class PlayerHead extends ViewComponent {
     bindUI() {
 
     }
-    init(id: string, headImg: string, layout: 'landscape' | 'vertical' | 'simple', glod?: number, name?: string, percent?: number): void {
+    init(id: string, headImg: string, layout: 'landscape' | 'vertical' | 'simple', glod?: Number, name?: string, percent?: number): void {
         const playerHead = this.node;
         const head = playerHead.getChildByName('head');
         const baifenbi = playerHead.getChildByName('headLine').getChildByName('baifenbi');
@@ -54,16 +54,25 @@ export default class PlayerHead extends ViewComponent {
         } else {
             playerName.active = false;
         }
-        if (glod) {
-            amount.getComponent(cc.Label).string = glod + '';
+        if (glod !== undefined) {
+            amount.getComponent(cc.Label).string = glod.toFixed(2) + '';
         } else {
             playerHead.getChildByName('glodInfo').active = false;
         }
         if (layout === 'landscape') {
             //横向
             if (name) {
-
+                playerName.anchorX = 0;
+                playerName.y = 20;
+                playerName.x = 55;
             }
+            if (name) {
+                playerHead.getChildByName('glodInfo').y = -20;
+                playerHead.getChildByName('glodInfo').x = 55;
+            }
+        } else if (layout === 'simple') {
+            playerName.active = false;
+            playerHead.getChildByName('glodInfo').active = false;
         }
     }
     /**显示输赢数目 */

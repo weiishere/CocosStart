@@ -1,6 +1,7 @@
 export enum CommandDefine {
     OpenTTZDeskPanel = 'OpenTTZDeskPanel',
     RefreshPlayerPush = 'RefreshPlayerPush',
+    RefreshMasterPlayerPush = 'RefreshMasterPlayerPush',
     LicensingCardPush = 'LicensingCardPush',
     PlayerPutAntePush = 'PlayerPutAntePush',
     RefreshSelfPlayerPush = 'RefreshSelfPlayerPush',

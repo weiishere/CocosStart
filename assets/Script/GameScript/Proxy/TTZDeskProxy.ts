@@ -29,6 +29,7 @@ export class TTZDeskProxy extends BaseProxy {
 
     /**初始化玩家列表 */
     initPlayerData(players: DeskPlayer[]): void {
+        //console.log('-------------initPlayerData------------------')
         let subPlayer = [];
         for (const deskPlayer of players) {
             if (this.isMy(deskPlayer.name)) {
@@ -54,12 +55,12 @@ export class TTZDeskProxy extends BaseProxy {
     }
 
     /**
-     * 添加用户
+     * 添加玩家（数组批量）
      * @param players 
      */
     addPlayerData(players: DeskPlayer[]): void {
+        console.log('-------------addPlayerData------------------')
         let subPlayers = this.repository.deskData.playerList.subPlayer;
-
         for (const deskPlayer of players) {
             let has = false;
             for (const subPlayer of subPlayers) {
@@ -72,6 +73,7 @@ export class TTZDeskProxy extends BaseProxy {
                 subPlayers.push(this.createUserInfo(deskPlayer));
             }
         }
+        this.facade.sendNotification(CommandDefine.RefreshPlayerPush, null, '');
     }
 
     /**
@@ -112,6 +114,7 @@ export class TTZDeskProxy extends BaseProxy {
             }
             this.repository.deskData.playerList.masterPlayer.push({ userInfo: userInfo, percent: deskBankerPlayer.percent });
         }
+        this.facade.sendNotification(CommandDefine.RefreshMasterPlayerPush, null, '');
     }
 
     /**更新牌组 */

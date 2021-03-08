@@ -5,6 +5,8 @@ import BaseMediator from "../Mediator/BaseMediator"
 import { PrefabDefine as TuiTongZiPrefabDefine } from "../TuiTongZiConst/PrefabDefine";
 import { CommandDefine } from "../TuiTongZiConst/CommandDefine";
 import TTZDeskView from "../Component/TuiTongZi/TTZDeskView";
+import { TTZDeskProxy } from "../Proxy/TTZDeskProxy";
+import { ProxyDefine } from "../TuiTongZiConst/ProxyDefine";
 
 export class TuiTongZiMediator extends BaseMediator {
     public constructor(mediatorName: string = null, viewComponent: any = null) {
@@ -29,6 +31,7 @@ export class TuiTongZiMediator extends BaseMediator {
             CommandDefine.OpenTTZDeskPanel,
             CommandDefine.RefreshSelfPlayerPush,
             CommandDefine.RefreshPlayerPush,
+            CommandDefine.RefreshMasterPlayerPush,
             CommandDefine.LicensingCardPush,
             CommandDefine.PlayerPutAntePush,
             CommandDefine.OpenCard,
@@ -37,8 +40,16 @@ export class TuiTongZiMediator extends BaseMediator {
             CommandDefine.ClearDesk
         ];
     }
+    public getTZDeskProxy(): TTZDeskProxy {
+        return <TTZDeskProxy>this.facade.retrieveProxy(ProxyDefine.TTZDesk);
+    }
 
     public async handleNotification(notification: INotification) {
+        const gameData = this.getTZDeskProxy().getGameData();
+        const deskData = this.getTZDeskProxy().getDeskData();
+        console.log('gameData', gameData);
+        console.log('deskData', deskData);
+
         switch (notification.getName()) {
             case CommandDefine.OpenTTZDeskPanel:
                 await this.init();
@@ -82,7 +93,9 @@ export class TuiTongZiMediator extends BaseMediator {
 
                     }
                 });
-                this.sendNotification(CommandDefine.RefreshSelfPlayerPush)
+                this.sendNotification(CommandDefine.RefreshSelfPlayerPush);
+                this.sendNotification(CommandDefine.RefreshPlayerPush);
+                this.sendNotification(CommandDefine.RefreshMasterPlayerPush);
                 break;
             case CommandDefine.RefreshSelfPlayerPush:
                 this.TTZDeskViewScript.updatePlayerHead();
@@ -90,6 +103,12 @@ export class TuiTongZiMediator extends BaseMediator {
                 break;
             case CommandDefine.RefreshPlayerPush:
                 //刷新玩家
+                this.TTZDeskViewScript.updateSubPlayerList();
+                break;
+            case CommandDefine.RefreshMasterPlayerPush:
+                //刷新拼庄玩家
+                
+                this.TTZDeskViewScript && this.TTZDeskViewScript.updateSMasterPlayerList();
                 break;
             case CommandDefine.LicensingCardPush:
                 //发牌

@@ -20,6 +20,9 @@ export default class TTZDeskView extends ViewComponent {
     private antePanelWrap: cc.Node;
     private chipWrap: cc.Node;
     private myHeader: cc.Node;
+    private subPlayerHeaderLeft: cc.Node;
+    private subPlayerHeaderRight: cc.Node;
+    private masterWrap: cc.Node;
 
     // LIFE-CYCLE CALLBACKS:
     @property(cc.Node)
@@ -36,6 +39,9 @@ export default class TTZDeskView extends ViewComponent {
     bindUI() {
         this.deskOpreationIconWrap = this.node.getChildByName("deskOpreationIconWrap");
         this.myHeader = this.node.getChildByName("myHeaderWrap");
+        this.subPlayerHeaderLeft = this.node.getChildByName("subPlayer_left");
+        this.subPlayerHeaderRight = this.node.getChildByName("subPlayer_right");
+        this.masterWrap = this.node.getChildByName("masterWrap");
         ///this.deskBtus = this.deskOpreationIconWrap.children;
         for (let i in this.deskOpreationIconWrap.children) {
             if (this.deskOpreationIconWrap.children[i] instanceof cc.Node) {
@@ -101,16 +107,7 @@ export default class TTZDeskView extends ViewComponent {
             }, _option.keepTime);
         }
     }
-    /**刷新头像 */
-    updatePlayerHead() {
-        //设置玩家自己头像
-        const selfPlayer = this.getData().deskData.playerList.mySelf;
-        cc.loader.loadRes(PrefabDefine.PlayerHead, cc.Prefab, (err, head) => {
-            const playerHead: cc.Node = cc.instantiate(head);
-            (playerHead.getComponent("PlayerHead") as PlayerHead).init(selfPlayer.uid, selfPlayer.headImg, "landscape");
-            this.myHeader.addChild(playerHead);
-        })
-    }
+
     /**绑定砝码点击操作 */
     public bindClipOpreationEvent(callBack: (node: cc.Node, clipNum: number) => void): void {
         let isDone = true;
@@ -159,5 +156,66 @@ export default class TTZDeskView extends ViewComponent {
             }).start();
         }, this);
     }
-    // update (dt) {}
+    /**刷新头像 */
+    updatePlayerHead() {
+        //设置玩家自己头像
+        const selfPlayer = this.getData().deskData.playerList.mySelf;
+        cc.loader.loadRes(PrefabDefine.PlayerHead, cc.Prefab, (err, head) => {
+            const playerHead: cc.Node = cc.instantiate(head);
+            (playerHead.getComponent("PlayerHead") as PlayerHead).init(selfPlayer.uid, selfPlayer.headImg, "landscape", selfPlayer.score, selfPlayer.nickName);
+            this.myHeader.addChild(playerHead);
+        })
+    }
+    /**刷新闲家玩家列表 */
+    updateSubPlayerList() {
+        const initHead = (head, index: number, parent: cc.Node, position: cc.Vec3) => {
+            const playerHead: cc.Node = cc.instantiate(head);
+            const _subPlayer = this.getData().deskData.playerList.subPlayer[index];
+            if (_subPlayer) {
+                (playerHead.getComponent("PlayerHead") as PlayerHead).init(_subPlayer.uid, _subPlayer.headImg, "vertical", _subPlayer.score, _subPlayer.nickName);
+                playerHead.position = position;
+                playerHead.scale = 0.8;
+                parent.addChild(playerHead);
+            }
+        }
+        cc.loader.loadRes(PrefabDefine.PlayerHead, cc.Prefab, (err, head) => {
+            initHead(head, 0, this.subPlayerHeaderLeft, new cc.Vec3(58, 220));
+            initHead(head, 1, this.subPlayerHeaderLeft, new cc.Vec3(-31, 100));
+            initHead(head, 2, this.subPlayerHeaderLeft, new cc.Vec3(-51, -30));
+            initHead(head, 3, this.subPlayerHeaderLeft, new cc.Vec3(20, -155));
+
+            initHead(head, 4, this.subPlayerHeaderRight, new cc.Vec3(-40, 220));
+            initHead(head, 5, this.subPlayerHeaderRight, new cc.Vec3(40, 100));
+            initHead(head, 6, this.subPlayerHeaderRight, new cc.Vec3(60, -30));
+            initHead(head, 7, this.subPlayerHeaderRight, new cc.Vec3(20, -155));
+        })
+    }
+    /**刷新庄家玩家列表 */
+    updateSMasterPlayerList() {
+        const initHead = (head, index: number, parent: cc.Node, position: cc.Vec3) => {
+            const playerHead: cc.Node = cc.instantiate(head);
+            const _masterPlayer = this.getData().deskData.playerList.masterPlayer[index];
+            if (_masterPlayer) {
+                (playerHead.getComponent("PlayerHead") as PlayerHead).init(_masterPlayer.userInfo.uid, _masterPlayer.userInfo.headImg, "simple", _masterPlayer.userInfo.score, _masterPlayer.userInfo.nickName, +_masterPlayer.percent);
+                playerHead.position = position;
+                playerHead.scale = 0.9;
+                // const widget = playerHead.addComponent(cc.Widget);
+                // widget.left = widgetValue;
+                parent.addChild(playerHead);
+            }
+        }
+        cc.loader.loadRes(PrefabDefine.PlayerHead, cc.Prefab, (err, head) => {
+            initHead(head, 0, this.masterWrap, new cc.Vec3(-320, 0));
+            initHead(head, 1, this.masterWrap, new cc.Vec3(-220, 0));
+            initHead(head, 2, this.masterWrap, new cc.Vec3(-120, 0));
+            initHead(head, 3, this.masterWrap, new cc.Vec3(120, 0));
+            initHead(head, 4, this.masterWrap, new cc.Vec3(220, 0));
+        })
+    }
+    /**刷新牌组 */
+    updateCardView() {
+        //首先刷新庄家牌组
+        const { frist, second } = this.getData().gameData.masterData.cards;
+        //刷新闲家牌组
+    }
 }
