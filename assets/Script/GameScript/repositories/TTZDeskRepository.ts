@@ -11,9 +11,9 @@ import { HistoryItem } from "../GameData/TuiTongZi/s2c/HistoryItem"
 export type UserInfo = {
     uid: string,
     nickName: string,
-    gender: Number,
+    gender: number,
     headImg: string,
-    score: Number,
+    score: number,
     phone: string,
     openId: string,
     seatNo: number

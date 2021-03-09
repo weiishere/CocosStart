@@ -7,6 +7,7 @@ import { CommandDefine } from "../TuiTongZiConst/CommandDefine";
 import TTZDeskView from "../Component/TuiTongZi/TTZDeskView";
 import { TTZDeskProxy } from "../Proxy/TTZDeskProxy";
 import { ProxyDefine } from "../TuiTongZiConst/ProxyDefine";
+import { TuiTongZiProxy } from "../Proxy/TuiTongZiProxy";
 
 export class TuiTongZiMediator extends BaseMediator {
     public constructor(mediatorName: string = null, viewComponent: any = null) {
@@ -38,11 +39,16 @@ export class TuiTongZiMediator extends BaseMediator {
             CommandDefine.ShowResult,
             CommandDefine.GetWinGlod,
             CommandDefine.ClearDesk,
-            CommandDefine.RefreshCardPush
+            CommandDefine.RefreshCardPush,
+            CommandDefine.RefreshGamePromptPush,
+            CommandDefine.RefreshGameScorePush
         ];
     }
     public getTZDeskProxy(): TTZDeskProxy {
         return <TTZDeskProxy>this.facade.retrieveProxy(ProxyDefine.TTZDesk);
+    }
+    public getTuiTongZiProxy(): TuiTongZiProxy {
+        return <TuiTongZiProxy>this.facade.retrieveProxy(ProxyDefine.TuiTongZi);
     }
 
     public async handleNotification(notification: INotification) {
@@ -86,18 +92,21 @@ export class TuiTongZiMediator extends BaseMediator {
                     this.hadChooseClip = clipNum;
                 });
                 this.TTZDeskViewScript.bindAnteAreaEvent((node: cc.Node, anteCode: string) => {
+                    if (!this.hadChooseClip) return;
                     if (anteCode === 'shun') {
-
-                    } else if (anteCode === 'wei') {
-
+                        this.getTuiTongZiProxy().bet(0, this.hadChooseClip);
                     } else if (anteCode === 'qian') {
-
+                        this.getTuiTongZiProxy().bet(1, this.hadChooseClip);
+                    } else if (anteCode === 'wei') {
+                        this.getTuiTongZiProxy().bet(2, this.hadChooseClip);
                     }
                 });
                 this.sendNotification(CommandDefine.RefreshSelfPlayerPush);
                 this.sendNotification(CommandDefine.RefreshPlayerPush);
                 this.sendNotification(CommandDefine.RefreshMasterPlayerPush);
-                this.sendNotification(CommandDefine.RefreshCardPush);
+                this.sendNotification(CommandDefine.RefreshCardPush, { isInit: false });
+                this.sendNotification(CommandDefine.RefreshGamePromptPush);
+                this.sendNotification(CommandDefine.RefreshGameScorePush);
                 break;
             case CommandDefine.RefreshSelfPlayerPush:
                 this.TTZDeskViewScript.updatePlayerHead();
@@ -105,28 +114,40 @@ export class TuiTongZiMediator extends BaseMediator {
                 break;
             case CommandDefine.RefreshPlayerPush:
                 //刷新玩家
-                this.TTZDeskViewScript.updateSubPlayerList();
+                this.TTZDeskViewScript && this.TTZDeskViewScript.updateSubPlayerList();
                 break;
             case CommandDefine.RefreshMasterPlayerPush:
                 //刷新拼庄玩家
-
                 this.TTZDeskViewScript && this.TTZDeskViewScript.updateSMasterPlayerList();
                 break;
             case CommandDefine.RefreshCardPush:
-                this.TTZDeskViewScript && this.TTZDeskViewScript.updateCardView();
                 //发牌
+                const { isInit } = notification.getBody();
+                this.TTZDeskViewScript && this.TTZDeskViewScript.updateCardView(isInit);
+                if (isInit) this.TTZDeskViewScript.clearDesk();
+
                 break;
             case CommandDefine.LicensingCardPush:
                 //发牌
                 break;
             case CommandDefine.PlayerPutAntePush:
                 //玩家下注
+                const { userInfo, subArea, amount } = notification.getBody();
+                this.TTZDeskViewScript && this.TTZDeskViewScript.playerClipFly(userInfo, subArea, amount);
                 break;
             case CommandDefine.OpenCard:
                 //翻牌（比牌）
                 break;
             case CommandDefine.ShowResult:
                 //显示输赢结果
+                break;
+            case CommandDefine.RefreshGamePromptPush:
+                //显示游戏文字提示
+                this.TTZDeskViewScript && this.TTZDeskViewScript.updateGamePrompt();
+                break;
+            case CommandDefine.RefreshGameScorePush:
+                //显示闲家头部分数
+                this.TTZDeskViewScript && this.TTZDeskViewScript.updateSubScore();
                 break;
             case CommandDefine.GetWinGlod:
                 //显示筹码流向，流向玩家

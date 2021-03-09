@@ -45,7 +45,7 @@ export default class TTZCardItemView extends ViewComponent {
     @property(cc.Node)
     cardNumberNode: cc.Node = null;
 
-    private cardNumber = 0;
+    public cardNumber = 0;
     bindEvent() {
 
     }
@@ -53,12 +53,16 @@ export default class TTZCardItemView extends ViewComponent {
 
     }
     /**翻转 */
-    overTurn(value) {
-        this.cardNumber = value;
+    overTurn() {
+        if (this.cardNumber === 0) { return }
+        if (this.node.getComponent(cc.Sprite).spriteFrame === this.mainCardbg) {
+            //已经是翻开状态
+            this.cardNumberNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[this.cardNumber] as string];
+            return;
+        }
+        this.cardNumberNode.active = false;
+        this.node.getComponent(cc.Sprite).spriteFrame = this.faceCardhideOverTurn_1;
         cc.tween(this.node)
-            .to(0.2, {}).call(() => {
-                this.node.getComponent(cc.Sprite).spriteFrame = this.faceCardhideOverTurn_1;
-            })
             .to(0.2, {}).call(() => {
                 this.node.getComponent(cc.Sprite).spriteFrame = this.faceCardhideOverTurn_2;
             })
@@ -70,7 +74,9 @@ export default class TTZCardItemView extends ViewComponent {
     }
     /**复位（盖住） */
     reset() {
-        this.cardNumberNode.getComponent(cc.Sprite).spriteFrame = this.faceCardhide;
+        //this.cardNumber = 0;
+        this.cardNumberNode.active = false;
+        this.node.getComponent(cc.Sprite).spriteFrame = this.faceCardhide;
     }
     start() {
 

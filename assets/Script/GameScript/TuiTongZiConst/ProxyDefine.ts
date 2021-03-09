@@ -1,3 +1,4 @@
 export enum ProxyDefine {
-    TTZDesk = "TTZDesk"
+    TTZDesk = "TTZDesk",
+    TuiTongZi = "TuiTongZi"
 }

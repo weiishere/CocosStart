@@ -19,7 +19,7 @@ export default class PlayerHead extends ViewComponent {
     @property(cc.Node)
     glodInfo: cc.Label = null;
 
-    private playerId: string = '';
+    public playerId: string = '';
     private playerName: string = '玩家';
     private userImage: string = '';
     private glodMum: number = 0;

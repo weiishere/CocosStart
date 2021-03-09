@@ -6,7 +6,7 @@ export default abstract class ViewComponent extends cc.Component {
     //view: cc.Node;
     async onLoad() {
         this.root = this.node;
-        cc.log(`${this.root.name} onLoad`);
+        //cc.log(`${this.root.name} onLoad`);
         await this.bindUI();
         this.bindEvent();
     }
