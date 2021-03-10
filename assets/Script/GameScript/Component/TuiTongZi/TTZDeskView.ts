@@ -424,14 +424,14 @@ export default class TTZDeskView extends ViewComponent {
             });
             //显示用户头像输赢
             result.playerBalance.forEach(() => {
-                
+
             })
         }, 6);
 
     }
     /**金币飞舞 */
     playerClipFly(userInfo: UserInfo, subArea: 'shun' | 'qian' | 'wei', amount: number) {
-        //console.log(uid, subArea, amount);
+        console.log(userInfo, subArea, amount);
         const jetton: cc.Node = cc.instantiate(this['jetton_' + amount]);
         let fromPlayer: cc.Node = null;
         jetton.scale = 0.5;

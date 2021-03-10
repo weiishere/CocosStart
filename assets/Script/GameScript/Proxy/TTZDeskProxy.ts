@@ -102,7 +102,6 @@ export class TTZDeskProxy extends BaseProxy {
 
     /**刷新拼庄用户 */
     updateApplyMasterPlayer(deskBankerPlayers: DeskBankerPlayer[]): void {
-        if (!deskBankerPlayers) return;
         this.repository.deskData.playerList.masterPlayer = [];
         for (const deskBankerPlayer of deskBankerPlayers) {
             let userInfo: UserInfo = {
@@ -117,10 +116,10 @@ export class TTZDeskProxy extends BaseProxy {
             }
             this.repository.deskData.playerList.masterPlayer.push({ userInfo: userInfo, percent: deskBankerPlayer.percent });
         }
-        this.sendNotification(CommandDefine.RefreshMasterPlayerPush);
+        this.facade.sendNotification(CommandDefine.RefreshMasterPlayerPush, null, '');
     }
 
-    /**更新牌组(isInit:是否是发牌的更新) */
+    /**更新牌组 */
     updateCardDataList(pokers: string[], isInit: boolean): void {
         for (let index = 0; index < 4; index++) {
             let start = index * 2;
@@ -257,36 +256,37 @@ export class TTZDeskProxy extends BaseProxy {
                 for (const betVal of betValList) {
                     if (betVal.betType === 0) { //顺门的下注
                         this.repository.gameData.subData.shun.glods.push({ userInfo: userInfo, amount: betVal.betVal });
-                        this.sendNotification(CommandDefine.PlayerPutAntePush, { userInfo, amount: betVal.betVal, subArea: 'shun' });
                         // 累计这个位置的总的下注
                         this.repository.gameData.subData.shun.totalGold += betVal.betVal;
                         // 累计自己的下注数据
                         if (this.isMy(userInfo.uid)) {
                             this.repository.gameData.myAnteData.shun += betVal.betVal;
                         }
+                        //const {serInfo, subArea, amount} = 
+                        this.sendNotification(CommandDefine.PlayerPutAntePush, { userInfo, subArea: 'shun', amount: betVal.betVal });
                     } else if (betVal.betType === 1) {//迁门的下注
                         this.repository.gameData.subData.qian.glods.push({ userInfo: userInfo, amount: betVal.betVal });
-                        this.sendNotification(CommandDefine.PlayerPutAntePush, { userInfo, amount: betVal.betVal, subArea: 'qian' });
                         // 累计这个位置的总的下注
                         this.repository.gameData.subData.qian.totalGold += betVal.betVal;
                         // 累计自己的下注数据
                         if (this.isMy(userInfo.uid)) {
                             this.repository.gameData.myAnteData.qian += betVal.betVal;
                         }
+                        this.sendNotification(CommandDefine.PlayerPutAntePush, { userInfo, subArea: 'qian', amount: betVal.betVal });
                     } else if (betVal.betType === 2) {//尾门的下注
                         this.repository.gameData.subData.wei.glods.push({ userInfo: userInfo, amount: betVal.betVal });
-                        this.sendNotification(CommandDefine.PlayerPutAntePush, { userInfo, amount: betVal.betVal, subArea: 'wei' });
                         // 累计这个位置的总的下注
                         this.repository.gameData.subData.wei.totalGold += betVal.betVal;
                         // 累计自己的下注数据
                         if (this.isMy(userInfo.uid)) {
                             this.repository.gameData.myAnteData.wei += betVal.betVal;
                         }
+                        this.sendNotification(CommandDefine.PlayerPutAntePush, { userInfo, subArea: 'wei', amount: betVal.betVal });
                     }
                 }
             }
         }
-        this.sendNotification(CommandDefine.RefreshGameScorePush);
+
 
     }
 
@@ -307,7 +307,7 @@ export class TTZDeskProxy extends BaseProxy {
             this.repository.gameData.historys.shift();
         }
         this.repository.gameData.historys.push(historyItem);
-        
+
     }
 
     /**
