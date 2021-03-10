@@ -17,13 +17,17 @@ export default class PlayerHead extends ViewComponent {
     nickName: cc.Label = null;
 
     @property(cc.Node)
-    glodInfo: cc.Label = null;
+    glodInfo: cc.Node = null;
+
+    @property(cc.Node)
+    changeMoney: cc.Node = null;
 
     public playerId: string = '';
     private playerName: string = '玩家';
     private userImage: string = '';
     private glodMum: number = 0;
     private percent: number = 20;
+
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
@@ -76,8 +80,12 @@ export default class PlayerHead extends ViewComponent {
         }
     }
     /**显示输赢数目 */
-    showGlodResult() {
-
+    showGlodResult(money) {
+        this.changeMoney.active = true;
+        this.changeMoney.getChildByName('changeMoney').getComponent(cc.Label).string = (money < 0 ? '-' : '+') + money;
+        this.changeMoney.x -= 100;
+        this.changeMoney.opacity = 0;
+        cc.tween(this.changeMoney).by(0.2, { position: cc.v3(100, 0, 0), opacity: 255 }).delay(3).by(0.2, { position: cc.v3(-100, 0, 0), opacity: 0 }).start();
     }
     start() {
 

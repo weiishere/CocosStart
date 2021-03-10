@@ -51,6 +51,7 @@ export type GameData = {
         qian: number,
         wei: number
     },
+    presentResult: any,
     stateStr: string
 }
 
@@ -86,6 +87,7 @@ export class TTZDeskRepository {
             qian: 0,
             wei: 0
         },
+        presentResult: null,
         stateStr: ""
     }
 

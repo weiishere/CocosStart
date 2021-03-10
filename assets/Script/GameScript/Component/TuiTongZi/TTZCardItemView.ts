@@ -53,7 +53,7 @@ export default class TTZCardItemView extends ViewComponent {
 
     }
     /**翻转 */
-    overTurn() {
+    overTurn(isAction: boolean) {
         if (this.cardNumber === 0) { return }
         if (this.node.getComponent(cc.Sprite).spriteFrame === this.mainCardbg) {
             //已经是翻开状态
@@ -61,16 +61,22 @@ export default class TTZCardItemView extends ViewComponent {
             return;
         }
         this.cardNumberNode.active = false;
-        this.node.getComponent(cc.Sprite).spriteFrame = this.faceCardhideOverTurn_1;
-        cc.tween(this.node)
-            .to(0.2, {}).call(() => {
-                this.node.getComponent(cc.Sprite).spriteFrame = this.faceCardhideOverTurn_2;
-            })
-            .to(0.2, {}).call(() => {
-                this.node.getComponent(cc.Sprite).spriteFrame = this.mainCardbg;
-                this.cardNumberNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[this.cardNumber] as string];
-                this.cardNumberNode.active = true;
-            }).start();
+        if (isAction) {
+            this.node.getComponent(cc.Sprite).spriteFrame = this.faceCardhideOverTurn_1;
+            cc.tween(this.node)
+                .to(0.2, {}).call(() => {
+                    this.node.getComponent(cc.Sprite).spriteFrame = this.faceCardhideOverTurn_2;
+                })
+                .to(0.2, {}).call(() => {
+                    this.node.getComponent(cc.Sprite).spriteFrame = this.mainCardbg;
+                    this.cardNumberNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[this.cardNumber] as string];
+                    this.cardNumberNode.active = true;
+                }).start();
+        } else {
+            this.node.getComponent(cc.Sprite).spriteFrame = this.mainCardbg;
+            this.cardNumberNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[this.cardNumber] as string];
+            this.cardNumberNode.active = true;
+        }
     }
     /**复位（盖住） */
     reset() {

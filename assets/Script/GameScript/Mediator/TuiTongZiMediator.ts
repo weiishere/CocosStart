@@ -104,7 +104,7 @@ export class TuiTongZiMediator extends BaseMediator {
                 this.sendNotification(CommandDefine.RefreshSelfPlayerPush);
                 this.sendNotification(CommandDefine.RefreshPlayerPush);
                 this.sendNotification(CommandDefine.RefreshMasterPlayerPush);
-                this.sendNotification(CommandDefine.RefreshCardPush, { isInit: false });
+                this.sendNotification(CommandDefine.RefreshCardPush, { isInit: false, isAction: false });
                 this.sendNotification(CommandDefine.RefreshGamePromptPush);
                 this.sendNotification(CommandDefine.RefreshGameScorePush);
                 break;
@@ -122,8 +122,8 @@ export class TuiTongZiMediator extends BaseMediator {
                 break;
             case CommandDefine.RefreshCardPush:
                 //发牌
-                const { isInit } = notification.getBody();
-                this.TTZDeskViewScript && this.TTZDeskViewScript.updateCardView(isInit);
+                const { isInit, isAction } = notification.getBody();
+                this.TTZDeskViewScript && this.TTZDeskViewScript.updateCardView(isInit, isAction);
                 if (isInit) this.TTZDeskViewScript.clearDesk();
 
                 break;
@@ -140,6 +140,7 @@ export class TuiTongZiMediator extends BaseMediator {
                 break;
             case CommandDefine.ShowResult:
                 //显示输赢结果
+                this.TTZDeskViewScript && this.TTZDeskViewScript.showReult()
                 break;
             case CommandDefine.RefreshGamePromptPush:
                 //显示游戏文字提示

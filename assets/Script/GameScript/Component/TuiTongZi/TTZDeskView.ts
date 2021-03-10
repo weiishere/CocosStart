@@ -17,6 +17,8 @@ import { UserInfo } from "../../repositories/GateRepository";
 import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
 import { ProxyDefine as MahjongDefine } from "../../MahjongConst/ProxyDefine";
 import { LoginData } from "../../GameData/LoginData";
+import CardResult from "./CardResult";
+import { S2CPushRoomPoker } from "../../GameData/TuiTongZi/s2c/S2CPushRoomPoker";
 
 @ccclass
 export default class TTZDeskView extends ViewComponent {
@@ -43,6 +45,10 @@ export default class TTZDeskView extends ViewComponent {
 
     @property(cc.Prefab)
     cardItem: cc.Prefab = null;
+
+    @property(cc.Prefab)
+    cardResult: cc.Prefab = null;
+
     // onLoad () {}
     bindUI() {
         this.deskOpreationIconWrap = this.node.getChildByName("deskOpreationIconWrap");
@@ -165,7 +171,7 @@ export default class TTZDeskView extends ViewComponent {
                 callBack(eventData.target as cc.Node, eventData.target.name.split("_")[0]);
 
 
-                this.setLight(eventData.target, true, { keepTime: 3 });
+                //this.setLight(eventData.target, true, { keepTime: 3 });
                 isDone = true;
             }).start();
         }, this);
@@ -228,7 +234,11 @@ export default class TTZDeskView extends ViewComponent {
             initHead(head, 4, this.masterWrap, new cc.Vec3(220, 0));
         })
     }
-    private getCardItem(parent: cc.Node, index: number, { card, isShow }, position: cc.Vec3, isAutoReturn: boolean): TTZCardItemView {
+    /**
+     * isAutoReturn:是否自动翻转
+     * isAction:是否执行翻转动作，直接显示牌型（如果有数组）
+     */
+    private getCardItem(parent: cc.Node, index: number, { card, isShow }, position: cc.Vec3, isAutoReturn: boolean, isAction: boolean): TTZCardItemView {
         let _node: cc.Node;
 
         if (!parent.children[index]) {
@@ -241,56 +251,182 @@ export default class TTZDeskView extends ViewComponent {
         script.cardNumber = card;
         if (isShow) {
             //console.log('-----------------------------' + isAutoReturn);
-            isAutoReturn && script.overTurn();
+            if (isAutoReturn) {
+                script.overTurn(isAction);
+            }
         } else {
             script.reset();
         }
         return script;
     }
     /**刷新牌组(是否是初发牌) */
-    updateCardView(isInit: boolean) {
-        //首先刷新庄家牌组
-
+    updateCardView(isInit: boolean, isAction: boolean) {
         const masterCardList = this.node.getChildByName('masterWrap').getChildByName('masterCardList');
         const shunCardList = this.node.getChildByName('antePanelWrap').getChildByName('shun_bg').getChildByName('subCardList');
         const qianCardList = this.node.getChildByName('antePanelWrap').getChildByName('qian_bg').getChildByName('subCardList');
         const weiCardList = this.node.getChildByName('antePanelWrap').getChildByName('wei_bg').getChildByName('subCardList');
         let isAutoReturn = !isInit
         const masterCards = this.getData().gameData.masterData.cards;
-        this.getCardItem(masterCardList, 0, masterCards.frist, cc.v3(-30, 0, 0), isAutoReturn);
-        this.getCardItem(masterCardList, 1, masterCards.second, cc.v3(30, 0, 0), isAutoReturn);
-        //刷新闲家牌组
         const shunCards = this.getData().gameData.subData.shun.cards;
-        this.getCardItem(shunCardList, 0, shunCards.frist, cc.v3(-30, 0, 0), isAutoReturn);
-        this.getCardItem(shunCardList, 1, shunCards.second, cc.v3(30, 0, 0), isAutoReturn);
-
         const qianCards = this.getData().gameData.subData.qian.cards;
-        this.getCardItem(qianCardList, 0, qianCards.frist, cc.v3(-30, 0, 0), isAutoReturn);
-        this.getCardItem(qianCardList, 1, qianCards.second, cc.v3(30, 0, 0), isAutoReturn);
-
         const weiCards = this.getData().gameData.subData.wei.cards;
-        this.getCardItem(weiCardList, 0, weiCards.frist, cc.v3(-30, 0, 0), isAutoReturn);
-        this.getCardItem(weiCardList, 1, weiCards.second, cc.v3(30, 0, 0), isAutoReturn);
-        if (isInit) {
-            const wraps = [masterCardList, shunCardList, qianCardList, weiCardList];
-            wraps.forEach(wrap => {
-                wrap.children.map(item => {
-                    item.position = cc.v3(item.position.x, item.position.y + 100);
-                    item.opacity = 0;
-                    (item.getComponent(TTZCardItemView) as TTZCardItemView).reset();
+
+        const wrapsParent = [
+            this.node.getChildByName('masterWrap'),
+            this.node.getChildByName('antePanelWrap').getChildByName('shun_bg'),
+            this.node.getChildByName('antePanelWrap').getChildByName('qian_bg'),
+            this.node.getChildByName('antePanelWrap').getChildByName('wei_bg')
+        ];
+        const wraps = [masterCardList, shunCardList, qianCardList, weiCardList,];
+        const cardListData = [masterCards, shunCards, qianCards, weiCards];
+
+
+        const overTurnHandler = (index, doneCallback?) => {
+            if (!wraps[index]) {
+                doneCallback && doneCallback();
+                this.scheduleOnce(() => {
+                    for (let i = 0; i < 4; i++) {
+                        if (wrapsParent[i].getChildByName('resultShow').children.length !== 0) {
+                            wrapsParent[i].getChildByName('resultShow').removeAllChildren();
+                            wrapsParent[i].getChildByName('resultShow').opacity = 0;
+                        }
+                    }
+                }, 7);
+                return;
+            };
+            window.setTimeout(() => {
+                this.getCardItem(wraps[index], 0, cardListData[index].frist, cc.v3(-30, 0, 0), true, isAction);
+                this.getCardItem(wraps[index], 1, cardListData[index].second, cc.v3(30, 0, 0), true, isAction);
+                if (wrapsParent[index].getChildByName('resultShow').children.length !== 0) {
+                    cc.tween(wrapsParent[index].getChildByName('resultShow')).delay(1).to(0.2, {
+                        position: cc.v3(wrapsParent[index].getChildByName('resultShow').x + 50,
+                            wrapsParent[index].getChildByName('resultShow').y), opacity: 255
+                    }).to(3, {}).start();
+                }
+                overTurnHandler(index + 1, doneCallback);
+            }, 1000);
+        }
+        const initShowCard = (callback) => {
+            if (isInit) {
+                wraps.forEach(wrap => {
+                    wrap.children.map(item => {
+                        item.position = cc.v3(item.position.x, item.position.y + 100);
+                        item.opacity = 0;
+                        (item.getComponent(TTZCardItemView) as TTZCardItemView).reset();
+                    });
                 });
-            });
-            this.scheduleOnce(() => {
                 wraps.forEach(wrap => {
                     wrap.children.map(item => {
                         cc.tween(item).to(0.2, { position: cc.v3(item.position.x, item.position.y - 100), opacity: 255 }).to(2, {}).call(() => {
-                            const _script = (item.getComponent(TTZCardItemView) as TTZCardItemView)
-                            _script.cardNumber && _script.overTurn();
-                        }).start()
+                            // const _script = (item.getComponent(TTZCardItemView) as TTZCardItemView)
+                            // _script.cardNumber && _script.overTurn(true);
+                        }).start();
                     });
                 });
-            }, 1);
+                this.scheduleOnce(() => {
+                    callback();
+                }, 1);
+            }
         }
+
+        if (!isAction && !isInit) {
+            for (let i = 0; i < 4; i++) {
+                this.getCardItem(wraps[i], 0, cardListData[i].frist, cc.v3(-30, 0, 0), isAutoReturn, isAction);
+                this.getCardItem(wraps[i], 1, cardListData[i].second, cc.v3(30, 0, 0), isAutoReturn, isAction);
+            }
+        }
+        if (isInit) {
+            initShowCard(() => {
+                overTurnHandler(0, () => { });
+            });
+        } else {
+            console.log('不是发牌后')
+            overTurnHandler(0, () => { });
+        }
+
+        // //首先刷新庄家牌组
+
+        // this.getCardItem(masterCardList, 0, masterCards.frist, cc.v3(-30, 0, 0), isAutoReturn, isAction);
+        // this.getCardItem(masterCardList, 1, masterCards.second, cc.v3(30, 0, 0), isAutoReturn, isAction);
+        // //刷新闲家牌组
+
+        // this.getCardItem(shunCardList, 0, shunCards.frist, cc.v3(-30, 0, 0), isAutoReturn, isAction);
+        // this.getCardItem(shunCardList, 1, shunCards.second, cc.v3(30, 0, 0), isAutoReturn, isAction);
+
+
+        // this.getCardItem(qianCardList, 0, qianCards.frist, cc.v3(-30, 0, 0), isAutoReturn, isAction);
+        // this.getCardItem(qianCardList, 1, qianCards.second, cc.v3(30, 0, 0), isAutoReturn, isAction);
+
+
+        // this.getCardItem(weiCardList, 0, weiCards.frist, cc.v3(-30, 0, 0), isAutoReturn, isAction);
+        // this.getCardItem(weiCardList, 1, weiCards.second, cc.v3(30, 0, 0), isAutoReturn, isAction);
+
+
+
+    }
+    /**显示结果（牌组类型，赢方区域发光，用户输赢数据，金币飞舞，玩家赢输钱） */
+    showReult() {
+        console.log('-------------------------------------------------------------');
+        console.log(this.getData().gameData.historys[this.getData().gameData.historys.length - 1]);
+        console.log(this.getData().gameData.presentResult);
+        console.log('-------------------------------------------------------------');
+        //const result = this.getData().gameData.historys[this.getData().gameData.historys.length - 1];
+        const result: S2CPushRoomPoker = this.getData().gameData.presentResult;
+        const resultShowMaster = this.node.getChildByName('masterWrap').getChildByName('resultShow');
+        const resultShowShun = this.node.getChildByName('antePanelWrap').getChildByName('shun_bg').getChildByName('resultShow');
+        const resultShowQian = this.node.getChildByName('antePanelWrap').getChildByName('qian_bg').getChildByName('resultShow');
+        const resultShowWei = this.node.getChildByName('antePanelWrap').getChildByName('wei_bg').getChildByName('resultShow');
+        //显示牌型
+        const arr = [resultShowMaster, resultShowShun, resultShowQian, resultShowWei];
+        for (let i = 0; i < result.results.length; i++) {
+            const masterCardShow: cc.Node = cc.instantiate(this.cardResult);
+            (masterCardShow.getComponent('CardResult') as CardResult).show(result.results[i].point, result.results[i].type, 0);
+            arr[i].zIndex = 10000;
+            arr[i].addChild(masterCardShow);
+            arr[i].x -= 50;
+            arr[i].opacity = 0;
+        }
+        const arr2 = [
+            this.node.getChildByName('antePanelWrap').getChildByName('shun_bg'),
+            this.node.getChildByName('antePanelWrap').getChildByName('qian_bg'),
+            this.node.getChildByName('antePanelWrap').getChildByName('wei_bg')
+        ];
+
+        this.scheduleOnce(() => {
+            //开始发光
+            result.winTypes.forEach((item, index) => {
+                if (item === 1) {
+                    this.setLight(arr2[index], true, { keepTime: 5 });
+                }
+            });
+            //金币回飞
+            const fly = (index: number, jetton: cc.Node, player: cc.Node) => {
+                if (result.winTypes[index] === 1) {
+                    //赢，飞回去
+                    const targetCoord = this.convetOtherNodeSpace(player, this.node);
+                    cc.tween(jetton).to(0.6, { position: targetCoord }, { easing: 'quintOut' }).call(() => { jetton.destroy(); }).start();
+                    cc.tween(player).to(0.1, { scale: player.name === 'playerList' ? 0.9 : 0.9 }).to(0.1, { scale: player.name === 'playerList' ? 1 : 0.8 }).start();
+                } else {
+                    //输，飞到庄家
+                    const targetCoord = this.convetOtherNodeSpace(this.node.getChildByName('masterWrap'), this.node);
+                    cc.tween(jetton).to(0.4, { position: targetCoord }, { easing: 'quintOut' }).call(() => { jetton.destroy(); }).start();
+                }
+            }
+            this.node.getChildByName('jettonsWrap').children.forEach(jetton => {
+                const { fromPlayer, subArea } = jetton['source'];
+                if (subArea === 'shun') {
+                    fly(0, jetton, fromPlayer);
+                } else if (subArea === 'qian') {
+                    fly(1, jetton, fromPlayer);
+                } else if (subArea === 'wei') {
+                    fly(2, jetton, fromPlayer);
+                }
+            });
+            //显示用户头像输赢
+            result.playerBalance.forEach(() => {
+                
+            })
+        }, 6);
 
     }
     /**金币飞舞 */
@@ -308,6 +444,8 @@ export default class TTZDeskView extends ViewComponent {
                 fromPlayer = subPlayer_leftArr[i];
                 jetton.position = this.convetOtherNodeSpace(subPlayer_leftArr[i], this.node);
                 this.node.getChildByName('jettonsWrap').addChild(jetton);
+                jetton['playerNode'] = fromPlayer;
+
                 break;
             }
         }
@@ -332,6 +470,8 @@ export default class TTZDeskView extends ViewComponent {
             jetton.position = this.convetOtherNodeSpace(fromPlayer, this.node);
             this.node.getChildByName('jettonsWrap').addChild(jetton);
         }
+        if (!jetton['source']) jetton['source'] = {};
+        jetton['source'] = { fromPlayer, subArea };
 
         //获取目标坐标
         const target = this.node.getChildByName("antePanelWrap").getChildByName(subArea + "_bg").getChildByName("jettonWrap");
@@ -362,7 +502,7 @@ export default class TTZDeskView extends ViewComponent {
         }
         //开始飞行
         cc.tween(fromPlayer).to(0.1, { scale: fromPlayer.name === 'playerList' ? 0.9 : 0.7 }).to(0.1, { scale: fromPlayer.name === 'playerList' ? 1 : 0.8 }).start();
-        cc.tween(jetton).to(0.2, { position: targetCoord }).start();
+        cc.tween(jetton).to(0.4, { position: targetCoord }, { easing: 'quintOut' }).start();
     }
     /**玩家自己下注 */
     myselfPlayerAnteFly(jettonType: number, subArea: 'shun' | 'qian' | 'wei') {
@@ -376,7 +516,7 @@ export default class TTZDeskView extends ViewComponent {
     }
     /**清理桌面 */
     clearDesk() {
-        this.node.getChildByName('jettonsWrap').removeAllChildren();
+        // this.node.getChildByName('jettonsWrap').removeAllChildren();
         // const arr = ['shun', 'qian', 'wei'];
         // arr.forEach(item => {
         //     this.node.getChildByName("antePanelWrap").getChildByName(item + "_bg").getChildByName("jettonWrap").removeAllChildren();

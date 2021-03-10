@@ -172,7 +172,7 @@ export class TTZDeskProxy extends BaseProxy {
                 }
             }
         }
-        this.sendNotification(CommandDefine.RefreshCardPush, { isInit });
+        this.sendNotification(CommandDefine.RefreshCardPush, { isInit, isAction: true });
         this.sendNotification(CommandDefine.RefreshGameScorePush);
     }
 
@@ -307,6 +307,7 @@ export class TTZDeskProxy extends BaseProxy {
             this.repository.gameData.historys.shift();
         }
         this.repository.gameData.historys.push(historyItem);
+        
     }
 
     /**
@@ -337,7 +338,9 @@ export class TTZDeskProxy extends BaseProxy {
      * @param s2CPushRoomPoker 结算数据
      */
     gameResult(s2CPushRoomPoker: S2CPushRoomPoker) {
-        //this.updateCardDataList(s2CPushRoomPoker.pokers, false);
+        this.updateCardDataList(s2CPushRoomPoker.pokers, false);
+        this.repository.gameData.presentResult = s2CPushRoomPoker;
+        this.sendNotification(CommandDefine.ShowResult);
     }
 
     getGameData(): GameData {
