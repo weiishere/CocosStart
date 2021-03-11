@@ -9,6 +9,7 @@ import { CommandDefine } from "../TuiTongZiConst/CommandDefine";
 import { HistoryItem } from "../GameData/TuiTongZi/s2c/HistoryItem";
 import { BankerQueuePlayer } from "../GameData/TuiTongZi/s2c/BankerQueuePlayer";
 import { S2CPushRoomPoker } from "../GameData/TuiTongZi/s2c/S2CPushRoomPoker";
+import { S2CEnterRoom } from "../GameData/TuiTongZi/s2c/S2CEnterRoom";
 
 export class TTZDeskProxy extends BaseProxy {
     public repository: TTZDeskRepository;
@@ -117,7 +118,13 @@ export class TTZDeskProxy extends BaseProxy {
             }
             this.repository.deskData.playerList.masterPlayer.push({ userInfo: userInfo, percent: deskBankerPlayer.percent });
         }
-        this.facade.sendNotification(CommandDefine.RefreshMasterPlayerPush, null, '');
+        this.facade.sendNotification(CommandDefine.RefreshMasterPlayerPush, deskBankerPlayers, '');
+    }
+
+    resetData() {
+        this.repository.gameData.subData.qian.glods = [];
+        this.repository.gameData.subData.shun.glods = [];
+        this.repository.gameData.subData.wei.glods = [];
     }
 
     /**更新牌组 */
@@ -336,6 +343,27 @@ export class TTZDeskProxy extends BaseProxy {
             }
         }
         this.repository.deskData.playerList.applyMasterPlayer = users;
+
+        this.sendNotification(CommandDefine.UpWaitUpBankerList, bankerWaitList);
+    }
+
+    /**
+     * 结算更新用户信息
+     * @param s2CPushRoomPoker 
+     */
+    balanceUpdateUserInfoScore(s2CPushRoomPoker: S2CPushRoomPoker) {
+        for (const playerInfo of s2CPushRoomPoker.playerBalance) {
+            if (playerInfo.name === this.repository.deskData.playerList.mySelf.uid) {
+                this.repository.deskData.playerList.mySelf.score = playerInfo.money;
+            } else {
+                for (const userInfo of this.repository.deskData.playerList.subPlayer) {
+                    if (playerInfo.name === userInfo.uid) {
+                        userInfo.score = playerInfo.money;
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -353,8 +381,11 @@ export class TTZDeskProxy extends BaseProxy {
 
     /**更新玩家金币变化 */
     updatePlayerGlod(playerId: string, glod: number) {
-
         this.sendNotification(CommandDefine.RefreshPlayerGload, { playerId, glod });
+    }
+
+    quitGame() {
+        this.sendNotification(CommandDefine.QuitGame, null);
     }
 
     getGameData(): GameData {

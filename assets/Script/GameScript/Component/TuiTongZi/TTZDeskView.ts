@@ -553,10 +553,14 @@ export default class TTZDeskView extends ViewComponent {
     }
     /**刷新闲家分数 */
     public updateSubScore() {
-        const masterTotal = parseInt(this.getData().deskData.playerList.masterPlayer.reduce((total, item) => { return total + item.userInfo.score; }, 0) + '');
+        const masterTotal = parseInt(this.getData().deskData.playerList.masterPlayer.reduce((total, item) => { return total + item.userInfo.score; }, 0) / 5 + '') ;
         this.node.getChildByName("antePanelWrap").getChildByName("shun_bg").getChildByName("headScore").getComponent(cc.Label).string = this.getData().gameData.subData.shun.totalGold + '/' + masterTotal;
         this.node.getChildByName("antePanelWrap").getChildByName("qian_bg").getChildByName("headScore").getComponent(cc.Label).string = this.getData().gameData.subData.qian.totalGold + '/' + masterTotal;
         this.node.getChildByName("antePanelWrap").getChildByName("wei_bg").getChildByName("headScore").getComponent(cc.Label).string = this.getData().gameData.subData.wei.totalGold + '/' + masterTotal;
+    }
+
+    quitGame(){
+        this.node.destroy();
     }
 
     /**把一个节点的本地坐标转到另一个节点的本地坐标下 */

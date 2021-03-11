@@ -66,21 +66,24 @@ export class TuiTongZiProxy extends ModuleProxy {
         } else if (msgType === TuiTongZiProtocol.C2S_PLAYER_LOGIN_OUT) {
             // 退出游戏成功返回
             this.setJoinRoom(false);
+            this.getTTZDeskProxy().quitGame();
         } else if (msgType === TuiTongZiProtocol.C2S_JOIN_ROOM) {
             let s2CEnterRoom: S2CEnterRoom = <S2CEnterRoom>content;
             this.setJoinRoom(true);
-            this.sendNotification(TuiTongZiDefineConst.OpenTTZDeskPanel);
+            this.sendNotification(TuiTongZiDefineConst.OpenTTZDeskPanel, s2CEnterRoom);
             this.getTTZDeskProxy().updateSelfPlayerData(this.getDeskPlayer(s2CEnterRoom.players, this.getUserName()));
             this.getTTZDeskProxy().initPlayerData(s2CEnterRoom.players);
-            this.getTTZDeskProxy().updateApplyMasterPlayer(s2CEnterRoom.bankerPlayer);
             this.getTTZDeskProxy().initAnteData(s2CEnterRoom.restoreAllPlayerBetVals);
             this.getTTZDeskProxy().updateCardDataList(s2CEnterRoom.spokers, false);
             this.getTTZDeskProxy().initHistory(this.roomInfo.historyList);
+            this.getTTZDeskProxy().updateApplyMasterPlayer(s2CEnterRoom.bankerPlayer);
             this.getTTZDeskProxy().updateWaitBankerList(s2CEnterRoom.bankerWaitList);
 
 
         } else if (msgType === TuiTongZiProtocol.C2S_UP_BANKER) {
+            this.getGateProxy().toast("上庄成功");
         } else if (msgType === TuiTongZiProtocol.C2S_DOWN_BANKER) {
+            this.getGateProxy().toast("下庄成功");
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_BANKER_CHANGE_TO_HALL) {
             let s2CPushBankerChange: S2CPushBankerChange = <S2CPushBankerChange>content;
             this.getTTZDeskProxy().updateApplyMasterPlayer(s2CPushBankerChange.deskBankerPlayer);
@@ -132,6 +135,7 @@ export class TuiTongZiProxy extends ModuleProxy {
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_DOWN_BANKER) {
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_DEAL) {
             let s2CPushDeal: S2CPushDeal = <S2CPushDeal>content;
+            this.getTTZDeskProxy().resetData();
             this.getTTZDeskProxy().updateGameStateStr("发牌中");
             this.getTTZDeskProxy().updateCardDataList(s2CPushDeal.spokers, true);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_MULTIPLAYER_BET) {    //推送玩家下注
@@ -200,6 +204,10 @@ export class TuiTongZiProxy extends ModuleProxy {
     }
 
     sendHeartbeat() {
+        // 没有进入游戏，不返回心跳
+        if (!this.isJoinRoom) {
+            return;
+        }
         this.sendGameData(TuiTongZiProtocol.S2C_HEARTBEAT, null);
     }
 
@@ -270,7 +278,7 @@ export class TuiTongZiProxy extends ModuleProxy {
     serverShutDown(): void {
         this.setJoinRoom(false);
         this.getGateProxy().toast("游戏服务暂停了");
-        this.sendNotification(CommandDefine.ExitDeskPanel, {}, '');
+        this.getTTZDeskProxy().quitGame();
     }
 
     onRegister() {

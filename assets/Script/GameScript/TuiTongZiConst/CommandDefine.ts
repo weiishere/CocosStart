@@ -12,5 +12,7 @@ export enum CommandDefine {
     RefreshCardPush = 'RefreshCardPush',
     RefreshGamePromptPush = 'RefreshGamePromptPush',
     RefreshGameScorePush = 'RefreshGameScorePush',
-    RefreshPlayerGload = 'RefreshPlayerGload'
+    RefreshPlayerGload = 'RefreshPlayerGload',
+    QuitGame = 'QuitGame',
+    UpWaitUpBankerList = 'UpWaitUpBankerList',
 }

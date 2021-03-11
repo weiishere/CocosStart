@@ -3,6 +3,7 @@ const { ccclass, property } = cc._decorator;
 import ViewComponent from "../../Base/ViewComponent";
 import { BankerQueuePlayer } from "../../GameData/TuiTongZi/s2c/BankerQueuePlayer";
 import { DeskBankerPlayer } from "../../GameData/TuiTongZi/s2c/DeskBankerPlayer";
+import { S2CEnterRoom } from "../../GameData/TuiTongZi/s2c/S2CEnterRoom";
 import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
 
 @ccclass
@@ -27,10 +28,21 @@ export default class UpBankerPanel extends ViewComponent {
     banker_Player_Info_Node_str: string = "bankerPlayerInfoNode";
     wait_Banker_Player_Info_Node_str: string = "waitBankerPlayerInfoNode";
 
+    /** 自己的用户名 */
+    userName: string;
+    /** 等待上庄的队列 */
+    bankerWaitList: BankerQueuePlayer[];
+    /** 是否下庄 */
+    isDown: boolean = false;
+
+    upBankerOrDownBankerHandle: Function;
+
     bindEvent() {
         this.closeBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            this.node.active = false;
         });
         this.upBankerOrDownBankerBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            this.upBankerOrDownBankerHandle(this.isDown);
         });
     }
     bindUI() {
@@ -38,11 +50,43 @@ export default class UpBankerPanel extends ViewComponent {
     start() {
     }
 
+    initData(s2CEnterRoom: S2CEnterRoom, userName: string, upBankerOrDownBankerHandle: Function) {
+        this.updateBankerPlayerList(s2CEnterRoom.bankerPlayer);
+        this.updateWaitUpBankerPlayerList(s2CEnterRoom.bankerWaitList);
+        this.userName = userName;
+
+        this.updateUpBankerOrDownBankerLabel();
+        this.updateUpBankerRemark(s2CEnterRoom);
+        this.upBankerOrDownBankerHandle = upBankerOrDownBankerHandle;
+    }
+
+    updateUpBankerRemark(s2CEnterRoom: S2CEnterRoom) {
+        this.upBankerRemark.string = `<color=#673509>上庄需要</color><color=#FFC600>${s2CEnterRoom.upBankerLimit}</color><color=#673509>金币以上，低于</color><color=#FFC600>${s2CEnterRoom.minContinueTakeBankerMoney}</color><color=#673509>将自动下庄。</color>`;
+    }
+
+    updateUpBankerOrDownBankerLabel() {
+        this.isDown = false;
+        for (const player of this.bankerWaitList) {
+            if (player.name === this.userName) {
+                this.isDown = true;
+                break;
+            }
+        }
+
+        let label = this.upBankerOrDownBankerBtn.getChildByName("btnLabel").getComponent(cc.Label);
+        if (this.isDown) {
+            label.string = "我要下庄";
+        } else {
+            label.string = "我要上庄";
+        }
+    }
+
     /**
      * 更新庄家列表
      * @param deskBankerPlayer 
      */
     updateBankerPlayerList(deskBankerPlayers: DeskBankerPlayer[]) {
+        let removeNodes = [];
         // 先删除不存在的当庄玩家
         for (const childrenNode of this.bankerListNode.children) {
             let has = false;
@@ -54,14 +98,18 @@ export default class UpBankerPanel extends ViewComponent {
             }
 
             if (!has) {
-                this.bankerListNode.removeChild(childrenNode);
+                removeNodes.push(childrenNode);
             }
+        }
+
+        for (const node of removeNodes) {
+            this.bankerListNode.removeChild(node);
         }
 
         // 添加新的玩家，同时修改已经存在玩家信息
         for (const deskBankerPlayer of deskBankerPlayers) {
             let has = false;
-            for (const childrenNode of this.waiUpBankerListNode.children) {
+            for (const childrenNode of this.bankerListNode.children) {
                 if (childrenNode.name === this.banker_Player_Info_Node_str + deskBankerPlayer.acctName) {
                     has = true;
                     this.updateBankerPlayerNodeInfo(childrenNode, deskBankerPlayer);
@@ -79,6 +127,11 @@ export default class UpBankerPanel extends ViewComponent {
      * @param bankerWaitList 
      */
     updateWaitUpBankerPlayerList(bankerWaitList: BankerQueuePlayer[]) {
+        this.bankerWaitList = bankerWaitList;
+
+        this.updateUpBankerOrDownBankerLabel();
+
+        let removeNodes = [];
         // 先删除不存在的排队玩家
         for (const childrenNode of this.waiUpBankerListNode.children) {
             let has = false;
@@ -90,8 +143,12 @@ export default class UpBankerPanel extends ViewComponent {
             }
 
             if (!has) {
-                this.waiUpBankerListNode.removeChild(childrenNode);
+                removeNodes.push(childrenNode);
             }
+        }
+
+        for (const node of removeNodes) {
+            this.waiUpBankerListNode.removeChild(node);
         }
 
         // 添加新的玩家，同时修改已经存在玩家信息
@@ -121,7 +178,7 @@ export default class UpBankerPanel extends ViewComponent {
         nicknameLabel.string = deskBankerPlayer.nickname;
         // 分数
         let scoreLabel = bankerPlayerInfoNodeTmp.getChildByName("scoreLabel").getComponent(cc.Label);
-        scoreLabel.string = deskBankerPlayer.money + "";
+        scoreLabel.string = deskBankerPlayer.money.toFixed(2);
         // 当庄余额占比
         let scoreRatioLabel = bankerPlayerInfoNodeTmp.getChildByName("scoreRatioLabel").getComponent(cc.Label);
         scoreRatioLabel.string = deskBankerPlayer.percent + "%";
@@ -147,7 +204,7 @@ export default class UpBankerPanel extends ViewComponent {
         nicknameLabel.string = bankerQueuePlayer.nickname;
         // 分数
         let scoreLabel = waitBankerPlayerInfoNodeTmp.getChildByName("scoreLabel").getComponent(cc.Label);
-        scoreLabel.string = bankerQueuePlayer.money + "";
+        scoreLabel.string = bankerQueuePlayer.money.toFixed(2);
 
         // 获得头像组件
         let headSprite = waitBankerPlayerInfoNodeTmp.getChildByName("head").getComponent(cc.Sprite);
@@ -168,7 +225,7 @@ export default class UpBankerPanel extends ViewComponent {
         nicknameLabel.string = bankerQueuePlayer.nickname;
         // 分数
         let scoreLabel = waitBankerPlayerInfoNode.getChildByName("scoreLabel").getComponent(cc.Label);
-        scoreLabel.string = bankerQueuePlayer.money + "";
+        scoreLabel.string = bankerQueuePlayer.money.toFixed(2);
     }
 
     /**
@@ -182,7 +239,7 @@ export default class UpBankerPanel extends ViewComponent {
         nicknameLabel.string = deskBankerPlayer.nickname;
         // 分数
         let scoreLabel = bankerPlayerInfoNode.getChildByName("scoreLabel").getComponent(cc.Label);
-        scoreLabel.string = deskBankerPlayer.money + "";
+        scoreLabel.string = deskBankerPlayer.money.toFixed(2);
 
         // 当庄余额占比
         let scoreRatioLabel = bankerPlayerInfoNode.getChildByName("scoreRatioLabel").getComponent(cc.Label);
