@@ -14,6 +14,7 @@ import { UserOfflineData } from '../GameData/UserOfflineData';
 import { GameNoDefine } from '../GameConst/GameNoDefine';
 import { OfflineGameData } from '../GameData/OfflineGameData';
 import { DymjProxy } from '../Proxy/DymjProxy';
+import { TuiTongZiProxy } from "../Proxy/TuiTongZiProxy";
 
 export class GateCommand extends BaseCommand {
     public execute(notification: INotification): void {
@@ -102,10 +103,19 @@ export class GateCommand extends BaseCommand {
                 this.getDymjProxy().loginGame(dymjOfflineData.level2);
             }
         }
+
+        let ttzOfflineData = <OfflineGameData>userOfflineData.offlineGameDatas[GameNoDefine.TUI_TONG_ZI];
+        if (ttzOfflineData) {
+            this.getTuiTongZiProxy().loginGame();
+        }
     }
 
     public getDymjProxy(): DymjProxy {
         return <DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj);
+    }
+
+    public getTuiTongZiProxy(): TuiTongZiProxy {
+        return <TuiTongZiProxy>this.facade.retrieveProxy(ProxyDefine.TuiTongZi);
     }
 
 }
