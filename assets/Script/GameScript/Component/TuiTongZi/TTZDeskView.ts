@@ -525,7 +525,7 @@ export default class TTZDeskView extends ViewComponent {
         }
         //开始飞行
         cc.tween(fromPlayer).to(0.1, { scale: fromPlayer.name === 'playerList' ? 0.9 : 0.7 }).to(0.1, { scale: fromPlayer.name === 'playerList' ? 1 : 0.8 }).start();
-        cc.tween(jetton).to(0.4, { position: targetCoord, rotation: getRadomRata(-1000) }, { easing: 'quintOut' }).start();
+        cc.tween(jetton).to(0.4, { position: targetCoord, angle: getRadomRata(1000) }, { easing: 'quintOut' }).start();
     }
     /**玩家自己下注 */
     myselfPlayerAnteFly(jettonType: number, subArea: 'shun' | 'qian' | 'wei') {
