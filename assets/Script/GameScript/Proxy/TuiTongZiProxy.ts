@@ -26,6 +26,7 @@ import { TTZDeskProxy } from './TTZDeskProxy';
 import { DeskPlayer } from '../GameData/TuiTongZi/s2c/DeskPlayer';
 import { RoomInfo } from '../GameData/TuiTongZi/s2c/RoomInfo';
 import { S2CPushRoomResultToHall } from '../GameData/TuiTongZi/s2c/S2CPushRoomResultToHall';
+import { TuiTongZiRoomGameStatus } from '../GameData/TuiTongZi/TuiTongZiRoomGameStatus';
 
 /**
  * 推筒子消息数据代理类
@@ -79,6 +80,15 @@ export class TuiTongZiProxy extends ModuleProxy {
             this.getTTZDeskProxy().updateApplyMasterPlayer(s2CEnterRoom.bankerPlayer);
             this.getTTZDeskProxy().updateWaitBankerList(s2CEnterRoom.bankerWaitList);
 
+            if (s2CEnterRoom.status === TuiTongZiRoomGameStatus.DEAL) {
+                this.getTTZDeskProxy().updateGameStateStr("发牌中");
+            } else if (s2CEnterRoom.status === TuiTongZiRoomGameStatus.BALANCE) {
+                this.getTTZDeskProxy().updateGameStateStr("比牌中");
+            } else if (s2CEnterRoom.status === TuiTongZiRoomGameStatus.IDLE) {
+                this.getTTZDeskProxy().updateGameStateStr("等待开始");
+            } else if (s2CEnterRoom.status === TuiTongZiRoomGameStatus.STOP_BET) {
+                this.getTTZDeskProxy().updateGameStateStr("停止下注");
+            }
 
         } else if (msgType === TuiTongZiProtocol.C2S_UP_BANKER) {
             this.getGateProxy().toast("上庄成功");

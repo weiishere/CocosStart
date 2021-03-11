@@ -14,6 +14,8 @@ import { DeskBankerPlayer } from "../GameData/TuiTongZi/s2c/DeskBankerPlayer";
 import { BankerQueuePlayer } from "../GameData/TuiTongZi/s2c/BankerQueuePlayer";
 import { stringToBytes_SJIS } from "../ts/text/stringToBytes_SJIS";
 import OnlinePlayerListPanel from "../Component/TuiTongZi/OnlinePlayerListPanel";
+import HistoryPanel from "../Component/TuiTongZi/HistoryPanel";
+import { HistoryItem } from "../GameData/TuiTongZi/s2c/HistoryItem";
 
 export class TuiTongZiMediator extends BaseMediator {
     public constructor(mediatorName: string = null, viewComponent: any = null) {
@@ -26,6 +28,7 @@ export class TuiTongZiMediator extends BaseMediator {
 
     private upBankerPanel: cc.Node;
     private onlinePlayerListPanel: cc.Node;
+    private historyPanel: cc.Node;
 
     protected prefabSource(): string {
         return TuiTongZiPrefabDefine.TuiTongZiDesk;
@@ -35,6 +38,7 @@ export class TuiTongZiMediator extends BaseMediator {
             // TuiTongZiPrefabDefine.TuiTongZiDesk,
             TuiTongZiPrefabDefine.UpBankerPanel,
             TuiTongZiPrefabDefine.OnlinePlayerListPanel,
+            TuiTongZiPrefabDefine.HistoryPanel,
         ];
     }
 
@@ -56,6 +60,7 @@ export class TuiTongZiMediator extends BaseMediator {
             CommandDefine.RefreshPlayerGload,
             CommandDefine.QuitGame,
             CommandDefine.UpWaitUpBankerList,
+            CommandDefine.AddHistory,
         ];
     }
     public getTZDeskProxy(): TTZDeskProxy {
@@ -124,6 +129,31 @@ export class TuiTongZiMediator extends BaseMediator {
         onlinePlayerListPanelScript.updatePlayerList(this.getTZDeskProxy().repository.deskData.playerList.subPlayer, this.getTZDeskProxy().repository.deskData.playerList.mySelf);
     }
 
+    private openHistoryPanel() {
+        if (this.historyPanel != null && this.historyPanel.isValid) {
+            this.historyPanel.active = true;
+            let historyPanelScript = <HistoryPanel>this.historyPanel.getComponent("HistoryPanel");
+            historyPanelScript.initData(this.getTZDeskProxy().repository.gameData.historys);
+            return;
+        }
+        let source = cc.loader.getRes(TuiTongZiPrefabDefine.HistoryPanel, cc.Prefab);
+        this.historyPanel = cc.instantiate(source);
+        this.historyPanel.active = true;
+        this.TTZDeskView.addChild(this.historyPanel);
+
+        let historyPanelScript = <HistoryPanel>this.historyPanel.getComponent("HistoryPanel");
+        historyPanelScript.initData(this.getTZDeskProxy().repository.gameData.historys);
+    }
+
+    private addHistory(historyItem: HistoryItem) {
+        if (this.historyPanel == null || !this.historyPanel.isValid) {
+            return;
+        }
+
+        let historyPanelScript = <HistoryPanel>this.historyPanel.getComponent("HistoryPanel");
+        historyPanelScript.addHistoryItem(historyItem);
+    }
+
     public async handleNotification(notification: INotification) {
         const gameData = this.getTZDeskProxy().getGameData();
         const deskData = this.getTZDeskProxy().getDeskData();
@@ -146,7 +176,7 @@ export class TuiTongZiMediator extends BaseMediator {
                     } else if (node.name === 'playerList') {
                         this.openOnlinePlayerList();
                     } else if (node.name === 'trend') {
-
+                        this.openHistoryPanel();
                     } else if (node.name === 'bankerRequest') {
                         this.upBankerPanel.active = true;
                     }
@@ -240,8 +270,13 @@ export class TuiTongZiMediator extends BaseMediator {
             case CommandDefine.UpWaitUpBankerList:
                 this.updateWaitUpBankerList(notification.getBody());
                 break;
+            case CommandDefine.AddHistory:
+                this.addHistory(notification.getBody());
+                break;
             case CommandDefine.QuitGame:
                 this.upBankerPanel = null;
+                this.onlinePlayerListPanel = null;
+                this.historyPanel = null;
                 this.TTZDeskViewScript && this.TTZDeskViewScript.quitGame();
                 break;
         }

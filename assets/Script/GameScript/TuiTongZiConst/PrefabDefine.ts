@@ -4,4 +4,5 @@ export enum PrefabDefine {
     CartItem = "prefabs/TuiTongZi/TTZDeskView",
     UpBankerPanel = "prefabs/TuiTongZi/upBankerPanel",
     OnlinePlayerListPanel = "prefabs/TuiTongZi/onlinePlayerListPanel",
+    HistoryPanel = "prefabs/TuiTongZi/historyPanel",
 }

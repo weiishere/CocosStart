@@ -86,6 +86,9 @@ export default class UpBankerPanel extends ViewComponent {
      * @param deskBankerPlayer 
      */
     updateBankerPlayerList(deskBankerPlayers: DeskBankerPlayer[]) {
+        if (!deskBankerPlayers) {
+            return;
+        }
         let removeNodes = [];
         // 先删除不存在的当庄玩家
         for (const childrenNode of this.bankerListNode.children) {
@@ -128,6 +131,9 @@ export default class UpBankerPanel extends ViewComponent {
      */
     updateWaitUpBankerPlayerList(bankerWaitList: BankerQueuePlayer[]) {
         this.bankerWaitList = bankerWaitList;
+        if (!this.bankerWaitList) {
+            return;
+        }
 
         this.updateUpBankerOrDownBankerLabel();
 

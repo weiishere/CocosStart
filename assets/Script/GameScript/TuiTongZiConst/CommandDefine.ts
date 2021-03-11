@@ -15,4 +15,5 @@ export enum CommandDefine {
     RefreshPlayerGload = 'RefreshPlayerGload',
     QuitGame = 'QuitGame',
     UpWaitUpBankerList = 'UpWaitUpBankerList',
+    AddHistory = 'addHistory',
 }
