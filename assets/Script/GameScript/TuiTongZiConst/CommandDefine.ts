@@ -10,6 +10,7 @@ export enum CommandDefine {
     GetWinGlod = 'GetWinGlod',
     ClearDesk = 'ClearDesk',
     RefreshCardPush = 'RefreshCardPush',
-    RefreshGamePromptPush =  'RefreshGamePromptPush',
-    RefreshGameScorePush = 'RefreshGameScorePush'
+    RefreshGamePromptPush = 'RefreshGamePromptPush',
+    RefreshGameScorePush = 'RefreshGameScorePush',
+    RefreshPlayerGload = 'RefreshPlayerGload'
 }

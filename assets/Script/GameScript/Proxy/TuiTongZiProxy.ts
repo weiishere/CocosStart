@@ -116,12 +116,14 @@ export class TuiTongZiProxy extends ModuleProxy {
                 this.getTTZDeskProxy().updateGameStateStr("停止下注");
             }
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_ROOM_POKER) { //推送本局的结算结果
-            let s2CPushRoomPoker: S2CPushRoomPoker = <S2CPushRoomPoker>content;  
+            let s2CPushRoomPoker: S2CPushRoomPoker = <S2CPushRoomPoker>content;
             //this.getTTZDeskProxy().updateCardDataList(s2CPushRoomPoker.pokers);
             this.getTTZDeskProxy().updateGameStateStr("比牌中");
             this.getTTZDeskProxy().gameResult(s2CPushRoomPoker);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_CREDIT_UPDATE) {  //推送玩家分数变化
             let s2CBetUpdateMoney: S2CBetUpdateMoney = <S2CBetUpdateMoney>content;
+
+            this.getTTZDeskProxy().updatePlayerGlod(s2CBetUpdateMoney.playerName, s2CBetUpdateMoney.money);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_SEAT_CHANGE) {   //推送座位变化
             let s2CRoomSeatChange: S2CRoomSeatChange = <S2CRoomSeatChange>content;
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_BANKER_QUEUE_LIST) {  //推送排队上庄的玩家列表
@@ -135,7 +137,7 @@ export class TuiTongZiProxy extends ModuleProxy {
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_MULTIPLAYER_BET) {    //推送玩家下注
             let s2CPushMultiplayerBet: S2CPushMultiplayerBet = <S2CPushMultiplayerBet>content;
             this.getTTZDeskProxy().updateAnteData(s2CPushMultiplayerBet.betInfos);
-            
+
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_DESK_WAIT_BET_COUNTDOWN) {
             let s2CPushRoomResultToHall: S2CPushRoomResultToHall = <S2CPushRoomResultToHall>content;
             this.getTTZDeskProxy().addHistory(s2CPushRoomResultToHall.history);
@@ -244,7 +246,7 @@ export class TuiTongZiProxy extends ModuleProxy {
         bet.betVal = betScore;
         c2sPlayerBet.betValList.push(bet);
 
-        this.sendGameData(TuiTongZiProtocol.C2S_JOIN_ROOM, c2sPlayerBet);
+        this.sendGameData(TuiTongZiProtocol.C2S_BET, c2sPlayerBet);
     }
 
     upBanker() {

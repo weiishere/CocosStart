@@ -70,7 +70,7 @@ export default class CardResult extends cc.Component {
                     break;
             }
         }
-        if (times) {
+        if (times !== 1) {
             this.timesNum.getChildByName('num').getComponent(cc.Label).string = times + '';
         } else {
             this.timesNum.active = false;

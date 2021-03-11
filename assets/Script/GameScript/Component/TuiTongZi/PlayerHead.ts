@@ -80,12 +80,28 @@ export default class PlayerHead extends ViewComponent {
         }
     }
     /**显示输赢数目 */
-    showGlodResult(money) {
+    showGlodResult(money: number, resultMoney: number) {
         this.changeMoney.active = true;
-        this.changeMoney.getChildByName('changeMoney').getComponent(cc.Label).string = (money < 0 ? '-' : '+') + money;
-        this.changeMoney.x -= 100;
-        this.changeMoney.opacity = 0;
-        cc.tween(this.changeMoney).by(0.2, { position: cc.v3(100, 0, 0), opacity: 255 }).delay(3).by(0.2, { position: cc.v3(-100, 0, 0), opacity: 0 }).start();
+        this.changeMoney.getChildByName('changeMoney').active = false;
+        this.changeMoney.getChildByName('changeMoney_gray').active = false;
+        this.node.getChildByName('glodInfo').getChildByName('amount').getComponent(cc.Label).string = resultMoney.toFixed(2) + '';
+        if (money !== 0) {
+            let changeMoneyNode;
+            const incre = money < 0 ? '-' : '+'
+            this.changeMoney.getChildByName('incre').getComponent(cc.Label).string = incre;
+            if (incre === '+') {
+                changeMoneyNode = this.changeMoney.getChildByName('changeMoney');
+                this.changeMoney.getChildByName('incre').color = new cc.Color(231, 165, 99, 255);
+            } else {
+                changeMoneyNode = this.changeMoney.getChildByName('changeMoney_gray');
+                this.changeMoney.getChildByName('incre').color = new cc.Color(138, 138, 138, 255);
+            }
+            
+            changeMoneyNode.active = true;
+            changeMoneyNode.getComponent(cc.Label).string = money.toFixed(0);
+            this.changeMoney.opacity = 0;
+            cc.tween(this.changeMoney).to(0.4, { position: cc.v3(0, 60, 0), opacity: 255 }, { easing: 'quintOut' }).delay(3).to(0.2, { position: cc.v3(0, 30, 0), opacity: 0 }).start();
+        }
     }
     start() {
 

@@ -41,7 +41,8 @@ export class TuiTongZiMediator extends BaseMediator {
             CommandDefine.ClearDesk,
             CommandDefine.RefreshCardPush,
             CommandDefine.RefreshGamePromptPush,
-            CommandDefine.RefreshGameScorePush
+            CommandDefine.RefreshGameScorePush,
+            CommandDefine.RefreshPlayerGload
         ];
     }
     public getTZDeskProxy(): TTZDeskProxy {
@@ -149,6 +150,10 @@ export class TuiTongZiMediator extends BaseMediator {
             case CommandDefine.RefreshGameScorePush:
                 //显示闲家头部分数
                 this.TTZDeskViewScript && this.TTZDeskViewScript.updateSubScore();
+                break;
+            case CommandDefine.RefreshPlayerGload:
+                const { playerId, glod } = notification.getBody();
+                this.TTZDeskViewScript && this.TTZDeskViewScript.updatePlayerGloadChange(playerId, glod, 0)
                 break;
             case CommandDefine.GetWinGlod:
                 //显示筹码流向，流向玩家

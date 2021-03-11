@@ -102,6 +102,7 @@ export class TTZDeskProxy extends BaseProxy {
 
     /**刷新拼庄用户 */
     updateApplyMasterPlayer(deskBankerPlayers: DeskBankerPlayer[]): void {
+        if (!deskBankerPlayers) return;
         this.repository.deskData.playerList.masterPlayer = [];
         for (const deskBankerPlayer of deskBankerPlayers) {
             let userInfo: UserInfo = {
@@ -173,6 +174,9 @@ export class TTZDeskProxy extends BaseProxy {
         }
         this.sendNotification(CommandDefine.RefreshCardPush, { isInit, isAction: true });
         this.sendNotification(CommandDefine.RefreshGameScorePush);
+        if (isInit) {
+            this.sendNotification(CommandDefine.RefreshGameScorePush);
+        }
     }
 
     /**
@@ -242,6 +246,7 @@ export class TTZDeskProxy extends BaseProxy {
                 }
             }
         }
+        this.sendNotification(CommandDefine.RefreshGameScorePush);
     }
 
     /**
@@ -286,7 +291,7 @@ export class TTZDeskProxy extends BaseProxy {
                 }
             }
         }
-
+        this.sendNotification(CommandDefine.RefreshGameScorePush);
 
     }
 
@@ -340,7 +345,16 @@ export class TTZDeskProxy extends BaseProxy {
     gameResult(s2CPushRoomPoker: S2CPushRoomPoker) {
         this.updateCardDataList(s2CPushRoomPoker.pokers, false);
         this.repository.gameData.presentResult = s2CPushRoomPoker;
+        this.repository.gameData.subData.shun.totalGold = 0;
+        this.repository.gameData.subData.qian.totalGold = 0;
+        this.repository.gameData.subData.wei.totalGold = 0;
         this.sendNotification(CommandDefine.ShowResult);
+    }
+
+    /**更新玩家金币变化 */
+    updatePlayerGlod(playerId: string, glod: number) {
+
+        this.sendNotification(CommandDefine.RefreshPlayerGload, { playerId, glod });
     }
 
     getGameData(): GameData {

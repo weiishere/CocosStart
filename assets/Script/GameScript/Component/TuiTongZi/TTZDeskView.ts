@@ -198,9 +198,9 @@ export default class TTZDeskView extends ViewComponent {
                 parent.addChild(playerHead);
             }
         }
-        this.subPlayerHeaderLeft.removeAllChildren();
-        this.subPlayerHeaderRight.removeAllChildren();
         cc.loader.loadRes(PrefabDefine.PlayerHead, cc.Prefab, (err, head) => {
+            this.subPlayerHeaderLeft.removeAllChildren();
+            this.subPlayerHeaderRight.removeAllChildren();
             initHead(head, 0, this.subPlayerHeaderLeft, new cc.Vec3(58, 220));
             initHead(head, 1, this.subPlayerHeaderLeft, new cc.Vec3(-31, 100));
             initHead(head, 2, this.subPlayerHeaderLeft, new cc.Vec3(-51, -30));
@@ -313,16 +313,17 @@ export default class TTZDeskView extends ViewComponent {
                         item.position = cc.v3(item.position.x, item.position.y + 100);
                         item.opacity = 0;
                         (item.getComponent(TTZCardItemView) as TTZCardItemView).reset();
+                        cc.tween(item).to(0.2, { position: cc.v3(item.position.x, item.position.y - 100), opacity: 255 }).to(2, {}).call(() => { }).start();
                     });
                 });
-                wraps.forEach(wrap => {
-                    wrap.children.map(item => {
-                        cc.tween(item).to(0.2, { position: cc.v3(item.position.x, item.position.y - 100), opacity: 255 }).to(2, {}).call(() => {
-                            // const _script = (item.getComponent(TTZCardItemView) as TTZCardItemView)
-                            // _script.cardNumber && _script.overTurn(true);
-                        }).start();
-                    });
-                });
+                // wraps.forEach(wrap => {
+                //     wrap.children.map(item => {
+                //         cc.tween(item).to(0.2, { position: cc.v3(item.position.x, item.position.y - 100), opacity: 255 }).to(2, {}).call(() => {
+                //             // const _script = (item.getComponent(TTZCardItemView) as TTZCardItemView)
+                //             // _script.cardNumber && _script.overTurn(true);
+                //         }).start();
+                //     });
+                // });
                 this.scheduleOnce(() => {
                     callback();
                 }, 1);
@@ -340,29 +341,9 @@ export default class TTZDeskView extends ViewComponent {
                 overTurnHandler(0, () => { });
             });
         } else {
-            console.log('不是发牌后')
+            //不是发牌后
             overTurnHandler(0, () => { });
         }
-
-        // //首先刷新庄家牌组
-
-        // this.getCardItem(masterCardList, 0, masterCards.frist, cc.v3(-30, 0, 0), isAutoReturn, isAction);
-        // this.getCardItem(masterCardList, 1, masterCards.second, cc.v3(30, 0, 0), isAutoReturn, isAction);
-        // //刷新闲家牌组
-
-        // this.getCardItem(shunCardList, 0, shunCards.frist, cc.v3(-30, 0, 0), isAutoReturn, isAction);
-        // this.getCardItem(shunCardList, 1, shunCards.second, cc.v3(30, 0, 0), isAutoReturn, isAction);
-
-
-        // this.getCardItem(qianCardList, 0, qianCards.frist, cc.v3(-30, 0, 0), isAutoReturn, isAction);
-        // this.getCardItem(qianCardList, 1, qianCards.second, cc.v3(30, 0, 0), isAutoReturn, isAction);
-
-
-        // this.getCardItem(weiCardList, 0, weiCards.frist, cc.v3(-30, 0, 0), isAutoReturn, isAction);
-        // this.getCardItem(weiCardList, 1, weiCards.second, cc.v3(30, 0, 0), isAutoReturn, isAction);
-
-
-
     }
     /**显示结果（牌组类型，赢方区域发光，用户输赢数据，金币飞舞，玩家赢输钱） */
     showReult() {
@@ -380,8 +361,8 @@ export default class TTZDeskView extends ViewComponent {
         const arr = [resultShowMaster, resultShowShun, resultShowQian, resultShowWei];
         for (let i = 0; i < result.results.length; i++) {
             const masterCardShow: cc.Node = cc.instantiate(this.cardResult);
-            (masterCardShow.getComponent('CardResult') as CardResult).show(result.results[i].point, result.results[i].type, 0);
-            arr[i].zIndex = 10000;
+            (masterCardShow.getComponent('CardResult') as CardResult).show(result.results[i].point, result.results[i].type, result.results[i].odds);
+            arr[i].x = i === 0 ? 356 : 0;
             arr[i].addChild(masterCardShow);
             arr[i].x -= 50;
             arr[i].opacity = 0;
@@ -400,34 +381,75 @@ export default class TTZDeskView extends ViewComponent {
                 }
             });
             //金币回飞
-            const fly = (index: number, jetton: cc.Node, player: cc.Node) => {
+            const fly = (index: number, jetton: cc.Node, player: cc.Node, delay) => {
                 if (result.winTypes[index] === 1) {
                     //赢，飞回去
                     const targetCoord = this.convetOtherNodeSpace(player, this.node);
-                    cc.tween(jetton).to(0.6, { position: targetCoord }, { easing: 'quintOut' }).call(() => { jetton.destroy(); }).start();
-                    cc.tween(player).to(0.1, { scale: player.name === 'playerList' ? 0.9 : 0.9 }).to(0.1, { scale: player.name === 'playerList' ? 1 : 0.8 }).start();
+                    cc.tween(jetton).delay(delay * 0.01 > 3 ? 3 : delay * 0.01).to(0.6, { position: targetCoord }, { easing: 'quintOut' }).call(() => { jetton.destroy(); }).start();
+                    cc.tween(player).delay(0.5).to(0.1, { scale: player.name === 'playerList' ? 0.9 : 0.9 }).to(0.1, { scale: player.name === 'playerList' ? 1 : 0.8 }).start();
                 } else {
                     //输，飞到庄家
                     const targetCoord = this.convetOtherNodeSpace(this.node.getChildByName('masterWrap'), this.node);
-                    cc.tween(jetton).to(0.4, { position: targetCoord }, { easing: 'quintOut' }).call(() => { jetton.destroy(); }).start();
+                    cc.tween(jetton).delay(delay * 0.01 > 3 ? 3 : delay * 0.01).to(0.6, { position: targetCoord }, { easing: 'quintOut' }).call(() => { jetton.destroy(); }).start();
                 }
             }
-            this.node.getChildByName('jettonsWrap').children.forEach(jetton => {
+            this.node.getChildByName('jettonsWrap').children.forEach((jetton, index) => {
                 const { fromPlayer, subArea } = jetton['source'];
                 if (subArea === 'shun') {
-                    fly(0, jetton, fromPlayer);
+                    fly(0, jetton, fromPlayer, index);
                 } else if (subArea === 'qian') {
-                    fly(1, jetton, fromPlayer);
+                    fly(1, jetton, fromPlayer, index);
                 } else if (subArea === 'wei') {
-                    fly(2, jetton, fromPlayer);
+                    fly(2, jetton, fromPlayer, index);
                 }
             });
-            //显示用户头像输赢
-            result.playerBalance.forEach(() => {
-
-            })
+            this.scheduleOnce(() => {
+                //显示用户头像输赢
+                result.playerBalance.forEach(item => {
+                    // let isFind = false;
+                    this.updatePlayerGloadChange(item.name, item.money, item.changeMoney);
+                    // this.subPlayerHeaderLeft.children.forEach(player => {
+                    //     const playerScript = player.getComponent('PlayerHead') as PlayerHead;
+                    //     if (playerScript.playerId === item.name) {
+                    //         isFind = true;
+                    //         playerScript.showGlodResult(item.changeMoney, item.money);
+                    //     }
+                    // });
+                    // if (!isFind) {
+                    //     this.subPlayerHeaderRight.children.forEach(player => {
+                    //         const playerScript = player.getComponent('PlayerHead') as PlayerHead;
+                    //         if (playerScript.playerId === item.name) {
+                    //             playerScript.showGlodResult(item.changeMoney, item.money);
+                    //         }
+                    //     });
+                    // }
+                    if (item.name === this.getSelfPlayer().userName) {
+                        const playerScript = this.myHeader.children[0].getComponent('PlayerHead') as PlayerHead;
+                        playerScript.showGlodResult(item.changeMoney, item.money);
+                    }
+                })
+            }, 0.8);
         }, 6);
 
+    }
+    /**对应玩家充值的金币变化 */
+    updatePlayerGloadChange(playerId: string, glod: number, change: number) {
+        let isFind = false;
+        this.subPlayerHeaderLeft.children.forEach(player => {
+            const playerScript = player.getComponent('PlayerHead') as PlayerHead;
+            if (playerScript.playerId === playerId) {
+                isFind = true;
+                playerScript.showGlodResult(change, glod);
+            }
+        });
+        if (!isFind) {
+            this.subPlayerHeaderRight.children.forEach(player => {
+                const playerScript = player.getComponent('PlayerHead') as PlayerHead;
+                if (playerScript.playerId === playerId) {
+                    playerScript.showGlodResult(change, glod);
+                }
+            });
+        }
     }
     /**金币飞舞 */
     playerClipFly(userInfo: UserInfo, subArea: 'shun' | 'qian' | 'wei', amount: number) {
@@ -435,6 +457,8 @@ export default class TTZDeskView extends ViewComponent {
         const jetton: cc.Node = cc.instantiate(this['jetton_' + amount]);
         let fromPlayer: cc.Node = null;
         jetton.scale = 0.5;
+        jetton.getChildByName('light').active = false;
+        const getRadomRata = (base) => (parseInt((Math.random() * base) + ''));
         //获取用户
         const subPlayer_leftArr = this.node.getChildByName("subPlayer_left").children;
         const subPlayer_rightArr = this.node.getChildByName("subPlayer_right").children;
@@ -462,8 +486,7 @@ export default class TTZDeskView extends ViewComponent {
             //隐藏用户或是自己
             if (userInfo.uid === this.getSelfPlayer().userName) {
                 //玩家自己下注
-                console.log('玩家自己下注' + amount)
-                fromPlayer = this.node.getChildByName("jettonWrap").getChildByName("chouma_" + amount);
+                fromPlayer = this.myHeader;//.getChildByName("chouma_" + amount);
             } else {
                 fromPlayer = this.node.getChildByName("deskOpreationIconWrap").getChildByName("playerList");
             }
@@ -472,37 +495,37 @@ export default class TTZDeskView extends ViewComponent {
         }
         if (!jetton['source']) jetton['source'] = {};
         jetton['source'] = { fromPlayer, subArea };
-
+        //jetton.rotation = radomRata();
         //获取目标坐标
         const target = this.node.getChildByName("antePanelWrap").getChildByName(subArea + "_bg").getChildByName("jettonWrap");
         const targetCoord = this.convetOtherNodeSpace(target, this.node);
         //打散
-        const redom = parseInt((Math.random() * 100) + '');
-        const sign = () => (parseInt((Math.random() * 10) + '') % 2 === 0 ? -1 : 1);
+        const sign = () => getRadomRata(10) % 2 === 0 ? -1 : 1;
         const resetPosition = (baseSize) => {
-            let deviation = Math.random() * 30;
+            let deviation = Math.random() * 40;
             targetCoord.x = baseSize * sign() + targetCoord.x + deviation * sign();
             targetCoord.y = baseSize * sign() + targetCoord.y + deviation * sign();
         }
+        const redom = getRadomRata(100);
         if (redom < 10) {
             //偏差大于50
-            resetPosition(80);
-        } else if (redom > 10 && redom < 3) {
+            resetPosition(60);
+        } else if (redom > 10 && redom < 30) {
             //偏差在80-100
-            resetPosition(65);
+            resetPosition(50);
         } else if (redom > 30 && redom < 50) {
             //偏差在60-80
-            resetPosition(50);
+            resetPosition(40);
         } else if (redom > 50 && redom < 70) {
             //偏差在40-60
-            resetPosition(35);
+            resetPosition(30);
         } else {
             //偏差小于40
             resetPosition(20);
         }
         //开始飞行
         cc.tween(fromPlayer).to(0.1, { scale: fromPlayer.name === 'playerList' ? 0.9 : 0.7 }).to(0.1, { scale: fromPlayer.name === 'playerList' ? 1 : 0.8 }).start();
-        cc.tween(jetton).to(0.4, { position: targetCoord }, { easing: 'quintOut' }).start();
+        cc.tween(jetton).to(0.4, { position: targetCoord, rotation: getRadomRata(-1000) }, { easing: 'quintOut' }).start();
     }
     /**玩家自己下注 */
     myselfPlayerAnteFly(jettonType: number, subArea: 'shun' | 'qian' | 'wei') {
