@@ -57,9 +57,9 @@ export default class UpBankerPanel extends ViewComponent {
     }
 
     initData(s2CEnterRoom: S2CEnterRoom, userName: string, upBankerOrDownBankerHandle: Function) {
+        this.userName = userName;
         this.updateBankerPlayerList(s2CEnterRoom.bankerPlayer);
         this.updateWaitUpBankerPlayerList(s2CEnterRoom.bankerWaitList);
-        this.userName = userName;
 
         this.updateUpBankerOrDownBankerLabel();
         this.updateUpBankerRemark(s2CEnterRoom);
@@ -198,6 +198,11 @@ export default class UpBankerPanel extends ViewComponent {
         // 昵称
         let nicknameLabel = bankerPlayerInfoNodeTmp.getChildByName("nicknameLabel").getComponent(cc.Label);
         nicknameLabel.string = deskBankerPlayer.nickname;
+        if (this.userName === deskBankerPlayer.acctName) {
+            let color = cc.color().fromHEX("#FF0000");
+            nicknameLabel.node.color = color;
+        }
+
         // 分数
         let scoreLabel = bankerPlayerInfoNodeTmp.getChildByName("scoreLabel").getComponent(cc.Label);
         scoreLabel.string = deskBankerPlayer.money.toFixed(2);
@@ -224,6 +229,11 @@ export default class UpBankerPanel extends ViewComponent {
         // 昵称
         let nicknameLabel = waitBankerPlayerInfoNodeTmp.getChildByName("nicknameLabel").getComponent(cc.Label);
         nicknameLabel.string = bankerQueuePlayer.nickname;
+        if (this.userName === bankerQueuePlayer.name) {
+            let color = cc.color().fromHEX("#FF0000");
+            nicknameLabel.node.color = color;
+        }
+
         // 分数
         let scoreLabel = waitBankerPlayerInfoNodeTmp.getChildByName("scoreLabel").getComponent(cc.Label);
         scoreLabel.string = bankerQueuePlayer.money.toFixed(2);

@@ -19,6 +19,8 @@ export default class OnlinePlayerListPanel extends ViewComponent {
 
     player_Info_Node: string = "playerInfoNode";
 
+    userName: string = null;
+
     bindEvent() {
         this.closeBtn.on(cc.Node.EventType.TOUCH_END, () => {
             this.node.active = false;
@@ -30,6 +32,7 @@ export default class OnlinePlayerListPanel extends ViewComponent {
     }
 
     updatePlayerList(subPlayersParam: Array<UserInfo>, myUser: UserInfo) {
+        this.userName = myUser.uid;
         let subPlayers = subPlayersParam.slice(0, subPlayersParam.length);
         subPlayers.push(myUser);
         subPlayers.sort((v1, v2) => {
@@ -94,6 +97,10 @@ export default class OnlinePlayerListPanel extends ViewComponent {
         // 昵称
         let nicknameLabel = playerInfoNodeTmp.getChildByName("nicknameLabel").getComponent(cc.Label);
         nicknameLabel.string = userInfo.nickName;
+        if (this.userName === userInfo.uid) {
+            let color = cc.color().fromHEX("#FF0000");
+            nicknameLabel.node.color = color;
+        }
         // 分数
         let scoreLabel = playerInfoNodeTmp.getChildByName("scoreLabel").getComponent(cc.Label);
         scoreLabel.string = userInfo.score.toFixed(2);
