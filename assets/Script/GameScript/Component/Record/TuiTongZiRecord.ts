@@ -82,6 +82,11 @@ export default class TuiTongZiRecord extends BaseRecord {
 
         let playLogParam: TuiTongZiPlayLogParam = JSON.parse(roomPlayaerCreditDto.extraParam);
 
+        if (this.bankerIconNode.active) {
+            let label = this.bankerIconNode.getChildByName("percentLabel").getComponent(cc.Label);
+            label.string = playLogParam.percent + "%";
+        }
+
         // 加载结果
         for (let i = 0; i < 4; i++) {
             let start = i * 2;
@@ -95,10 +100,13 @@ export default class TuiTongZiRecord extends BaseRecord {
             let betLabel = null;
             if (i === 0) {
                 betLabel = this.shunBetLabel;
+                // this.shunBetLabel.string = `顺下注：${bet}`
             } else if (i === 1) {
                 betLabel = this.qianBetLabel;
+                // this.qianBetLabel.string = `迁下注：${bet}`
             } else if (i === 2) {
                 betLabel = this.weiBetLabel;
+                // this.weiBetLabel.string = `尾下注：${bet}`
             }
             betLabel.string = `下注：${bet}`
         }
