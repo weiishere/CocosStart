@@ -200,6 +200,10 @@ export class TuiTongZiProxy extends ModuleProxy {
             this.getGateProxy().toast("没有可下注的金额了");
         } else if (errorCode === TuiTongZiErrorCode.PLAYER_CASH_STORTAGE) {
             this.getGateProxy().toast("余额不足");
+        } else if (errorCode === TuiTongZiErrorCode.BET_NOT_QUIT_ROOM) {
+            this.getGateProxy().toast("已经下注了，不能退出游戏");
+        } else if (errorCode === TuiTongZiErrorCode.PLAYER_BANKER_NOT_QUIT_ROOM) {
+            this.getGateProxy().toast("你正在当庄，不能退出游戏");
         }
 
         if (msgType === TuiTongZiProtocol.C2S_PLAYER_LOGIN || msgType === TuiTongZiProtocol.C2S_JOIN_ROOM) {
@@ -281,7 +285,7 @@ export class TuiTongZiProxy extends ModuleProxy {
      * 登出
      */
     logout() {
-        this.sendGameData(TuiTongZiProtocol.C2S_PLAYER_LOGIN_OUT, null, (op: number, msgType: number) => {
+        this.sendGameData(TuiTongZiProtocol.C2S_QUIT_ROOM, null, (op: number, msgType: number) => {
         });
     }
 

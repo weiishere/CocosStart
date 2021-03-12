@@ -37,6 +37,7 @@ export default class UpBankerPanel extends ViewComponent {
     userName: string;
     /** 等待上庄的队列 */
     bankerWaitList: BankerQueuePlayer[];
+    deskBankerPlayers: DeskBankerPlayer[];
     /** 是否下庄 */
     isDown: boolean = false;
 
@@ -78,6 +79,15 @@ export default class UpBankerPanel extends ViewComponent {
             }
         }
 
+        if (!this.isDown && this.deskBankerPlayers) {
+            for (const player of this.deskBankerPlayers) {
+                if (player.acctName === this.userName) {
+                    this.isDown = true;
+                    break;
+                }
+            }
+        }
+
         let sprite = this.upBankerOrDownBankerBtn.getComponent(cc.Sprite);
         if (this.isDown) {
             sprite.spriteFrame = this.wyxzBtu;//"我要下庄";
@@ -91,6 +101,7 @@ export default class UpBankerPanel extends ViewComponent {
      * @param deskBankerPlayer 
      */
     updateBankerPlayerList(deskBankerPlayers: DeskBankerPlayer[]) {
+        this.deskBankerPlayers = deskBankerPlayers;
         if (!deskBankerPlayers) {
             return;
         }
