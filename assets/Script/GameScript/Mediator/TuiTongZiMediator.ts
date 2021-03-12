@@ -2,11 +2,12 @@ import Facade from "../../Framework/care/Facade";
 import { INotification } from "../../Framework/interfaces/INotification";
 import Mediator from "../../Framework/patterns/mediator/Mediator";
 import BaseMediator from "../Mediator/BaseMediator"
-import { PrefabDefine as TuiTongZiPrefabDefine } from "../TuiTongZiConst/PrefabDefine";
-import { CommandDefine } from "../TuiTongZiConst/CommandDefine";
+import { PrefabDefine as TuiTongZiPrefabDefine } from "../TuiTongZiConst/TTZPrefabDefine";
+import { CommandDefine } from "../TuiTongZiConst/TTZCommandDefine";
+import { CommandDefine as MahjongCommandDefine } from "../MahjongConst/CommandDefine";
 import TTZDeskView from "../Component/TuiTongZi/TTZDeskView";
 import { TTZDeskProxy } from "../Proxy/TTZDeskProxy";
-import { ProxyDefine } from "../TuiTongZiConst/ProxyDefine";
+import { ProxyDefine } from "../TuiTongZiConst/TTZProxyDefine";
 import { TuiTongZiProxy } from "../Proxy/TuiTongZiProxy";
 import UpBankerPanel from "../Component/TuiTongZi/UpBankerPanel";
 import { S2CEnterRoom } from "../GameData/TuiTongZi/s2c/S2CEnterRoom";
@@ -170,9 +171,9 @@ export class TuiTongZiMediator extends BaseMediator {
                     if (node.name === 'exitIcon') {
                         this.getTuiTongZiProxy().logout();
                     } else if (node.name === 'ruleIcon') {
-
+                        this.TTZDeskViewScript.openHelperAlert();
                     } else if (node.name === 'setIcon') {
-
+                        this.sendNotification(MahjongCommandDefine.OpenSetting);
                     } else if (node.name === 'playerList') {
                         this.openOnlinePlayerList();
                     } else if (node.name === 'trend') {

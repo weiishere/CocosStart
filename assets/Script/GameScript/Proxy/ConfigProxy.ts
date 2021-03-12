@@ -26,7 +26,7 @@ export class ConfigProxy extends BaseProxy {
 
     private _ips = [];
     private currentRemoteIp = "";
-
+    private loadingPanel: cc.Node;
     private isOther = false;
 
     public constructor(proxyName: string = null, data: any = null) {
@@ -38,7 +38,10 @@ export class ConfigProxy extends BaseProxy {
     }
 
     public loadConfig(): void {
-
+        this.loadingPanel = new cc.Node('Loading');
+        const label = this.loadingPanel.addComponent(cc.Label);
+        label.string = "Loading";
+        cc.find("Canvas").addChild(this.loadingPanel);
         cc.loader.loadRes("config/config", cc.JsonAsset, (err, res) => {
             if (err) {
                 // tips.string = "加载本地配置文件失败！";
@@ -77,6 +80,7 @@ export class ConfigProxy extends BaseProxy {
 
     public resOtherUrl(url) {
         HttpUtil.send(url, (response) => {
+            this.loadingPanel.destroy();
             this._ips = response.ip;
             this._shareUrl = response.url[0];
             if (!this._ips || this._ips.length === 0) {
@@ -88,6 +92,7 @@ export class ConfigProxy extends BaseProxy {
             // 递归获取配置
             this.loadLocalConfigRepeatedly(this._ips, 0);
         }, (err) => {
+            this.loadingPanel.destroy();
             this.getGateProxy().toast("获取配置失败！");
         }, HttpUtil.METHOD_GET);
     }
@@ -147,10 +152,12 @@ export class ConfigProxy extends BaseProxy {
                 this.facade.sendNotification(CommandDefine.GateCommand, null, NotificationTypeDefine.CheckLogin);
             }
             isSueeccd = true;
+            this.loadingPanel.destroy();
         }, (errorCode, request, state, url) => {
             // tips.string = "配置文件获取失败!";
             console.log("login err: ", errorCode);
             isSueeccd = false;
+            this.loadingPanel.destroy();
         }, HttpUtil.METHOD_GET);
 
         return isSueeccd;

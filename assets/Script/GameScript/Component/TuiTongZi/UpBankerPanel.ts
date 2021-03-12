@@ -21,6 +21,11 @@ export default class UpBankerPanel extends ViewComponent {
     waitBankerPlayerInfoNode: cc.Node = null;
     @property(cc.RichText)
     upBankerRemark: cc.RichText = null;
+
+    @property(cc.SpriteFrame)
+    wyszBtu: cc.SpriteFrame = null;
+    @property(cc.SpriteFrame)
+    wyxzBtu: cc.SpriteFrame = null;
     /** 上庄或者下庄按钮 */
     @property(cc.Node)
     upBankerOrDownBankerBtn: cc.Node = null;
@@ -73,11 +78,11 @@ export default class UpBankerPanel extends ViewComponent {
             }
         }
 
-        let label = this.upBankerOrDownBankerBtn.getChildByName("btnLabel").getComponent(cc.Label);
+        let sprite = this.upBankerOrDownBankerBtn.getComponent(cc.Sprite);
         if (this.isDown) {
-            label.string = "我要下庄";
+            sprite.spriteFrame = this.wyxzBtu;//"我要下庄";
         } else {
-            label.string = "我要上庄";
+            sprite.spriteFrame = this.wyszBtu;//"我要上庄";
         }
     }
 

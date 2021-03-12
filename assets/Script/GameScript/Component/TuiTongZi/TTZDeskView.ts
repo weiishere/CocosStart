@@ -8,9 +8,9 @@ import ViewComponent from "../../Base/ViewComponent";
 const { ccclass, property } = cc._decorator;
 import { GameData, DeskData, TTZDeskRepository } from "../../repositories/TTZDeskRepository"
 import PlayerHead from "./PlayerHead";
-import { PrefabDefine } from "../../TuiTongZiConst/PrefabDefine";
+import { PrefabDefine } from "../../TuiTongZiConst/TTZPrefabDefine";
 import Facade from "../../../Framework/care/Facade";
-import { ProxyDefine } from "../../TuiTongZiConst/ProxyDefine";
+import { ProxyDefine } from "../../TuiTongZiConst/TTZProxyDefine";
 import { TTZDeskProxy } from "../../Proxy/TTZDeskProxy";
 import TTZCardItemView from "./TTZCardItemView";
 import { UserInfo } from "../../repositories/GateRepository";
@@ -233,6 +233,12 @@ export default class TTZDeskView extends ViewComponent {
             initHead(head, 3, this.masterWrap, new cc.Vec3(120, 0));
             initHead(head, 4, this.masterWrap, new cc.Vec3(220, 0));
         })
+    }
+    /**打开帮助框 */
+    openHelperAlert(): void {
+        cc.loader.loadRes('prefabs/TuiTongZi/ttzRole', cc.Prefab, (error, item) => {
+            this.node.addChild(cc.instantiate(item));
+        });
     }
     /**
      * isAutoReturn:是否自动翻转

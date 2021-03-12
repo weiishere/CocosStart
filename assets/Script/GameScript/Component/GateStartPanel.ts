@@ -59,6 +59,12 @@ export default class GateStartPanel extends ViewComponent {
         const exchangeNode = this.root.getChildByName("gameBg3").getChildByName("gameItem3");
         const _action3 = cc.repeatForever(cc.sequence(cc.scaleTo(1.2, 1.02), cc.scaleTo(1.2, 0.98), cc.callFunc(() => { })));
         exchangeNode.runAction(_action3);
+
+        const erbaGaneNode = this.root.getChildByName("otherGame").getChildByName("game_ebg").getChildByName("hot");
+        const _action4 = cc.repeatForever(cc.sequence(cc.scaleTo(0.1, 1.1),cc.scaleTo(0.4, 1.1),
+        cc.sequence(cc.rotateBy(0.05, 5), cc.rotateBy(0.05, -5), cc.rotateBy(0.05, 5), cc.rotateBy(0.05, -5), cc.rotateBy(0.05, 5), cc.rotateBy(0.05, -5),
+        cc.scaleTo(0.1, 1),cc.scaleTo(0.4, 1), cc.callFunc(() => { }))));
+        erbaGaneNode.runAction(_action4);
     }
 
     protected async bindEvent() {
