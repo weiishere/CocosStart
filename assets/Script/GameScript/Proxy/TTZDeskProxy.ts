@@ -103,8 +103,10 @@ export class TTZDeskProxy extends BaseProxy {
 
     /**刷新拼庄用户 */
     updateApplyMasterPlayer(deskBankerPlayers: DeskBankerPlayer[]): void {
+        if(!deskBankerPlayers){
+            deskBankerPlayers = [];
+        }
         this.repository.deskData.playerList.masterPlayer = [];
-        if (!deskBankerPlayers) return;
         for (const deskBankerPlayer of deskBankerPlayers) {
             let userInfo: UserInfo = {
                 uid: deskBankerPlayer.acctName,
