@@ -227,11 +227,12 @@ export default class TTZDeskView extends ViewComponent {
             }
         }
         cc.loader.loadRes(PrefabDefine.PlayerHead, cc.Prefab, (err, head) => {
-            initHead(head, 0, this.masterWrap, new cc.Vec3(-320, 0));
-            initHead(head, 1, this.masterWrap, new cc.Vec3(-220, 0));
-            initHead(head, 2, this.masterWrap, new cc.Vec3(-120, 0));
-            initHead(head, 3, this.masterWrap, new cc.Vec3(120, 0));
-            initHead(head, 4, this.masterWrap, new cc.Vec3(220, 0));
+            this.masterWrap.getChildByName('masterPlayerWrap').removeAllChildren();
+            initHead(head, 0, this.masterWrap.getChildByName('masterPlayerWrap'), new cc.Vec3(-320, 0));
+            initHead(head, 1, this.masterWrap.getChildByName('masterPlayerWrap'), new cc.Vec3(-220, 0));
+            initHead(head, 2, this.masterWrap.getChildByName('masterPlayerWrap'), new cc.Vec3(-120, 0));
+            initHead(head, 3, this.masterWrap.getChildByName('masterPlayerWrap'), new cc.Vec3(120, 0));
+            initHead(head, 4, this.masterWrap.getChildByName('masterPlayerWrap'), new cc.Vec3(220, 0));
         })
     }
     /**打开帮助框 */
@@ -246,7 +247,7 @@ export default class TTZDeskView extends ViewComponent {
      */
     private getCardItem(parent: cc.Node, index: number, { card, isShow }, position: cc.Vec3, isAutoReturn: boolean, isAction: boolean): TTZCardItemView {
         let _node: cc.Node;
-
+        if (!parent) return;
         if (!parent.children[index]) {
             _node = cc.instantiate(this.cardItem);
             parent.addChild(_node);
@@ -414,21 +415,6 @@ export default class TTZDeskView extends ViewComponent {
                 result.playerBalance.forEach(item => {
                     // let isFind = false;
                     this.updatePlayerGloadChange(item.name, item.money, item.changeMoney);
-                    // this.subPlayerHeaderLeft.children.forEach(player => {
-                    //     const playerScript = player.getComponent('PlayerHead') as PlayerHead;
-                    //     if (playerScript.playerId === item.name) {
-                    //         isFind = true;
-                    //         playerScript.showGlodResult(item.changeMoney, item.money);
-                    //     }
-                    // });
-                    // if (!isFind) {
-                    //     this.subPlayerHeaderRight.children.forEach(player => {
-                    //         const playerScript = player.getComponent('PlayerHead') as PlayerHead;
-                    //         if (playerScript.playerId === item.name) {
-                    //             playerScript.showGlodResult(item.changeMoney, item.money);
-                    //         }
-                    //     });
-                    // }
                     if (item.name === this.getSelfPlayer().userName) {
                         const playerScript = this.myHeader.children[0].getComponent('PlayerHead') as PlayerHead;
                         playerScript.showGlodResult(item.changeMoney, item.money);
@@ -559,13 +545,13 @@ export default class TTZDeskView extends ViewComponent {
     }
     /**刷新闲家分数 */
     public updateSubScore() {
-        const masterTotal = parseInt(this.getData().deskData.playerList.masterPlayer.reduce((total, item) => { return total + item.userInfo.score; }, 0) / 5 + '') ;
+        const masterTotal = parseInt(this.getData().deskData.playerList.masterPlayer.reduce((total, item) => { return total + item.userInfo.score; }, 0) / 5 + '');
         this.node.getChildByName("antePanelWrap").getChildByName("shun_bg").getChildByName("headScore").getComponent(cc.Label).string = this.getData().gameData.subData.shun.totalGold + '/' + masterTotal;
         this.node.getChildByName("antePanelWrap").getChildByName("qian_bg").getChildByName("headScore").getComponent(cc.Label).string = this.getData().gameData.subData.qian.totalGold + '/' + masterTotal;
         this.node.getChildByName("antePanelWrap").getChildByName("wei_bg").getChildByName("headScore").getComponent(cc.Label).string = this.getData().gameData.subData.wei.totalGold + '/' + masterTotal;
     }
 
-    quitGame(){
+    quitGame() {
         this.node.destroy();
     }
 

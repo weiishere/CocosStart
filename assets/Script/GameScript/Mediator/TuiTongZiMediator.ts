@@ -279,6 +279,7 @@ export class TuiTongZiMediator extends BaseMediator {
                 this.onlinePlayerListPanel = null;
                 this.historyPanel = null;
                 this.TTZDeskViewScript && this.TTZDeskViewScript.quitGame();
+                this.TTZDeskViewScript = null;
                 break;
         }
     }

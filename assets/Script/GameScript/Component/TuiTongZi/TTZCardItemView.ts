@@ -64,10 +64,10 @@ export default class TTZCardItemView extends ViewComponent {
         if (isAction) {
             this.node.getComponent(cc.Sprite).spriteFrame = this.faceCardhideOverTurn_1;
             cc.tween(this.node)
-                .to(0.2, {}).call(() => {
+                .to(0.1, {}).call(() => {
                     this.node.getComponent(cc.Sprite).spriteFrame = this.faceCardhideOverTurn_2;
                 })
-                .to(0.2, {}).call(() => {
+                .to(0.1, {}).call(() => {
                     this.node.getComponent(cc.Sprite).spriteFrame = this.mainCardbg;
                     this.cardNumberNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[this.cardNumber] as string];
                     this.cardNumberNode.active = true;
