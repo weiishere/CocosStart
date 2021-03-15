@@ -6,14 +6,17 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import { TuiTongZiSuitType } from "../../GameData/TuiTongZi/TuiTongZiSuitType";
+import { TTZMusicManager } from '../../Other/TTZMusicManager';
 
 const { ccclass, property } = cc._decorator;
 @ccclass
 export default class CardResult extends cc.Component {
 
 
-    @property
-    text: string = 'hello';
+
+    type: TuiTongZiSuitType;
+    num: number;
+    times: number
 
     @property(cc.Node)
     dian: cc.Node = null;
@@ -46,6 +49,9 @@ export default class CardResult extends cc.Component {
      * @param times 倍数
      */
     show(num: number, type: TuiTongZiSuitType, times: number) {
+        this.num = num;
+        this.type = type;
+        this.times = times;
         if (type === TuiTongZiSuitType.POINT_POKER) {
             //点数
             this.cardType.active = false;
@@ -70,6 +76,7 @@ export default class CardResult extends cc.Component {
                     break;
             }
         }
+        //TTZMusicManager.playResult(type, num);
         if (times !== 1) {
             this.timesNum.getChildByName('num').getComponent(cc.Label).string = times + '';
         } else {

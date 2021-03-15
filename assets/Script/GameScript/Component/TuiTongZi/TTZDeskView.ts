@@ -19,6 +19,10 @@ import { ProxyDefine as MahjongDefine } from "../../MahjongConst/ProxyDefine";
 import { LoginData } from "../../GameData/LoginData";
 import CardResult from "./CardResult";
 import { S2CPushRoomPoker } from "../../GameData/TuiTongZi/s2c/S2CPushRoomPoker";
+import { TTZMusicManager } from "../../Other/TTZMusicManager";
+import { TuiTongZiSuitType } from "../../GameData/TuiTongZi/TuiTongZiSuitType";
+import { DymjMusicManager } from "../../Other/DymjMusicManager";
+
 
 @ccclass
 export default class TTZDeskView extends ViewComponent {
@@ -308,7 +312,15 @@ export default class TTZDeskView extends ViewComponent {
                     cc.tween(wrapsParent[index].getChildByName('resultShow')).delay(1).to(0.2, {
                         position: cc.v3(wrapsParent[index].getChildByName('resultShow').x + 50,
                             wrapsParent[index].getChildByName('resultShow').y), opacity: 255
+                    }).call(() => {
+                        if (wrapsParent[index].getChildByName('resultShow').getChildByName('cardResult')){
+                            const { type, num } = (wrapsParent[index].getChildByName('resultShow').getChildByName('cardResult').getComponent('CardResult') as CardResult)
+                            TTZMusicManager.playResult(type, num);
+                        }
                     }).to(3, {}).start();
+                } else {
+                    //语音第一张牌
+                    // TTZMusicManager.playResult(TuiTongZiSuitType.POINT_POKER, cardListData[index].frist.card);
                 }
                 overTurnHandler(index + 1, doneCallback);
             }, 1000);
@@ -345,7 +357,9 @@ export default class TTZDeskView extends ViewComponent {
         }
         if (isInit) {
             initShowCard(() => {
-                overTurnHandler(0, () => { });
+                overTurnHandler(0, () => {
+
+                });
             });
         } else {
             //不是发牌后
@@ -399,6 +413,7 @@ export default class TTZDeskView extends ViewComponent {
                     const targetCoord = this.convetOtherNodeSpace(this.node.getChildByName('masterWrap'), this.node);
                     cc.tween(jetton).delay(delay * 0.01 > 3 ? 3 : delay * 0.01).to(0.6, { position: targetCoord }, { easing: 'quintOut' }).call(() => { jetton.destroy(); }).start();
                 }
+                TTZMusicManager.winBet();
             }
             this.node.getChildByName('jettonsWrap').children.forEach((jetton, index) => {
                 const { fromPlayer, subArea } = jetton['source'];
@@ -518,6 +533,7 @@ export default class TTZDeskView extends ViewComponent {
         //开始飞行
         cc.tween(fromPlayer).to(0.1, { scale: fromPlayer.name === 'playerList' ? 0.9 : 0.7 }).to(0.1, { scale: fromPlayer.name === 'playerList' ? 1 : 0.8 }).start();
         cc.tween(jetton).to(0.4, { position: targetCoord, angle: getRadomRata(1000) }, { easing: 'quintOut' }).start();
+        TTZMusicManager.glodBet();
     }
     /**玩家自己下注 */
     myselfPlayerAnteFly(jettonType: number, subArea: 'shun' | 'qian' | 'wei') {

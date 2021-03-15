@@ -12,7 +12,7 @@ export class TTZMusicManager {
      * @param point 点数
      */
     static playResult(type: number, point: number) {
-        let audioUrl = this.ttzAudioPath + "/";
+        let audioUrl = this.ttzAudioPath + "";
         if (type === TuiTongZiSuitType.YAO_JI_PAIR) {
             audioUrl += "yaojidui";
         } else if (type === TuiTongZiSuitType.PAIR) {
@@ -25,23 +25,34 @@ export class TTZMusicManager {
         } else if (type === TuiTongZiSuitType.AO_TEN) {
             audioUrl += "tong10";
         } else if (type === TuiTongZiSuitType.POINT_POKER) {
-            if (point % 0.5 === 0) {
+            if (point % 1 === 0.5) {
                 audioUrl += `tong${point}5`;
             } else {
                 audioUrl += `tong${point}`;
             }
         }
+        audioUrl += '.mp3';
         // let audioUrl = this.dymjAudioPath + defaultSex + "/s_" + defaultSex + "_" + type + "_" + (mjValue % 9 + 1);
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, audioUrl, AudioNotificationTypeDefine.PlayEffect);
     }
 
     static startBet() {
-        let audioUrl = `${this.ttzAudioPath}/startBet`
+        let audioUrl = `${this.ttzAudioPath}startbet.mp3`
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, audioUrl, AudioNotificationTypeDefine.PlayEffect);
     }
 
     static stopBet() {
-        let audioUrl = `${this.ttzAudioPath}/stop`
+        let audioUrl = `${this.ttzAudioPath}stop.mp3`
+        Facade.Instance.sendNotification(CommandDefine.AudioCommand, audioUrl, AudioNotificationTypeDefine.PlayEffect);
+    }
+
+    static glodBet() {
+        let audioUrl = `${this.ttzAudioPath}bet2.mp3`
+        Facade.Instance.sendNotification(CommandDefine.AudioCommand, audioUrl, AudioNotificationTypeDefine.PlayEffect);
+    }
+
+    static winBet() {
+        let audioUrl = `${this.ttzAudioPath}winGlod.mp3`
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, audioUrl, AudioNotificationTypeDefine.PlayEffect);
     }
 }

@@ -18,6 +18,7 @@ import OnlinePlayerListPanel from "../Component/TuiTongZi/OnlinePlayerListPanel"
 import HistoryPanel from "../Component/TuiTongZi/HistoryPanel";
 import { HistoryItem } from "../GameData/TuiTongZi/s2c/HistoryItem";
 
+
 export class TuiTongZiMediator extends BaseMediator {
     public constructor(mediatorName: string = null, viewComponent: any = null) {
         super(mediatorName, viewComponent);

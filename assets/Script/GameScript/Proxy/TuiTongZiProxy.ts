@@ -27,6 +27,7 @@ import { DeskPlayer } from '../GameData/TuiTongZi/s2c/DeskPlayer';
 import { RoomInfo } from '../GameData/TuiTongZi/s2c/RoomInfo';
 import { S2CPushRoomResultToHall } from '../GameData/TuiTongZi/s2c/S2CPushRoomResultToHall';
 import { TuiTongZiRoomGameStatus } from '../GameData/TuiTongZi/TuiTongZiRoomGameStatus';
+import { TTZMusicManager } from '../Other/TTZMusicManager';
 
 /**
  * 推筒子消息数据代理类
@@ -88,6 +89,7 @@ export class TuiTongZiProxy extends ModuleProxy {
                 this.getTTZDeskProxy().updateGameStateStr("等待开始");
             } else if (s2CEnterRoom.status === TuiTongZiRoomGameStatus.STOP_BET) {
                 this.getTTZDeskProxy().updateGameStateStr("停止下注");
+
             }
 
         } else if (msgType === TuiTongZiProtocol.C2S_UP_BANKER) {
@@ -125,8 +127,17 @@ export class TuiTongZiProxy extends ModuleProxy {
                     countdown = "0" + s2CPushCountDown.countdown;
                 }
                 this.getTTZDeskProxy().updateGameStateStr("开始下注" + countdown);
+
+                console.log(countdown);
+                if (countdown === '10') {
+                    TTZMusicManager.startBet();
+                }
+                if (countdown === '01') {
+                    this.getTTZDeskProxy().updateGameStateStr("停止下注");
+                    TTZMusicManager.stopBet();
+                }
             } else {
-                this.getTTZDeskProxy().updateGameStateStr("停止下注");
+
             }
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_ROOM_POKER) { //推送本局的结算结果
             let s2CPushRoomPoker: S2CPushRoomPoker = <S2CPushRoomPoker>content;
