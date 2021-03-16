@@ -16,6 +16,7 @@ export class TTZMusicManager {
         if (type === TuiTongZiSuitType.YAO_JI_PAIR) {
             audioUrl += "yaojidui";
         } else if (type === TuiTongZiSuitType.PAIR) {
+            // 服务器给的点数是从0开始的，所有这里要加1
             point++;
             audioUrl += `tong${point}${point}`;
             if (point === 5) {
