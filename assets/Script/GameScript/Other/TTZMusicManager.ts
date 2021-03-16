@@ -16,7 +16,7 @@ export class TTZMusicManager {
         if (type === TuiTongZiSuitType.YAO_JI_PAIR) {
             audioUrl += "yaojidui";
         } else if (type === TuiTongZiSuitType.PAIR) {
-            point ++;
+            point++;
             audioUrl += `tong${point}${point}`;
             if (point === 5) {
                 audioUrl += "d";
@@ -26,7 +26,7 @@ export class TTZMusicManager {
         } else if (type === TuiTongZiSuitType.AO_TEN) {
             audioUrl += "tong10";
         } else if (type === TuiTongZiSuitType.POINT_POKER) {
-            if (point.toString().indexOf(".") != -1) {
+            if (point % 1 === 0.5) {
                 point -= 0.5;
                 audioUrl += `tong${point}5`;
             } else {
