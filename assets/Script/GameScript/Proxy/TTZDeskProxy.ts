@@ -85,9 +85,12 @@ export class TTZDeskProxy extends BaseProxy {
      * @returns 
      */
     removePlayerData(players: string[]) {
+        if(!players){
+            players = [];
+        }
         let subPlayers = this.repository.deskData.playerList.subPlayer;
         if (!subPlayers) {
-            return;
+            subPlayers = [];
         }
 
         for (const userName of players) {
@@ -99,6 +102,7 @@ export class TTZDeskProxy extends BaseProxy {
                 }
             }
         }
+        this.facade.sendNotification(CommandDefine.RefreshPlayerPush, null, '');
     }
 
     /**刷新拼庄用户 */

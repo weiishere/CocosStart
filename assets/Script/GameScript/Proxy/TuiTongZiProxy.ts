@@ -91,7 +91,6 @@ export class TuiTongZiProxy extends ModuleProxy {
                 this.getTTZDeskProxy().updateGameStateStr("停止下注");
 
             }
-
         } else if (msgType === TuiTongZiProtocol.C2S_UP_BANKER) {
             this.getGateProxy().toast("上庄成功");
         } else if (msgType === TuiTongZiProtocol.C2S_DOWN_BANKER) {
