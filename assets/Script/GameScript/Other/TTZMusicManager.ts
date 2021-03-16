@@ -55,4 +55,9 @@ export class TTZMusicManager {
         let audioUrl = `${this.ttzAudioPath}winGlod.mp3`
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, audioUrl, AudioNotificationTypeDefine.PlayEffect);
     }
+
+    static newRound() {
+        let audioUrl = `${this.ttzAudioPath}newRound.mp3`
+        Facade.Instance.sendNotification(CommandDefine.AudioCommand, audioUrl, AudioNotificationTypeDefine.PlayEffect);
+    }
 }

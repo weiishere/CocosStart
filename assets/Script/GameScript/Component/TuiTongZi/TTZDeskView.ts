@@ -356,6 +356,7 @@ export default class TTZDeskView extends ViewComponent {
             }
         }
         if (isInit) {
+            TTZMusicManager.newRound();
             initShowCard(() => {
                 overTurnHandler(0, () => {
 

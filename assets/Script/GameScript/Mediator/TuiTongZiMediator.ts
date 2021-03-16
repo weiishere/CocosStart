@@ -17,6 +17,8 @@ import { stringToBytes_SJIS } from "../ts/text/stringToBytes_SJIS";
 import OnlinePlayerListPanel from "../Component/TuiTongZi/OnlinePlayerListPanel";
 import HistoryPanel from "../Component/TuiTongZi/HistoryPanel";
 import { HistoryItem } from "../GameData/TuiTongZi/s2c/HistoryItem";
+import { MusicManager } from "../Other/MusicManager";
+import { AudioSourceDefine } from "../MahjongConst/AudioSourceDefine";
 
 
 export class TuiTongZiMediator extends BaseMediator {
@@ -165,7 +167,7 @@ export class TuiTongZiMediator extends BaseMediator {
         switch (notification.getName()) {
             case CommandDefine.OpenTTZDeskPanel:
                 await this.init();
-
+                //MusicManager.getInstance().playMusic(AudioSourceDefine.BackMusic4);
                 this.TTZDeskView = this.viewComponent.getChildByName('tuitongzi_Desk');
                 this.TTZDeskViewScript = this.TTZDeskView.getComponent('TTZDeskView') as TTZDeskView;
                 this.TTZDeskViewScript.bindDskOpreationEvent((node) => {

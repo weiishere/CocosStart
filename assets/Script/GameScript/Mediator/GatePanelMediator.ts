@@ -31,7 +31,7 @@ export class GatePanelMediator extends BaseMediator {
 
     private userHeaderScript;
     private loadingPanel: cc.Node = null;
-    private musicManager: MusicManager;
+    //private musicManager: MusicManager;
 
     /** 兑换窗口 */
     private exchangePanelNode: cc.Node;
@@ -43,7 +43,7 @@ export class GatePanelMediator extends BaseMediator {
 
     public constructor(mediatorName: string = null, viewComponent: any = null) {
         super(mediatorName, viewComponent);
-        this.musicManager = new MusicManager();
+        //this.musicManager = new MusicManager();
     }
 
     public getWebSockerProxy(): WebSockerProxy {
@@ -139,22 +139,22 @@ export class GatePanelMediator extends BaseMediator {
         this.viewComponent.addChild(this.settingPrefab);
 
         let settingScript = this.settingPrefab.getComponent("Setting");
-        settingScript.init(this.musicManager.isPauseMusic, this.musicManager.isPauseEffect, isShowChangeUserBtn, this.getConfigProxy().version);
+        settingScript.init(MusicManager.getInstance().isPauseMusic, MusicManager.getInstance().isPauseEffect, isShowChangeUserBtn, this.getConfigProxy().version);
     }
 
     private musciHandle(notification: INotification): void {
         switch (notification.getType()) {
             case AudioNotificationTypeDefine.PlayAudio:
-                this.musicManager.playMusic(notification.getBody());
+                MusicManager.getInstance().playMusic(notification.getBody());
                 break;
             case AudioNotificationTypeDefine.PlayEffect:
-                this.musicManager.playEffect(notification.getBody());
+                MusicManager.getInstance().playEffect(notification.getBody());
                 break;
             case AudioNotificationTypeDefine.PauseAudio:
-                this.musicManager.updatePauseMusic(notification.getBody());
+                MusicManager.getInstance().updatePauseMusic(notification.getBody());
                 break;
             case AudioNotificationTypeDefine.PauseEffect:
-                this.musicManager.updatePauseEffect(notification.getBody());
+                MusicManager.getInstance().updatePauseEffect(notification.getBody());
                 break;
         }
     }
@@ -239,7 +239,7 @@ export class GatePanelMediator extends BaseMediator {
     /** 切换账号 */
     private changeUserHandle() {
         // 暂停音乐
-        this.musicManager.updatePauseMusic(true, false);
+        MusicManager.getInstance().updatePauseMusic(true, false);
         if (this.gameStartPanel.isValid) {
             this.gameStartPanel.destroy();
         }
@@ -404,7 +404,9 @@ export class GatePanelMediator extends BaseMediator {
                 const userInfoPanel = cc.loader.getRes(PrefabDefine.UserInfoPanel, cc.Prefab);
                 const { loginData } = notification.getBody();
 
-                this.musicManager.playMusic(AudioSourceDefine.BackMusic);
+                
+                //this.sendNotification(NotificationTypeDefine.BgMusicPlay);
+                MusicManager.getInstance().playMusic(AudioSourceDefine.BackMusic2);
                 this.sendNotification(CommandDefine.OpenToast, { content: "欢迎回来" });
 
                 let gameStartResource = cc.loader.getRes(PrefabDefine.GameStartPanel, cc.Prefab);

@@ -15,8 +15,15 @@ import { GameNoDefine } from '../GameConst/GameNoDefine';
 import { OfflineGameData } from '../GameData/OfflineGameData';
 import { DymjProxy } from '../Proxy/DymjProxy';
 import { TuiTongZiProxy } from "../Proxy/TuiTongZiProxy";
+import { MusicManager } from "../Other/MusicManager";
+import { AudioSourceDefine } from "../MahjongConst/AudioSourceDefine";
 
 export class GateCommand extends BaseCommand {
+    private musicManager;
+    constructor() {
+        super();
+        this.musicManager = new MusicManager();
+    }
     public execute(notification: INotification): void {
         const gateProxy = Facade.Instance.retrieveProxy(ProxyDefine.Gate) as GateProxy;
         switch (notification.getType()) {
@@ -48,6 +55,9 @@ export class GateCommand extends BaseCommand {
 
                 this.handleOfflineData();
                 break;
+            // case NotificationTypeDefine.BgMusicPlay:
+            //     this.musicManager.playMusic(notification.getBody().bgMusic || AudioSourceDefine.BackMusic2);
+            //     break;
         }
     }
 

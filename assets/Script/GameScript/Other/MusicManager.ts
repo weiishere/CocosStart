@@ -13,7 +13,7 @@ export class MusicManager {
     isPauseMusic: boolean = false;
     // 是否暂停音效
     isPauseEffect: boolean = false;
-
+    private static instance: MusicManager;
     effectUrl = null;
     bgUrl = null;
 
@@ -48,7 +48,7 @@ export class MusicManager {
     updatePauseMusic(value: boolean, isCache: boolean = true) {
         if (isCache) {
             this.isPauseMusic = value;
-            this.localStorage.setItem("isPauseMusic", this.isPauseMusic);
+            //this.localStorage.setItem("isPauseMusic", this.isPauseMusic);
         }
 
         if (!value) {
@@ -100,7 +100,7 @@ export class MusicManager {
         if (bgUrl) {
             this.bgUrl = bgUrl;
         }
-        if (!this.bgUrl || this.isPauseMusic) {
+        if (!this.bgUrl) {
             return;
         }
 
@@ -151,5 +151,11 @@ export class MusicManager {
                 this.updateEffectVolume(this.effectVolume);
             });
         }
+    }
+    static getInstance() {
+        if (!this.instance) {
+            this.instance = new MusicManager();
+        }
+        return this.instance;
     }
 }

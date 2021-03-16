@@ -19,11 +19,15 @@ import { DymjMusicManager } from '../Other/DymjMusicManager';
 import { DeskPanelViewEventDefine } from "../GameConst/Event/DeskPanelViewEventDefine";
 import ChatBox, { MsgObj } from "../Component/ChatBox";
 import { GameNoDefine } from "../GameConst/GameNoDefine";
+import { AudioSourceDefine } from "../MahjongConst/AudioSourceDefine";
+import { MusicManager } from "../Other/MusicManager";
 
 export class DeskMediator extends BaseMediator {
+    //private musicManager: MusicManager;
 
     public constructor(mediatorName: string = null, viewComponent: any = null) {
         super(mediatorName, viewComponent);
+        //this.musicManager = new MusicManager();
         this.listenerEvent();
     }
 
@@ -148,6 +152,8 @@ export class DeskMediator extends BaseMediator {
                     this.getDymjProxy().ready();
                     this.sendNotification(CommandDefine.ReStartGamePush);
                 } else {
+                    //this.musicManager.playMusic(AudioSourceDefine.BackMusic3);
+                    MusicManager.getInstance().playMusic(AudioSourceDefine.BackMusic3);
                     this.DeskPanelViewScript.bindDskOpreationEvent(node => {
                         if (node.name === 'exitIcon') {
                             //退出房间
