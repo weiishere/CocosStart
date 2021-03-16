@@ -48,7 +48,7 @@ export class MusicManager {
     updatePauseMusic(value: boolean, isCache: boolean = true) {
         if (isCache) {
             this.isPauseMusic = value;
-            //this.localStorage.setItem("isPauseMusic", this.isPauseMusic);
+            this.localStorage.setItem("isPauseMusic", this.isPauseMusic);
         }
 
         if (!value) {
@@ -100,7 +100,7 @@ export class MusicManager {
         if (bgUrl) {
             this.bgUrl = bgUrl;
         }
-        if (!this.bgUrl) {
+        if (!this.bgUrl || this.isPauseMusic) {
             return;
         }
 
