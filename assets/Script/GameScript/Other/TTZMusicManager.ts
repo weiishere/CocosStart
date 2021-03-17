@@ -63,4 +63,9 @@ export class TTZMusicManager {
         let audioUrl = `${this.ttzAudioPath}newRound.mp3`
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, audioUrl, AudioNotificationTypeDefine.PlayEffect);
     }
+
+    static overTurnCard(){
+        let audioUrl = `${this.ttzAudioPath}fanpai.mp3`
+        Facade.Instance.sendNotification(CommandDefine.AudioCommand, audioUrl, AudioNotificationTypeDefine.PlayEffect);
+    }
 }

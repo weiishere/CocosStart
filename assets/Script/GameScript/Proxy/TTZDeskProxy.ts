@@ -85,29 +85,34 @@ export class TTZDeskProxy extends BaseProxy {
      * @returns 
      */
     removePlayerData(players: string[]) {
-        if(!players){
+        if (!players) {
             players = [];
+            return;
         }
         let subPlayers = this.repository.deskData.playerList.subPlayer;
         if (!subPlayers) {
             subPlayers = [];
+        } else {
+            this.repository.deskData.playerList.subPlayer = subPlayers.filter(player => {
+                return !players.some(p => p === player.uid);
+            });
         }
 
-        for (const userName of players) {
-            for (let index = 0; index < subPlayers.length; index++) {
-                const player = subPlayers[index];
-                if (player.uid === userName) {
-                    subPlayers.slice(index, 1);
-                    break;
-                }
-            }
-        }
-        this.facade.sendNotification(CommandDefine.RefreshPlayerPush, null, '');
+        // for (const userName of players) {
+        //     for (let index = 0; index < subPlayers.length; index++) {
+        //         const player = subPlayers[index];
+        //         if (player.uid === userName) {
+        //             subPlayers.slice(index, 1);
+        //             break;
+        //         }
+        //     }
+        // }
+        this.sendNotification(CommandDefine.RefreshPlayerPush);
     }
 
     /**刷新拼庄用户 */
     updateApplyMasterPlayer(deskBankerPlayers: DeskBankerPlayer[]): void {
-        if(!deskBankerPlayers){
+        if (!deskBankerPlayers) {
             deskBankerPlayers = [];
         }
         this.repository.deskData.playerList.masterPlayer = [];
@@ -269,6 +274,7 @@ export class TTZDeskProxy extends BaseProxy {
     updateAnteData(betInfos: S2CPushBetInfo[]): void {
         for (const betInfo of betInfos) {
             let userInfo = this.getUserInfo(betInfo.playerName);
+            userInfo.score = betInfo.money;
             if (userInfo) {
                 let betValList = betInfo.betValList;
                 for (const betVal of betValList) {

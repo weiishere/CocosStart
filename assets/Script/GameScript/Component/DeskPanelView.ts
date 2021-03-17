@@ -295,7 +295,7 @@ export default class DeskPanelView extends ViewComponent {
     bindGameOpreationEvent(callBack: (node: cc.Node, correlationInfoData) => void): void {
         this.opreationArea.on('gameOpreation', (eventData) => {
             cc.tween(eventData.target).to(0.1, { scale: 0.95, position: cc.v2(0, -5) }).call(() => {
-                console.log(`按下${eventData.target.name}`, eventData.target);
+                //console.log(`按下${eventData.target.name}`, eventData.target);
                 callBack(eventData.target as cc.Node, this.getData().gameData.eventData.gameEventData.myGameEvent.correlationInfoData);
             }).to(0.1, { scale: 1, position: cc.v2(0, 0) }).start();
         }, this);
@@ -304,7 +304,7 @@ export default class DeskPanelView extends ViewComponent {
     bindDskOpreationEvent(callBack: (node: cc.Node) => void): void {
         this.deskOpreationIconWrap.on('deskOpreation', (eventData) => {
             cc.tween(eventData.target).to(0.1, { scale: 0.9 }).call(() => {
-                console.log(`按下${eventData.target.name}`, eventData.target);
+                //console.log(`按下${eventData.target.name}`, eventData.target);
                 callBack(eventData.target as cc.Node);
             }).to(0.1, { scale: 1 }).start();
         }, this);
@@ -879,7 +879,7 @@ export default class DeskPanelView extends ViewComponent {
     showCardAlert(gameIndex: number, cardNumber: number): void {
 
         if (gameIndex === undefined || this.isMe(gameIndex)) {
-            console.log(this.showCardEndPosition);
+            //console.log(this.showCardEndPosition);
             const _card = this.addCardToNode(this.myShowCardWrap, cardNumber, "mine", "setUp", {
                 purAddNode: node => (node.getComponent('CardItemView') as CardItemView).setStress(true)
             });

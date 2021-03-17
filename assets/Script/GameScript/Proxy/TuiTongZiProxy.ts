@@ -103,6 +103,7 @@ export class TuiTongZiProxy extends ModuleProxy {
             this.getTTZDeskProxy().addPlayerData(s2CPushJoinRoom.players);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_PLAYER_QUIT_ROOM) {
             let s2CQuitRoom: S2CQuitRoom = <S2CQuitRoom>content;
+            console.log('---------------玩家下线----------');
             this.getTTZDeskProxy().removePlayerData(s2CQuitRoom.playerNames);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_REST_COUNTDOWN) {
             let s2CPushCountDown: S2CPushCountDown = <S2CPushCountDown>content;
@@ -127,7 +128,6 @@ export class TuiTongZiProxy extends ModuleProxy {
                 }
                 this.getTTZDeskProxy().updateGameStateStr("开始下注" + countdown);
 
-                console.log(countdown);
                 if (countdown === '10') {
                     TTZMusicManager.startBet();
                 }

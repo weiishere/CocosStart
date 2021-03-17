@@ -159,10 +159,10 @@ export class TuiTongZiMediator extends BaseMediator {
     }
 
     public async handleNotification(notification: INotification) {
-        const gameData = this.getTZDeskProxy().getGameData();
-        const deskData = this.getTZDeskProxy().getDeskData();
-        console.log('gameData', gameData);
-        console.log('deskData', deskData);
+        // const gameData = this.getTZDeskProxy().getGameData();
+        // const deskData = this.getTZDeskProxy().getDeskData();
+        // console.log('gameData', gameData);
+        // console.log('deskData', deskData);
 
         switch (notification.getName()) {
             case CommandDefine.OpenTTZDeskPanel:

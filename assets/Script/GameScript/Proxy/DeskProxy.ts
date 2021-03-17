@@ -200,7 +200,7 @@ export class DeskProxy extends BaseProxy {
                 }, 800);
             }
         } else {
-            console.log('dymjS2CPlayerGet.getMjValue', dymjS2CPlayerGet.getMjValue);
+            //console.log('dymjS2CPlayerGet.getMjValue', dymjS2CPlayerGet.getMjValue);
             let { partnerCards } = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
             partnerCards.isHandCard = true;
             partnerCards.handCard = dymjS2CPlayerGet.getMjValue;

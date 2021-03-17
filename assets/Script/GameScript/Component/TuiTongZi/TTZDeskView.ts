@@ -202,6 +202,7 @@ export default class TTZDeskView extends ViewComponent {
                 parent.addChild(playerHead);
             }
         }
+        console.log(this.getData().deskData.playerList.subPlayer.length)
         cc.loader.loadRes(PrefabDefine.PlayerHead, cc.Prefab, (err, head) => {
             this.subPlayerHeaderLeft.removeAllChildren();
             this.subPlayerHeaderRight.removeAllChildren();
@@ -313,7 +314,7 @@ export default class TTZDeskView extends ViewComponent {
                         position: cc.v3(wrapsParent[index].getChildByName('resultShow').x + 50,
                             wrapsParent[index].getChildByName('resultShow').y), opacity: 255
                     }).call(() => {
-                        if (wrapsParent[index].getChildByName('resultShow').getChildByName('cardResult')){
+                        if (wrapsParent[index].getChildByName('resultShow').getChildByName('cardResult')) {
                             const { type, num } = (wrapsParent[index].getChildByName('resultShow').getChildByName('cardResult').getComponent('CardResult') as CardResult)
                             TTZMusicManager.playResult(type, num);
                         }
@@ -321,6 +322,7 @@ export default class TTZDeskView extends ViewComponent {
                 } else {
                     //语音第一张牌
                     // TTZMusicManager.playResult(TuiTongZiSuitType.POINT_POKER, cardListData[index].frist.card);
+                    TTZMusicManager.overTurnCard();
                 }
                 overTurnHandler(index + 1, doneCallback);
             }, 1000);
@@ -369,10 +371,10 @@ export default class TTZDeskView extends ViewComponent {
     }
     /**显示结果（牌组类型，赢方区域发光，用户输赢数据，金币飞舞，玩家赢输钱） */
     showReult() {
-        console.log('-------------------------------------------------------------');
-        console.log(this.getData().gameData.historys[this.getData().gameData.historys.length - 1]);
-        console.log(this.getData().gameData.presentResult);
-        console.log('-------------------------------------------------------------');
+        // console.log('-------------------------------------------------------------');
+        // console.log(this.getData().gameData.historys[this.getData().gameData.historys.length - 1]);
+        // console.log(this.getData().gameData.presentResult);
+        // console.log('-------------------------------------------------------------');
         //const result = this.getData().gameData.historys[this.getData().gameData.historys.length - 1];
         const result: S2CPushRoomPoker = this.getData().gameData.presentResult;
         const resultShowMaster = this.node.getChildByName('masterWrap').getChildByName('resultShow');
@@ -408,7 +410,8 @@ export default class TTZDeskView extends ViewComponent {
                     //赢，飞回去
                     const targetCoord = this.convetOtherNodeSpace(player, this.node);
                     cc.tween(jetton).delay(delay * 0.01 > 3 ? 3 : delay * 0.01).to(0.6, { position: targetCoord }, { easing: 'quintOut' }).call(() => { jetton.destroy(); }).start();
-                    cc.tween(player).delay(0.5).to(0.1, { scale: player.name === 'playerList' ? 0.9 : 0.9 }).to(0.1, { scale: player.name === 'playerList' ? 1 : 0.8 }).start();
+                    //cc.tween(player).delay(0.5).to(0.1, { scale: player.name === 'playerList' ? 0.9 : 0.9 }).to(0.1, { scale: player.name === 'playerList' ? 1 : 0.8 }).start();
+                    cc.tween(player).delay(0.5).by(0.1, { scale: -0.1 }).by(0.1, { scale: 0.1 }).start();
                 } else {
                     //输，飞到庄家
                     const targetCoord = this.convetOtherNodeSpace(this.node.getChildByName('masterWrap'), this.node);
@@ -435,33 +438,50 @@ export default class TTZDeskView extends ViewComponent {
                         const playerScript = this.myHeader.children[0].getComponent('PlayerHead') as PlayerHead;
                         playerScript.showGlodResult(item.changeMoney, item.money);
                     }
-                })
+                });
+                result.bankerBalance.forEach(item => {
+                    // let isFind = false;
+                    this.updatePlayerGloadChange(item.name, item.money, item.winloss);
+
+                });
             }, 0.8);
         }, 6);
 
     }
     /**对应玩家充值的金币变化 */
     updatePlayerGloadChange(playerId: string, glod: number, change: number) {
-        let isFind = false;
+        //let isFind = false;
+        if (playerId === this.getSelfPlayer().userName) {
+            const playerScript = this.myHeader.children[0].getComponent('PlayerHead') as PlayerHead;
+            playerScript.showGlodResult(change, glod);
+            return;
+        }
         this.subPlayerHeaderLeft.children.forEach(player => {
             const playerScript = player.getComponent('PlayerHead') as PlayerHead;
             if (playerScript.playerId === playerId) {
-                isFind = true;
                 playerScript.showGlodResult(change, glod);
+                return;
             }
         });
-        if (!isFind) {
-            this.subPlayerHeaderRight.children.forEach(player => {
-                const playerScript = player.getComponent('PlayerHead') as PlayerHead;
-                if (playerScript.playerId === playerId) {
-                    playerScript.showGlodResult(change, glod);
-                }
-            });
-        }
+        this.subPlayerHeaderRight.children.forEach(player => {
+            const playerScript = player.getComponent('PlayerHead') as PlayerHead;
+            if (playerScript.playerId === playerId) {
+                playerScript.showGlodResult(change, glod);
+                return;
+            }
+        });
+        this.masterWrap.getChildByName('masterPlayerWrap').children.forEach(player => {
+            const playerScript = player.getComponent('PlayerHead') as PlayerHead;
+            if (playerScript.playerId === playerId) {
+                playerScript.showGlodResult(change, glod);
+                return;
+            }
+        });
     }
     /**金币飞舞 */
     playerClipFly(userInfo: UserInfo, subArea: 'shun' | 'qian' | 'wei', amount: number) {
-        console.log(userInfo, subArea, amount);
+        //console.log(userInfo, subArea, amount);
+        this.updatePlayerGloadChange(userInfo.uid, +userInfo.score, -amount);
         const jetton: cc.Node = cc.instantiate(this['jetton_' + amount]);
         let fromPlayer: cc.Node = null;
         jetton.scale = 0.5;
@@ -532,7 +552,8 @@ export default class TTZDeskView extends ViewComponent {
             resetPosition(20);
         }
         //开始飞行
-        cc.tween(fromPlayer).to(0.1, { scale: fromPlayer.name === 'playerList' ? 0.9 : 0.7 }).to(0.1, { scale: fromPlayer.name === 'playerList' ? 1 : 0.8 }).start();
+        cc.tween(fromPlayer).by(0.1, { scale: -0.1 }).by(0.1, { scale: +0.1 }).start();
+        //cc.tween(fromPlayer).to(0.1, { scale: fromPlayer.name === 'playerList' ? 0.9 : 0.7 }).to(0.1, { scale: fromPlayer.name === 'playerList' ? 1 : 0.8 }).start();
         cc.tween(jetton).to(0.4, { position: targetCoord, angle: getRadomRata(1000) }, { easing: 'quintOut' }).start();
         TTZMusicManager.glodBet();
     }
