@@ -5,7 +5,7 @@ import { TuiTongZiPlayLogParam } from '../../GameData/Record/TuiTongZiPlayLogPar
 import { RoomPlayerCredit } from '../../GameData/RoomPlayerCredit';
 import { CommandDefine } from '../../MahjongConst/CommandDefine';
 import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
-import CardItemView from '../CardItemView';
+import CardItemView from '../DdYiMahjong/CardItemView';
 import BaseRecord from './BaseRecord';
 
 const { ccclass, property } = cc._decorator;

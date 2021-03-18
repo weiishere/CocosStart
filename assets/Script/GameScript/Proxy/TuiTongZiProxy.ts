@@ -28,6 +28,7 @@ import { RoomInfo } from '../GameData/TuiTongZi/s2c/RoomInfo';
 import { S2CPushRoomResultToHall } from '../GameData/TuiTongZi/s2c/S2CPushRoomResultToHall';
 import { TuiTongZiRoomGameStatus } from '../GameData/TuiTongZi/TuiTongZiRoomGameStatus';
 import { TTZMusicManager } from '../Other/TTZMusicManager';
+import { TuiTongZiSuitType } from '../GameData/TuiTongZi/TuiTongZiSuitType';
 
 /**
  * 推筒子消息数据代理类
@@ -142,6 +143,7 @@ export class TuiTongZiProxy extends ModuleProxy {
             let s2CPushRoomPoker: S2CPushRoomPoker = <S2CPushRoomPoker>content;
             //this.getTTZDeskProxy().updateCardDataList(s2CPushRoomPoker.pokers);
             this.getTTZDeskProxy().updateGameStateStr("比牌中");
+            this.getTTZDeskProxy().balanceUpdateUserInfoScore(s2CPushRoomPoker);
             this.getTTZDeskProxy().gameResult(s2CPushRoomPoker);
         } else if (msgType === TuiTongZiProtocol.S2C_PUSH_CREDIT_UPDATE) {  //推送玩家分数变化
             let s2CBetUpdateMoney: S2CBetUpdateMoney = <S2CBetUpdateMoney>content;

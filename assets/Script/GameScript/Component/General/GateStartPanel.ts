@@ -6,14 +6,14 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const { ccclass, property } = cc._decorator;
-import ViewComponent from "../Base/ViewComponent";
-import Facade from "../../Framework/care/Facade";
-import { ProxyDefine } from "../MahjongConst/ProxyDefine"
-import { CommandDefine } from "../MahjongConst/CommandDefine"
-import { GateProxy } from "../Proxy/GateProxy";
-import { TuiTongZiProxy } from "../Proxy/TuiTongZiProxy";
-import { DymjMusicManager } from '../Other/DymjMusicManager';
-import { ConfigProxy } from "../Proxy/ConfigProxy";
+import ViewComponent from "../../Base/ViewComponent";
+import Facade from "../../../Framework/care/Facade";
+import { ProxyDefine } from "../../MahjongConst/ProxyDefine"
+import { CommandDefine } from "../../MahjongConst/CommandDefine"
+import { GateProxy } from "../../Proxy/GateProxy";
+import { TuiTongZiProxy } from "../../Proxy/TuiTongZiProxy";
+import { DymjMusicManager } from '../../Other/DymjMusicManager';
+import { ConfigProxy } from "../../Proxy/ConfigProxy";
 
 @ccclass
 export default class GateStartPanel extends ViewComponent {

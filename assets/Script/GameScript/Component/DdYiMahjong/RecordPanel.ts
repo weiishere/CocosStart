@@ -1,19 +1,19 @@
-import ViewComponent from '../Base/ViewComponent';
-import { SpriteLoadUtil } from '../Other/SpriteLoadUtil';
-import { LoginAfterHttpUtil } from '../Util/LoginAfterHttpUtil';
-import Facade from '../../Framework/care/Facade';
-import { ProxyDefine } from '../MahjongConst/ProxyDefine';
-import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
-import { ConfigProxy } from '../Proxy/ConfigProxy';
-import { HttpUtil } from '../Util/HttpUtil';
-import { GameRecordInfo } from '../GameData/GameRecordInfo';
-import { RoomPlayerCredit } from '../GameData/RoomPlayerCredit';
+import ViewComponent from '../../Base/ViewComponent';
+import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
+import { LoginAfterHttpUtil } from '../../Util/LoginAfterHttpUtil';
+import Facade from '../../../Framework/care/Facade';
+import { ProxyDefine } from '../../MahjongConst/ProxyDefine';
+import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
+import { ConfigProxy } from '../../Proxy/ConfigProxy';
+import { HttpUtil } from '../../Util/HttpUtil';
+import { GameRecordInfo } from '../../GameData/GameRecordInfo';
+import { RoomPlayerCredit } from '../../GameData/RoomPlayerCredit';
 import RecordDetailList from './RecordDetailList';
-import { CommandDefine } from '../MahjongConst/CommandDefine';
-import { GateProxy } from '../Proxy/GateProxy';
-import { GameNoDefine } from '../GameConst/GameNoDefine';
-import { PrefabDefine } from '../MahjongConst/PrefabDefine';
-import BaseRecord from './Record/BaseRecord';
+import { CommandDefine } from '../../MahjongConst/CommandDefine';
+import { GateProxy } from '../../Proxy/GateProxy';
+import { GameNoDefine } from '../../GameConst/GameNoDefine';
+import { PrefabDefine } from '../../MahjongConst/PrefabDefine';
+import BaseRecord from '../Record/BaseRecord';
 // Learn TypeScript:
 //  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
 // Learn Attribute:

@@ -5,16 +5,16 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import Facade from "../../Framework/care/Facade";
-import ViewComponent from "../Base/ViewComponent";
-import { CommandDefine } from "../MahjongConst/CommandDefine";
-import { ProxyDefine } from "../MahjongConst/ProxyDefine";
-import { SpriteLoadUtil } from "../Other/SpriteLoadUtil";
-import { ConfigProxy } from "../Proxy/ConfigProxy";
-import { GateProxy } from "../Proxy/GateProxy";
-import { LocalCacheDataProxy } from "../Proxy/LocalCacheDataProxy";
-import { HttpUtil } from "../Util/HttpUtil";
-import { LoginAfterHttpUtil } from "../Util/LoginAfterHttpUtil";
+import Facade from "../../../Framework/care/Facade";
+import ViewComponent from "../../Base/ViewComponent";
+import { CommandDefine } from "../../MahjongConst/CommandDefine";
+import { ProxyDefine } from "../../MahjongConst/ProxyDefine";
+import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
+import { ConfigProxy } from "../../Proxy/ConfigProxy";
+import { GateProxy } from "../../Proxy/GateProxy";
+import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
+import { HttpUtil } from "../../Util/HttpUtil";
+import { LoginAfterHttpUtil } from "../../Util/LoginAfterHttpUtil";
 
 const { ccclass, property } = cc._decorator;
 

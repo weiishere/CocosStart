@@ -1,12 +1,12 @@
-import ViewComponent from '../Base/ViewComponent';
-import { HttpUtil } from '../Util/HttpUtil';
-import Facade from '../../Framework/care/Facade';
-import { ProxyDefine } from '../MahjongConst/ProxyDefine';
-import { ConfigProxy } from '../Proxy/ConfigProxy';
-import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
-import { CommandDefine } from '../MahjongConst/CommandDefine';
-import { LoginAfterHttpUtil } from '../Util/LoginAfterHttpUtil';
-import { GateProxy } from '../Proxy/GateProxy';
+import ViewComponent from '../../Base/ViewComponent';
+import { HttpUtil } from '../../Util/HttpUtil';
+import Facade from '../../../Framework/care/Facade';
+import { ProxyDefine } from '../../MahjongConst/ProxyDefine';
+import { ConfigProxy } from '../../Proxy/ConfigProxy';
+import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
+import { CommandDefine } from '../../MahjongConst/CommandDefine';
+import { LoginAfterHttpUtil } from '../../Util/LoginAfterHttpUtil';
+import { GateProxy } from '../../Proxy/GateProxy';
 
 const { ccclass, property } = cc._decorator;
 

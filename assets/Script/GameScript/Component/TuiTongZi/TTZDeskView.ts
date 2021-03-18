@@ -481,7 +481,7 @@ export default class TTZDeskView extends ViewComponent {
     /**金币飞舞 */
     playerClipFly(userInfo: UserInfo, subArea: 'shun' | 'qian' | 'wei', amount: number) {
         //console.log(userInfo, subArea, amount);
-        this.updatePlayerGloadChange(userInfo.uid, +userInfo.score, -amount);
+        this.updatePlayerGloadChange(userInfo.uid, +userInfo.score, 0);
         const jetton: cc.Node = cc.instantiate(this['jetton_' + amount]);
         let fromPlayer: cc.Node = null;
         jetton.scale = 0.5;

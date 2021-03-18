@@ -5,7 +5,7 @@ import BaseMediator from "./BaseMediator";
 import { PrefabDefine } from "../MahjongConst/PrefabDefine";
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
-import { GatePanelView } from '../Component/GatePanelView';
+import { GatePanelView } from '../Component/General/GatePanelView';
 import { ProxyDefine } from "../MahjongConst/ProxyDefine";
 import { GateRepository } from "../repositories/GateRepository"
 import { GateProxy } from "../Proxy/GateProxy"
@@ -15,9 +15,9 @@ import { AudioNotificationTypeDefine } from '../MahjongConst/AudioNotificationTy
 import { MusicManager } from '../Other/MusicManager';
 import { UserGold } from '../GameData/UserGold';
 import { WebSockerProxy } from '../Proxy/WebSocketProxy';
-import MyCenter from '../Component/MyCenter';
-import RecordDetailList from "../Component/RecordDetailList";
-import NoticeAlert from "../Component/NoticeAlert";
+import MyCenter from '../Component/General/MyCenter';
+import RecordDetailList from "../Component/DdYiMahjong/RecordDetailList";
+import NoticeAlert from "../Component/General/NoticeAlert";
 
 export class GatePanelMediator extends BaseMediator {
     //private gatePanelView: GatePanelView = null;

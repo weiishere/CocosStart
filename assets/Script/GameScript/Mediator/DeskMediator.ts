@@ -7,7 +7,7 @@ import { ProxyDefine } from "../MahjongConst/ProxyDefine"
 import { DeskProxy } from "../Proxy/DeskProxy"
 import { LocalCacheDataProxy } from "../Proxy/LocalCacheDataProxy"
 import { DymjProxy } from '../Proxy/DymjProxy';
-import DeskPanelView from "../Component/DeskPanelView";
+import DeskPanelView from "../Component/DdYiMahjong/DeskPanelView";
 import { DeskEventName, PlayerInfo } from "../repositories/DeskRepository";
 import { DymjOperationType } from "../GameData/Dymj/DymjOperationType";
 import { DymjGang } from "../GameData/Dymj/s2c/DymjGang";
@@ -17,7 +17,7 @@ import { DymjTing } from "../GameData/Dymj/s2c/DymjTing";
 import { DymjGameResult } from "../GameData/Dymj/s2c/DymjGameResult";
 import { DymjMusicManager } from '../Other/DymjMusicManager';
 import { DeskPanelViewEventDefine } from "../GameConst/Event/DeskPanelViewEventDefine";
-import ChatBox, { MsgObj } from "../Component/ChatBox";
+import ChatBox, { MsgObj } from "../Component/DdYiMahjong/ChatBox";
 import { GameNoDefine } from "../GameConst/GameNoDefine";
 import { AudioSourceDefine } from "../MahjongConst/AudioSourceDefine";
 import { MusicManager } from "../Other/MusicManager";

@@ -1,4 +1,4 @@
-import ViewComponent from '../Base/ViewComponent';
+import ViewComponent from '../../Base/ViewComponent';
 // Learn TypeScript:
 //  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
 // Learn Attribute:

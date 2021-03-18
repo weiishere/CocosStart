@@ -1,15 +1,15 @@
-import ViewComponent from '../Base/ViewComponent';
-import { HttpUtil } from '../Util/HttpUtil';
-import Facade from '../../Framework/care/Facade';
-import { ProxyDefine } from '../MahjongConst/ProxyDefine';
-import { ConfigProxy } from '../Proxy/ConfigProxy';
-import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
-import { CommandDefine } from '../MahjongConst/CommandDefine';
-import { LoginAfterHttpUtil } from '../Util/LoginAfterHttpUtil';
-import { ResponseCode } from '../GameConst/ResponseCode';
-import { GateProxy } from '../Proxy/GateProxy';
-import { DateUtil } from '../Util/DateUtil';
-import { getUserOrderInfo } from './bonus/MyBonus';
+import ViewComponent from '../../Base/ViewComponent';
+import { HttpUtil } from '../../Util/HttpUtil';
+import Facade from '../../../Framework/care/Facade';
+import { ProxyDefine } from '../../MahjongConst/ProxyDefine';
+import { ConfigProxy } from '../../Proxy/ConfigProxy';
+import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
+import { CommandDefine } from '../../MahjongConst/CommandDefine';
+import { LoginAfterHttpUtil } from '../../Util/LoginAfterHttpUtil';
+import { ResponseCode } from '../../GameConst/ResponseCode';
+import { GateProxy } from '../../Proxy/GateProxy';
+import { DateUtil } from '../../Util/DateUtil';
+import { getUserOrderInfo } from '../bonus/MyBonus';
 
 const { ccclass, property } = cc._decorator;
 

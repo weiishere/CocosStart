@@ -1,18 +1,18 @@
-import ViewComponent from '../Base/ViewComponent';
-import { SpriteLoadUtil } from '../Other/SpriteLoadUtil';
-import { LoginAfterHttpUtil } from '../Util/LoginAfterHttpUtil';
-import Facade from '../../Framework/care/Facade';
-import { ProxyDefine } from '../MahjongConst/ProxyDefine';
-import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
-import { ConfigProxy } from '../Proxy/ConfigProxy';
-import { HttpUtil } from '../Util/HttpUtil';
-import { GameRecordInfo } from '../GameData/GameRecordInfo';
-import { RoomPlayerCredit } from '../GameData/RoomPlayerCredit';
-import { RoomPlayLog } from '../GameData/RoomPlayLog';
-import { DateUtil } from '../Util/DateUtil';
-import { PrefabDefine } from '../MahjongConst/PrefabDefine';
-import BaseRecordDetail, { PlayerRecordData } from './Record/BaseRecordDetail';
-import { GameNoDefine } from '../GameConst/GameNoDefine';
+import ViewComponent from '../../Base/ViewComponent';
+import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
+import { LoginAfterHttpUtil } from '../../Util/LoginAfterHttpUtil';
+import Facade from '../../../Framework/care/Facade';
+import { ProxyDefine } from '../../MahjongConst/ProxyDefine';
+import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
+import { ConfigProxy } from '../../Proxy/ConfigProxy';
+import { HttpUtil } from '../../Util/HttpUtil';
+import { GameRecordInfo } from '../../GameData/GameRecordInfo';
+import { RoomPlayerCredit } from '../../GameData/RoomPlayerCredit';
+import { RoomPlayLog } from '../../GameData/RoomPlayLog';
+import { DateUtil } from '../../Util/DateUtil';
+import { PrefabDefine } from '../../MahjongConst/PrefabDefine';
+import BaseRecordDetail, { PlayerRecordData } from '../Record/BaseRecordDetail';
+import { GameNoDefine } from '../../GameConst/GameNoDefine';
 
 const { ccclass, property } = cc._decorator;
 

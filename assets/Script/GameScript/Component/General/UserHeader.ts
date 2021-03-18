@@ -6,10 +6,10 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const { ccclass, property } = cc._decorator;
-import ViewComponent from "../Base/ViewComponent";
-import Facade from '../../Framework/care/Facade';
-import { CommandDefine } from '../MahjongConst/CommandDefine';
-import { SpriteLoadUtil } from '../Other/SpriteLoadUtil';
+import ViewComponent from "../../Base/ViewComponent";
+import Facade from '../../../Framework/care/Facade';
+import { CommandDefine } from '../../MahjongConst/CommandDefine';
+import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
 
 @ccclass
 export default class UserHeader extends ViewComponent {

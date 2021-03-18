@@ -1,6 +1,6 @@
 const { ccclass, property } = cc._decorator;
-import ViewComponent from "../Base/ViewComponent";
-import { PrefabDefine } from "../MahjongConst/PrefabDefine"
+import ViewComponent from "../../Base/ViewComponent";
+import { PrefabDefine } from "../../MahjongConst/PrefabDefine"
 
 @ccclass
 export class LoginPanel extends ViewComponent {

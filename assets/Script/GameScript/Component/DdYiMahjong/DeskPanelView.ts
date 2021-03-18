@@ -6,20 +6,19 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const { ccclass, property } = cc._decorator;
-import { GameData, DeskData, PlayerInfo, DeskRepository } from "../repositories/DeskRepository"
-import ViewComponent from "../Base/ViewComponent";
-import CardItemView, { ModType, PositionType, FallShowStatus } from "../Component/CardItemView"
-import Facade from "../../Framework/care/Facade";
-import { ProxyDefine } from "../MahjongConst/ProxyDefine";
-import { DeskProxy } from "../Proxy/DeskProxy";
-import { LocalCacheDataProxy } from "../Proxy/LocalCacheDataProxy";
-import { LoginData } from "../GameData/LoginData";
-import { GateCommand } from "../Command/GateCommand";
-import { CommandDefine } from "../MahjongConst/CommandDefine";
-import { DeskPanelViewEventDefine } from "../GameConst/Event/DeskPanelViewEventDefine";
+import { GameData, DeskData, PlayerInfo, DeskRepository } from "../../repositories/DeskRepository"
+import ViewComponent from "../../Base/ViewComponent";
+import CardItemView, { ModType, PositionType, FallShowStatus } from "./CardItemView"
+import Facade from "../../../Framework/care/Facade";
+import { ProxyDefine } from "../../MahjongConst/ProxyDefine";
+import { DeskProxy } from "../../Proxy/DeskProxy";
+import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
+import { LoginData } from "../../GameData/LoginData";
+import { GateCommand } from "../../Command/GateCommand";
+import { CommandDefine } from "../../MahjongConst/CommandDefine";
+import { DeskPanelViewEventDefine } from "../../GameConst/Event/DeskPanelViewEventDefine";
 import { MsgObj } from "./ChatBox";
-import { PrefabDefine } from "../MahjongConst/PrefabDefine";
-import MyPlayer from "./bonus/MyPlayer";
+import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
 
 @ccclass
 export default class DeskPanelView extends ViewComponent {

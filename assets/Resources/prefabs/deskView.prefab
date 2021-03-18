@@ -67,10 +67,13 @@
       },
       {
         "__id__": 557
+      },
+      {
+        "__id__": 558
       }
     ],
     "_prefab": {
-      "__id__": 558
+      "__id__": 559
     },
     "_opacity": 255,
     "_color": {
@@ -22411,6 +22414,23 @@
     "_isAbsVerticalCenter": true,
     "_originalWidth": 1334,
     "_originalHeight": 750,
+    "_id": ""
+  },
+  {
+    "__type__": "a8259G29jFOvrFlvlMi4XYI",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "label": null,
+    "cardItem": {
+      "__uuid__": "7b8ee160-f215-490c-8b26-9d84db23caeb"
+    },
+    "maskWrap": {
+      "__id__": 540
+    },
     "_id": ""
   },
   {

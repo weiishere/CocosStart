@@ -5,10 +5,10 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import Facade from "../../Framework/care/Facade";
-import ViewComponent from "../Base/ViewComponent";
-import { ProxyDefine } from "../MahjongConst/ProxyDefine";
-import { LocalCacheDataProxy } from "../Proxy/LocalCacheDataProxy";
+import Facade from "../../../Framework/care/Facade";
+import ViewComponent from "../../Base/ViewComponent";
+import { ProxyDefine } from "../../MahjongConst/ProxyDefine";
+import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
 
 const { ccclass, property } = cc._decorator;
 

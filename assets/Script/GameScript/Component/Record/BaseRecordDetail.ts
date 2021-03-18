@@ -4,7 +4,7 @@ import { ProxyDefine } from '../../MahjongConst/ProxyDefine';
 import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
 import { ConfigProxy } from '../../Proxy/ConfigProxy';
 import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
-import CardItemView from '../CardItemView';
+import CardItemView from '../DdYiMahjong/CardItemView';
 const { ccclass, property } = cc._decorator;
 
 export type PlayerRecordData = {

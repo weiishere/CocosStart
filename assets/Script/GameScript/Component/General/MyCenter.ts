@@ -1,14 +1,14 @@
-import ViewComponent from '../Base/ViewComponent';
-import { LoginData } from '../GameData/LoginData';
-import { SpriteLoadUtil } from '../Other/SpriteLoadUtil';
-import Facade from '../../Framework/care/Facade';
-import { ProxyDefine } from '../MahjongConst/ProxyDefine';
-import { GateProxy } from '../Proxy/GateProxy';
-import { LoginAfterHttpUtil } from '../Util/LoginAfterHttpUtil';
-import { ConfigProxy } from '../Proxy/ConfigProxy';
-import { HttpUtil } from '../Util/HttpUtil';
-import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
-import { CommandDefine } from '../MahjongConst/CommandDefine';
+import ViewComponent from '../../Base/ViewComponent';
+import { LoginData } from '../../GameData/LoginData';
+import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
+import Facade from '../../../Framework/care/Facade';
+import { ProxyDefine } from '../../MahjongConst/ProxyDefine';
+import { GateProxy } from '../../Proxy/GateProxy';
+import { LoginAfterHttpUtil } from '../../Util/LoginAfterHttpUtil';
+import { ConfigProxy } from '../../Proxy/ConfigProxy';
+import { HttpUtil } from '../../Util/HttpUtil';
+import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
+import { CommandDefine } from '../../MahjongConst/CommandDefine';
 
 const { ccclass, property } = cc._decorator;
 

@@ -1,11 +1,11 @@
 const { ccclass, property } = cc._decorator;
-import ViewComponent from "../Base/ViewComponent";
-import { PrefabDefine } from "../MahjongConst/PrefabDefine"
-import { GateEventDefine } from '../GameConst/Event/GateEventDefine';
-import { PhoneRegisterOrLoginData } from '../GameData/PhoneRegisterOrLoginData';
-import Facade from "../../Framework/care/Facade";
-import { CommandDefine } from "../MahjongConst/CommandDefine";
-import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
+import ViewComponent from "../../Base/ViewComponent";
+import { PrefabDefine } from "../../MahjongConst/PrefabDefine"
+import { GateEventDefine } from '../../GameConst/Event/GateEventDefine';
+import { PhoneRegisterOrLoginData } from '../../GameData/PhoneRegisterOrLoginData';
+import Facade from "../../../Framework/care/Facade";
+import { CommandDefine } from "../../MahjongConst/CommandDefine";
+import { NotificationTypeDefine } from "../../MahjongConst/NotificationTypeDefine";
 
 @ccclass
 export class LoginSubPanel extends ViewComponent {

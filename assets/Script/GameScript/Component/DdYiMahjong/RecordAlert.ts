@@ -1,18 +1,18 @@
-import ViewComponent from '../Base/ViewComponent';
-import Facade from '../../Framework/care/Facade';
-import { ProxyDefine } from '../MahjongConst/ProxyDefine';
-import { LocalCacheDataProxy } from '../Proxy/LocalCacheDataProxy';
-import { ConfigProxy } from '../Proxy/ConfigProxy';
-import { RoomPlayLog } from '../GameData/RoomPlayLog';
+import ViewComponent from '../../Base/ViewComponent';
+import Facade from '../../../Framework/care/Facade';
+import { ProxyDefine } from '../../MahjongConst/ProxyDefine';
+import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
+import { ConfigProxy } from '../../Proxy/ConfigProxy';
+import { RoomPlayLog } from '../../GameData/RoomPlayLog';
 import { RecorDetailData } from './RecordDetailList';
-import { DymjGameResult } from '../GameData/Dymj/s2c/DymjGameResult';
-import { DymjGameUIResultItem } from '../GameData/Dymj/s2c/DymjGameUIResultItem';
-import { CommandDefine } from '../MahjongConst/CommandDefine';
-import { DymjProxy } from '../Proxy/DymjProxy';
-import { DymjGangHuTypeValue } from '../GameData/Dymj/s2c/DymjGangHuTypeValue';
-import { PrefabDefine } from '../MahjongConst/PrefabDefine';
-import BaseRecordDetail, { PlayerRecordData } from './Record/BaseRecordDetail';
-import { GameNoDefine } from '../GameConst/GameNoDefine';
+import { DymjGameResult } from '../../GameData/Dymj/s2c/DymjGameResult';
+import { DymjGameUIResultItem } from '../../GameData/Dymj/s2c/DymjGameUIResultItem';
+import { CommandDefine } from '../../MahjongConst/CommandDefine';
+import { DymjProxy } from '../../Proxy/DymjProxy';
+import { DymjGangHuTypeValue } from '../../GameData/Dymj/s2c/DymjGangHuTypeValue';
+import { PrefabDefine } from '../../MahjongConst/PrefabDefine';
+import BaseRecordDetail, { PlayerRecordData } from '../Record/BaseRecordDetail';
+import { GameNoDefine } from '../../GameConst/GameNoDefine';
 
 const { ccclass, property } = cc._decorator;
 

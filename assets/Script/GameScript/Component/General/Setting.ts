@@ -6,11 +6,11 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const { ccclass, property } = cc._decorator;
-import ViewComponent from "../Base/ViewComponent";
-import { MusicManager } from '../Other/MusicManager';
-import Facade from '../../Framework/care/Facade';
-import { CommandDefine } from '../MahjongConst/CommandDefine';
-import { AudioNotificationTypeDefine } from '../MahjongConst/AudioNotificationTypeDefine';
+import ViewComponent from "../../Base/ViewComponent";
+import { MusicManager } from '../../Other/MusicManager';
+import Facade from '../../../Framework/care/Facade';
+import { CommandDefine } from '../../MahjongConst/CommandDefine';
+import { AudioNotificationTypeDefine } from '../../MahjongConst/AudioNotificationTypeDefine';
 
 @ccclass
 export default class Setting extends ViewComponent {

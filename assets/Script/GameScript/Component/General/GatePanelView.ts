@@ -1,8 +1,8 @@
 const { ccclass, property } = cc._decorator;
-import ViewComponent from "../Base/ViewComponent";
-import { PrefabDefine } from "../MahjongConst/PrefabDefine"
-import Facade from '../../Framework/care/Facade';
-import { CommandDefine } from '../MahjongConst/CommandDefine';
+import ViewComponent from "../../Base/ViewComponent";
+import { PrefabDefine } from "../../MahjongConst/PrefabDefine"
+import Facade from '../../../Framework/care/Facade';
+import { CommandDefine } from '../../MahjongConst/CommandDefine';
 
 @ccclass
 export class GatePanelView extends ViewComponent {
