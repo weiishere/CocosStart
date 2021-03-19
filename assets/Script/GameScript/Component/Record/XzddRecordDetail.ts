@@ -51,7 +51,7 @@ export default class RecordDetail extends BaseRecordDetail {
 
         playerData.forEach(v => {
             if (v.userName === userName) {
-                this.loadRecordInfo(this.recordInfo, true, v);
+                this.loadRecordInfo(this.recordInfo, true, v, "自己");
             } else {
                 // let re = cc.instantiate(this.recordInfo);
                 // re.y = -124;
@@ -61,7 +61,7 @@ export default class RecordDetail extends BaseRecordDetail {
         })
     }
 
-    loadRecordInfo(recordInfo: cc.Node, isMy: boolean, playerData: any) {
+    loadRecordInfo(recordInfo: cc.Node, isMy: boolean, playerData: any, userInfoStr: string) {
         let headSprite = recordInfo.getChildByName("head").getComponent(cc.Sprite);
         if (playerData.head) {
             SpriteLoadUtil.loadSprite(headSprite, playerData.head);
@@ -93,10 +93,8 @@ export default class RecordDetail extends BaseRecordDetail {
             winlossLabel.node.color = color;
             winlossLabel.string = playerData.winloss + "";
         }
-        if (isMy) {
-            userInfoLabel.string = "自己";
-        } else {
-            userInfoLabel.string = "对家";
+        userInfoLabel.string = userInfoStr;
+        if (!isMy) {
             recordInfo.getChildByName("win").active = false;
             recordInfo.getChildByName("lose").active = false;
         }
@@ -260,19 +258,24 @@ export default class RecordDetail extends BaseRecordDetail {
     menuClick(event) {
         let thisSeatNo = this.getThisSeatNo(this._thisUserName);
         let seatNo = 0;
+        let userInfoStr = "";
         if (event.target.name === "thisToggle") {
             seatNo = thisSeatNo;
+            userInfoStr = "自己";
         } else if (event.target.name === "oppositionToggle") {
             seatNo = this.getOppositionSeatNo(thisSeatNo);
+            userInfoStr = "对家";
         } else if (event.target.name === "nextToggle") {
             seatNo = this.getNextSeatNo(thisSeatNo);
+            userInfoStr = "下家";
         } else if (event.target.name === "upToggle") {
             seatNo = this.getUpSeatNo(thisSeatNo);
+            userInfoStr = "上家";
         }
 
         let playerData = this.getPlayerData(seatNo);
         if (playerData) {
-            this.loadRecordInfo(this.recordInfo, thisSeatNo === seatNo, playerData);
+            this.loadRecordInfo(this.recordInfo, thisSeatNo === seatNo, playerData, userInfoStr);
         }
     }
 }

@@ -113,6 +113,8 @@ export default class RecordDetailList extends ViewComponent {
         let data = null;
         if (gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
             data = cc.loader.getRes(PrefabDefine.DymjRecordDetail, cc.Prefab);
+        } else if (gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI) {
+            data = cc.loader.getRes(PrefabDefine.XdzzRecordDetail, cc.Prefab);
         }
 
         if (!data) {
