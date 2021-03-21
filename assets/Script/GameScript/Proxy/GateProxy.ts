@@ -8,7 +8,7 @@ import { ServerCode } from '../GameConst/ServerCode';
 import { WebSockerProxy } from './WebSocketProxy';
 import { LoginData } from '../GameData/LoginData';
 import { ClubProxy } from './ClubProxy';
-import {TuiTongZiProxy} from './TuiTongZiProxy';
+import { TuiTongZiProxy } from './TuiTongZiProxy';
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
 import { UserOfflineData } from '../GameData/UserOfflineData';
@@ -137,7 +137,7 @@ export class GateProxy extends BaseProxy {
         let param = {
             userName: this.getLocalCacheDataProxy().getLoginData().userName,
         }
-        let url = this.getFacadeUrl() + "/user/getInviteCode";
+        let url = this.getFacadeUrl() + "user/getInviteCode";
         LoginAfterHttpUtil.send(url, (response) => {
             if (response) {
                 this.getLocalCacheDataProxy().setInviteCode(response);
@@ -166,6 +166,24 @@ export class GateProxy extends BaseProxy {
 
         // 获得邀请码
         this.getInviteCode();
+
+        this.getSystemNotice();
+    }
+
+    private getSystemNotice() {
+        let param = {
+        }
+        let url = this.getFacadeUrl() + "notice/getSystemNotice";
+        LoginAfterHttpUtil.send(url, (response) => {
+            if (response && response.bd) {
+                this.getConfigProxy().leessang = response.bd;
+                this.sendNotification(CommandDefine.UpdateLeessang, { content: response.bd });
+            } else {
+                this.toast("获取系统公告失败！");
+            }
+        }, (err) => {
+            this.toast("获取系统公告失败！");
+        }, HttpUtil.METHOD_POST, param);
     }
 
     /**

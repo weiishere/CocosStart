@@ -38,6 +38,11 @@ export default class ScrollMsgNode extends cc.Component {
 
     }
 
+    public updateContent(content: string) {
+        this.contentArr = [];
+        this.contentArr.push(content);
+    }
+
     public createContent(content: string, width?: number, spriteFrame?: cc.SpriteFrame,): void {
         if (content == null || content.length == 0) {
             return

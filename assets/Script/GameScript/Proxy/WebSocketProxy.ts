@@ -174,10 +174,13 @@ export class WebSockerProxy extends Proxy {
                 this.sendNotification(CommandDefine.ForcedOffline, null);
                 break;
             case OperationDefine.NOTICE_UPDATE:
-                if (JSON.parse(dt.content).type === 1) {
+                let notice = JSON.parse(dt.content);
+                if (notice.type === 1) {
                     this.sendNotification(CommandDefine.OpenNoticeAlert, {
-                        content: JSON.parse(dt.content).content, callback: () => { }
+                        content: notice.content, callback: () => { }
                     });
+                } else {
+                    this.sendNotification(CommandDefine.UpdateLeessang, notice);
                 }
                 break;
             case OperationDefine.GGW2C_Heartbeat:

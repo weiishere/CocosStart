@@ -219,4 +219,8 @@ export class ConfigProxy extends BaseProxy {
     public get leessang(): string {
         return this._leessang;
     }
+
+    public set leessang(_lessang: string) {
+        this._leessang = _lessang;
+    }
 }
