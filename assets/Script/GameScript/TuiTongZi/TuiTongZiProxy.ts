@@ -1,7 +1,7 @@
-import { ModuleProxy } from './ModuleProxy';
+import { ModuleProxy } from '../Proxy/ModuleProxy';
 import { OperationDefine } from '../GameConst/OperationDefine';
 import { CommandDefine } from '../MahjongConst/CommandDefine';
-import { CommandDefine as TuiTongZiDefineConst } from '../TuiTongZiConst/TTZCommandDefine';
+import { CommandDefine as TuiTongZiDefineConst } from './TuiTongZiConst/TTZCommandDefine';
 import { TuiTongZiProtocol } from '../Protocol/TuiTongZiProtocol';
 import { GameServerCode } from '../GameConst/GameServerCode';
 import { C2SPlayerLogin } from '../GameData/TuiTongZi/c2s/C2SPlayerLogin';
@@ -21,7 +21,7 @@ import { S2CRoomSeatChange } from '../GameData/TuiTongZi/s2c/S2CRoomSeatChange';
 import { S2CWaitBankerPlayer } from '../GameData/TuiTongZi/s2c/S2CWaitBankerPlayer';
 import { S2CPushDeal } from '../GameData/TuiTongZi/s2c/S2CPushDeal';
 import { S2CPushMultiplayerBet } from '../GameData/TuiTongZi/s2c/S2CPushMultiplayerBet';
-import { ProxyDefine } from '../TuiTongZiConst/TTZProxyDefine';
+import { ProxyDefine } from './TuiTongZiConst/TTZProxyDefine';
 import { TTZDeskProxy } from './TTZDeskProxy';
 import { DeskPlayer } from '../GameData/TuiTongZi/s2c/DeskPlayer';
 import { RoomInfo } from '../GameData/TuiTongZi/s2c/RoomInfo';

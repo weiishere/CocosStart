@@ -16,7 +16,7 @@ import { DymjProxy } from './DymjProxy';
 import { GateProxy } from './GateProxy';
 import { ResponseCode } from '../GameConst/ResponseCode';
 import { XzddProxy } from './XzddProxy';
-import { TuiTongZiProxy } from './TuiTongZiProxy';
+import { TuiTongZiProxy } from '../TuiTongZi/TuiTongZiProxy';
 
 class WebSocketData {
     gsData: any;

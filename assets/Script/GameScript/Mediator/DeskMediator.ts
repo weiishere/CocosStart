@@ -8,7 +8,7 @@ import { DeskProxy } from "../Proxy/DeskProxy"
 import { LocalCacheDataProxy } from "../Proxy/LocalCacheDataProxy"
 import { DymjProxy } from '../Proxy/DymjProxy';
 import DeskPanelView from "../Component/DdYiMahjong/DeskPanelView";
-import { DeskEventName, PlayerInfo } from "../repositories/DeskRepository";
+import { DeskEventName, PlayerInfo } from "../repositories/DYMJDeskRepository";
 import { DymjOperationType } from "../GameData/Dymj/DymjOperationType";
 import { DymjGang } from "../GameData/Dymj/s2c/DymjGang";
 import { DymjPeng } from "../GameData/Dymj/s2c/DymjPeng";

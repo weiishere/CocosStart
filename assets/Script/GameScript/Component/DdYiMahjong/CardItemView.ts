@@ -5,7 +5,7 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import { MayHuCard } from "../../repositories/DeskRepository";
+import { MayHuCard } from "../../repositories/DYMJDeskRepository";
 
 const { ccclass, property } = cc._decorator;
 export type ModType = 'setUp' | 'fall';

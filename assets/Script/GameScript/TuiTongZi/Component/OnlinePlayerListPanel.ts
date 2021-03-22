@@ -5,7 +5,7 @@ import { BankerQueuePlayer } from "../../GameData/TuiTongZi/s2c/BankerQueuePlaye
 import { DeskBankerPlayer } from "../../GameData/TuiTongZi/s2c/DeskBankerPlayer";
 import { S2CEnterRoom } from "../../GameData/TuiTongZi/s2c/S2CEnterRoom";
 import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
-import { UserInfo } from "../../repositories/TTZDeskRepository";
+import { UserInfo } from "../TTZDeskRepository";
 
 @ccclass
 export default class OnlinePlayerListPanel extends ViewComponent {

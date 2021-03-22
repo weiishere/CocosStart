@@ -6,8 +6,8 @@ import { DeskBankerPlayer } from "../../GameData/TuiTongZi/s2c/DeskBankerPlayer"
 import { HistoryItem } from "../../GameData/TuiTongZi/s2c/HistoryItem";
 import { S2CEnterRoom } from "../../GameData/TuiTongZi/s2c/S2CEnterRoom";
 import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
-import { UserInfo } from "../../repositories/TTZDeskRepository";
-import CardItemView from "../DdYiMahjong/CardItemView";
+import { UserInfo } from "../TTZDeskRepository";
+import CardItemView from "../../Component/DdYiMahjong/CardItemView";
 
 @ccclass
 export default class HistoryPanel extends ViewComponent {

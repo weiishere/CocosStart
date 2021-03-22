@@ -14,7 +14,7 @@ import { UserOfflineData } from '../GameData/UserOfflineData';
 import { GameNoDefine } from '../GameConst/GameNoDefine';
 import { OfflineGameData } from '../GameData/OfflineGameData';
 import { DymjProxy } from '../Proxy/DymjProxy';
-import { TuiTongZiProxy } from "../Proxy/TuiTongZiProxy";
+import { TuiTongZiProxy } from "../TuiTongZi/TuiTongZiProxy";
 import { MusicManager } from "../Other/MusicManager";
 import { AudioSourceDefine } from "../MahjongConst/AudioSourceDefine";
 

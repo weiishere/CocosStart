@@ -34,10 +34,13 @@
       },
       {
         "__id__": 31
+      },
+      {
+        "__id__": 32
       }
     ],
     "_prefab": {
-      "__id__": 32
+      "__id__": 33
     },
     "_opacity": 255,
     "_color": {
@@ -1188,6 +1191,40 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": null,
+    "_id": ""
+  },
+  {
+    "__type__": "a9790oxe9FI6JEkRLht9ZqR",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "dian": {
+      "__id__": 6
+    },
+    "cardNumType": {
+      "__id__": 2
+    },
+    "timesNum": {
+      "__id__": 23
+    },
+    "cardType": {
+      "__id__": 14
+    },
+    "duizi": {
+      "__uuid__": "040dbcd5-5def-4ea5-bd4d-3acc0bb1bf78"
+    },
+    "erbaGang": {
+      "__uuid__": "07a0ac7c-7c41-4873-823d-f494c0d949df"
+    },
+    "pieShi": {
+      "__uuid__": "9ad6368d-bedd-4418-a56d-cb712f36d7c0"
+    },
+    "yaojiDui": {
+      "__uuid__": "7acf860c-e9bf-40fa-a07d-8796f58fdcea"
+    },
     "_id": ""
   },
   {

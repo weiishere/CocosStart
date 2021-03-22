@@ -6,12 +6,12 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 import ViewComponent from "../../Base/ViewComponent";
 const { ccclass, property } = cc._decorator;
-import { GameData, DeskData, TTZDeskRepository } from "../../repositories/TTZDeskRepository"
+import { GameData, DeskData, TTZDeskRepository } from "../TTZDeskRepository"
 import PlayerHead from "./PlayerHead";
-import { PrefabDefine } from "../../TuiTongZiConst/TTZPrefabDefine";
+import { PrefabDefine } from "../TuiTongZiConst/TTZPrefabDefine";
 import Facade from "../../../Framework/care/Facade";
-import { ProxyDefine } from "../../TuiTongZiConst/TTZProxyDefine";
-import { TTZDeskProxy } from "../../Proxy/TTZDeskProxy";
+import { ProxyDefine } from "../TuiTongZiConst/TTZProxyDefine";
+import { TTZDeskProxy } from "../TTZDeskProxy";
 import TTZCardItemView from "./TTZCardItemView";
 import { UserInfo } from "../../repositories/GateRepository";
 import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";

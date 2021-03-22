@@ -1,5 +1,5 @@
 import BaseProxy from "./BaseProxy";
-import { DeskRepository, GameData, DeskData, PlayerInfo, BarType, RecordType, PartnerCard, MayHuCard, DeskEventName } from '../repositories/DeskRepository';
+import { DeskRepository, GameData, DeskData, PlayerInfo, BarType, RecordType, PartnerCard, MayHuCard, DeskEventName } from '../repositories/DYMJDeskRepository';
 import { ConfigProxy } from './ConfigProxy';
 import { ProxyDefine } from '../MahjongConst/ProxyDefine';
 import { HttpUtil } from '../Util/HttpUtil';

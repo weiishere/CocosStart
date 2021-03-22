@@ -8,7 +8,7 @@ import { ServerCode } from '../GameConst/ServerCode';
 import { WebSockerProxy } from './WebSocketProxy';
 import { LoginData } from '../GameData/LoginData';
 import { ClubProxy } from './ClubProxy';
-import { TuiTongZiProxy } from './TuiTongZiProxy';
+import { TuiTongZiProxy } from '../TuiTongZi/TuiTongZiProxy';
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine";
 import { UserOfflineData } from '../GameData/UserOfflineData';

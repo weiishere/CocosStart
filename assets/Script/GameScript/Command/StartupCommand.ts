@@ -3,11 +3,11 @@ import { INotification } from "../../Framework/interfaces/INotification";
 import Command from "../../Framework/patterns/command/Command";
 import { GatePanelMediator } from "../Mediator/GatePanelMediator";
 import { MediatorDefine } from "../MahjongConst/MediatorDefine";
-import { MediatorDefine as TTZMediatorDefine } from "../TuiTongZiConst/TTZMediatorDefine";
+import { MediatorDefine as TTZMediatorDefine } from "../TuiTongZi/TuiTongZiConst/TTZMediatorDefine";
 import { ApplicationGlobal } from "../MahjongConst/ApplicationGlobal"
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { ProxyDefine } from "../MahjongConst/ProxyDefine";
-import { ProxyDefine as ttzProxyDefine } from "../TuiTongZiConst/TTZProxyDefine";
+import { ProxyDefine as ttzProxyDefine } from "../TuiTongZi/TuiTongZiConst/TTZProxyDefine";
 import { GateProxy } from "../Proxy/GateProxy";
 import { DeskProxy } from "../Proxy/DeskProxy";
 import { NotificationTypeDefine } from "../MahjongConst/NotificationTypeDefine"
@@ -18,8 +18,8 @@ import { ConfigProxy } from "../Proxy/ConfigProxy";
 import { ClubProxy } from '../Proxy/ClubProxy';
 import { DeskListMediator } from '../Mediator/DeskListMediator';
 import { DeskMediator } from '../Mediator/DeskMediator';
-import { TuiTongZiMediator } from '../Mediator/TuiTongZiMediator';
-import { TTZDeskProxy } from "../Proxy/TTZDeskProxy";
+import { TuiTongZiMediator } from '../TuiTongZi/TuiTongZiMediator';
+import { TTZDeskProxy } from "../TuiTongZi/TTZDeskProxy";
 
 export class StartupCommand extends Command {
     public execute(notification: INotification): void {

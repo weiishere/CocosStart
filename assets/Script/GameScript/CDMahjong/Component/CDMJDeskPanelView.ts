@@ -17,11 +17,11 @@ import { LoginData } from "../../GameData/LoginData";
 import { GateCommand } from "../../Command/GateCommand";
 import { CommandDefine } from "../../MahjongConst/CommandDefine";
 import { DeskPanelViewEventDefine } from "../../GameConst/Event/DeskPanelViewEventDefine";
-import { MsgObj } from "./ChatBox";
+import { MsgObj } from "../DdYiMahjong/ChatBox";
 import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
 
 @ccclass
-export default class DeskPanelView extends ViewComponent {
+export default class CDMJDeskPanelView extends ViewComponent {
 
     @property(cc.Label)
     label: cc.Label = null;

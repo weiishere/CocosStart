@@ -1,11 +1,10 @@
-import BaseProxy from "./BaseProxy";
-import { TTZDeskRepository, GameData, DeskData, UserInfo } from '../repositories/TTZDeskRepository';
-import { ConfigProxy } from './ConfigProxy';
+import BaseProxy from "../Proxy/BaseProxy";
+import { TTZDeskRepository, GameData, DeskData, UserInfo } from './TTZDeskRepository';
 import { DeskPlayer } from "../GameData/TuiTongZi/s2c/DeskPlayer";
 import { DeskBankerPlayer } from "../GameData/TuiTongZi/s2c/DeskBankerPlayer";
 import { S2CPushBetInfo } from "../GameData/TuiTongZi/s2c/S2CPushBetInfo";
 import { PlayerBet } from "../GameData/TuiTongZi/s2c/PlayerBet";
-import { CommandDefine } from "../TuiTongZiConst/TTZCommandDefine";
+import { CommandDefine } from "./TuiTongZiConst/TTZCommandDefine";
 import { HistoryItem } from "../GameData/TuiTongZi/s2c/HistoryItem";
 import { BankerQueuePlayer } from "../GameData/TuiTongZi/s2c/BankerQueuePlayer";
 import { S2CPushRoomPoker } from "../GameData/TuiTongZi/s2c/S2CPushRoomPoker";

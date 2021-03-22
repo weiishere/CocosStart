@@ -11,7 +11,7 @@ import Facade from "../../../Framework/care/Facade";
 import { ProxyDefine } from "../../MahjongConst/ProxyDefine"
 import { CommandDefine } from "../../MahjongConst/CommandDefine"
 import { GateProxy } from "../../Proxy/GateProxy";
-import { TuiTongZiProxy } from "../../Proxy/TuiTongZiProxy";
+import { TuiTongZiProxy } from "../../TuiTongZi/TuiTongZiProxy";
 import { DymjMusicManager } from '../../Other/DymjMusicManager';
 import { ConfigProxy } from "../../Proxy/ConfigProxy";
 
