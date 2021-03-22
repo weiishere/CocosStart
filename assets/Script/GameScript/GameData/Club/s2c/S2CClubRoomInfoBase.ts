@@ -18,5 +18,7 @@ export class S2CClubRoomInfoBase {
     /** 用户信息 */
     userInfos: Array<S2CClubRoomPlayerInfo>;
     /** 准入 */
-    enterLimit: number
+    enterLimit: number;
+    /** 房间类型 */
+    roomType: number;
 }

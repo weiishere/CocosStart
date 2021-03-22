@@ -27,9 +27,12 @@ export default class DeskList extends ViewComponent {
     chooseSpeedPanel: cc.Node = null;
 
     waitHandleDesk = [];
-    private basicScoreList: Array<number> = [];
-    start() {
 
+    private roomType: number = -1;
+    private roomInfoArray: S2CClubRoomInfoBase[] = null;
+    private basicScoreList: Array<number> = [];
+
+    start() {
     }
 
     protected bindUI(): void {
@@ -80,21 +83,60 @@ export default class DeskList extends ViewComponent {
             return;
         }
 
-        // 先删除所有子节点，避免重复显示
-        this.deskContainer.removeAllChildren();
-        for (const roomInfo of s2CJoinClubInfo.roomInfos) {
-            this.addDeskNode(roomInfo);
+        this.roomInfoArray = s2CJoinClubInfo.roomInfos;
+        if (!this.roomInfoArray) {
+            this.roomInfoArray = [];
         }
+
+        this.loadDeskNode();
+
         for (const deskNode of this.deskContainer.children) {
             let script = deskNode.getComponent(BaseDesk) as BaseDesk;
             this.basicScoreList.push(script.basicScore);
         }
         this.basicScoreList = Array.from(new Set(this.basicScoreList));
         this.basicScoreList.sort((a, b) => a - b)
+    }
+
+    loadDeskNode() {
+        // 先删除所有子节点，避免重复显示
+        this.deskContainer.removeAllChildren();
+
+        let roomInfos = this.getRoomInfos();
+        for (const roomInfo of roomInfos) {
+            this.addDeskNode(roomInfo);
+        }
+
         this.sortDesk();
     }
 
+    getRoomInfos(): S2CClubRoomInfoBase[] {
+        let roomInfos: S2CClubRoomInfoBase[] = [];
+
+        if (this.roomType > -1) {
+            this.roomInfoArray.forEach(v => {
+                if (this.roomType === v.roomType) {
+                    roomInfos.push(v);
+                }
+            });
+        } else {
+            roomInfos = this.roomInfoArray;
+        }
+
+        return roomInfos;
+    }
+
     addDesk(roomInfo: S2CClubRoomInfoBase) {
+        if (this.isRoomExist(roomInfo.roomNo)) {
+            return;
+        }
+
+        // 如果当前添加房间类型和选中的类型不相同，就直接添加到数组中
+        if (this.roomType > -1 && this.roomType !== roomInfo.roomType) {
+            this.roomInfoArray.push(roomInfo);
+            return;
+        }
+
         this.waitHandleDesk.push(roomInfo);
     }
 
@@ -102,15 +144,35 @@ export default class DeskList extends ViewComponent {
         if (this.getDeskNode(roomInfo.roomNo)) {
             return;
         }
+
         let desk = this.createDeskPrefab(roomInfo.gameSubClass);
         if (!desk) {
             return;
         }
-        
+
         this.deskContainer.addChild(desk);
 
         let script = <BaseDesk>desk.getComponent(BaseDesk);
         script.initData(roomInfo);
+    }
+
+    isRoomExist(roomNo: number) {
+        for (const roomInfo of this.roomInfoArray) {
+            if (roomInfo.roomNo === roomNo) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    removeRoomInfo(roomNo: number) {
+        for (let index = 0; index < this.roomInfoArray.length; index++) {
+            const roomInfo = this.roomInfoArray[index];
+            if (roomInfo.roomNo === roomNo) {
+                this.roomInfoArray.splice(index, 1);
+                break;
+            }
+        }
     }
 
     createDeskPrefab(gameSubClass: number) {
@@ -128,6 +190,7 @@ export default class DeskList extends ViewComponent {
     }
 
     deleteDeskNode(roomNo: number) {
+        this.removeRoomInfo(roomNo);
         let deskScript = this.getDeskNode(roomNo);
         if (deskScript == null) {
             return;
@@ -198,7 +261,7 @@ export default class DeskList extends ViewComponent {
     getDeskNode(roomNo: number): BaseDesk {
         for (const deskNode of this.deskContainer.children) {
             let script = deskNode.getComponent(BaseDesk);
-            if (script.roomNo == roomNo) {
+            if (script.roomNo === roomNo) {
                 return script;
             }
         }
@@ -257,18 +320,20 @@ export default class DeskList extends ViewComponent {
         return desks[0].getComponent(BaseDesk).roomNo;
     }
 
-
-    testAddDesk() {
-        let desk = cc.instantiate(this.dymjDesk);
-        this.deskContainer.addChild(desk);
-    }
-
-    testDeleteDesk() {
-        if (this.deskContainer.childrenCount == 0) {
-            return;
+    selectRoomType(toggle: cc.Toggle) {
+        if (toggle.node.name === 'roomTypeAll') {
+            this.roomType = -1;
+        } else if (toggle.node.name === 'roomType21') {
+            this.roomType = 0;
+        } else if (toggle.node.name === 'roomType22') {
+            this.roomType = 1;
+        } else if (toggle.node.name === 'roomType32') {
+            this.roomType = 2;
+        } else if (toggle.node.name === 'roomType43') {
+            this.roomType = 3;
         }
 
-        this.deskContainer.children[this.deskContainer.childrenCount - 1].destroy();
+        this.loadDeskNode();
     }
 
     update(dt) {

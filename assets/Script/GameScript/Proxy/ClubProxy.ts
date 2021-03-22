@@ -87,7 +87,7 @@ export class ClubProxy extends ModuleProxy {
     public joinClub(): void {
         let token = this.getLocalCacheDataProxy().getUserToken();
         // clubNo 目前默认为1，表示系统俱乐部
-        this.sendGameData(ClubProtocol.C2S_LOGIN_CLUB, new ClubC2SLogin(token, 1), (op: number, msgType: number) => {
+        this.sendGameData(ClubProtocol.C2S_LOGIN_CLUB, new ClubC2SLogin(token, 1, 0), (op: number, msgType: number) => {
             // 进入俱乐部之后没有返回的处理
         });
     }

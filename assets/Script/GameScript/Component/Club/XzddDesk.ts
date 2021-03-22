@@ -22,10 +22,22 @@ export default class XzddDesk extends BaseDesk {
     head4: cc.Sprite = null;
 
     initData(s2CClubRoomInfoBase: S2CClubRoomInfoBase) {
+
+        let roomType = "";
+        if (s2CClubRoomInfoBase.roomType === 0) {
+            roomType = "两人一房";
+        } else if (s2CClubRoomInfoBase.roomType === 1) {
+            roomType = "两人两房";
+        } else if (s2CClubRoomInfoBase.roomType === 2) {
+            roomType = "三人两房";
+        } else if (s2CClubRoomInfoBase.roomType === 3) {
+            roomType = "四人三房";
+        }
+
         this.roomNo = s2CClubRoomInfoBase.roomNo;
         this.basicScore = s2CClubRoomInfoBase.basicScore;
         this.enterLimit = s2CClubRoomInfoBase.enterLimit;
-        this.anteLabel.string = `${GameNoDefine.getGameName(s2CClubRoomInfoBase.gameSubClass)}${s2CClubRoomInfoBase.basicScore}底分`;
+        this.anteLabel.string = `${roomType}${s2CClubRoomInfoBase.basicScore}底分`;
         this.setRoundCount(s2CClubRoomInfoBase.currentGameCount, s2CClubRoomInfoBase.gameCount);
 
         let userInfos = s2CClubRoomInfoBase.userInfos;
