@@ -17,6 +17,7 @@ import { DymjProxy } from '../Proxy/DymjProxy';
 import { TuiTongZiProxy } from "../TuiTongZi/TuiTongZiProxy";
 import { MusicManager } from "../Other/MusicManager";
 import { AudioSourceDefine } from "../MahjongConst/AudioSourceDefine";
+import { XzddProxy } from "../CDMahjong/XzddProxy";
 
 export class GateCommand extends BaseCommand {
     private musicManager;
@@ -107,6 +108,13 @@ export class GateCommand extends BaseCommand {
             this.getGateProxy().joinClub();
         }
 
+        let xzddOfflineData = <OfflineGameData>userOfflineData.offlineGameDatas[GameNoDefine.XUE_ZHAN_DAO_DI];
+        if (xzddOfflineData) {
+            if (xzddOfflineData.level2 > 0) {
+                this.getXzddProxy().loginGame(xzddOfflineData.level2);
+            }
+        }
+
         let dymjOfflineData = <OfflineGameData>userOfflineData.offlineGameDatas[GameNoDefine.DA_YI_ER_REN_MAHJONG];
         if (dymjOfflineData) {
             if (dymjOfflineData.level2 > 0) {
@@ -118,6 +126,10 @@ export class GateCommand extends BaseCommand {
         if (ttzOfflineData) {
             this.getTuiTongZiProxy().loginGame();
         }
+    }
+
+    public getXzddProxy(): XzddProxy {
+        return <XzddProxy>this.facade.retrieveProxy(ProxyDefine.Xzdd);
     }
 
     public getDymjProxy(): DymjProxy {
