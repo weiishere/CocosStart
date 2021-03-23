@@ -56,6 +56,7 @@ export class XzddProxy extends ModuleProxy {
             dymjS2CEnterRoom.players.forEach(v => {
                 v.azimuth -= 1;
             })
+            
             // 这里构建麻将界面
             this.sendNotification(CDMJCommandDefine.InitDeskPanel, { dymjS2CEnterRoom });
         } else if (msgType === XzddProtocol.S_PUSH_DESK_PLAYER_LIST) {// 推送玩家信息

@@ -17,6 +17,7 @@ import { GateProxy } from './GateProxy';
 import { ResponseCode } from '../GameConst/ResponseCode';
 import { XzddProxy } from '../CDMahjong/XzddProxy';
 import { TuiTongZiProxy } from '../TuiTongZi/TuiTongZiProxy';
+import { XzddProtocol } from '../Protocol/XzddProtocol';
 
 class WebSocketData {
     gsData: any;
@@ -295,6 +296,8 @@ export class WebSockerProxy extends Proxy {
         // 由于麻将的客户端发送消息和返回的消息号不一致，这里做了一个转换
         if (op === OperationDefine.DA_YI_ER_REN_MAHJONG) {
             msgType = DymjProtocol.dymjMsgTypeConvert(msgType);
+        } else if (op === OperationDefine.XUE_ZHAN_DAO_DI) {
+            msgType = XzddProtocol.dymjMsgTypeConvert(msgType);
         }
 
         let msgKey = op + "-" + msgType;
