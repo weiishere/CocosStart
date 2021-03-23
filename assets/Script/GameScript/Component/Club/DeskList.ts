@@ -131,10 +131,10 @@ export default class DeskList extends ViewComponent {
         if (this.getRoomInfo(roomInfo.roomNo)) {
             return;
         }
-
+        
+        this.roomInfoArray.push(roomInfo);
         // 如果当前添加房间类型和选中的类型不相同，就直接添加到数组中
         if (this.roomType > -1 && this.roomType !== roomInfo.roomType) {
-            this.roomInfoArray.push(roomInfo);
             return;
         }
 
