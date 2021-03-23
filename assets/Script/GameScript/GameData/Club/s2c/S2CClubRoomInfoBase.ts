@@ -21,4 +21,6 @@ export class S2CClubRoomInfoBase {
     enterLimit: number;
     /** 房间类型 */
     roomType: number;
+    /** 游戏详细参数 */
+    gameParam: string;
 }

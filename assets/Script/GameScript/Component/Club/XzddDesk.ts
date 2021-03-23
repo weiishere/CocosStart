@@ -40,11 +40,26 @@ export default class XzddDesk extends BaseDesk {
         this.anteLabel.string = `${roomType}${s2CClubRoomInfoBase.basicScore}底分`;
         this.setRoundCount(s2CClubRoomInfoBase.currentGameCount, s2CClubRoomInfoBase.gameCount);
 
+        let gameParamObj = JSON.parse(s2CClubRoomInfoBase.gameParam);
+
+        if (this.isHuanSanZhang(gameParamObj)) {
+            this.anteLabel.string += `(换三张)`
+        }
+
         let userInfos = s2CClubRoomInfoBase.userInfos;
 
         for (const userInfo of userInfos) {
             this.sitDown(userInfo.head, userInfo.nickname, userInfo.seatNo);
         }
+    }
+
+    isHuanSanZhang(gameParamObj: any) {
+        for (const rule of gameParamObj.rules) {
+            if (rule === 16) {
+                return true;
+            }
+        }
+        return false;
     }
 
     setRoundCount(currentGameCount: number, gameCount: number) {
