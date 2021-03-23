@@ -56,7 +56,7 @@ export default class CDMJDeskMediator extends BaseMediator {
     protected inAdvanceLoadFiles(): string[] {
         return [
             //PrefabDefine.DeskPanel,
-            PrefabDefine.RecordAlert,
+            PrefabDefine.CDMJRecordAlert,
             PrefabDefine.ChatBox
         ];
     }
@@ -97,10 +97,10 @@ export default class CDMJDeskMediator extends BaseMediator {
         if (this.recordAlterNode && this.recordAlterNode.isValid) {
             this.recordAlterNode.destroy();
         }
-        let recordAlterResource = cc.loader.getRes(PrefabDefine.RecordAlert, cc.Prefab);
+        let recordAlterResource = cc.loader.getRes(PrefabDefine.CDMJRecordAlert, cc.Prefab);
         this.recordAlterNode = <cc.Node>cc.instantiate(recordAlterResource);
         this.view.addChild(this.recordAlterNode);
-        let script = this.recordAlterNode.getComponent("RecordAlert");
+        let script = this.recordAlterNode.getComponent("CDMJRecordAlert");
         script.buildData(data, GameNoDefine.DA_YI_ER_REN_MAHJONG);
     }
 
