@@ -6,16 +6,16 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const { ccclass, property } = cc._decorator;
-import { GameData, DeskData, PlayerInfo, DeskRepository } from "../../repositories/DYMJDeskRepository"
+import { GameData, DeskData, PlayerInfo, DeskRepository } from "../CDMJDeskRepository"
 import ViewComponent from "../../Base/ViewComponent";
 import CardItemView, { ModType, PositionType, FallShowStatus } from "../../Component/DdYiMahjong/CardItemView"
 import Facade from "../../../Framework/care/Facade";
-import { ProxyDefine } from "../../MahjongConst/ProxyDefine";
-import { DeskProxy } from "../../Proxy/DeskProxy";
+import { CDMJProxyDefine } from "../CDMJConst/CDMJProxyDefine";
+import { CDMJDeskProxy } from "../CDMJDeskProxy";
 import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
 import { LoginData } from "../../GameData/LoginData";
-import { GateCommand } from "../../Command/GateCommand";
 import { CommandDefine } from "../../MahjongConst/CommandDefine";
+import { CDMJCommandDefine } from "../CDMJConst/CDMJCommandDefine";
 import { DeskPanelViewEventDefine } from "../../GameConst/Event/DeskPanelViewEventDefine";
 import { MsgObj } from "../../Component/DdYiMahjong/ChatBox";
 import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
@@ -96,7 +96,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     private arrowCard: cc.Node = null;
     private showCardEvent: (card: number) => void = (card: number) => { };
     getSelfPlayer(): LoginData {
-        return (<LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData)).getLoginData();
+        return (<LocalCacheDataProxy>Facade.Instance.retrieveProxy(CDMJProxyDefine.LocalCacheData)).getLoginData();
     }
     getPlayerByIndex(playerIndex: number): PlayerInfo {
         return this.getData().deskData.playerList.find(player => player.gameIndex === playerIndex);
@@ -108,7 +108,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         return this.getData().deskData.playerList.find(player => player.gameIndex === playerIndex);
     }
     getData(): DeskRepository {
-        return (Facade.Instance.retrieveProxy(ProxyDefine.Desk) as DeskProxy).repository;
+        return (Facade.Instance.retrieveProxy(CDMJProxyDefine.CDMJDesk) as CDMJDeskProxy).repository;
     }
     isMe(index?, playerId?): boolean {
         const { userName } = this.getSelfPlayer();
@@ -567,22 +567,24 @@ export default class CDMJDeskPanelView extends ViewComponent {
             if (this.getData().gameData.myCards.status.isBaoHu) {
                 //报胡不能出牌
                 self.mainCardList.map(item => (item.getComponent("CardItemView") as CardItemView).setDisable());
-            } else if (this.getData().gameData.myCards.status.isBaoQingHu) {
-                //报请胡，有些牌可以出，对子牌不能出
-                const disableCard = this.getData().gameData.myCards.disableCard;
-                disableCard.forEach(item => {
-                    self.mainCardList.filter(card => {
-                        const _card = card.getComponent("CardItemView") as CardItemView;
-                        _card.isActive = true;
-                        return _card.cardNumber === item;
-                    }).forEach((card, i) => {
-                        const _card = card.getComponent("CardItemView") as CardItemView;
-                        if (i < 2) {
-                            if (_card.isDisable) _card.setDisable();//最多只能一对
-                        }
-                    });
-                })
-            } else {
+            }
+            //  else if (this.getData().gameData.myCards.status.isBaoQingHu) {
+            //     //报请胡，有些牌可以出，对子牌不能出
+            //     const disableCard = this.getData().gameData.myCards.disableCard;
+            //     disableCard.forEach(item => {
+            //         self.mainCardList.filter(card => {
+            //             const _card = card.getComponent("CardItemView") as CardItemView;
+            //             _card.isActive = true;
+            //             return _card.cardNumber === item;
+            //         }).forEach((card, i) => {
+            //             const _card = card.getComponent("CardItemView") as CardItemView;
+            //             if (i < 2) {
+            //                 if (_card.isDisable) _card.setDisable();//最多只能一对
+            //             }
+            //         });
+            //     })
+            // } 
+            else {
                 //全部牌都可以出，并配置可胡牌
                 self.mainCardList.map(item => {
                     const _card = (item.getComponent("CardItemView") as CardItemView); _card.isActive = true;
@@ -636,9 +638,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
                 }
                 //对家是否听牌
                 const status = this.getData().gameData.partnerCardsList.find(item => item.playerId === partner.playerId).partnerCards.status;
-                if ((status.isBaoQingHu || status.isBaoHu)) {
-                    this.node.getChildByName("frontJobNode").getChildByName("ting").active = true;
-                } else {
+                if (status.isBaoHu) {
                     this.node.getChildByName("frontJobNode").getChildByName("ting").active = false;
                 }
             } else if (this.positionNode[_gameIndex].name === 'p-left') {
@@ -668,11 +668,11 @@ export default class CDMJDeskPanelView extends ViewComponent {
                 case 'touch': this.opreationBtus.touch_btu.active = true; break;
                 case 'bar': this.opreationBtus.bar_btu.active = true; break;
                 case 'hu': this.opreationBtus.hu_btu.active = true; break;
-                case 'qingHu': this.opreationBtus.qingHu_btu.active = true; break;
+                //case 'qingHu': this.opreationBtus.qingHu_btu.active = true; break;
                 case 'ting': this.opreationBtus.baoHu_btu.active = true; break;
                 case 'show': this.opreationBtus.show_btu.active = true; break;
                 case 'ready': this.opreationBtus.ready_btu.active = true; break;
-                case 'tingQingHu': this.opreationBtus.baoQingHu_btu.active = true; break;
+                //case 'tingQingHu': this.opreationBtus.baoQingHu_btu.active = true; break;
             }
         });
         if (eventName.length !== 0 && eventName.indexOf('show') === -1 && eventName.indexOf('ready') === -1) {
@@ -924,7 +924,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
             let t = +countDownNum.string;
             if (t >= 0) countDownNum.string = (--t) + '';
             if (t === 0) {
-                Facade.Instance.sendNotification(CommandDefine.Entrust, { command: true }, '');
+                Facade.Instance.sendNotification(CDMJCommandDefine.Entrust, { command: true }, '');
             }
         }
         this.schedule(this.scheduleCallBack, 1);
@@ -944,7 +944,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     }
 
     cancleTuoGuanClick() {
-        Facade.Instance.sendNotification(CommandDefine.Entrust, { command: false }, '');
+        Facade.Instance.sendNotification(CDMJCommandDefine.Entrust, { command: false }, '');
         this.closeEntrustMask();
     }
 

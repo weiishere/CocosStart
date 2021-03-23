@@ -135,6 +135,7 @@ export class DeskMediator extends BaseMediator {
 
         switch (notification.getName()) {
             case CommandDefine.InitDeskPanel:
+                debugger
                 this.roundMark = notification.getBody().dymjS2CEnterRoom.roundMark;
                 this.sendNotification(CommandDefine.CloseLoadingPanel);
                 let isReconnect = true;

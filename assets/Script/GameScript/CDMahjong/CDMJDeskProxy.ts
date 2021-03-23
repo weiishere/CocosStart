@@ -26,6 +26,7 @@ import { XzddGameResult } from '../GameData/Xzdd/s2c/XzddGameResult';
 import { XzddGameReconnData } from '../GameData/Xzdd/s2c/XzddGameReconnData';
 import { XzddGameUIResultItem } from '../GameData/Xzdd/s2c/XzddGameUIResultItem';
 import { XzddS2CEnterRoom } from '../GameData/Xzdd/s2c/XzddS2CEnterRoom';
+import { ProxyDefine } from '../MahjongConst/ProxyDefine';
 
 export class CDMJDeskProxy extends BaseProxy {
     public repository: DeskRepository;
@@ -192,7 +193,7 @@ export class CDMJDeskProxy extends BaseProxy {
             this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
             if (this.getGameData().myCards.status.isBaoHu && !xzddS2CPlayerGet.nextStep.oprts) {
                 window.setTimeout(() => {
-                    (<XzddProxy>this.facade.retrieveProxy(CDMJProxyDefine.CDMJ)).putMahkjong(xzddS2CPlayerGet.getMjValue);
+                    (<XzddProxy>this.facade.retrieveProxy(ProxyDefine.Xzdd)).putMahkjong(xzddS2CPlayerGet.getMjValue);
                 }, 800);
             }
             // else if (this.getGameData().myCards.status.isBaoQingHu && !xzddS2CPlayerGet.nextStep.oprts) {
@@ -633,7 +634,7 @@ export class CDMJDeskProxy extends BaseProxy {
         if (!dymjGameReconnData.isReady) {
             //说明断线重连处于两局之间，需要清理数据
             this.clearGameData();
-            (<XzddProxy>this.facade.retrieveProxy(CDMJProxyDefine.CDMJ)).goOn();
+            (<XzddProxy>this.facade.retrieveProxy(ProxyDefine.Xzdd)).goOn();
         }
         this.sendNotification(CDMJCommandDefine.ReStartGamePush, null);
     }

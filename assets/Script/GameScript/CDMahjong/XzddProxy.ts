@@ -51,14 +51,14 @@ export class XzddProxy extends ModuleProxy {
             // 登录成功之后直接进入房间
             this.joinRoom(this.joinRoomNo);
         } else if (msgType === XzddProtocol.S_ENTER_ROOM) {
+            
             // dymjS2CEnterRoom 这个名字是需要修改，这里是为了能够拉起二人麻将做的测试
-            let dymjS2CEnterRoom: XzddS2CEnterRoom = <XzddS2CEnterRoom>content;
-            dymjS2CEnterRoom.players.forEach(v => {
+            let xzddS2CEnterRoom: XzddS2CEnterRoom = <XzddS2CEnterRoom>content;
+            xzddS2CEnterRoom.players.forEach(v => {
                 v.azimuth -= 1;
             })
-            
             // 这里构建麻将界面
-            this.sendNotification(CDMJCommandDefine.InitDeskPanel, { dymjS2CEnterRoom });
+            this.sendNotification(CDMJCommandDefine.InitDeskPanel, { xzddS2CEnterRoom });
         } else if (msgType === XzddProtocol.S_PUSH_DESK_PLAYER_LIST) {// 推送玩家信息
             let xzddEnterDeskPushPlyaerList: XzddEnterDeskPushPlyaerList = <XzddEnterDeskPushPlyaerList>content;
             xzddEnterDeskPushPlyaerList.players.forEach(v => {
@@ -224,7 +224,6 @@ export class XzddProxy extends ModuleProxy {
      * 准备
      */
     ready() {
-        cc.log("发送准备=================");
         this.isReadyEnterRoom = false;
         let xzddC2SEnterUserInfo: XzddC2SEnterUserInfo = new XzddC2SEnterUserInfo();
         xzddC2SEnterUserInfo.acctName = this.getUserName();

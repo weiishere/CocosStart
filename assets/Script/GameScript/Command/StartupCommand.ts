@@ -22,6 +22,8 @@ import { TuiTongZiMediator } from '../TuiTongZi/TuiTongZiMediator';
 import { TTZDeskProxy } from "../TuiTongZi/TTZDeskProxy";
 import { CDMJProxyDefine } from "../CDMahjong/CDMJConst/CDMJProxyDefine";
 import { CDMJDeskProxy } from "../CDMahjong/CDMJDeskProxy";
+import CDMJDeskMediator from "../CDMahjong/CDMJDeskMediator";
+import { CDMJMediatorDefine } from "../CDMahjong/CDMJConst/CDMJMediatorDefine";
 
 export class StartupCommand extends Command {
     public execute(notification: INotification): void {
@@ -38,6 +40,7 @@ export class StartupCommand extends Command {
         Facade.Instance.registerMediator(new DeskListMediator(MediatorDefine.DeskList, ApplicationGlobal.GatePanel));
         Facade.Instance.registerMediator(new DeskMediator(MediatorDefine.Desk, ApplicationGlobal.GatePanel));
         Facade.Instance.registerMediator(new TuiTongZiMediator(TTZMediatorDefine.TTZDeskPanel, ApplicationGlobal.GatePanel));
+        Facade.Instance.registerMediator(new CDMJDeskMediator(CDMJMediatorDefine.CDMJDeskPanel, ApplicationGlobal.GatePanel));
 
         /**放到command的notification命令或逻辑注意一个原则：可能会被其他view重用，不然尽量放到mediator中 */
         Facade.Instance.registerCommand(CommandDefine.GateCommand, GateCommand);
@@ -49,7 +52,6 @@ export class StartupCommand extends Command {
         //初始化Gate
         this.sendNotification(CommandDefine.InitGatePanel, {});
 
-        //this.sendNotification(CommandDefine.InitDeskPanel, {});
         
     }
 }

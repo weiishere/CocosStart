@@ -2,8 +2,9 @@ import BaseMediator from "../Mediator/BaseMediator";
 import { DeskPanelViewEventDefine } from "../GameConst/Event/DeskPanelViewEventDefine";
 import { CDMJProxyDefine } from "./CDMJConst/CDMJProxyDefine";
 import { XzddProxy } from "./XzddProxy"
+import { ProxyDefine } from '../MahjongConst/ProxyDefine';
 import { CDMJDeskProxy } from "./CDMJDeskProxy"
-import { PrefabDefine } from "../MahjongConst/PrefabDefine";
+import { PrefabDefine } from "../CDMahjong/CDMJConst/CDMJPrefabDefine";
 import CDMJDeskPanelView from "./Component/CDMJDeskPanelView";
 import { XzddGameResult } from "../GameData/Xzdd/s2c/XzddGameResult";
 import { CDMJCommandDefine } from "./CDMJConst/CDMJCommandDefine";
@@ -17,10 +18,10 @@ import { XzddOperationType } from "../GameData/Xzdd/XzddOperationType";
 import { XzddPeng } from "../GameData/Xzdd/s2c/XzddPeng";
 import { XzddHu } from "../GameData/Xzdd/s2c/XzddHu";
 import ChatBox, { MsgObj } from "../Component/DdYiMahjong/ChatBox";
+import { CommandDefine } from "../MahjongConst/CommandDefine";
 
-const {ccclass, property} = cc._decorator;
 
-@ccclass
+
 export default class CDMJDeskMediator extends BaseMediator {
     public constructor(mediatorName: string = null, viewComponent: any = null) {
         super(mediatorName, viewComponent);
@@ -35,7 +36,7 @@ export default class CDMJDeskMediator extends BaseMediator {
     }
 
     protected prefabSource(): string {
-        return PrefabDefine.DeskPanel;
+        return PrefabDefine.CDMJDesk;
     }
     private DeskPanelViewScript: CDMJDeskPanelView = null;
     private deskPanel: cc.Node = null;
@@ -64,7 +65,7 @@ export default class CDMJDeskMediator extends BaseMediator {
     }
 
     public getCdmjProxy(): XzddProxy {
-        return <XzddProxy>this.facade.retrieveProxy(CDMJProxyDefine.CDMJ);
+        return <XzddProxy>this.facade.retrieveProxy(ProxyDefine.Xzdd);
     }
     public listNotificationInterests(): string[] {
         return [
@@ -128,20 +129,20 @@ export default class CDMJDeskMediator extends BaseMediator {
         // const deskData = this.getDeskProxy().getDeskData();
         // console.log('gameData', gameData);
         // console.log('deskData', deskData);
-
+        console.log(notification.getName());
         switch (notification.getName()) {
             case CDMJCommandDefine.InitDeskPanel:
-                debugger
-                this.roundMark = notification.getBody().dymjS2CEnterRoom.roundMark;
-                this.sendNotification(CDMJCommandDefine.CloseLoadingPanel);
+                
+                this.roundMark = notification.getBody().xzddS2CEnterRoom.roundMark;
+                this.sendNotification(CommandDefine.CloseLoadingPanel);
                 let isReconnect = true;
                 if (!this.view || !this.view.isValid) {
                     isReconnect = false;
                     await this.init();
                 }
-                this.deskPanel = this.viewComponent.getChildByName('deskView');
-                this.DeskPanelViewScript = this.deskPanel.getComponent('DeskPanelView') as CDMJDeskPanelView;
-                this.getDeskProxy().updateDeskInfo(notification.getBody().dymjS2CEnterRoom);
+                this.deskPanel = this.viewComponent.getChildByName('cdmjdeskView');
+                this.DeskPanelViewScript = this.deskPanel.getComponent('CDMJDeskPanelView') as CDMJDeskPanelView;
+                this.getDeskProxy().updateDeskInfo(notification.getBody().xzddS2CEnterRoom);
                 this.DeskPanelViewScript.updateRoomInfo();
                 this.DeskPanelViewScript.updatedDeskAiming();
                 // 如果是重连，在这里发送准备消息
@@ -159,7 +160,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                                 this.getCdmjProxy().logout();
                                 this.sendNotification(CDMJCommandDefine.ExitDeskPanel);
                             } else {
-                                this.sendNotification(CDMJCommandDefine.OpenToast, { content: '抱歉，牌局未完成，请勿退出牌局' });
+                                this.sendNotification(CommandDefine.OpenToast, { content: '抱歉，牌局未完成，请勿退出牌局' });
                             }
                         } else if (node.name === 'recordIcon') {
                             // if (this.dymjGameResult) {
