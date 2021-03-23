@@ -10,6 +10,7 @@ import { DeskListEventDefine } from '../../GameConst/Event/DeskListEventDefine';
 import { PrefabDefine } from '../../MahjongConst/PrefabDefine';
 import BaseDesk from './BaseDesk';
 import { GameNoDefine } from '../../GameConst/GameNoDefine';
+import { S2CClubRoomPlayerInfo } from '../../GameData/Club/s2c/S2CClubRoomPlayerInfo';
 
 const { ccclass, property } = cc._decorator;
 
@@ -127,7 +128,7 @@ export default class DeskList extends ViewComponent {
     }
 
     addDesk(roomInfo: S2CClubRoomInfoBase) {
-        if (this.isRoomExist(roomInfo.roomNo)) {
+        if (this.getRoomInfo(roomInfo.roomNo)) {
             return;
         }
 
@@ -156,13 +157,13 @@ export default class DeskList extends ViewComponent {
         script.initData(roomInfo);
     }
 
-    isRoomExist(roomNo: number) {
+    getRoomInfo(roomNo: number) {
         for (const roomInfo of this.roomInfoArray) {
             if (roomInfo.roomNo === roomNo) {
-                return true;
+                return roomInfo;
             }
         }
-        return false;
+        return null;
     }
 
     removeRoomInfo(roomNo: number) {
@@ -226,9 +227,59 @@ export default class DeskList extends ViewComponent {
         })
     }
 
-    sitDown(s2CClubRoomSitDown: S2CClubRoomSitDown) {
-        let deskScript = this.getDeskNode(s2CClubRoomSitDown.roomNo);
+    addRoomPlayer(s2CClubRoomSitDown: S2CClubRoomSitDown) {
+        let roomInfo = this.getRoomInfo(s2CClubRoomSitDown.roomNo);
+        if (roomInfo === null) {
+            return;
+        }
 
+        let isExist = false;
+        for (const userInfo of roomInfo.userInfos) {
+            if (userInfo.userName === s2CClubRoomSitDown.userName) {
+                isExist = true;
+                break;
+            }
+        }
+
+        if (!isExist) {
+            let userInfo = new S2CClubRoomPlayerInfo();
+            userInfo.userName = s2CClubRoomSitDown.userName;
+            userInfo.head = s2CClubRoomSitDown.head;
+            userInfo.seatNo = s2CClubRoomSitDown.seatNo;
+            userInfo.nickname = s2CClubRoomSitDown.nickname;
+
+            roomInfo.userInfos.push(userInfo);
+        }
+    }
+
+    removeRoomPlayer(s2CClubRoomStandUp: S2CClubRoomStandUp) {
+        let roomInfo = this.getRoomInfo(s2CClubRoomStandUp.roomNo);
+        if (roomInfo === null) {
+            return;
+        }
+
+        for (let index = 0; index < roomInfo.userInfos.length; index++) {
+            const userInfo = roomInfo.userInfos[index];
+            if (userInfo.userName === s2CClubRoomStandUp.userName) {
+                roomInfo.userInfos.splice(index, 1);
+                break;
+            }
+        }
+    }
+
+    updateRoomInfo(s2CClubPushRoomRound: S2CClubPushRoomRound) {
+        let roomInfo = this.getRoomInfo(s2CClubPushRoomRound.roomNo);
+        if (roomInfo === null) {
+            return;
+        }
+
+        roomInfo.currentGameCount = s2CClubPushRoomRound.roundCount;
+        roomInfo.gameCount = s2CClubPushRoomRound.gameCount;
+    }
+
+    sitDown(s2CClubRoomSitDown: S2CClubRoomSitDown) {
+        this.addRoomPlayer(s2CClubRoomSitDown);
+        let deskScript = this.getDeskNode(s2CClubRoomSitDown.roomNo);
         if (!deskScript) {
             return;
         }
@@ -238,8 +289,8 @@ export default class DeskList extends ViewComponent {
     }
 
     standUp(s2CClubRoomStandUp: S2CClubRoomStandUp) {
+        this.removeRoomPlayer(s2CClubRoomStandUp);
         let deskScript = this.getDeskNode(s2CClubRoomStandUp.roomNo);
-
         if (!deskScript) {
             return;
         }
@@ -249,6 +300,7 @@ export default class DeskList extends ViewComponent {
     }
 
     setRoundCount(s2CClubPushRoomRound: S2CClubPushRoomRound) {
+        this.updateRoomInfo(s2CClubPushRoomRound);
         let deskScript = this.getDeskNode(s2CClubPushRoomRound.roomNo);
 
         if (!deskScript) {
