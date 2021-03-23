@@ -20,6 +20,8 @@ import { DeskListMediator } from '../Mediator/DeskListMediator';
 import { DeskMediator } from '../Mediator/DeskMediator';
 import { TuiTongZiMediator } from '../TuiTongZi/TuiTongZiMediator';
 import { TTZDeskProxy } from "../TuiTongZi/TTZDeskProxy";
+import { CDMJProxyDefine } from "../CDMahjong/CDMJConst/CDMJProxyDefine";
+import { CDMJDeskProxy } from "../CDMahjong/CDMJDeskProxy";
 
 export class StartupCommand extends Command {
     public execute(notification: INotification): void {
@@ -29,6 +31,8 @@ export class StartupCommand extends Command {
         Facade.Instance.registerProxy(new ConfigProxy(ProxyDefine.Config));
         Facade.Instance.registerProxy(new DeskProxy(ProxyDefine.Desk));
         Facade.Instance.registerProxy(new TTZDeskProxy(ttzProxyDefine.TTZDesk));
+        Facade.Instance.registerProxy(new CDMJDeskProxy(CDMJProxyDefine.CDMJDesk));
+        
 
         Facade.Instance.registerMediator(new GatePanelMediator(MediatorDefine.GatePanel, ApplicationGlobal.GatePanel));
         Facade.Instance.registerMediator(new DeskListMediator(MediatorDefine.DeskList, ApplicationGlobal.GatePanel));

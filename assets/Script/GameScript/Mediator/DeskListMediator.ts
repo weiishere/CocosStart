@@ -20,7 +20,7 @@ import { UserGold } from '../GameData/UserGold';
 import { GameNoDefine } from "../GameConst/GameNoDefine";
 import { DymjProxy } from "../Proxy/DymjProxy";
 import { GateProxy } from '../Proxy/GateProxy';
-import { XzddProxy } from "../Proxy/XzddProxy";
+import { XzddProxy } from "../CDMahjong/XzddProxy";
 
 export class DeskListMediator extends BaseMediator {
 

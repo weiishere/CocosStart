@@ -1,4 +1,4 @@
-import { ModuleProxy } from './ModuleProxy';
+import { ModuleProxy } from '../Proxy/ModuleProxy';
 import { OperationDefine } from '../GameConst/OperationDefine';
 import { XzddProtocol } from '../Protocol/XzddProtocol';
 import { XzddC2SPlayerLogin } from '../GameData/Xzdd/c2s/XzddC2SPlayerLogin';
@@ -18,10 +18,10 @@ import { XzddC2SEnterUserInfo } from '../GameData/Xzdd/c2s/XzddC2SEnterUserInfo'
 import { XzddC2SPutMahjong } from '../GameData/Xzdd/c2s/XzddC2SPutMahjong';
 import { XzddC2SOperatioinData } from '../GameData/Xzdd/c2s/XzddC2SOperatioinData';
 import { XzddOperationType } from '../GameData/Xzdd/XzddOperationType';
-import { CommandDefine } from '../MahjongConst/CommandDefine';
+import { CDMJCommandDefine } from './CDMJConst/CDMJCommandDefine';
 import { XzddEnterDeskPushPlyaerList } from '../GameData/Xzdd/s2c/XzddEnterDeskPushPlyaerList';
-import { ProxyDefine } from '../MahjongConst/ProxyDefine';
-import { DeskProxy } from './DeskProxy';
+import { CDMJProxyDefine } from './CDMJConst/CDMJProxyDefine';
+import { CDMJDeskProxy } from './CDMJDeskProxy';
 import { XzddS2CDissolveResult } from '../GameData/Xzdd/s2c/XzddS2CDissolveResult';
 import { XzddEntrust } from '../GameData/Xzdd/s2c/XzddEntrust';
 import { XzddEntrustRsp } from '../GameData/Xzdd/s2c/XzddEntrustRsp';
@@ -57,7 +57,7 @@ export class XzddProxy extends ModuleProxy {
                 v.azimuth -= 1;
             })
             // 这里构建麻将界面
-            this.sendNotification(CommandDefine.InitDeskPanel, { dymjS2CEnterRoom });
+            this.sendNotification(CDMJCommandDefine.InitDeskPanel, { dymjS2CEnterRoom });
         } else if (msgType === XzddProtocol.S_PUSH_DESK_PLAYER_LIST) {// 推送玩家信息
             let xzddEnterDeskPushPlyaerList: XzddEnterDeskPushPlyaerList = <XzddEnterDeskPushPlyaerList>content;
             xzddEnterDeskPushPlyaerList.players.forEach(v => {
@@ -65,7 +65,7 @@ export class XzddProxy extends ModuleProxy {
             });
             this.getDeskProxy().updateUserInfo(xzddEnterDeskPushPlyaerList.players)
         } else if (msgType === XzddProtocol.S_GO_ON) {  //继续游戏返回
-            this.sendNotification(CommandDefine.ReStartGamePush, null);
+            this.sendNotification(CDMJCommandDefine.ReStartGamePush, null);
         } else if (msgType === XzddProtocol.S_Game_BeginDeal_BroadCast) {   //开始游戏发牌数据
             let xzddS2CBeginDealData: XzddS2CBeginDealData = <XzddS2CBeginDealData>content;
             xzddS2CBeginDealData.players.forEach(v => {
@@ -135,9 +135,9 @@ export class XzddProxy extends ModuleProxy {
         } else if (msgType === XzddProtocol.S_ENTRUST) {   //请求托管返回
             let xzddEntrustRsp: XzddEntrustRsp = <XzddEntrustRsp>content;
             if (xzddEntrustRsp.isHosted) {
-                this.sendNotification(CommandDefine.OpenEntrustPanel, null);
+                this.sendNotification(CDMJCommandDefine.OpenEntrustPanel, null);
             } else {
-                this.sendNotification(CommandDefine.EntrustNotice, null);
+                this.sendNotification(CDMJCommandDefine.EntrustNotice, null);
             }
         } else if (msgType === XzddProtocol.C_SEND_INTERACT_MSG) {   //推送玩家互动消息
             this.getDeskProxy().playerInteractMsg(content);
@@ -303,7 +303,7 @@ export class XzddProxy extends ModuleProxy {
         this.isReadyEnterRoom = false;
         this.joinRoomNo = null;
         this.getGateProxy().toast("游戏服务暂停了");
-        this.sendNotification(CommandDefine.ExitDeskPanel, {}, '');
+        this.sendNotification(CDMJCommandDefine.ExitDeskPanel, {}, '');
     }
 
     onRegister() {
@@ -311,7 +311,7 @@ export class XzddProxy extends ModuleProxy {
     }
 
     getDeskProxy() {
-        return <DeskProxy>this.facade.retrieveProxy(ProxyDefine.Desk);
+        return <CDMJDeskProxy>this.facade.retrieveProxy(CDMJProxyDefine.CDMJDesk);
     }
 
 }

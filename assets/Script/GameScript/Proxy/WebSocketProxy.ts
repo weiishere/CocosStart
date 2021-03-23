@@ -15,7 +15,7 @@ import { UserGold } from '../GameData/UserGold';
 import { DymjProxy } from './DymjProxy';
 import { GateProxy } from './GateProxy';
 import { ResponseCode } from '../GameConst/ResponseCode';
-import { XzddProxy } from './XzddProxy';
+import { XzddProxy } from '../CDMahjong/XzddProxy';
 import { TuiTongZiProxy } from '../TuiTongZi/TuiTongZiProxy';
 
 class WebSocketData {

@@ -8,7 +8,7 @@
 const { ccclass, property } = cc._decorator;
 import { GameData, DeskData, PlayerInfo, DeskRepository } from "../../repositories/DYMJDeskRepository"
 import ViewComponent from "../../Base/ViewComponent";
-import CardItemView, { ModType, PositionType, FallShowStatus } from "./CardItemView"
+import CardItemView, { ModType, PositionType, FallShowStatus } from "../../Component/DdYiMahjong/CardItemView"
 import Facade from "../../../Framework/care/Facade";
 import { ProxyDefine } from "../../MahjongConst/ProxyDefine";
 import { DeskProxy } from "../../Proxy/DeskProxy";
@@ -17,14 +17,11 @@ import { LoginData } from "../../GameData/LoginData";
 import { GateCommand } from "../../Command/GateCommand";
 import { CommandDefine } from "../../MahjongConst/CommandDefine";
 import { DeskPanelViewEventDefine } from "../../GameConst/Event/DeskPanelViewEventDefine";
-import { MsgObj } from "../DdYiMahjong/ChatBox";
+import { MsgObj } from "../../Component/DdYiMahjong/ChatBox";
 import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
 
 @ccclass
 export default class CDMJDeskPanelView extends ViewComponent {
-
-    @property(cc.Label)
-    label: cc.Label = null;
 
     @property(cc.Prefab)
     cardItem: cc.Prefab = null;
