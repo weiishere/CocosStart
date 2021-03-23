@@ -16,8 +16,8 @@ import { MusicManager } from '../Other/MusicManager';
 import { UserGold } from '../GameData/UserGold';
 import { WebSockerProxy } from '../Proxy/WebSocketProxy';
 import MyCenter from '../Component/General/MyCenter';
-import RecordDetailList from "../Component/DdYiMahjong/RecordDetailList";
 import NoticeAlert from "../Component/General/NoticeAlert";
+import RecordDetailList from "../Component/Record/RecordDetailList";
 
 export class GatePanelMediator extends BaseMediator {
     //private gatePanelView: GatePanelView = null;

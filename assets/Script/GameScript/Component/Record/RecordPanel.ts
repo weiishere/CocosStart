@@ -132,6 +132,12 @@ export default class RecordPanel extends ViewComponent {
      * 创建记录项
      */
     createRecordItem(data: GameRecordInfo, userName: string) {
+        let gameSubClass = data.gameSubClass;
+        // 如果记录只有两个人的，那么就使用二人麻将的战绩
+        if (data.roomPlayerCreditDtos.length === 2) {
+            gameSubClass = GameNoDefine.DA_YI_ER_REN_MAHJONG;
+        }
+
         let recordItemObj = this.getRecordPrefab(data.gameSubClass);
         this.recordContent.addChild(recordItemObj);
 

@@ -3,9 +3,7 @@ import Facade from '../../../Framework/care/Facade';
 import { ProxyDefine } from '../../MahjongConst/ProxyDefine';
 import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
 import { ConfigProxy } from '../../Proxy/ConfigProxy';
-import { RoomPlayLog } from '../../GameData/RoomPlayLog';
 import { RecorDetailData } from './RecordDetailList';
-import { DymjGameResult } from '../../GameData/Dymj/s2c/DymjGameResult';
 import { DymjGameUIResultItem } from '../../GameData/Dymj/s2c/DymjGameUIResultItem';
 import { CommandDefine } from '../../MahjongConst/CommandDefine';
 import { DymjProxy } from '../../Proxy/DymjProxy';
@@ -149,32 +147,32 @@ export default class RecordAlert extends ViewComponent {
         return 0;
     }
 
-    buildData(dymjGameResult: DymjGameResult, gameSubClass: number = GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+    buildData(gameResult: any, gameSubClass: number = GameNoDefine.DA_YI_ER_REN_MAHJONG) {
         let recorDetailData: RecorDetailData = {
             gameSubClass: gameSubClass,
-            roomNo: dymjGameResult.roomNo,
-            currentGameCount: dymjGameResult.currentGameCount,
+            roomNo: gameResult.roomNo,
+            currentGameCount: gameResult.currentGameCount,
             playerData: []
         }
 
         let userName = this.getLocalCacheDataProxy().getLoginData().userName;
 
         // 是否显示退出按钮
-        this.quitRoom.active = dymjGameResult.currentGameCount >= dymjGameResult.totalGameCount;
+        this.quitRoom.active = gameResult.currentGameCount >= gameResult.totalGameCount;
 
-        if (dymjGameResult.isShowQuitBtn) {
+        if (gameResult.isShowQuitBtn) {
             this.quitRoom.active = true;
         }
 
         // 有退出按钮就没有下一局按钮
         this.goOnBtn.active = !this.quitRoom.active;
 
-        this.startNextRoundBtnCountdown(dymjGameResult.time);
+        this.startNextRoundBtnCountdown(gameResult.time);
 
         // 最后胡牌的牌型
-        dymjGameResult.players.forEach(v => {
-            let huPaiName = this.getResultDesc(dymjGameResult.list, v.azimuth);
-            let winlossScore = this.getResultWinloss(dymjGameResult.list, v.azimuth);
+        gameResult.players.forEach(v => {
+            let huPaiName = this.getResultDesc(gameResult.list, v.azimuth);
+            let winlossScore = this.getResultWinloss(gameResult.list, v.azimuth);
             let shouValues = [];
             let pengValues = [];
             let gangValues = [];
@@ -225,15 +223,36 @@ export default class RecordAlert extends ViewComponent {
             recorDetailData.playerData.push(playerRecordData);
         });
 
-        this.createRecordDetailItem(recorDetailData, dymjGameResult.totalGameCount);
+        this.createRecordDetailItem(recorDetailData, gameResult.totalGameCount);
     }
 
     createRecordDetailItem(recorDetailData: RecorDetailData, totalLength: number) {
-        let recordDetailNode = cc.instantiate(cc.loader.getRes(PrefabDefine.DymjRecordDetail, cc.Prefab));
+        let gameSubClass = recorDetailData.gameSubClass;
+
+        if (recorDetailData.playerData.length === 2) {
+            gameSubClass = GameNoDefine.DA_YI_ER_REN_MAHJONG;
+        }
+
+        let recordDetailNode = this.getRecordPrefab(gameSubClass);
         let script = <BaseRecordDetail>recordDetailNode.getComponent(BaseRecordDetail);
         recordDetailNode.y = 66;
         script.loadData(false, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount, totalLength, recorDetailData.playerData);
         this.node.addChild(recordDetailNode);
+    }
+
+    getRecordPrefab(gameSubClass: number): cc.Node {
+        let data = null;
+        if (gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+            data = cc.loader.getRes(PrefabDefine.DymjRecordDetail, cc.Prefab);
+        } else if (gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI) {
+            data = cc.loader.getRes(PrefabDefine.XdzzRecordDetail, cc.Prefab);
+        }
+
+        if (!data) {
+            return;
+        }
+
+        return cc.instantiate(data);
     }
 
     // update (dt) {}

@@ -125,7 +125,13 @@ export default class RecordDetailList extends ViewComponent {
     }
 
     createRecordDetailItem(recorDetailData: RecorDetailData, totalLength: number) {
-        let recordDetailNode = this.getRecordPrefab(recorDetailData.gameSubClass);
+        let gameSubClass = recorDetailData.gameSubClass;
+
+        if (recorDetailData.playerData.length === 2) {
+            gameSubClass = GameNoDefine.DA_YI_ER_REN_MAHJONG;
+        }
+
+        let recordDetailNode = this.getRecordPrefab(gameSubClass);
         let script = <BaseRecordDetail>recordDetailNode.getComponent(BaseRecordDetail);
         this.recordContent.addChild(recordDetailNode);
 

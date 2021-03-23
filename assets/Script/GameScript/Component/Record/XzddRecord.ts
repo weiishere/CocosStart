@@ -93,7 +93,9 @@ export default class XzddRecord extends BaseRecord {
         let palyerItem = this.createPlayerItemPlus(myRoomPlayerCreditDto, "自己");
         playerInfoNode.addChild(palyerItem);
 
-        let roomPlayerCreditDto = this.getRoomPlayerCreditBySeatNo(data.roomPlayerCreditDtos, this.getOppositionSeatNo(myRoomPlayerCreditDto.seatNo));
+        let roomPlayerCreditDto = null;
+
+        roomPlayerCreditDto = this.getRoomPlayerCreditBySeatNo(data.roomPlayerCreditDtos, this.getOppositionSeatNo(myRoomPlayerCreditDto.seatNo));
         if (roomPlayerCreditDto) {
             palyerItem = this.createPlayerItemPlus(roomPlayerCreditDto, "对家");
             playerInfoNode.addChild(palyerItem);
