@@ -1,4 +1,4 @@
-export class UIOpHuRsp {
+export class XzddUIOpHuRsp {
     playerAzimuth: number;   //被胡的方位。自摸时，是自己的方位；抢杠时，是被抢杠一方的方位；点炮时，是点炮方方位；
     mjValue: number;   //被胡的牌值。
     huType: number;   //胡类型。

@@ -1,7 +1,7 @@
 import { XzddGang } from './XzddGang';
 import { XzddPlayerInfo } from './XzddPlayerInfo';
-import { UIOpPengRsp } from './UIOpPengRsp';
-import { UIOpHuRsp } from './UIOpHuRsp';
+import { XzddUIOpPengRsp } from './XzddUIOpPengRsp';
+import { XzddUIOpHuRsp } from './XzddUIOpHuRsp';
 export class XzddPlayerReconnData {
     playerInfo: XzddPlayerInfo;
     isBank: boolean; //是否为庄。
@@ -9,8 +9,8 @@ export class XzddPlayerReconnData {
     isTingQingHu: boolean;  //是否已经报请胡。
     shouValues: number[]; // 手牌数组。已经排序好的手牌。格式：[int]。
     gangValues: XzddGang[]; //杠牌数组。格式：[{playerAzimuth:int, mjValue:int, gangType:int}]。
-    pengValues: UIOpPengRsp[];  //碰牌数组。格式：[{playerAzimuth:int, mjValue:int}]。
-    huValues: UIOpHuRsp[]; //胡牌数组。格式：
+    pengValues: XzddUIOpPengRsp[];  //碰牌数组。格式：[{playerAzimuth:int, mjValue:int}]。
+    huValues: XzddUIOpHuRsp[]; //胡牌数组。格式：
     //[{playerAzimuth:int, mjValue:int, huType:int, isAfterGang:Boolean, explosiveCount:int}]。
     chuValues: number[]; //出牌数组。按照出牌顺序排列。格式：[int]。
     //如果有定章功能，在定章牌没有翻开之前，不将定章牌归于出牌中。翻开后，就放入出牌中了。
