@@ -25,6 +25,14 @@ import { CDMJDeskProxy } from './CDMJDeskProxy';
 import { XzddS2CDissolveResult } from '../GameData/Xzdd/s2c/XzddS2CDissolveResult';
 import { XzddEntrust } from '../GameData/Xzdd/s2c/XzddEntrust';
 import { XzddEntrustRsp } from '../GameData/Xzdd/s2c/XzddEntrustRsp';
+import { XzddShowDingZhangMahjongs } from '../GameData/Xzdd/s2c/XzddShowDingZhangMahjongs';
+import { XzddDingZhangMahjongs } from '../GameData/Xzdd/c2s/XzddDingZhangMahjongs';
+import { XzddOpDingZhangMahjongsRsp } from '../GameData/Xzdd/s2c/XzddOpDingZhangMahjongsRsp';
+import { XzddOpDingZhangMahjongsBroadCast } from '../GameData/Xzdd/s2c/XzddOpDingZhangMahjongsBroadCast';
+import { XzddShowHuan3ZhangMahjongs } from '../GameData/Xzdd/s2c/XzddShowHuan3ZhangMahjongs';
+import { XzddHuan3ZhangMahjongs } from '../GameData/Xzdd/c2s/XzddHuan3ZhangMahjongs';
+import { XzddOpHuan3ZhangMahjongsRsp } from '../GameData/Xzdd/s2c/XzddOpHuan3ZhangMahjongsRsp';
+import { XzddOpHuan3ZhangMahjongsBroadCast } from '../GameData/Xzdd/s2c/XzddOpHuan3ZhangMahjongsBroadCast';
 
 /**
  * 血战到底消息数据代理类
@@ -51,7 +59,7 @@ export class XzddProxy extends ModuleProxy {
             // 登录成功之后直接进入房间
             this.joinRoom(this.joinRoomNo);
         } else if (msgType === XzddProtocol.S_ENTER_ROOM) {
-            
+
             // dymjS2CEnterRoom 这个名字是需要修改，这里是为了能够拉起二人麻将做的测试
             let xzddS2CEnterRoom: XzddS2CEnterRoom = <XzddS2CEnterRoom>content;
             xzddS2CEnterRoom.players.forEach(v => {
@@ -142,6 +150,26 @@ export class XzddProxy extends ModuleProxy {
             }
         } else if (msgType === XzddProtocol.C_SEND_INTERACT_MSG) {   //推送玩家互动消息
             this.getDeskProxy().playerInteractMsg(content);
+        } else if (msgType === XzddProtocol.S_Game_ShowDingzhang) {   //提示玩家定章消息
+            let xzddShowDingZhangMahjongs: XzddShowDingZhangMahjongs = <XzddShowDingZhangMahjongs>content;
+            xzddShowDingZhangMahjongs.playerAzimuth -= 1;
+        } else if (msgType === XzddProtocol.S_Game_Dingzhang) {   //玩家定章结果返回
+            let xzddOpDingZhangMahjongsRsp: XzddOpDingZhangMahjongsRsp = <XzddOpDingZhangMahjongsRsp>content;
+            xzddOpDingZhangMahjongsRsp.playerAzimuth -= 1;
+        } else if (msgType === XzddProtocol.S_Game_Put_Dingzhang) {   //所有玩家定张结束，包含所有玩家的定张信息
+            let xzddOpDingZhangMahjongsBroadCast: XzddOpDingZhangMahjongsBroadCast = <XzddOpDingZhangMahjongsBroadCast>content;
+        } else if (msgType === XzddProtocol.S_Game_ShowHuan3Zhang) {   //提示玩家换三张操作
+            let xzddShowHuan3ZhangMahjongs: XzddShowHuan3ZhangMahjongs = <XzddShowHuan3ZhangMahjongs>content;
+            xzddShowHuan3ZhangMahjongs.playerAzimuth -= 1;
+
+        } else if (msgType === XzddProtocol.S_Game_Huan3Zhang) {   //玩家操作换三张结果返回
+            let xzddOpHuan3ZhangMahjongsRsp: XzddOpHuan3ZhangMahjongsRsp = <XzddOpHuan3ZhangMahjongsRsp>content;
+            xzddOpHuan3ZhangMahjongsRsp.playerAzimuth -= 1;
+            
+        } else if (msgType === XzddProtocol.S_Game_Put_Huan3Zhang) {   //所有玩家换三张结束之后，广播的消息
+            let xzddOpHuan3ZhangMahjongsBroadCast: XzddOpHuan3ZhangMahjongsBroadCast = <XzddOpHuan3ZhangMahjongsBroadCast>content;
+            xzddOpHuan3ZhangMahjongsBroadCast.playerAzimuth -= 1;
+
         } else if (msgType === XzddProtocol.S_HEARTBEAT) {   //推送玩家退出游戏消息
             this.sendHeartbeat();
         }
@@ -280,6 +308,30 @@ export class XzddProxy extends ModuleProxy {
         xzddEntrust.isUserRequest = false;
         xzddEntrust.isHosted = isHosted;
         this.sendGameData(XzddProtocol.C_ENTRUST, xzddEntrust);
+    }
+
+    /**
+     * 定张
+     * @param queType 0：万 1： 筒 2： 条
+     */
+    dingZhang(queType: number) {
+        let xzddDingZhangMahjongs: XzddDingZhangMahjongs = new XzddDingZhangMahjongs();
+        xzddDingZhangMahjongs.acctName = this.getUserName();
+        xzddDingZhangMahjongs.queType = queType;
+        this.sendGameData(XzddProtocol.C_Game_Dingzhang, xzddDingZhangMahjongs, (op: number, msgType: number) => {
+        });
+    }
+
+    /**
+     * 换三张
+     * @param mahjongs 玩家选择的三张牌，注意：这个三张牌必须是同一个花色的
+     */
+    huanSanZhang(mahjongs: number[]) {
+        let xzddHuan3ZhangMahjongs: XzddHuan3ZhangMahjongs = new XzddHuan3ZhangMahjongs();
+        xzddHuan3ZhangMahjongs.mahjongs = mahjongs
+
+        this.sendGameData(XzddProtocol.C_Game_Huan3Zhang, xzddHuan3ZhangMahjongs, (op: number, msgType: number) => {
+        });
     }
 
     /**
