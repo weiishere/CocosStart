@@ -241,6 +241,10 @@ export class XzddProtocol {
             return XzddProtocol.S_ENTRUST;
         } else if (msgType === XzddProtocol.C_CHECKHU) {
             return XzddProtocol.S_CHECKHU;
+        } else if (msgType === XzddProtocol.C_Game_Dingzhang) {
+            return XzddProtocol.S_Game_Dingzhang;
+        } else if (msgType === XzddProtocol.C_Game_Huan3Zhang) {
+            return XzddProtocol.S_Game_Huan3Zhang;
         }
 
         return msgType;
