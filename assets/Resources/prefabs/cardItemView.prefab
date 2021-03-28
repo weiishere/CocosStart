@@ -762,6 +762,9 @@
     "hideRightCardbg": {
       "__uuid__": "ce0a40f8-0069-45b5-bed5-9ded4f4547a4"
     },
+    "sideLieCardbg": {
+      "__uuid__": "7b8d560f-aaba-4b65-b60a-a31de65f55ac"
+    },
     "lieLeftCardbg": {
       "__uuid__": "7b8d560f-aaba-4b65-b60a-a31de65f55ac"
     },

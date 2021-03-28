@@ -1,3 +1,4 @@
 export enum DeskPanelViewEventDefine {
-    DeskPanelViewOnLoadComplate = "DeskPanelViewOnLoadComplate",
+    DYMJDeskPanelViewOnLoadComplate = "DYMJDeskPanelViewOnLoadComplate",
+    CDMJDeskPanelViewOnLoadComplate = "CDMYDeskPanelViewOnLoadComplate",
 }

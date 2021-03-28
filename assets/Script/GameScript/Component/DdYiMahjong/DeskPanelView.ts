@@ -283,7 +283,7 @@ export default class DeskPanelView extends ViewComponent {
             }
         }, this);
 
-        this.dispatchCustomEvent(DeskPanelViewEventDefine.DeskPanelViewOnLoadComplate, null);
+        this.dispatchCustomEvent(DeskPanelViewEventDefine.DYMJDeskPanelViewOnLoadComplate, null);
         //预加载表情
         for (let i = 1; i <= 25; i++) {
             cc.loader.loadRes(`textures/desk/face/face(${i})`, cc.Texture2D, (err, item) => { });

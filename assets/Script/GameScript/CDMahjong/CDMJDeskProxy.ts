@@ -127,6 +127,7 @@ export class CDMJDeskProxy extends BaseProxy {
         oprts.forEach(op => {
             const _eventName = this.getGameData().eventData.gameEventData.myGameEvent.eventName;
             const _correlationInfoData = this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;
+            
             if (op.oprtType === XzddOperationType.GANG) {
                 _eventName.push("bar");
                 this.getGameData().myCards.cardsChoose = op.gang.mjValues;
@@ -162,6 +163,9 @@ export class CDMJDeskProxy extends BaseProxy {
                     this.getGameData().myCards.cardsChoose = [];//可能有多种报牌方式
                     op.ting.list && op.ting.list.forEach(item => this.getGameData().myCards.cardsChoose.push(item.putValue));
                 }
+            } else if (op.oprtType === XzddOperationType.DINGZHANG) {
+                debugger
+                _eventName.push("setFace");
             }
             // else if (op.oprtType === XzddOperationType.QING_HU) {
             //     _eventName.push("qingHu");
@@ -403,7 +407,7 @@ export class CDMJDeskProxy extends BaseProxy {
         //更新中间大字数据
         this.getGameData().eventData.gameEventData.deskGameEvent.eventName = _deskEventName;
         this.getGameData().eventData.gameEventData.deskGameEvent.correlationInfoData = _deskEventCorrelationInfoData;
-        this.sendNotification(CDMJCommandDefine.EventDonePush, { givePlayer, giveCard, isMe: this.isMy(playerInfo.playerId), eventName: _deskEventName });
+        this.sendNotification(CDMJCommandDefine.EventDonePush, { givePlayer, giveCard, playerGameIndex: playerInfo.gameIndex, isMe: this.isMy(playerInfo.playerId), eventName: _deskEventName });
     }
 
     /** 自己和对家出牌（出牌之后） */
@@ -419,29 +423,27 @@ export class CDMJDeskProxy extends BaseProxy {
         } else {
             let partnerCard = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
             partnerCard.partnerCards.outCardList.push(xzddS2COpPutRsp.putMjValue);
-            //partnerCard.partnerCards.curCardCount--;
 
             if (!partnerCard.partnerCards.isHandCard) {
                 partnerCard.partnerCards.curCardCount--;
-                let count = 0;
-                partnerCard.partnerCards.curCardList = partnerCard.partnerCards.curCardList.filter((item, index) => {
-                    if (item === xzddS2COpPutRsp.putMjValue && count === 0) { count++; return false; } else { return true; }
-                });
+                // let count = 0;
+                // //确保只删除打出的牌
+                // partnerCard.partnerCards.curCardList = partnerCard.partnerCards.curCardList.filter((item, index) => {
+                //     if (item === xzddS2COpPutRsp.putMjValue && count === 0) { count++; return false; } else { return true; }
+                // });
             } else {
                 //如果有手牌，这里要注意看打出的牌是否等于手牌
                 if (partnerCard.partnerCards.handCard !== xzddS2COpPutRsp.putMjValue) {
                     //出的不是手牌
                     let count = 0;
-                    partnerCard.partnerCards.curCardList = partnerCard.partnerCards.curCardList.filter((item, index) => {
-                        if (item === xzddS2COpPutRsp.putMjValue && count === 0) { count++; return false; } else { return true; }
-                    });
-                    // console.log('----------------------------')
-                    // console.log(partnerCard.partnerCards.handCard);
-                    // console.log('----------------------------')
-                    partnerCard.partnerCards.handCard !== 0 && partnerCard.partnerCards.curCardList.push(partnerCard.partnerCards.handCard + 0);
-                    partnerCard.partnerCards.curCardList.sort((a, b) => a - b);
+                    // partnerCard.partnerCards.curCardList = partnerCard.partnerCards.curCardList.filter((item, index) => {
+                    //     if (item === xzddS2COpPutRsp.putMjValue && count === 0) { count++; return false; } else { return true; }
+                    // });
+                    // partnerCard.partnerCards.handCard !== 0 && partnerCard.partnerCards.curCardList.push(partnerCard.partnerCards.handCard + 0);
+                    // partnerCard.partnerCards.curCardList.sort((a, b) => a - b);
                 }
             }
+            partnerCard.partnerCards.curCardList = xzddS2COpPutRsp.spValuesSorted
 
             partnerCard.partnerCards.isHandCard = false;
             partnerCard.partnerCards.handCard = 0;

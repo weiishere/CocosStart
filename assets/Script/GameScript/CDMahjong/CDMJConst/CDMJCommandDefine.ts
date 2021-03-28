@@ -22,7 +22,7 @@ export enum CDMJCommandDefine {
     ShowMyEventPush = "CDMJ_ShowMyEventPush",
     EventDonePush = "CDMJ_EventDonePush",
     ShowCenterEffect = "CDMJ_ShowCenterEffect",
-    ReStartGamePush = 'ReStartGamePush',
+    ReStartGamePush = 'CDMJ_ReStartGamePush',
     ShowCardEffect = "CDMJ_ShowCardEffect",
     Entrust = "CDMJ_Entrust",
     EntrustNotice = "CDMJ_EntrustNotice",

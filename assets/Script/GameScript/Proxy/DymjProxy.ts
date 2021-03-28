@@ -56,6 +56,7 @@ export class DymjProxy extends ModuleProxy {
                 v.azimuth -= 1;
             })
             // 这里构建麻将界面
+            cc.log("构建DYMJ--sendNotification=================");
             this.sendNotification(CommandDefine.InitDeskPanel, { dymjS2CEnterRoom });
         } else if (msgType === DymjProtocol.S_PUSH_DESK_PLAYER_LIST) {// 推送玩家信息
             let dymjEnterDeskPushPlyaerList: DymjEnterDeskPushPlyaerList = <DymjEnterDeskPushPlyaerList>content;
@@ -222,7 +223,7 @@ export class DymjProxy extends ModuleProxy {
      * 准备
      */
     ready() {
-        cc.log("发送准备=================");
+        cc.log("发送准备=================DYMJ");
         this.isReadyEnterRoom = false;
         let dymjC2SEnterUserInfo: DymjC2SEnterUserInfo = new DymjC2SEnterUserInfo();
         dymjC2SEnterUserInfo.acctName = this.getUserName();

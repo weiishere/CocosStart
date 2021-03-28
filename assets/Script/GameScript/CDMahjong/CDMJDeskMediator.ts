@@ -30,7 +30,7 @@ export default class CDMJDeskMediator extends BaseMediator {
 
     private listenerEvent() {
         // 加载完成事件
-        this.viewComponent.on(DeskPanelViewEventDefine.DeskPanelViewOnLoadComplate, () => {
+        this.viewComponent.on(DeskPanelViewEventDefine.CDMJDeskPanelViewOnLoadComplate, () => {
             this.getCdmjProxy().ready();
         });
     }
@@ -125,14 +125,13 @@ export default class CDMJDeskMediator extends BaseMediator {
 
     public async handleNotification(notification: INotification) {
 
-        // const gameData = this.getDeskProxy().getGameData();
-        // const deskData = this.getDeskProxy().getDeskData();
-        // console.log('gameData', gameData);
-        // console.log('deskData', deskData);
-        console.log(notification.getName());
+        const gameData = this.getDeskProxy().getGameData();
+        const deskData = this.getDeskProxy().getDeskData();
+        console.log('gameData', gameData);
+        console.log('deskData', deskData);
+
         switch (notification.getName()) {
             case CDMJCommandDefine.InitDeskPanel:
-                
                 this.roundMark = notification.getBody().xzddS2CEnterRoom.roundMark;
                 this.sendNotification(CommandDefine.CloseLoadingPanel);
                 let isReconnect = true;
@@ -245,7 +244,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 break;
             case CDMJCommandDefine.LicensingCardPush://发牌
                 this.DeskPanelViewScript.updateRoomInfo();
-                this.sendNotification(CDMJCommandDefine.ShowCenterEffect, { isMe: undefined });
+                this.sendNotification(CDMJCommandDefine.ShowCenterEffect, { isMe: undefined, gameIndex: -1 });
                 this.DeskPanelViewScript.updatedDeskAiming();
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateCountDown();
@@ -296,11 +295,11 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updatedDeskAiming();
                 // const givePlayer: PlayerInfo = notification.getBody().givePlayer;
                 // const giveCard: number = notification.getBody().giveCard;
-                const _body = <{ givePlayer: PlayerInfo, giveCard: number, isMe: boolean, eventName: DeskEventName }>notification.getBody();
-                const { givePlayer, giveCard, eventName } = _body;
+                const _body = <{ givePlayer: PlayerInfo, playerGameIndex: number, giveCard: number, isMe: boolean, eventName: DeskEventName }>notification.getBody();
+                const { givePlayer, giveCard, eventName, playerGameIndex } = _body;
                 this.playEventSound(eventName);
                 givePlayer && giveCard && this.DeskPanelViewScript.deleteOutCard(givePlayer.gameIndex, giveCard);//去除outcard
-                this.sendNotification(CDMJCommandDefine.ShowCenterEffect, { isMe: _body.isMe });
+                this.sendNotification(CDMJCommandDefine.ShowCenterEffect, { isMe: _body.isMe, gameIndex: playerGameIndex });
                 break;
             case CDMJCommandDefine.ShowCardNotificationPush://通知出牌
                 this.DeskPanelViewScript.updateMyOperationBtu();
@@ -317,8 +316,8 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.getCdmjProxy().putMahkjong(cardNumber, isQingHu);
                 break;
             case CDMJCommandDefine.ShowCenterEffect://显示中间大字
-                const { isMe } = notification.getBody();
-                this.DeskPanelViewScript.updateEventWran(isMe, () => {
+                const { isMe, gameIndex } = notification.getBody();
+                this.DeskPanelViewScript.updateEventWran(isMe, gameIndex, () => {
                     this.getDeskProxy().clearDeskGameEvent();
                 });
                 break;

@@ -10,7 +10,7 @@ import { MayHuCard } from "../../repositories/DYMJDeskRepository";
 const { ccclass, property } = cc._decorator;
 export type ModType = 'setUp' | 'fall';
 export type FallShowStatus = 'display' | 'hide';
-export type PositionType = 'mine' | 'front' | 'left' | 'right';
+export type PositionType = 'mine' | 'front' | 'side' | 'left' | 'right';
 
 @ccclass
 export default class CardItemView extends cc.Component {
@@ -35,8 +35,8 @@ export default class CardItemView extends cc.Component {
     @property(cc.SpriteFrame)
     hideRightCardbg: cc.SpriteFrame = null;//右对手隐藏牌
 
-    // @property(cc.SpriteFrame)
-    // lieFrontCardbg: cc.SpriteFrame = null;//对面趟牌
+    @property(cc.SpriteFrame)
+    sideLieCardbg: cc.SpriteFrame = null;//侧面趟牌
 
     @property(cc.SpriteFrame)
     lieLeftCardbg: cc.SpriteFrame = null;//左方趟牌
@@ -341,10 +341,11 @@ export default class CardItemView extends cc.Component {
                 faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
                 break;
             case 'front':
+                //对家牌
                 faceNode.setRotation(180);
                 if (this.mod === 'setUp') {
                     if (!cardNumber) {
-                        cardComp.spriteFrame = this.hideFrontCardbg;
+                        cardComp.spriteFrame = this.mainHideCardbg;//.hideFrontCardbg;
                         faceNode.active = false;
                     } else {
                         cardComp.spriteFrame = this.mainCardbg;
@@ -363,13 +364,83 @@ export default class CardItemView extends cc.Component {
                     faceNode.setPosition(cc.v2(0, 6));
                     faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
                 }
-                //对家牌
                 break;
+            case 'side':
+                if (this.mod === 'setUp') {
+                    if (!cardNumber) {
+                        cardComp.spriteFrame = this.hideLeftCardbg;//.hideFrontCardbg;
+                        faceNode.active = false;
+                    } else {
+                        cardComp.spriteFrame = this.sideLieCardbg;
+                        this.node.setScale(0.6);
+                        faceNode.active = true;
+                        faceNode.setRotation(0);
+                        faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
+                    }
+                    this.node.setRotation(90);
+                } else if (this.mod === "fall") {
+                    if (option && option.fallShowStatus && option.fallShowStatus === 'hide') {
+                        cardComp.spriteFrame = this.hideLeftCardbg;//.hideFrontFallCardbg;
+                        faceNode.active = false;
+                    } else {
+                        cardComp.spriteFrame = this.lieLeftCardbg;//.lieMineCardbg;
+                    }
+                    faceNode.setPosition(cc.v2(0, 6));
+                    faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
+                }
             case 'left':
                 //左方牌
+                if (this.mod === 'setUp') {
+                    if (!cardNumber) {
+                        cardComp.spriteFrame = this.hideLeftCardbg;//.hideFrontCardbg;
+                        faceNode.active = false;
+                    } else {
+                        cardComp.spriteFrame = this.hideLeftCardbg;
+                        this.node.setScale(0.6);
+                        faceNode.active = true;
+                        faceNode.setRotation(0);
+                        faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
+                    }
+                    //this.node.setRotation(90);
+                } else if (this.mod === "fall") {
+                    if (option && option.fallShowStatus && option.fallShowStatus === 'hide') {
+                        cardComp.spriteFrame = this.sideLieCardbg;//.hideFrontFallCardbg;
+                        faceNode.active = false;
+                    } else {
+                        cardComp.spriteFrame = this.sideLieCardbg;//.lieMineCardbg;
+                    }
+                    faceNode.setPosition(cc.v2(3, 6));
+                    faceNode.setRotation(90);
+                    faceNode.setScale(0.4);
+                    faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
+                }
                 break;
             case 'right':
                 //右方牌
+                if (this.mod === 'setUp') {
+                    if (!cardNumber) {
+                        cardComp.spriteFrame = this.hideRightCardbg;//.hideFrontCardbg;
+                        faceNode.active = false;
+                    } else {
+                        cardComp.spriteFrame = this.hideRightCardbg;
+                        this.node.setScale(0.6);
+                        faceNode.active = true;
+                        faceNode.setRotation(0);
+                        faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
+                    }
+                    //this.node.setRotation(90);
+                } else if (this.mod === "fall") {
+                    if (option && option.fallShowStatus && option.fallShowStatus === 'hide') {
+                        cardComp.spriteFrame = this.sideLieCardbg;//.hideFrontFallCardbg;
+                        faceNode.active = false;
+                    } else {
+                        cardComp.spriteFrame = this.sideLieCardbg;//.lieMineCardbg;
+                    }
+                    faceNode.setPosition(cc.v2(-3, 6));
+                    faceNode.setRotation(-90);
+                    faceNode.setScale(0.4);
+                    faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
+                }
                 break;
         }
     }

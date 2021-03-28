@@ -248,7 +248,6 @@ export class HttpUtil {
         //const token = md5(parseInt((new Date().getTime() / 10000) + '') * 10000 + ".ziyungeSecret");
         // const s = parseInt((new Date().getTime() / 10000) + '') * 10000 + ".ziyungeSecret";
         // console.log(md5(s));
-        // debugger
 
         pXHR.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
