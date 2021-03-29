@@ -54,7 +54,7 @@ export default class CDMJRecordAlert extends ViewComponent {
     }
 
     public getXzddProxy() {
-        return <XzddProxy>Facade.Instance.retrieveProxy(ProxyDefine.Dymj);
+        return <XzddProxy>Facade.Instance.retrieveProxy(ProxyDefine.Xzdd);
     }
 
     public getLocalCacheDataProxy() {
@@ -170,6 +170,8 @@ export default class CDMJRecordAlert extends ViewComponent {
 
         this.startNextRoundBtnCountdown(gameResult.time);
 
+        let myAzimuth: number = 0;
+        let myPlayerRecordData: PlayerRecordData;
         // 最后胡牌的牌型
         gameResult.players.forEach(v => {
             let huPaiName = this.getResultDesc(gameResult.list, v.azimuth);
@@ -196,16 +198,17 @@ export default class CDMJRecordAlert extends ViewComponent {
                 });
             }
 
-            let gangPaiName = this.getGangDesc(v.gangValues);
+            // let gangPaiName = this.getGangDesc(v.gangValues);
+            let gangPaiName = "";
             let huPaiNameTmp = huPaiName;
             if (huValues.length > 0) {
-                if (huPaiNameTmp) {
-                    huPaiNameTmp += ", " + gangPaiName;
-                } else {
-                    huPaiNameTmp = gangPaiName;
-                }
+                // if (huPaiNameTmp) {
+                //     huPaiNameTmp += ", " + gangPaiName;
+                // } else {
+                //     huPaiNameTmp = gangPaiName;
+                // }
             } else {
-                huPaiNameTmp = "未胡牌, " + gangPaiName;
+                huPaiNameTmp = "未胡牌";
             }
 
             let playerRecordData: PlayerRecordData = {
@@ -218,11 +221,20 @@ export default class CDMJRecordAlert extends ViewComponent {
                 nickname: v.nickname,
                 seatNo: v.azimuth,
                 head: v.head,
-                winloss: winlossScore
+                winloss: winlossScore,
+                detailRemark: ""
+            }
+
+            if (userName === v.userName) {
+                myAzimuth = v.azimuth;
+                myPlayerRecordData = playerRecordData;
             }
 
             recorDetailData.playerData.push(playerRecordData);
         });
+
+        let str = this.getDetailGameResult(myAzimuth, gameResult.list);
+        myPlayerRecordData.detailRemark = str;
 
         this.createRecordDetailItem(recorDetailData, gameResult.totalGameCount);
     }
@@ -234,7 +246,7 @@ export default class CDMJRecordAlert extends ViewComponent {
             gameSubClass = GameNoDefine.DA_YI_ER_REN_MAHJONG;
         }
 
-        let recordDetailNode = this.getRecordPrefab(recorDetailData.gameSubClass);
+        let recordDetailNode = this.getRecordPrefab(gameSubClass);
         let script = <BaseRecordDetail>recordDetailNode.getComponent(BaseRecordDetail);
         recordDetailNode.y = 66;
         script.loadData(false, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount, totalLength, recorDetailData.playerData);
@@ -256,5 +268,164 @@ export default class CDMJRecordAlert extends ViewComponent {
         return cc.instantiate(data);
     }
 
-    // update (dt) {}
+    getDetailGameResult(myAzimuth: number, gameResultItems: XzddGameUIResultItem[]) {
+        let sb = "";
+        for (const gameResultItem of gameResultItems) {
+            if (gameResultItem.type === "total") {
+                continue;
+            }
+
+            let changeCredit = this.getAzimuthPlayer(myAzimuth, gameResultItem);
+            if (changeCredit == 0) {
+                continue;
+            }
+            let resultName = "";
+            if (gameResultItem.itemType === 5) {
+                resultName = "刮风";
+                if (changeCredit < 0) {
+                    resultName = "被刮风";
+                }
+            } else if (gameResultItem.itemType === 4) {
+                resultName = "下雨";
+                if (changeCredit < 0) {
+                    resultName = "被下雨";
+                }
+            } else if (gameResultItem.itemType === 10) {
+                resultName = "面下杠";
+                if (changeCredit < 0) {
+                    resultName = "被面下杠";
+                }
+            } else if (gameResultItem.itemType === 3) {
+                resultName = "呼叫转移";
+            } else if (gameResultItem.itemType === 1) {
+                resultName = "查大叫";
+                if (changeCredit < 0) {
+                    resultName = "被查叫";
+                }
+            } else if (gameResultItem.itemType === 7) {
+                resultName = "吃胡";
+                if (changeCredit < 0) {
+                    resultName = "点炮";
+                }
+            } else if (gameResultItem.itemType === 6) {
+                resultName = "自摸";
+                if (changeCredit < 0) {
+                    resultName = "被自摸";
+                }
+            } else if (gameResultItem.itemType === 8) {
+                resultName = "杠上花";
+                if (changeCredit < 0) {
+                    resultName = "被杠上花";
+                }
+            } else if (gameResultItem.itemType === 9) {
+                resultName = "杠上炮";
+                if (changeCredit < 0) {
+                    resultName = "被杠上炮";
+                }
+            }
+
+            let azimuthStr = "";
+
+            let azimuthWinloss: number[] = [gameResultItem.azimuth1, gameResultItem.azimuth2, gameResultItem.azimuth3, gameResultItem.azimuth4];
+
+            for (let index = 0; index < azimuthWinloss.length; index++) {
+                const winloss = azimuthWinloss[index];
+                if (index === myAzimuth) {
+                    continue;
+                }
+
+                if (winloss === 0) {
+                    continue;
+                }
+
+                // 如果自己是负的，不需要找其他负的玩家，只需要知道正的玩家就可以了
+                if (changeCredit < 0 && winloss < 9) {
+                    continue;
+                }
+                azimuthStr += this.getAzimuthName(myAzimuth, index) + " ";
+            }
+
+            sb = `${resultName},${changeCredit},${azimuthStr}\n`;
+        }
+
+        cc.log(sb);
+        return sb;
+    }
+
+    getAzimuthPlayer(myAzimuth: number, xzddGameUIResultItem: XzddGameUIResultItem) {
+        if (myAzimuth === 0 && xzddGameUIResultItem.azimuth1 != 0) {
+            return xzddGameUIResultItem.azimuth1;
+        } else if (myAzimuth === 1 && xzddGameUIResultItem.azimuth2 != 0) {
+            return xzddGameUIResultItem.azimuth2;
+        } else if (myAzimuth === 2 && xzddGameUIResultItem.azimuth3 != 0) {
+            return xzddGameUIResultItem.azimuth3;
+        } else if (myAzimuth === 3 && xzddGameUIResultItem.azimuth4 != 0) {
+            return xzddGameUIResultItem.azimuth4;
+        }
+        return 0;
+    }
+
+    getAzimuthName(myAzimuth: number, azimuthType: number) {
+        let duiJiaAzimuth = this.getDuiJiaAzimuth(myAzimuth);
+        let shangJiaAzimuth = this.getShangJiaAzimuth(myAzimuth);
+        let xiaJiaAzimuth = this.getXiaJiaAzimuth(myAzimuth);
+
+        if (duiJiaAzimuth == azimuthType) {
+            return "对家";
+        } else if (shangJiaAzimuth == azimuthType) {
+            return "上家";
+        } else if (xiaJiaAzimuth == azimuthType) {
+            return "下家";
+        }
+        return "自己";
+    }
+
+    /**
+     * 获得对家方位
+     * 
+     * @param myAzimuth
+     * @return
+     */
+    getDuiJiaAzimuth(myAzimuth: number) {
+        if (myAzimuth === 0) {
+            return 2;
+        } else if (myAzimuth === 1) {
+            return 3;
+        } else if (myAzimuth === 2) {
+            return 0;
+        } else if (myAzimuth === 3) {
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * 获得上家方位
+     * 
+     * @param myAzimuth
+     * @return
+     */
+    getShangJiaAzimuth(myAzimuth: number) {
+        let index = myAzimuth - 1;
+        if (index < 0) {
+            index = 3;
+        }
+
+        return index;
+    }
+
+    /**
+     * 获得上家方位
+     * 
+     * @param myAzimuth
+     * @return
+     */
+    getXiaJiaAzimuth(myAzimuth: number) {
+        let index = myAzimuth + 1;
+        if (index > 3) {
+            index = 0;
+        }
+
+        return index;
+    }
 }

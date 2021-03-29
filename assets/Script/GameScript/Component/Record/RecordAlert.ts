@@ -218,7 +218,8 @@ export default class RecordAlert extends ViewComponent {
                 nickname: v.nickname,
                 seatNo: v.azimuth,
                 head: v.head,
-                winloss: winlossScore
+                winloss: winlossScore,
+                detailRemark: ""
             }
 
             recorDetailData.playerData.push(playerRecordData);

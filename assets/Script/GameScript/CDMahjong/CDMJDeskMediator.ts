@@ -103,7 +103,7 @@ export default class CDMJDeskMediator extends BaseMediator {
         this.recordAlterNode = <cc.Node>cc.instantiate(recordAlterResource);
         this.view.addChild(this.recordAlterNode);
         let script = this.recordAlterNode.getComponent("CDMJRecordAlert");
-        script.buildData(data, GameNoDefine.DA_YI_ER_REN_MAHJONG);
+        script.buildData(data, GameNoDefine.XUE_ZHAN_DAO_DI);
     }
 
     public playEventSound(eventName: DeskEventName, cardNumber?: number) {
