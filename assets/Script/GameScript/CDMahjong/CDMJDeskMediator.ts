@@ -89,7 +89,9 @@ export default class CDMJDeskMediator extends BaseMediator {
             CDMJCommandDefine.OpenChatBox,
             CDMJCommandDefine.ShowDeskChatMsg,
             CDMJCommandDefine.WebSocketReconnect,
-            CDMJCommandDefine.ChangePlayerGold
+            CDMJCommandDefine.ChangePlayerGold,
+            CDMJCommandDefine.DingzhangDone,
+            CDMJCommandDefine.AllDingzhangDone
         ];
     }
 
@@ -219,6 +221,12 @@ export default class CDMJDeskMediator extends BaseMediator {
                         } else if (node.name === 'pass') {
                             //过
                             this.getCdmjProxy().operation(XzddOperationType.XIAO, 0);
+                        } else if (node.name === "ding-wan") {
+                            this.getCdmjProxy().dingZhang(0);
+                        } else if (node.name === "ding-tong") {
+                            this.getCdmjProxy().dingZhang(1);
+                        } else if (node.name === "ding-tiao") {
+                            this.getCdmjProxy().dingZhang(2);
                         }
                     });
                 }
@@ -269,6 +277,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updatedDeskAiming();
                 this.DeskPanelViewScript.updateRoomInfo();
                 this.DeskPanelViewScript.updateCountDown();
+                this.DeskPanelViewScript.updateDingZhangView();
                 break;
             case CDMJCommandDefine.GetGameCardPush://摸牌
                 this.DeskPanelViewScript.updateHandCardAndHuCard();//更新手牌
@@ -308,7 +317,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updatedDeskAiming();
                 break;
             case CDMJCommandDefine.ShowMyEventPush://通知本方有事件
-                this.DeskPanelViewScript.updateMyOperationBtu();
+                this.DeskPanelViewScript.updateMyOperationBtu(notification.getBody().suggestFaceSetType);
                 //notification.getBody().isZhuaQinghu && this.playEventSound('qingHu');//有可能是对方请胡，自己要抓请胡，需要语音提示
                 break;
             case CDMJCommandDefine.ShowCard://本方出牌
@@ -361,6 +370,12 @@ export default class CDMJDeskMediator extends BaseMediator {
             case CDMJCommandDefine.ChangePlayerGold://金币变化
                 this.facade.sendNotification(CDMJCommandDefine.RefreshPlayerPush, {}, '');
                 this.DeskPanelViewScript.showPlayerGlodChange();
+                break;
+            case CDMJCommandDefine.DingzhangDone://玩家定章完成
+                this.DeskPanelViewScript.updateMyOperationBtu();
+                break;
+            case CDMJCommandDefine.AllDingzhangDone://全部玩家完成定章
+                this.DeskPanelViewScript.updateDingZhangView();
                 break;
         }
     }

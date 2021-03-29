@@ -27,6 +27,9 @@ import { XzddGameReconnData } from '../GameData/Xzdd/s2c/XzddGameReconnData';
 import { XzddGameUIResultItem } from '../GameData/Xzdd/s2c/XzddGameUIResultItem';
 import { XzddS2CEnterRoom } from '../GameData/Xzdd/s2c/XzddS2CEnterRoom';
 import { ProxyDefine } from '../MahjongConst/ProxyDefine';
+import { XzddShowDingZhangMahjongs } from '../GameData/Xzdd/s2c/XzddShowDingZhangMahjongs';
+import { XzddOpDingZhangMahjongsRsp } from '../GameData/Xzdd/s2c/XzddOpDingZhangMahjongsRsp';
+import { XzddOpDingZhangMahjongsBroadCast } from '../GameData/Xzdd/s2c/XzddOpDingZhangMahjongsBroadCast';
 
 export class CDMJDeskProxy extends BaseProxy {
     public repository: DeskRepository;
@@ -71,7 +74,7 @@ export class CDMJDeskProxy extends BaseProxy {
                         "barCard": [],
                         "hadHuCard": 0,
                         "outCardList": [],
-                        "setFace": 0,
+                        "setFace": -1,
                         "status": {
                             "isHadHu": false,
                             "isBaoHu": false
@@ -127,7 +130,7 @@ export class CDMJDeskProxy extends BaseProxy {
         oprts.forEach(op => {
             const _eventName = this.getGameData().eventData.gameEventData.myGameEvent.eventName;
             const _correlationInfoData = this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;
-            
+
             if (op.oprtType === XzddOperationType.GANG) {
                 _eventName.push("bar");
                 this.getGameData().myCards.cardsChoose = op.gang.mjValues;
@@ -164,7 +167,7 @@ export class CDMJDeskProxy extends BaseProxy {
                     op.ting.list && op.ting.list.forEach(item => this.getGameData().myCards.cardsChoose.push(item.putValue));
                 }
             } else if (op.oprtType === XzddOperationType.DINGZHANG) {
-                debugger
+
                 _eventName.push("setFace");
             }
             // else if (op.oprtType === XzddOperationType.QING_HU) {
@@ -233,6 +236,39 @@ export class CDMJDeskProxy extends BaseProxy {
             this.sendNotification(CDMJCommandDefine.ShowMyEventPush, { eventName: this.getGameData().eventData.gameEventData.myGameEvent.eventName, isZhuaQinghu });
         }
     }
+    /**推送定章提示信息 */
+    updateDingZhangOperationEvent(xzddShowDingZhangMahjongs: XzddShowDingZhangMahjongs) {
+        if (this.getGameData().myCards.setFace !== -1) {
+            //本局已经完成了定章
+            return;
+        }
+        console.log('-----------弹出定章推送------------')
+        this.getGameData().eventData.gameEventData.myGameEvent.eventName = ['setFace'];
+        this.getGameData().eventData.deskEventData.eventName = '';
+        this.sendNotification(CDMJCommandDefine.ShowMyEventPush, { eventName: this.getGameData().eventData.gameEventData.myGameEvent.eventName, suggestFaceSetType: xzddShowDingZhangMahjongs.queTypes[0] });
+    }
+    /**玩家自己完成定章 */
+    playerSelfDingzhangDone(xzddOpDingZhangMahjongsRsp: XzddOpDingZhangMahjongsRsp) {
+        //console.log(xzddOpDingZhangMahjongsRsp.dingzhangType);
+        this.getGameData().myCards.setFace = xzddOpDingZhangMahjongsRsp.dingzhangType;
+        this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
+        this.sendNotification(CDMJCommandDefine.DingzhangDone);
+    }
+    /**所有玩家完成定章 */
+    allPlayerDingZhangDone(xzddOpDingZhangMahjongsBroadCast: XzddOpDingZhangMahjongsBroadCast) {
+        xzddOpDingZhangMahjongsBroadCast.dingzhangType.forEach((item, index) => {
+            const player = this.getDeskData().playerList.find(i => i.gameIndex === index);
+            if (this.isMy(player.playerId)) {
+                this.getGameData().myCards.setFace = item;
+            } else {
+                const partner = this.getGameData().partnerCardsList.find(i => i.playerId === player.playerId);
+                if (partner) {
+                    partner.partnerCards.setFace = item;
+                }
+            }
+        });
+        this.sendNotification(CDMJCommandDefine.AllDingzhangDone);
+    }
 
     /**
      * 通知下一步有哪些操作动作(广播有事件)
@@ -246,7 +282,7 @@ export class CDMJDeskProxy extends BaseProxy {
             if (xzddS2CDoNextOperation.nextStep.type === 1) {
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = ["show"];
                 this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = {};
-                //不能出的牌(用户报胡之后)
+                //不能出的牌(用户报胡之后/定缺后不能出的牌)
                 this.getGameData().myCards.disableCard = xzddS2CDoNextOperation.nextStep.datas || [];
             } else if (xzddS2CDoNextOperation.nextStep.type === 2) {
                 //碰杠胡
@@ -485,7 +521,7 @@ export class CDMJDeskProxy extends BaseProxy {
                 "barCard": [],
                 "hadHuCard": 0,
                 "outCardList": [],
-                "setFace": 0,
+                "setFace": -1,
                 "status": {
                     "isHadHu": false,
                     "isBaoHu": false
@@ -581,7 +617,7 @@ export class CDMJDeskProxy extends BaseProxy {
                     outCardList: outCard,
                     touchCard: pengCard,
                     curCardList: (handCard > 0 ? curCardList.splice(0, curCardList.length - 1) : curCardList),//curCardList,
-                    setFace: 0,
+                    setFace: player.dingzhang.dingzhangType,
                     handCard: handCard,
                     cardsChoose: [],
                     disableCard: [],
@@ -617,7 +653,7 @@ export class CDMJDeskProxy extends BaseProxy {
                         /**对家已经出的牌 */
                         outCardList: outCard,
                         /**对家定章 */
-                        setFace: 0,
+                        setFace: player.dingzhang.dingzhangType,
                         /**对家的状态 */
                         status: {
                             /**对家是否已经胡牌 */

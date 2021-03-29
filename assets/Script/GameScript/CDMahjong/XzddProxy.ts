@@ -89,8 +89,6 @@ export class XzddProxy extends ModuleProxy {
         } else if (msgType === XzddProtocol.S_Game_DoNextOperation_BroadCast) {   //推送玩家下一步的操作
             let xzddS2CDoNextOperation: XzddS2CDoNextOperation = <XzddS2CDoNextOperation>content;
             xzddS2CDoNextOperation.playerAzimuth -= 1;
-            console.log('-----------', xzddS2CDoNextOperation.nextStep.oprts);
-            
             this.getDeskProxy().updateNextOperationEvent(xzddS2CDoNextOperation);
         } else if (msgType === XzddProtocol.S_Game_Result_BroadCast) {   //推送游戏结束消息
             let xzddGameResult: XzddGameResult = <XzddGameResult>content;
@@ -157,11 +155,14 @@ export class XzddProxy extends ModuleProxy {
         } else if (msgType === XzddProtocol.S_Game_ShowDingzhang) {   //提示玩家定章消息
             let xzddShowDingZhangMahjongs: XzddShowDingZhangMahjongs = <XzddShowDingZhangMahjongs>content;
             xzddShowDingZhangMahjongs.playerAzimuth -= 1;
+            this.getDeskProxy().updateDingZhangOperationEvent(xzddShowDingZhangMahjongs);
         } else if (msgType === XzddProtocol.S_Game_Dingzhang) {   //玩家定章结果返回
             let xzddOpDingZhangMahjongsRsp: XzddOpDingZhangMahjongsRsp = <XzddOpDingZhangMahjongsRsp>content;
             xzddOpDingZhangMahjongsRsp.playerAzimuth -= 1;
+            this.getDeskProxy().playerSelfDingzhangDone(xzddOpDingZhangMahjongsRsp);
         } else if (msgType === XzddProtocol.S_Game_Put_Dingzhang) {   //所有玩家定张结束，包含所有玩家的定张信息
             let xzddOpDingZhangMahjongsBroadCast: XzddOpDingZhangMahjongsBroadCast = <XzddOpDingZhangMahjongsBroadCast>content;
+            this.getDeskProxy().allPlayerDingZhangDone(xzddOpDingZhangMahjongsBroadCast);
         } else if (msgType === XzddProtocol.S_Game_ShowHuan3Zhang) {   //提示玩家换三张操作
             let xzddShowHuan3ZhangMahjongs: XzddShowHuan3ZhangMahjongs = <XzddShowHuan3ZhangMahjongs>content;
             xzddShowHuan3ZhangMahjongs.playerAzimuth -= 1;
@@ -169,7 +170,7 @@ export class XzddProxy extends ModuleProxy {
         } else if (msgType === XzddProtocol.S_Game_Huan3Zhang) {   //玩家操作换三张结果返回
             let xzddOpHuan3ZhangMahjongsRsp: XzddOpHuan3ZhangMahjongsRsp = <XzddOpHuan3ZhangMahjongsRsp>content;
             xzddOpHuan3ZhangMahjongsRsp.playerAzimuth -= 1;
-            
+
         } else if (msgType === XzddProtocol.S_Game_Put_Huan3Zhang) {   //所有玩家换三张结束之后，广播的消息
             let xzddOpHuan3ZhangMahjongsBroadCast: XzddOpHuan3ZhangMahjongsBroadCast = <XzddOpHuan3ZhangMahjongsBroadCast>content;
             xzddOpHuan3ZhangMahjongsBroadCast.playerAzimuth -= 1;

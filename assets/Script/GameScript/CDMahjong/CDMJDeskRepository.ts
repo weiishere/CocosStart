@@ -188,7 +188,7 @@ export class DeskRepository {
             barCard: [],
             hadHuCard: 0,
             outCardList: [],
-            setFace: 3,
+            setFace: -1,
             status: {
                 isHadHu: false,
                 isBaoHu: false
@@ -210,7 +210,7 @@ export class DeskRepository {
                     barCard: [],
                     hadHuCard: 0,
                     outCardList: [],
-                    setFace: 0,
+                    setFace: -1,
                     status: {
                         isHadHu: false,
                         isBaoHu: false

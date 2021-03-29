@@ -121,14 +121,15 @@ export default class CardItemView extends cc.Component {
     private extractionUp: (cardNumber: number) => void;
     private cardDir: Array<String> = ['', 'wan1', 'wan2', 'wan3', 'wan4', 'wan5', 'wan6', 'wan7', 'wan8', 'wan9', 'tong1', 'tong2', 'tong3', 'tong4', 'tong5', 'tong6', 'tong7', 'tong8', 'tong9', 'tiao1', 'tiao2', 'tiao3', 'tiao4', 'tiao5', 'tiao6', 'tiao7', 'tiao8', 'tiao9']
     private dragStartPosition: cc.Vec2 = null;
+    private arrows: cc.Node;
     onLoad() {
-
+        
     }
     start() {
 
     }
     public setArrows(active?: boolean) {
-        const arrows = this.node.getChildByName('cardArrows');
+        //const arrows = this.node.getChildByName('cardArrows');
         const _action2 = cc.repeatForever(
             cc.sequence(
                 cc.moveBy(0.3, 0, -10),
@@ -136,11 +137,11 @@ export default class CardItemView extends cc.Component {
                 cc.callFunc(() => { })));
         if (active) {
 
-            arrows.active = true;
-            arrows.runAction(_action2);
+            this.arrows.active = true;
+            this.arrows.runAction(_action2);
         } else {
             //arrows.stopAllActions();
-            arrows && (arrows.active = false);
+            this.arrows && (this.arrows.active = false);
         }
 
     }
@@ -321,6 +322,7 @@ export default class CardItemView extends cc.Component {
         this.position = position;
         const cardComp = this.node.getComponent(cc.Sprite);
         const faceNode = this.node.getChildByName('face');
+        this.arrows = this.node.getChildByName('cardArrows');
         faceNode.setScale(0.9, 0.9);
         switch (this.position) {
             case 'mine':
@@ -412,6 +414,8 @@ export default class CardItemView extends cc.Component {
                     faceNode.setPosition(cc.v2(3, 6));
                     faceNode.setRotation(90);
                     faceNode.setScale(0.4);
+                    this.arrows.setScale(0.4);//这块整体可能放大倍数，所以指示器缩小
+                    this.arrows.y -= 40;
                     faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
                 }
                 break;
@@ -439,6 +443,8 @@ export default class CardItemView extends cc.Component {
                     faceNode.setPosition(cc.v2(-3, 6));
                     faceNode.setRotation(-90);
                     faceNode.setScale(0.4);
+                    this.arrows.setScale(0.4);//这块整体可能放大倍数，所以指示器缩小
+                    this.arrows.y -= 40;
                     faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
                 }
                 break;
