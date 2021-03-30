@@ -298,7 +298,7 @@ export default class CDMJDeskMediator extends BaseMediator {
             case CDMJCommandDefine.EventDonePush://玩家处理操作之后的推送
                 this.DeskPanelViewScript.updateMyCurCardList();
                 this.DeskPanelViewScript.updateOtherCurCardList();
-                this.DeskPanelViewScript.updateHandCardAndHuCard();
+                //this.DeskPanelViewScript.updateHandCardAndHuCard();
                 this.DeskPanelViewScript.updateMyBarAndTouchCard();
                 this.DeskPanelViewScript.updateMyOperationBtu();
                 this.DeskPanelViewScript.updatedDeskAiming();
@@ -373,6 +373,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 break;
             case CDMJCommandDefine.DingzhangDone://玩家定章完成
                 this.DeskPanelViewScript.updateMyOperationBtu();
+                this.DeskPanelViewScript.updateMyCurCardList();
                 break;
             case CDMJCommandDefine.AllDingzhangDone://全部玩家完成定章
                 this.DeskPanelViewScript.updateDingZhangView();

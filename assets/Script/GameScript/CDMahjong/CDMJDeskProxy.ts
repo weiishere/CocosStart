@@ -252,6 +252,8 @@ export class CDMJDeskProxy extends BaseProxy {
         //console.log(xzddOpDingZhangMahjongsRsp.dingzhangType);
         this.getGameData().myCards.setFace = xzddOpDingZhangMahjongsRsp.dingzhangType;
         this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
+        //this.getGameData().myCards.curCardList.sort((a, b) => a - b);
+        this.getGameData().myCards.curCardList = xzddOpDingZhangMahjongsRsp.spValuesSorted;
         this.sendNotification(CDMJCommandDefine.DingzhangDone);
     }
     /**所有玩家完成定章 */
@@ -288,6 +290,8 @@ export class CDMJDeskProxy extends BaseProxy {
                 //碰杠胡
                 this.doEventData(xzddS2CDoNextOperation.nextStep.oprts);
             }
+            console.log('xzddS2CDoNextOperation.nextStep.datas=====', xzddS2CDoNextOperation.nextStep.datas);
+            this.getGameData().myCards.disableCard = xzddS2CDoNextOperation.nextStep.datas || [];
             //this.doEventData(dymjS2CDoNextOperation.nextStep.oprts);
         }
         this.sendNotification(CDMJCommandDefine.ShowCardNotificationPush);
@@ -315,6 +319,7 @@ export class CDMJDeskProxy extends BaseProxy {
                 giveCard = xzddGameOperation.peng.mjValue;
                 this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();//去掉引碰者出牌
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = ['show'];
+                //console.log('disableCard=========', this.getGameData().myCards.disableCard);
             } else if (xzddGameOperation.oprtType === DymjOperationType.GANG) {
                 const barType: BarType = { barCard: xzddGameOperation.gang.mjValues[0], barType: xzddGameOperation.gang.gangType as 0 | 1 | 2 };
                 this.getGameData().myCards.barCard.push(barType);

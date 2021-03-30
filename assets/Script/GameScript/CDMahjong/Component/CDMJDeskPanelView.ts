@@ -567,6 +567,28 @@ export default class CDMJDeskPanelView extends ViewComponent {
         });
 
     }
+    /**处理禁用牌 */
+    // updateDisableCard() { 
+    //     const disableCard = this.getData().gameData.myCards.disableCard;
+    //     const eventName = this.getData().gameData.eventData.gameEventData.myGameEvent.eventName;
+    //     if (eventName.indexOf('show') !== -1 || eventName.indexOf('touch') !== -1) {
+    //         if (this.getData().gameData.myCards.disableCard.length !== 0) {
+    //             disableCard.forEach(item => {
+    //                 this.mainCardList.forEach(card => {
+    //                     const _card = card.getComponent("CardItemView") as CardItemView;
+    //                     _card.isActive = true;
+    //                     if (_card.cardNumber === item) _card.setDisable();
+    //                 })
+    //             })
+    //         } else {
+    //             this.mainCardList.forEach(card => {
+    //                 const _card = card.getComponent("CardItemView") as CardItemView;
+    //                 _card.isActive = true;
+    //             })
+    //         }
+    //     }
+        
+    // }
     /**-----更新杠、碰牌组辅助方法 */
     private updateMyBarAndTouchCardHelper(partner: PartnerCard, playerBarCard: cc.Node, playerTouchCard: cc.Node, position: PositionType) {
 
@@ -639,7 +661,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         const disableCard = this.getData().gameData.myCards.disableCard;
         this.handCard.removeAllChildren();
         this.handCard.width = 0;
-        this.handCard.height = 0;
+        //this.handCard.height = 0;
         if (this.getData().gameData.myCards.handCard !== 0) {
             const _handCard = this.addCardToNode(this.handCard, this.getData().gameData.myCards.handCard, "mine", 'setUp', {
                 active: true,
@@ -666,8 +688,8 @@ export default class CDMJDeskPanelView extends ViewComponent {
             _handCard.setPosition(0, 50);
             cc.tween(_handCard).to(0.1, { opacity: 255, position: cc.v3(0, 0) }).start();
             //判断手牌是否可出
-            console.log(disableCard);
-            console.log('disableCard=========', disableCard.some(item => item === _card.cardNumber));
+            // console.log(disableCard);
+            // console.log('disableCard=========', disableCard.some(item => item === _card.cardNumber));
             if (disableCard.some(item => item === _card.cardNumber)) _card.setDisable();
 
             //配置可胡牌
@@ -692,6 +714,11 @@ export default class CDMJDeskPanelView extends ViewComponent {
             }
         } else if (this.getData().gameData.myCards.handCard === 0 && eventName.length === 1 && eventName.indexOf('touch') !== -1) {
             //刚刚碰了，所以没有摸牌
+
+        }
+        //console.log('xzddS2CDoNextOperation.nextStep.datas=====2222', disableCard);
+
+        if (eventName.indexOf('show') !== -1) {
             if (this.getData().gameData.myCards.disableCard.length !== 0) {
                 disableCard.forEach(item => {
                     self.mainCardList.forEach(card => {
@@ -700,8 +727,14 @@ export default class CDMJDeskPanelView extends ViewComponent {
                         if (_card.cardNumber === item) _card.setDisable();
                     })
                 })
+            } else {
+                self.mainCardList.forEach(card => {
+                    const _card = card.getComponent("CardItemView") as CardItemView;
+                    _card.isActive = true;
+                })
             }
         }
+
         // else {
         //     //全部牌都不可以出
         //     self.mainCardList.map(item => (item.getComponent("CardItemView") as CardItemView).isActive = false);

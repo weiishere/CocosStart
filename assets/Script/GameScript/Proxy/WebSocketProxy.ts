@@ -129,7 +129,7 @@ export class WebSockerProxy extends Proxy {
         // 服务器推送的数据
         let resData = JSON.parse(event.data);
 
-        cc.log("event.data", event.data, "dt : ", resData);
+        //cc.log("event.data", event.data, "dt : ", resData);
 
         if (resData.op) {
             // 专门处理网关的消息
