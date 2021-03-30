@@ -765,6 +765,9 @@
     "sideLieCardbg": {
       "__uuid__": "7b8d560f-aaba-4b65-b60a-a31de65f55ac"
     },
+    "sideHideLieCardbg": {
+      "__uuid__": "915a683d-f34f-458b-ab78-e1372e8f407f"
+    },
     "lieLeftCardbg": {
       "__uuid__": "7b8d560f-aaba-4b65-b60a-a31de65f55ac"
     },

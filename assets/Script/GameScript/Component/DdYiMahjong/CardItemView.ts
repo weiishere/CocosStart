@@ -39,6 +39,9 @@ export default class CardItemView extends cc.Component {
     sideLieCardbg: cc.SpriteFrame = null;//侧面趟牌
 
     @property(cc.SpriteFrame)
+    sideHideLieCardbg: cc.SpriteFrame = null;//侧面趟牌盖住
+
+    @property(cc.SpriteFrame)
     lieLeftCardbg: cc.SpriteFrame = null;//左方趟牌
 
     // @property(cc.SpriteFrame)
@@ -406,7 +409,7 @@ export default class CardItemView extends cc.Component {
                     //this.node.setRotation(90);
                 } else if (this.mod === "fall") {
                     if (option && option.fallShowStatus && option.fallShowStatus === 'hide') {
-                        cardComp.spriteFrame = this.sideLieCardbg;//.hideFrontFallCardbg;
+                        cardComp.spriteFrame = this.sideHideLieCardbg;//.hideFrontFallCardbg;
                         faceNode.active = false;
                     } else {
                         cardComp.spriteFrame = this.sideLieCardbg;//.lieMineCardbg;
@@ -435,7 +438,7 @@ export default class CardItemView extends cc.Component {
                     //this.node.setRotation(90);
                 } else if (this.mod === "fall") {
                     if (option && option.fallShowStatus && option.fallShowStatus === 'hide') {
-                        cardComp.spriteFrame = this.sideLieCardbg;//.hideFrontFallCardbg;
+                        cardComp.spriteFrame = this.sideHideLieCardbg;//.hideFrontFallCardbg;
                         faceNode.active = false;
                     } else {
                         cardComp.spriteFrame = this.sideLieCardbg;//.lieMineCardbg;
