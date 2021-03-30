@@ -345,7 +345,7 @@ export default class CDMJRecordAlert extends ViewComponent {
                 azimuthStr += this.getAzimuthName(myAzimuth, index) + " ";
             }
 
-            sb = `${resultName},${changeCredit},${azimuthStr}\n`;
+            sb += `${resultName},${changeCredit},${azimuthStr}\n`;
         }
 
         cc.log(sb);
