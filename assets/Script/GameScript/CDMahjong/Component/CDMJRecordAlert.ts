@@ -222,7 +222,7 @@ export default class CDMJRecordAlert extends ViewComponent {
                 seatNo: v.azimuth,
                 head: v.head,
                 winloss: winlossScore,
-                detailRemark: ""
+                detailRemark: []
             }
 
             if (userName === v.userName) {
@@ -233,8 +233,7 @@ export default class CDMJRecordAlert extends ViewComponent {
             recorDetailData.playerData.push(playerRecordData);
         });
 
-        let str = this.getDetailGameResult(myAzimuth, gameResult.list);
-        myPlayerRecordData.detailRemark = str;
+        myPlayerRecordData.detailRemark = this.getDetailGameResult(myAzimuth, gameResult.list);
 
         this.createRecordDetailItem(recorDetailData, gameResult.totalGameCount);
     }
@@ -269,7 +268,7 @@ export default class CDMJRecordAlert extends ViewComponent {
     }
 
     getDetailGameResult(myAzimuth: number, gameResultItems: XzddGameUIResultItem[]) {
-        let sb = "";
+        let itemResults = [];
         for (const gameResultItem of gameResultItems) {
             if (gameResultItem.type === "total") {
                 continue;
@@ -339,17 +338,17 @@ export default class CDMJRecordAlert extends ViewComponent {
                 }
 
                 // 如果自己是负的，不需要找其他负的玩家，只需要知道正的玩家就可以了
-                if (changeCredit < 0 && winloss < 9) {
+                if (changeCredit < 0 && winloss < 0) {
                     continue;
                 }
                 azimuthStr += this.getAzimuthName(myAzimuth, index) + " ";
             }
 
-            sb += `${resultName},${changeCredit},${azimuthStr}\n`;
+            let resultItem = `${resultName},${changeCredit},${azimuthStr}`;
+            itemResults.push(resultItem);
         }
 
-        cc.log(sb);
-        return sb;
+        return itemResults;
     }
 
     getAzimuthPlayer(myAzimuth: number, xzddGameUIResultItem: XzddGameUIResultItem) {

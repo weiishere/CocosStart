@@ -98,7 +98,8 @@ export default class RecordDetailList extends ViewComponent {
                 nickname: v.nickname,
                 seatNo: v.seatNo,
                 head: v.head,
-                winloss: v.winloss
+                winloss: v.winloss,
+                detailRemark: gameParam.itemResults,
             }
             recorDetailData.playerData.push(playerRecordData);
         });

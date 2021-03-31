@@ -13,6 +13,16 @@ export default class RecordDetail extends BaseRecordDetail {
 
     @property(cc.Node)
     recordInfo: cc.Node = null;
+    @property(cc.Node)
+    detailBtn: cc.Node = null;
+    @property(cc.Node)
+    detailItem: cc.Node = null;
+    @property(cc.Node)
+    shouQiBtn: cc.Node = null;
+    @property(cc.Node)
+    detailItemContent: cc.Node = null;
+    @property(cc.Node)
+    itemContent: cc.Node = null;
     @property(cc.Prefab)
     cardItemPrefab: cc.Prefab = null;
 
@@ -23,6 +33,12 @@ export default class RecordDetail extends BaseRecordDetail {
 
     }
     protected bindEvent(): void {
+        this.detailBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            this.detailItem.active = true;
+        });
+        this.shouQiBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            this.detailItem.active = false;
+        });
     }
 
     public getConfigProxy() {
@@ -52,6 +68,8 @@ export default class RecordDetail extends BaseRecordDetail {
         playerData.forEach(v => {
             if (v.userName === userName) {
                 this.loadRecordInfo(this.recordInfo, true, v, "自己");
+
+                this.loadItemContent(v.detailRemark);
             } else {
                 // let re = cc.instantiate(this.recordInfo);
                 // re.y = -124;
@@ -61,7 +79,7 @@ export default class RecordDetail extends BaseRecordDetail {
         })
     }
 
-    loadRecordInfo(recordInfo: cc.Node, isMy: boolean, playerData: any, userInfoStr: string) {
+    loadRecordInfo(recordInfo: cc.Node, isMy: boolean, playerData: PlayerRecordData, userInfoStr: string) {
         let headSprite = recordInfo.getChildByName("head").getComponent(cc.Sprite);
         if (playerData.head) {
             SpriteLoadUtil.loadSprite(headSprite, playerData.head);
@@ -95,8 +113,11 @@ export default class RecordDetail extends BaseRecordDetail {
         }
         userInfoLabel.string = userInfoStr;
         if (!isMy) {
+            this.detailBtn.active = false;
             recordInfo.getChildByName("win").active = false;
             recordInfo.getChildByName("lose").active = false;
+        } else {
+            this.detailBtn.active = true;
         }
 
         let pengValue = playerData.pengValues;
@@ -259,6 +280,7 @@ export default class RecordDetail extends BaseRecordDetail {
         let thisSeatNo = this.getThisSeatNo(this._thisUserName);
         let seatNo = 0;
         let userInfoStr = "";
+        this.detailItem.active = false;
         if (event.target.name === "thisToggle") {
             seatNo = thisSeatNo;
             userInfoStr = "自己";
@@ -276,6 +298,22 @@ export default class RecordDetail extends BaseRecordDetail {
         let playerData = this.getPlayerData(seatNo);
         if (playerData) {
             this.loadRecordInfo(this.recordInfo, thisSeatNo === seatNo, playerData, userInfoStr);
+        }
+    }
+
+    loadItemContent(detailRemark: string[]) {
+        this.detailItemContent.removeAllChildren();
+        for (const detailValue of detailRemark) {
+            let values = detailValue.split(",");
+
+            let content = cc.instantiate(this.itemContent);
+            content.active = true;
+            for (let index = 0; index < content.childrenCount; index++) {
+                const tmpNode = content.children[index];
+                tmpNode.getComponent(cc.Label).string = values[index];
+            }
+
+            this.detailItemContent.addChild(content);
         }
     }
 }

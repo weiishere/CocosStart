@@ -18,7 +18,7 @@ export type PlayerRecordData = {
     gangValues: number[],
     shouValues: number[],
     huValues: number[],
-    detailRemark: string,
+    detailRemark: string[],
 }
 
 @ccclass
