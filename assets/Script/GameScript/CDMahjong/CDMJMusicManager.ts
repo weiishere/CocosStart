@@ -36,7 +36,7 @@ const BoySoundConfig = {
             res: ["sc_boy_1tong0", "sc_boy_1tong1", "sc_boy_1tong2", "sc_boy_1tong3"]
         }, {
             name: "2tong",
-            res: ["sc_boy_2tong0", "sc_boy_2tong1", "sc_boy_2tong2", "sc_boy_2tong3"]
+            res: ["sc_boy_2tong0", "sc_boy_2tong1"]
         }, {
             name: "3tong",
             res: ["sc_boy_3tong", "sc_boy_3tong0", "sc_boy_3tong1"]
@@ -213,6 +213,8 @@ export class CDMJMusicManager {
 
         let audioUrl = this.cdmjAudioPath + resName;
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, audioUrl, AudioNotificationTypeDefine.PlayEffect);
+
+        this.chuPai();
     }
 
     /** 出牌的声音 */
@@ -236,7 +238,7 @@ export class CDMJMusicManager {
     static peng(defaultSex = 'boy') {
         let pengValue = ["sc_" + defaultSex + "_peng", "sc_" + defaultSex + "_peng0", "sc_" + defaultSex + "_peng1", "sc_" + defaultSex + "_peng2"];
         let randomIndex = Math.floor((Math.random() * pengValue.length));
-        let pengUrl = this.cdmjAudioPath+ pengValue[randomIndex];
+        let pengUrl = this.cdmjAudioPath + pengValue[randomIndex];
 
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, pengUrl, AudioNotificationTypeDefine.PlayEffect);
     }

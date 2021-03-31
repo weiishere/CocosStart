@@ -253,6 +253,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 //this.view && this.view.destroy();
                 break;
             case CDMJCommandDefine.LicensingCardPush://发牌
+                CDMJMusicManager.startGame();
                 this.DeskPanelViewScript.updateRoomInfo();
                 this.sendNotification(CDMJCommandDefine.ShowCenterEffect, { isMe: undefined, gameIndex: -1 });
                 this.DeskPanelViewScript.updatedDeskAiming();
