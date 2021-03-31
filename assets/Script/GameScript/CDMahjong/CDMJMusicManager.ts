@@ -229,6 +229,12 @@ export class CDMJMusicManager {
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, audioUrl, AudioNotificationTypeDefine.PlayEffect);
     }
 
+    /** 选择牌发出的声音 */
+    static selectPoker() {
+        let audioUrl = this.cdmjAudioPath + "xuanpai";
+        Facade.Instance.sendNotification(CommandDefine.AudioCommand, audioUrl, AudioNotificationTypeDefine.PlayEffect);
+    }
+
     /** 定张结束播放的声音 */
     static dingzhangOver() {
         let audioUrl = this.cdmjAudioPath + "dingque";

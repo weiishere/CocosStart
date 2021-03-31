@@ -380,6 +380,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 break;
             case CDMJCommandDefine.AllDingzhangDone://全部玩家完成定章
                 this.DeskPanelViewScript.updateDingZhangView();
+                CDMJMusicManager.dingzhangOver();
                 break;
         }
     }
