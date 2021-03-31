@@ -268,7 +268,7 @@ export class CDMJMusicManager {
     }
 
     static ziMo(defaultSex = 'boy') {
-        let huValue = ["sc_" + defaultSex + "_hu", "sc_" + defaultSex + "_hu0", "sc_" + defaultSex + "_hu1", "sc_" + defaultSex + "_hu_zimo"];
+        let huValue = ["sc_" + defaultSex + "_hu", "sc_" + defaultSex + "_hu1", "sc_" + defaultSex + "_hu_zimo"];
         let randomIndex = Math.floor((Math.random() * huValue.length));
         let huUrl = this.cdmjAudioPath + huValue[randomIndex];
 
