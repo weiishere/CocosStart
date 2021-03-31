@@ -78,11 +78,12 @@ export default class CDMJDeskPanelView extends ViewComponent {
     private scheduleCallBack: () => void;
     private cardChooseAlert: cc.Node;
     private isAllowShowCard = true;//是否允许出牌
-    private gameEventWarn: { touchWarn: cc.Node, huWarn: cc.Node, burWarn: cc.Node, xiayuWarn: cc.Node, zimoWarn: cc.Node, gameBeginWarn: cc.Node } = {
+    private gameEventWarn: { touchWarn: cc.Node, huWarn: cc.Node, burWarn: cc.Node, xiayuWarn: cc.Node, guafengWarn: cc.Node, zimoWarn: cc.Node, gameBeginWarn: cc.Node } = {
         touchWarn: null,
         huWarn: null,
         burWarn: null,
         xiayuWarn: null,
+        guafengWarn: null,
         zimoWarn: null,
         gameBeginWarn: null
     }
@@ -164,6 +165,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         for (let i in this.gameEventWarn) {
             if (this.gameEventWarn[i] instanceof cc.Node) {
                 (this.gameEventWarn[i] as cc.Node).active = false;
+                (this.gameEventWarn[i] as cc.Node).opacity = 0;
             }
         }
     }
@@ -290,6 +292,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.gameEventWarn.huWarn = this.gameEventView.getChildByName("hu_2x");
         this.gameEventWarn.burWarn = this.gameEventView.getChildByName("gang_2x");
         this.gameEventWarn.xiayuWarn = this.gameEventView.getChildByName("xiayu_2x");
+        this.gameEventWarn.guafengWarn = this.gameEventView.getChildByName("gang_2x");
         this.gameEventWarn.zimoWarn = this.gameEventView.getChildByName("zimo_2x");
         this.gameEventWarn.gameBeginWarn = this.gameEventView.getChildByName("gameBegin");
         //#endregion
@@ -510,9 +513,8 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**更新杠碰牌 */
     updateMyBarAndTouchCard(): void {
         //先更新杠/碰
-        this.barCard.removeAllChildren();
-        this.barCard.width = 0;
-        this.barCard.height = 0;
+
+
         const barItems = [];
         this.getData().gameData.myCards.barCard.map(item => {
             const barItem = new cc.Node('barItem');
@@ -533,10 +535,12 @@ export default class CDMJDeskPanelView extends ViewComponent {
             //this.barCard.addChild(barItem);
             barItems.push(barItem);
         });
+        this.barCard.removeAllChildren();
+        this.barCard.width = 0;
         barItems.forEach(n => this.barCard.addChild(n));
 
-        this.touchCard.width = 0;
-        this.touchCard.height = 0;
+
+
         const touchItems = [];
         this.getData().gameData.myCards.touchCard.map(item => {
             const touchItem = new cc.Node('touchItem');
@@ -549,6 +553,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
             touchItems.push(touchItem);
         });
         this.touchCard.removeAllChildren();
+        this.touchCard.width = 0;
         touchItems.forEach(n => this.touchCard.addChild(n));
 
         //更新其他玩家杠/碰
@@ -567,28 +572,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
         });
 
     }
-    /**处理禁用牌 */
-    // updateDisableCard() { 
-    //     const disableCard = this.getData().gameData.myCards.disableCard;
-    //     const eventName = this.getData().gameData.eventData.gameEventData.myGameEvent.eventName;
-    //     if (eventName.indexOf('show') !== -1 || eventName.indexOf('touch') !== -1) {
-    //         if (this.getData().gameData.myCards.disableCard.length !== 0) {
-    //             disableCard.forEach(item => {
-    //                 this.mainCardList.forEach(card => {
-    //                     const _card = card.getComponent("CardItemView") as CardItemView;
-    //                     _card.isActive = true;
-    //                     if (_card.cardNumber === item) _card.setDisable();
-    //                 })
-    //             })
-    //         } else {
-    //             this.mainCardList.forEach(card => {
-    //                 const _card = card.getComponent("CardItemView") as CardItemView;
-    //                 _card.isActive = true;
-    //             })
-    //         }
-    //     }
-        
-    // }
     /**-----更新杠、碰牌组辅助方法 */
     private updateMyBarAndTouchCardHelper(partner: PartnerCard, playerBarCard: cc.Node, playerTouchCard: cc.Node, position: PositionType) {
 
@@ -617,13 +600,13 @@ export default class CDMJDeskPanelView extends ViewComponent {
                     this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 90) });
                     this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 60) });
                     this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 30) });
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 0) });
+                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 74) });
                 } else if (item.barType === 2) {
                     //----------------------------------------暗杠,最上面一张需要盖住
                     this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 90) });
                     this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 60) });
                     this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 30) });
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 0), fallShowStatus: 'hide' });
+                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 74), fallShowStatus: 'hide' });
                 }
             }
             barItems.push(barItem);
@@ -645,7 +628,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
             } else {
                 this.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 64) });//.setPosition(cc.v2(-36, 0));
                 this.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 32) });//.setPosition(cc.v2(36, 0));
-                this.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 28));
+                this.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 57) });//.setPosition(cc.v2(0, 28));
             }
             touchItems.push(touchItem);
             //playerTouchCard.addChild(touchItem);
@@ -682,11 +665,15 @@ export default class CDMJDeskPanelView extends ViewComponent {
                 this.showCardAlert(undefined, cardNumber);//意思是不管返回了，放手就出牌
                 self.showCardEvent(cardNumber);
             });
-            //设置下落动作
-            _card.setStress(true);
             _handCard.opacity = 0;
             _handCard.setPosition(0, 50);
-            cc.tween(_handCard).to(0.1, { opacity: 255, position: cc.v3(0, 0) }).start();
+            _handCard.setRotation(-60);
+            _card.setStress(true);
+            this.scheduleOnce(() => {
+                //设置下落动作
+                cc.tween(_handCard).to(0.2, { opacity: 255, position: cc.v3(0, 0), rotation: 0 }).start();
+            }, 0.5);
+
             //判断手牌是否可出
             // console.log(disableCard);
             // console.log('disableCard=========', disableCard.some(item => item === _card.cardNumber));
@@ -890,7 +877,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
             case 'touch': effectNode = this.gameEventWarn.touchWarn; break;
             case 'hu': effectNode = this.gameEventWarn.huWarn; break;
             case 'xiayu': effectNode = this.gameEventWarn.xiayuWarn; break;//下雨
-            case 'guafeng': effectNode = this.gameEventWarn.xiayuWarn; break;//刮风，图片待换
+            case 'guafeng': effectNode = this.gameEventWarn.guafengWarn; break;//刮风，图片待换
             case 'zimo': effectNode = this.gameEventWarn.zimoWarn; break;
             case 'gameBegin': effectNode = this.gameEventWarn.gameBeginWarn; break;
             case 'gameEnd': break;
@@ -914,15 +901,35 @@ export default class CDMJDeskPanelView extends ViewComponent {
             }
             //po = isMe ? -250 : 250;
         }
-        effectNode && this.effectAction(effectNode, 'show', { moveBy: { x: 0, y: 0 } }, (node) => {
-            this.scheduleOnce(() => {
-                cc.tween(node).to(0.2, { position: cc.v3(pox, po), opacity: 0, scale: 0.3 }).call(() => {
-                    node.setPosition(0, 0);
-                    this.reSetDeskEventEffect();
-                    effectDone();
-                }).start();
-            }, 1);
-        });
+        effectNode.active = true;
+        effectNode.opacity = 100;
+        effectNode.setScale(0.3);
+        effectNode.position = cc.v3(pox, po);
+        cc.tween(effectNode)
+            .to(0.2, { position: cc.v3(0, 0), opacity: 255, scale: 1 }).delay(1)
+            .to(0.2, { position: cc.v3(pox, po), opacity: 0, scale: 0.3 }).call(() => {
+                effectNode.setPosition(0, 0);
+                this.reSetDeskEventEffect();
+                effectDone();
+            }).start();
+        // effectNode && this.effectAction(effectNode, 'show', { moveBy: { x: 0, y: 0 } }, (node) => {
+        //     node.position = cc.v3(pox, po);
+        //     cc.tween(node)
+        //         .to(0.2, { position: cc.v3(0, 0), opacity: 255 }).delay(1)
+        //         .to(0.2, { position: cc.v3(pox, po), opacity: 0, scale: 0.3 }).call(() => {
+        //             node.setPosition(0, 0);
+        //             this.reSetDeskEventEffect();
+        //             effectDone();
+        //         }).start();
+        //     // this.scheduleOnce(() => {
+
+        //     //     cc.tween(node).to(0.2, { position: cc.v3(pox, po), opacity: 0, scale: 0.3 }).call(() => {
+        //     //         node.setPosition(0, 0);
+        //     //         this.reSetDeskEventEffect();
+        //     //         effectDone();
+        //     //     }).start();
+        //     // }, 1);
+        // });
     }
     /**显示金币变化 */
     showPlayerGlodChange() {
@@ -1169,14 +1176,17 @@ export default class CDMJDeskPanelView extends ViewComponent {
             }
             const newNode = new cc.Node('face');
             const sprite = newNode.addComponent(cc.Sprite);
-            newNode.setScale(0.4);
+            newNode.setScale(0.8);
+            newNode.setRotation(180);
+            newNode.opacity = 0;
             newNode.x += 40;
             newNode.y += 80;
             cc.loader.loadRes(`textures/desk/desk`, cc.SpriteAtlas, (err, item) => {
                 //0：万 1： 筒 2： 条
                 sprite.spriteFrame = item.getSpriteFrame(['img_wan', 'img_tong', 'img_tiao'][dz]);
-            })
+            });
             headNode.addChild(newNode);
+            cc.tween(newNode).to(0.3, { scale: 0.4, opacity: 255, rotation: 0 }).start();
         }
 
 

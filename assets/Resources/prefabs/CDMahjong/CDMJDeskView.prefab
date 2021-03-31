@@ -11845,7 +11845,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        2,
+        0,
         -280.05,
         0,
         0,
@@ -12098,7 +12098,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": -10,
-      "height": 51
+      "height": 50
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -12109,7 +12109,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -19.8,
+        0,
         0,
         0,
         0,
@@ -12359,7 +12359,7 @@
     "_layoutSize": {
       "__type__": "cc.Size",
       "width": -10,
-      "height": 51
+      "height": 50
     },
     "_resize": 1,
     "_N$layoutType": 1,
@@ -12434,7 +12434,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -27.8,
+        2,
         0,
         0,
         0,
@@ -12649,7 +12649,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        14.587,
+        0,
         0,
         0,
         0,
@@ -12744,7 +12744,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 0,
-      "height": 114
+      "height": 50
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -12755,8 +12755,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        17.800000000000004,
-        12,
+        0,
+        0,
         0,
         0,
         0,
@@ -12791,7 +12791,7 @@
     "_layoutSize": {
       "__type__": "cc.Size",
       "width": 0,
-      "height": 114
+      "height": 50
     },
     "_resize": 1,
     "_N$layoutType": 1,
@@ -12851,7 +12851,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 0,
-      "height": 0
+      "height": 50
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -12862,8 +12862,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        17.800000000000004,
-        12,
+        0,
+        0,
         0,
         0,
         0,
@@ -12898,7 +12898,7 @@
     "_layoutSize": {
       "__type__": "cc.Size",
       "width": 0,
-      "height": 0
+      "height": 50
     },
     "_resize": 1,
     "_N$layoutType": 1,
@@ -15511,7 +15511,7 @@
       "__id__": 1
     },
     "component": "",
-    "_componentId": "580d85GWqhANrWsALMesPC/",
+    "_componentId": "0ed73NzWtpKarCG/rGxxWIA",
     "handler": "cancleTuoGuanClick",
     "customEventData": ""
   },

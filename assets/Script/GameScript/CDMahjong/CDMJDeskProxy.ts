@@ -325,6 +325,11 @@ export class CDMJDeskProxy extends BaseProxy {
                 this.getGameData().myCards.barCard.push(barType);
                 _deskEventName = 'bar';
                 _deskEventCorrelationInfoData = correlationInfoData = xzddGameOperation.gang;
+                switch (xzddGameOperation.gang.gangType) {
+                    case 0: _deskEventName = 'guafeng'; break;
+                    case 1: _deskEventName = 'bar'; break;
+                    case 2: _deskEventName = 'xiayu'; break;
+                }
                 givePlayer = this.getPlayerByGameIndex(xzddGameOperation.gang.playerAzimuth);
                 giveCard = xzddGameOperation.gang.mjValues[0];
                 if (barType.barType === 1) {
