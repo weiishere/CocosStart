@@ -236,13 +236,21 @@ export class CDMJMusicManager {
     static peng(defaultSex = 'boy') {
         let pengValue = ["sc_" + defaultSex + "_peng", "sc_" + defaultSex + "_peng0", "sc_" + defaultSex + "_peng1", "sc_" + defaultSex + "_peng2"];
         let randomIndex = Math.floor((Math.random() * pengValue.length));
-        let pengUrl = this.cdmjAudioPath + "/" + pengValue[randomIndex];
+        let pengUrl = this.cdmjAudioPath+ pengValue[randomIndex];
 
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, pengUrl, AudioNotificationTypeDefine.PlayEffect);
     }
 
-    static gang(defaultSex = 'boy') {
-        let gangValue = ["sc_" + defaultSex + "_gang", "sc_" + defaultSex + "_gang0", "sc_" + defaultSex + "_gang1", "sc_" + defaultSex + "_gang3"];
+    static gangGuaFeng(defaultSex = 'boy') {
+        let gangValue = ["sc_" + defaultSex + "_gang", "sc_" + defaultSex + "_gang0", "sc_" + defaultSex + "_gang3"];
+        let randomIndex = Math.floor((Math.random() * gangValue.length));
+        let gangUrl = this.cdmjAudioPath + gangValue[randomIndex];
+
+        Facade.Instance.sendNotification(CommandDefine.AudioCommand, gangUrl, AudioNotificationTypeDefine.PlayEffect);
+    }
+
+    static gangXiaYu(defaultSex = 'boy') {
+        let gangValue = ["sc_" + defaultSex + "_gang", "sc_" + defaultSex + "_gang1", "sc_" + defaultSex + "_gang3"];
         let randomIndex = Math.floor((Math.random() * gangValue.length));
         let gangUrl = this.cdmjAudioPath + gangValue[randomIndex];
 

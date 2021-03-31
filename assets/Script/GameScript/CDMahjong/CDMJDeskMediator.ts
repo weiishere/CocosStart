@@ -111,7 +111,9 @@ export default class CDMJDeskMediator extends BaseMediator {
             CDMJMusicManager.put(cardNumber - 1, "boy");
         } else {
             switch (eventName) {
-                case 'bar': CDMJMusicManager.gang("boy"); break;
+                case 'bar': CDMJMusicManager.gangGuaFeng("boy"); break;
+                case 'guafeng': CDMJMusicManager.gangGuaFeng("boy"); break;
+                case 'xiayu': CDMJMusicManager.gangXiaYu("boy"); break;
                 case 'touch': CDMJMusicManager.peng("boy"); break;
                 case 'zimo': CDMJMusicManager.ziMo("boy"); break;
                 case 'ting':
