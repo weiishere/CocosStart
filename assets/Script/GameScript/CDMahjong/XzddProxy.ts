@@ -173,11 +173,11 @@ export class XzddProxy extends ModuleProxy {
         } else if (msgType === XzddProtocol.S_Game_Huan3Zhang) {   //玩家操作换三张结果返回
             let xzddOpHuan3ZhangMahjongsRsp: XzddOpHuan3ZhangMahjongsRsp = <XzddOpHuan3ZhangMahjongsRsp>content;
             xzddOpHuan3ZhangMahjongsRsp.playerAzimuth -= 1;
-
+            
         } else if (msgType === XzddProtocol.S_Game_Put_Huan3Zhang) {   //所有玩家换三张结束之后，广播的消息
             let xzddOpHuan3ZhangMahjongsBroadCast: XzddOpHuan3ZhangMahjongsBroadCast = <XzddOpHuan3ZhangMahjongsBroadCast>content;
             xzddOpHuan3ZhangMahjongsBroadCast.playerAzimuth -= 1;
-
+            this.getDeskProxy().chooseSwitchInCard(xzddOpHuan3ZhangMahjongsBroadCast);
         } else if (msgType === XzddProtocol.S_HEARTBEAT) {   //推送玩家退出游戏消息
             this.sendHeartbeat();
         }

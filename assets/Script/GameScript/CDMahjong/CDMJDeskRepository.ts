@@ -113,7 +113,7 @@ export type GameData = {
         disableCard: Array<number>,
         mayHuCards: Array<MayHuCard>;
         switchOutCardDefault: Array<number>,
-        switchOutCard: Array<number>,
+        //switchOutCard: Array<number>,
         switchInCard: Array<number>
     },
     partnerCardsList: Array<PartnerCard>,
@@ -201,7 +201,7 @@ export class DeskRepository {
             disableCard: [],
             mayHuCards: [],
             switchOutCardDefault: [],
-            switchOutCard: [],
+            //switchOutCard: [],
             switchInCard: []
         },
         /**对手方牌列数据 */

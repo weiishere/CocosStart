@@ -30,6 +30,8 @@ import { ProxyDefine } from '../MahjongConst/ProxyDefine';
 import { XzddShowDingZhangMahjongs } from '../GameData/Xzdd/s2c/XzddShowDingZhangMahjongs';
 import { XzddOpDingZhangMahjongsRsp } from '../GameData/Xzdd/s2c/XzddOpDingZhangMahjongsRsp';
 import { XzddOpDingZhangMahjongsBroadCast } from '../GameData/Xzdd/s2c/XzddOpDingZhangMahjongsBroadCast';
+import { XzddOpHuan3ZhangMahjongsRsp } from '../GameData/Xzdd/s2c/XzddOpHuan3ZhangMahjongsRsp';
+import { XzddOpHuan3ZhangMahjongsBroadCast } from '../GameData/Xzdd/s2c/XzddOpHuan3ZhangMahjongsBroadCast';
 
 export class CDMJDeskProxy extends BaseProxy {
     public repository: DeskRepository;
@@ -499,13 +501,20 @@ export class CDMJDeskProxy extends BaseProxy {
         this.sendNotification(CDMJCommandDefine.ShowCardPush, { playerInfo, showCard: xzddS2COpPutRsp.putMjValue });
     }
 
-    /**收到换三张的信息 */
+    /**收到换三张的提示信息 */
     chooseSwitchOutCard(chooseCardList: Array<number>): void {
         if (this.getGameData().myCards.switchInCard.length !== 0) return;
-        this.getGameData().myCards.switchInCard = chooseCardList;
+        this.getGameData().switchCardCountDown = 300;
+        //this.getGameData().myCards.switchOutCard = chooseCardList;
         this.sendNotification(CDMJCommandDefine.SwitchOutCard);
     }
-
+    /**收到换三张的结果信息 */
+    chooseSwitchInCard(xzddOpHuan3ZhangMahjongsBroadCast: XzddOpHuan3ZhangMahjongsBroadCast) {
+        this.getGameData().switchCardCountDown = 0;
+        this.getGameData().myCards.switchInCard = xzddOpHuan3ZhangMahjongsBroadCast.newMahjongs;
+        this.getGameData().myCards.curCardList = xzddOpHuan3ZhangMahjongsBroadCast.spValuesSorted;
+        this.sendNotification(CDMJCommandDefine.SwitchCardDonePush);
+    }
     /** 更新玩家金币 */
     updatePlayerGold(xzddUpdateUserCredit: XzddUpdateUserCredit) {
         xzddUpdateUserCredit.players.forEach(updatePlayer => {
@@ -634,7 +643,7 @@ export class CDMJDeskProxy extends BaseProxy {
                     outCardList: outCard,
                     touchCard: pengCard,
                     curCardList: (handCard > 0 ? curCardList.splice(0, curCardList.length - 1) : curCardList),//curCardList,
-                    setFace: player.dingzhang.dingzhangType,
+                    setFace: player.dingzhang ? player.dingzhang.dingzhangType : -1,
                     handCard: handCard,
                     cardsChoose: [],
                     disableCard: [],
@@ -644,7 +653,7 @@ export class CDMJDeskProxy extends BaseProxy {
                         isBaoHu: isBaoHu
                     },
                     switchOutCardDefault: [],
-                    switchOutCard: [],
+                    //switchOutCard: [],
                     switchInCard: []
                 }
 
@@ -673,7 +682,7 @@ export class CDMJDeskProxy extends BaseProxy {
                         /**对家已经出的牌 */
                         outCardList: outCard,
                         /**对家定章 */
-                        setFace: player.dingzhang.dingzhangType,
+                        setFace: player.dingzhang ? player.dingzhang.dingzhangType : -1,
                         /**对家的状态 */
                         status: {
                             /**对家是否已经胡牌 */

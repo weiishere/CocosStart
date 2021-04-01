@@ -36,7 +36,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     private barCard: cc.Node;
     private huCard: cc.Node;
     private outCardList: cc.Node;
-    private mainCardList: Array<cc.Node> = [];
+    public mainCardList: Array<cc.Node> = [];
     private handCard: cc.Node = null;
 
     private frontMainCardListPanel: cc.Node;
@@ -433,6 +433,8 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.getData().gameData.myCards.curCardList.map(item => {
             const card = this.addCardToNode(this.mainCardListPanel, item, "mine", 'setUp', {
                 touchEndCallback: function () {
+                    debugger
+                    if (self.getData().gameData.switchCardCountDown !== 0) return;
                     const script = this.node.getComponent("CardItemView") as CardItemView;
                     if (script.isChoose) {
                         if (script.isActive) {
@@ -449,12 +451,23 @@ export default class CDMJDeskPanelView extends ViewComponent {
                 }
             });
             const cardScript = (card.getComponent("CardItemView") as CardItemView);
-            if (cardScript.isActive) {
-                //抽出事件
-                cardScript.bindExtractionUp((cardNumber: number) => {
-                    return myhelper.bindExtractionUpHelper.bind(this)(cardNumber);
-                });
-            }
+            //if (cardScript.isActive) {
+            //抽出事件
+            cardScript.bindExtractionUp((cardNumber: number) => {
+                if (this.getData().gameData.switchCardCountDown !== 0) {
+                    console.log('cardScript.isActive', cardScript.isActive);
+                    const isAllow = myhelper.bindSwitchExtractionUpHelper.bind(this)(cardNumber);
+                    if (isAllow) {
+                        //验证通过
+                        // this.getData().gameData.myCards.switchOutCard.length === 3 && this.getData().gameData.myCards.switchOutCard.shift();
+                        // this.getData().gameData.myCards.switchOutCard.push(cardNumber);
+                        cardScript.setChooseAndStand();
+                    }
+                    return false;
+                }
+                return true;
+            });
+            //}
             cardScript.bindLaunch((node: cc.Node, position) => {
                 //console.log("出牌", node);
                 if (this.isAllowShowCard === false) {
@@ -657,6 +670,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
                     (node.getComponent("CardItemView") as CardItemView).setStress();//选中
                 },
                 touchEndCallback: function () {
+                    if (self.getData().gameData.switchCardCountDown !== 0) return;//选三张的时候不要复位
                     self.mainCardList.map(item => {
                         const _view = (item.getComponent("CardItemView") as CardItemView);
                         _view.reSetChooseFalse();
@@ -1157,7 +1171,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
             this.effectAction(_card, 'show', { moveBy }, () => {
                 this.scheduleOnce(() => playerShowCardWrap.removeAllChildren(), 1.5);
             });
-
         }
     }
     /**更新房间信息（牌局等） */
@@ -1214,25 +1227,36 @@ export default class CDMJDeskPanelView extends ViewComponent {
         // dingzhangIconBuild(leftHeadNode, this.getData().gameData.myCards.setFace);
         // dingzhangIconBuild(rightHeadNode, this.getData().gameData.myCards.setFace);
     }
-    /**显示要换3张的牌 */
+    /**显示要换3张的牌(一局只会执行一次) */
     showSwitchCardList(): void {
+        debugger
         this.node.getChildByName('switchCardAlert').active = true;
         !this.timer3 && (this.timer3 = window.setInterval(() => {
             if (this.getData().gameData.switchCardCountDown !== 0) {
                 this.getData().gameData.switchCardCountDown--;
                 this.node.getChildByName('switchCardAlert').getChildByName('input_btu').getChildByName('btuStr').getComponent(cc.Label).string = `确定(${this.getData().gameData.switchCardCountDown}s)`;
             } else {
-                this.node.getChildByName('switchCardAlert').active = false;
+                //this.node.getChildByName('switchCardAlert').active = false;
                 window.clearInterval(this.timer3);
             }
         }, 1000));
-        const switchCards = this.getData().gameData.myCards.switchOutCard;
-        this.mainCardList.forEach(card => {
-            const _card = card.getComponent("CardItemView") as CardItemView;
-            if (switchCards.indexOf(_card.cardNumber) !== -1) {
-                _card.setChooseAndStand();
+        const switchCards = this.getData().gameData.myCards.switchOutCardDefault;
+        console.log('switchOutCard', switchCards);
+
+        this.mainCardList.forEach(card => (card.getComponent("CardItemView") as CardItemView).reSetChooseFalse());
+        switchCards.forEach(item => {
+            for (let i = 0, l = this.mainCardList.length; i < l; i++) {
+                const _card = this.mainCardList[i].getComponent("CardItemView") as CardItemView;
+                if (_card.cardNumber === item && !_card.isChoose) {
+                    _card.setChooseAndStand();
+                    break;
+                }
             }
         })
+    }
+    /**所有玩家完成切三张选牌 */
+    switchCardDone() {
+        this.node.getChildByName('switchCardAlert').active = false;
     }
     /**更新倒计时 */
     updateCountDown(): void {

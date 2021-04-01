@@ -343,7 +343,7 @@ export default class CardItemView extends cc.Component {
                     this.bindEvent(option && option.touchEndCallback);
                 } else if (this.mod === "fall") {
                     if (option && option.fallShowStatus && option.fallShowStatus === 'hide') {
-                        cardComp.spriteFrame = this.hideFrontFallCardbg;
+                        cardComp.spriteFrame = this.hideFrontCardbg;//this.hideFrontFallCardbg;
                         faceNode.active = false;
                     } else {
                         cardComp.spriteFrame = this.lieMineCardbg;

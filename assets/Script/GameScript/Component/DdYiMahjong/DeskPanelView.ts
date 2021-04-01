@@ -394,7 +394,7 @@ export default class DeskPanelView extends ViewComponent {
             });
             const cardScript = (card.getComponent("CardItemView") as CardItemView);
             if (cardScript.isActive) {
-                cardScript.bindExtractionUp((cardNumber: number) => { });
+                cardScript.bindExtractionUp((cardNumber: number) => true);
             }
             cardScript.bindLaunch((node: cc.Node, position) => {
                 //console.log("出牌", node);

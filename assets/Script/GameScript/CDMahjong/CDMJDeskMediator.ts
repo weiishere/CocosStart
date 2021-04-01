@@ -92,7 +92,8 @@ export default class CDMJDeskMediator extends BaseMediator {
             CDMJCommandDefine.ChangePlayerGold,
             CDMJCommandDefine.DingzhangDone,
             CDMJCommandDefine.AllDingzhangDone,
-            CDMJCommandDefine.SwitchOutCard
+            CDMJCommandDefine.SwitchOutCard,
+            CDMJCommandDefine.SwitchCardDonePush
         ];
     }
 
@@ -384,7 +385,10 @@ export default class CDMJDeskMediator extends BaseMediator {
                 CDMJMusicManager.dingzhangOver();
                 break;
             case CDMJCommandDefine.SwitchOutCard://选择要换的牌
-            
+                this.DeskPanelViewScript.showSwitchCardList();
+                break;
+            case CDMJCommandDefine.SwitchCardDonePush://选择要换的牌
+                this.DeskPanelViewScript.switchCardDone();
                 break;
         }
     }

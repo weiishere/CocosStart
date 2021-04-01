@@ -32,5 +32,6 @@ export enum CDMJCommandDefine {
     ChangePlayerGold = "CDMJ_ChangePlayerGold",
     DingzhangDone = "CDML_DingzhangDone",
     AllDingzhangDone = "CDMJ_AllDingzhangDone",
-    SwitchOutCard = "SwitchOutCard"
+    SwitchOutCard = "SwitchOutCard",
+    SwitchCardDonePush = "SwitchCardDonePush"
 }
