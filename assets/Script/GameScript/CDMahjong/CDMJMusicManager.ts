@@ -271,6 +271,7 @@ export class CDMJMusicManager {
         let huUrl = this.cdmjAudioPath + huValue[randomIndex];
 
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, huUrl, AudioNotificationTypeDefine.PlayEffect);
+        this.he();
     }
 
     static ziMo(defaultSex = 'boy') {
@@ -279,10 +280,12 @@ export class CDMJMusicManager {
         let huUrl = this.cdmjAudioPath + huValue[randomIndex];
 
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, huUrl, AudioNotificationTypeDefine.PlayEffect);
+        this.he();
     }
 
     static tianHu(defaultSex = 'boy') {
         this.ziMo(defaultSex);
+        this.he();
     }
 
     static diHu(defaultSex = 'boy') {
@@ -291,6 +294,13 @@ export class CDMJMusicManager {
         let huUrl = this.cdmjAudioPath + huValue[0];
 
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, huUrl, AudioNotificationTypeDefine.PlayEffect);
+
+        this.he();
     }
 
+    /** 胡牌的音效 */
+    static he() {
+        let audioUrl = this.cdmjAudioPath + "he";
+        Facade.Instance.sendNotification(CommandDefine.AudioCommand, audioUrl, AudioNotificationTypeDefine.PlayEffect);
+    }
 }

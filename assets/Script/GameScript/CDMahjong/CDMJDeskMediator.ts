@@ -159,9 +159,10 @@ export default class CDMJDeskMediator extends BaseMediator {
                     MusicManager.getInstance().playMusic(AudioSourceDefine.BackMusic3);
                     this.DeskPanelViewScript.bindDskOpreationEvent(node => {
                         if (node.name === 'exitIcon') {
+                            let seatNumber = this.getDeskProxy().getDeskData().gameSetting.seatNumber;
                             //退出房间
                             const { playerList } = this.getDeskProxy().repository.deskData;
-                            if (playerList.length === 1) {
+                            if (playerList.length < seatNumber) {
                                 this.getCdmjProxy().logout();
                                 this.sendNotification(CDMJCommandDefine.ExitDeskPanel);
                             } else {

@@ -26,5 +26,7 @@ export class XzddS2CEnterRoom extends XzddBaseRoomData {
     preventCheatin: boolean;
     /** gps距离 */
     gpsDistance: number;
+    /** 房间座位数 */
+    seatNumber: number;
     players: any;
 }

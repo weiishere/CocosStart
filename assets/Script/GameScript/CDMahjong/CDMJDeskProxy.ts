@@ -753,6 +753,7 @@ export class CDMJDeskProxy extends BaseProxy {
         this.getDeskData().gameSetting.baseScore = dymjS2CEnterRoom.value;
         this.getDeskData().gameSetting.fanTime = dymjS2CEnterRoom.fanNum;
         this.getDeskData().gameSetting.roomId = dymjS2CEnterRoom.roomId;
+        this.getDeskData().gameSetting.seatNumber = dymjS2CEnterRoom.seatNumber;
         this.updateUserInfo(dymjS2CEnterRoom.players);
     }
 
