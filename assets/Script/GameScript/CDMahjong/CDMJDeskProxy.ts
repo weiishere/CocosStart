@@ -499,6 +499,13 @@ export class CDMJDeskProxy extends BaseProxy {
         this.sendNotification(CDMJCommandDefine.ShowCardPush, { playerInfo, showCard: xzddS2COpPutRsp.putMjValue });
     }
 
+    /**收到换三张的信息 */
+    chooseSwitchOutCard(chooseCardList: Array<number>): void {
+        if (this.getGameData().myCards.switchInCard.length !== 0) return;
+        this.getGameData().myCards.switchInCard = chooseCardList;
+        this.sendNotification(CDMJCommandDefine.SwitchOutCard);
+    }
+
     /** 更新玩家金币 */
     updatePlayerGold(xzddUpdateUserCredit: XzddUpdateUserCredit) {
         xzddUpdateUserCredit.players.forEach(updatePlayer => {
@@ -635,7 +642,10 @@ export class CDMJDeskProxy extends BaseProxy {
                     status: {
                         isHadHu: huCard > 0,
                         isBaoHu: isBaoHu
-                    }
+                    },
+                    switchOutCardDefault: [],
+                    switchOutCard: [],
+                    switchInCard: []
                 }
 
 

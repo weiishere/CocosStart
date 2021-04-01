@@ -112,6 +112,9 @@ export type GameData = {
         cardsChoose: Array<number>,
         disableCard: Array<number>,
         mayHuCards: Array<MayHuCard>;
+        switchOutCardDefault: Array<number>,
+        switchOutCard: Array<number>,
+        switchInCard: Array<number>
     },
     partnerCardsList: Array<PartnerCard>,
     /**倒计时 */
@@ -120,6 +123,7 @@ export type GameData = {
     positionIndex: number,
     /**剩余牌数量 */
     remainCard: number,
+    switchCardCountDown: number,
     /**事件信息 */
     eventData: {
         /**桌面事件 */
@@ -195,7 +199,10 @@ export class DeskRepository {
             },
             cardsChoose: [],
             disableCard: [],
-            mayHuCards: []
+            mayHuCards: [],
+            switchOutCardDefault: [],
+            switchOutCard: [],
+            switchInCard: []
         },
         /**对手方牌列数据 */
         partnerCardsList: [
@@ -219,6 +226,7 @@ export class DeskRepository {
             }
         ],
         countDownTime: 0,
+        switchCardCountDown: 0,
         positionIndex: 0,
         remainCard: 0,
         eventData: {

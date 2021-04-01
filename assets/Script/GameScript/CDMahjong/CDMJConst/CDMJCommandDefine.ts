@@ -31,5 +31,6 @@ export enum CDMJCommandDefine {
     ShowDeskChatMsg = "CDMJ_ShowDeskChatMsg",
     ChangePlayerGold = "CDMJ_ChangePlayerGold",
     DingzhangDone = "CDML_DingzhangDone",
-    AllDingzhangDone = "CDMJ_AllDingzhangDone"
+    AllDingzhangDone = "CDMJ_AllDingzhangDone",
+    SwitchOutCard = "SwitchOutCard"
 }

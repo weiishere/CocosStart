@@ -19,6 +19,7 @@ import { CDMJCommandDefine } from "../CDMJConst/CDMJCommandDefine";
 import { DeskPanelViewEventDefine } from "../../GameConst/Event/DeskPanelViewEventDefine";
 import { MsgObj } from "../../Component/DdYiMahjong/ChatBox";
 import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
+import myhelper from "./CDMJDeskPanelViewHelper";
 
 @ccclass
 export default class CDMJDeskPanelView extends ViewComponent {
@@ -73,7 +74,8 @@ export default class CDMJDeskPanelView extends ViewComponent {
     private showOutCard: cc.Node;
     private charNotice: cc.Node;
     private timer: number;
-    private timer2: number
+    private timer2: number;
+    private timer3: number;
     private showCardEndPosition: { x: number, y: number }
     private scheduleCallBack: () => void;
     private cardChooseAlert: cc.Node;
@@ -448,7 +450,10 @@ export default class CDMJDeskPanelView extends ViewComponent {
             });
             const cardScript = (card.getComponent("CardItemView") as CardItemView);
             if (cardScript.isActive) {
-                cardScript.bindExtractionUp((cardNumber: number) => { });
+                //抽出事件
+                cardScript.bindExtractionUp((cardNumber: number) => {
+                    return myhelper.bindExtractionUpHelper.bind(this)(cardNumber);
+                });
             }
             cardScript.bindLaunch((node: cc.Node, position) => {
                 //console.log("出牌", node);
@@ -1208,6 +1213,26 @@ export default class CDMJDeskPanelView extends ViewComponent {
         // dingzhangIconBuild(frontHeadNode, this.getData().gameData.myCards.setFace);
         // dingzhangIconBuild(leftHeadNode, this.getData().gameData.myCards.setFace);
         // dingzhangIconBuild(rightHeadNode, this.getData().gameData.myCards.setFace);
+    }
+    /**显示要换3张的牌 */
+    showSwitchCardList(): void {
+        this.node.getChildByName('switchCardAlert').active = true;
+        !this.timer3 && (this.timer3 = window.setInterval(() => {
+            if (this.getData().gameData.switchCardCountDown !== 0) {
+                this.getData().gameData.switchCardCountDown--;
+                this.node.getChildByName('switchCardAlert').getChildByName('input_btu').getChildByName('btuStr').getComponent(cc.Label).string = `确定(${this.getData().gameData.switchCardCountDown}s)`;
+            } else {
+                this.node.getChildByName('switchCardAlert').active = false;
+                window.clearInterval(this.timer3);
+            }
+        }, 1000));
+        const switchCards = this.getData().gameData.myCards.switchOutCard;
+        this.mainCardList.forEach(card => {
+            const _card = card.getComponent("CardItemView") as CardItemView;
+            if (switchCards.indexOf(_card.cardNumber) !== -1) {
+                _card.setChooseAndStand();
+            }
+        })
     }
     /**更新倒计时 */
     updateCountDown(): void {

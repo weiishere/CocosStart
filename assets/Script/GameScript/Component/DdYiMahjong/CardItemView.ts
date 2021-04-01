@@ -126,7 +126,7 @@ export default class CardItemView extends cc.Component {
     private dragStartPosition: cc.Vec2 = null;
     private arrows: cc.Node;
     onLoad() {
-        
+
     }
     start() {
 
@@ -193,6 +193,12 @@ export default class CardItemView extends cc.Component {
             faceNode.active = true;
         }
     }
+    /**手动选择并抽出 */
+    public setChooseAndStand() {
+        const _card = this.node.getComponent("CardItemView") as CardItemView;
+        _card.isChoose = true;
+        cc.tween(this.node).to(0.1, { position: cc.v3(0, 20) }).start();
+    }
     /**复位 */
     public reSetChooseFalse(): void {
         this.isChoose = this.isPress = this.isDrag = false;
@@ -235,15 +241,16 @@ export default class CardItemView extends cc.Component {
         }, this);
     }
     /**绑定抽出事件 */
-    bindExtractionUp(extractionUp: (cardNumber: number) => void) {
+    bindExtractionUp(extractionUp: (cardNumber: number) => boolean) {
         this.extractionUp = extractionUp;
     }
     private onTouchDoneCallBack(touchEndCallback, touchEvent) {
         touchEndCallback && touchEndCallback.call(this);
         this.mayHuCards && this.mayHuCards.huList.length !== 0 && (this.node.getChildByName('down').active = true);
         if (!this.isChoose) {
+            const isAllextractionUp = this.extractionUp ? this.extractionUp(this.cardNumber) : true;
+            if (!isAllextractionUp) return;
             cc.tween(this.node).to(0.1, { position: cc.v3(0, 20) }).start();
-            this.extractionUp && this.extractionUp(this.cardNumber);
             if (this.mayHuCards) {
                 //抽出显示可胡牌
                 this.mayHuCardWrap = this.node.getChildByName("mayHuCardWrap");

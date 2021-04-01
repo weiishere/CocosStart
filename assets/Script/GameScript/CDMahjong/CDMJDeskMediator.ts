@@ -91,7 +91,8 @@ export default class CDMJDeskMediator extends BaseMediator {
             CDMJCommandDefine.WebSocketReconnect,
             CDMJCommandDefine.ChangePlayerGold,
             CDMJCommandDefine.DingzhangDone,
-            CDMJCommandDefine.AllDingzhangDone
+            CDMJCommandDefine.AllDingzhangDone,
+            CDMJCommandDefine.SwitchOutCard
         ];
     }
 
@@ -377,6 +378,9 @@ export default class CDMJDeskMediator extends BaseMediator {
                 break;
             case CDMJCommandDefine.AllDingzhangDone://全部玩家完成定章
                 this.DeskPanelViewScript.updateDingZhangView();
+                break;
+            case CDMJCommandDefine.SwitchOutCard://选择要换的牌
+            
                 break;
         }
     }

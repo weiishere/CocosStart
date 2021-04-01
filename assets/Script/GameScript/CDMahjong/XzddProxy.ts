@@ -166,7 +166,10 @@ export class XzddProxy extends ModuleProxy {
         } else if (msgType === XzddProtocol.S_Game_ShowHuan3Zhang) {   //提示玩家换三张操作
             let xzddShowHuan3ZhangMahjongs: XzddShowHuan3ZhangMahjongs = <XzddShowHuan3ZhangMahjongs>content;
             xzddShowHuan3ZhangMahjongs.playerAzimuth -= 1;
-
+            const myCards = (<CDMJDeskProxy>this.facade.retrieveProxy(CDMJProxyDefine.CDMJDesk)).repository.gameData.myCards;
+            if (myCards.switchOutCardDefault.length === 3) return;
+            myCards.switchOutCardDefault = xzddShowHuan3ZhangMahjongs.mahjongs;
+            this.getDeskProxy().chooseSwitchOutCard(xzddShowHuan3ZhangMahjongs.mahjongs);
         } else if (msgType === XzddProtocol.S_Game_Huan3Zhang) {   //玩家操作换三张结果返回
             let xzddOpHuan3ZhangMahjongsRsp: XzddOpHuan3ZhangMahjongsRsp = <XzddOpHuan3ZhangMahjongsRsp>content;
             xzddOpHuan3ZhangMahjongsRsp.playerAzimuth -= 1;
