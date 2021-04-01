@@ -264,7 +264,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 801.3,
-      "height": 362
+      "height": 405
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -337,8 +337,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 319,
-      "height": 74
+      "width": 499,
+      "height": 117
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -350,7 +350,7 @@
       "ctor": "Float64Array",
       "array": [
         17.733,
-        184.34000000000003,
+        187.35000000000002,
         0,
         0,
         0,
@@ -414,7 +414,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        0,
+        21.635,
         0,
         0,
         0,
@@ -512,8 +512,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 84,
-      "height": 89
+      "width": 73,
+      "height": 80
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -565,7 +565,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "86e00208-62b5-4bb2-b190-1cc96915c76e"
+      "__uuid__": "6dd61afc-4e29-43f6-996a-18d02634441e"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -579,7 +579,7 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": {
-      "__uuid__": "a78d4ce0-69f0-41c0-9909-3af3bc4bcb93"
+      "__uuid__": "211e3353-b22e-48fe-a5d4-b22b0622d57e"
     },
     "_id": ""
   },
@@ -678,7 +678,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "c11a3938-73c3-460b-9fc6-86aaff98fb62"
+      "__uuid__": "a2f25c12-162f-4ce7-9582-b9378d8c7220"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -692,7 +692,7 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": {
-      "__uuid__": "a78d4ce0-69f0-41c0-9909-3af3bc4bcb93"
+      "__uuid__": "211e3353-b22e-48fe-a5d4-b22b0622d57e"
     },
     "_id": ""
   },
@@ -799,7 +799,7 @@
       "ctor": "Float64Array",
       "array": [
         11.305,
-        25.840000000000032,
+        7.350000000000023,
         0,
         0,
         0,
@@ -850,9 +850,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 169,
+      "g": 186,
+      "b": 230,
       "a": 255
     },
     "_contentSize": {
@@ -1101,9 +1101,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 169,
+      "g": 186,
+      "b": 230,
       "a": 255
     },
     "_contentSize": {
@@ -1352,9 +1352,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 169,
+      "g": 186,
+      "b": 230,
       "a": 255
     },
     "_contentSize": {
@@ -1606,8 +1606,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 154,
-      "height": 57
+      "width": 162,
+      "height": 61
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1659,7 +1659,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "6fcb3dbb-1dbf-4a0b-8273-900a7c4d24cc"
+      "__uuid__": "5a531fcf-2b63-4b86-92b9-9d5d42f0aec5"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -1673,7 +1673,7 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": {
-      "__uuid__": "a78d4ce0-69f0-41c0-9909-3af3bc4bcb93"
+      "__uuid__": "211e3353-b22e-48fe-a5d4-b22b0622d57e"
     },
     "_id": ""
   },
@@ -2295,7 +2295,7 @@
       "ctor": "Float64Array",
       "array": [
         11,
-        -115.65999999999997,
+        -134.14999999999998,
         0,
         0,
         0,
@@ -4587,7 +4587,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "da66a122-c8ea-4087-8176-a0a92bd8dd59"
+      "__uuid__": "e0a40aeb-a4c0-4557-91c7-a86382090d7c"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -4614,7 +4614,7 @@
     "_layoutSize": {
       "__type__": "cc.Size",
       "width": 801.3,
-      "height": 362
+      "height": 405
     },
     "_resize": 1,
     "_N$layoutType": 2,

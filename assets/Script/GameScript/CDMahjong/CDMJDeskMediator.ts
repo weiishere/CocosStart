@@ -10,7 +10,6 @@ import { XzddGameResult } from "../GameData/Xzdd/s2c/XzddGameResult";
 import { CDMJCommandDefine } from "./CDMJConst/CDMJCommandDefine";
 import { GameNoDefine } from "../GameConst/GameNoDefine";
 import { DeskEventName, PlayerInfo } from "./CDMJDeskRepository";
-import { DymjMusicManager } from "../Other/DymjMusicManager";
 import { INotification } from "../../Framework/interfaces/INotification";
 import { MusicManager } from "../Other/MusicManager";
 import { AudioSourceDefine } from "../MahjongConst/AudioSourceDefine";
@@ -19,6 +18,7 @@ import { XzddPeng } from "../GameData/Xzdd/s2c/XzddPeng";
 import { XzddHu } from "../GameData/Xzdd/s2c/XzddHu";
 import ChatBox, { MsgObj } from "../Component/DdYiMahjong/ChatBox";
 import { CommandDefine } from "../MahjongConst/CommandDefine";
+import { CDMJMusicManager } from "./CDMJMusicManager";
 
 
 
@@ -109,18 +109,20 @@ export default class CDMJDeskMediator extends BaseMediator {
 
     public playEventSound(eventName: DeskEventName, cardNumber?: number) {
         if (cardNumber) {
-            DymjMusicManager.put(cardNumber - 1, 1);
+            CDMJMusicManager.put(cardNumber - 1, "boy");
         } else {
             switch (eventName) {
-                case 'bar': DymjMusicManager.gang(1); break;
-                case 'touch': DymjMusicManager.peng(1); break;
-                case 'zimo': DymjMusicManager.ziMo(1); break;
+                case 'bar': CDMJMusicManager.gangGuaFeng("boy"); break;
+                case 'guafeng': CDMJMusicManager.gangGuaFeng("boy"); break;
+                case 'xiayu': CDMJMusicManager.gangXiaYu("boy"); break;
+                case 'touch': CDMJMusicManager.peng("boy"); break;
+                case 'zimo': CDMJMusicManager.ziMo("boy"); break;
                 case 'ting':
                     //const _correlationInfoData = this.getDeskProxy().repository.gameData.eventData.gameEventData.deskGameEvent.correlationInfoData;
-                    DymjMusicManager.baoHu(1);
+                    // CDMJMusicManager.baoHu(1);
                     break;
-                //case 'qingHu': DymjMusicManager.qingHu(1); break;
-                case 'hu': DymjMusicManager.dianPao(1); break;
+                //case 'qingHu': CDMJMusicManager.qingHu(1); break;
+                case 'hu': CDMJMusicManager.dianPao("boy"); break;
             }
         }
 
@@ -252,6 +254,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 //this.view && this.view.destroy();
                 break;
             case CDMJCommandDefine.LicensingCardPush://发牌
+                CDMJMusicManager.startGame();
                 this.DeskPanelViewScript.updateRoomInfo();
                 this.sendNotification(CDMJCommandDefine.ShowCenterEffect, { isMe: undefined, gameIndex: -1 });
                 this.DeskPanelViewScript.updatedDeskAiming();
@@ -378,6 +381,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 break;
             case CDMJCommandDefine.AllDingzhangDone://全部玩家完成定章
                 this.DeskPanelViewScript.updateDingZhangView();
+                CDMJMusicManager.dingzhangOver();
                 break;
             case CDMJCommandDefine.SwitchOutCard://选择要换的牌
             

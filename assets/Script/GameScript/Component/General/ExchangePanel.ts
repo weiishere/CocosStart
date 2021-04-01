@@ -14,6 +14,8 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class ExchangePanel extends ViewComponent {
 
+    @property(cc.Sprite)
+    bgSprite: cc.Sprite = null;
     @property(cc.Node)
     goldBuyList: cc.Node = null;
     @property(cc.Node)
@@ -41,6 +43,8 @@ export default class ExchangePanel extends ViewComponent {
     rechargeValue: cc.Node = null;
     @property(cc.Node)
     vipExchange: cc.Node = null;
+    @property(cc.SpriteAtlas)
+    newFace: cc.SpriteAtlas = null;
 
     /** 查询的url */
     findUrl: string = "";
@@ -343,6 +347,23 @@ export default class ExchangePanel extends ViewComponent {
                         let label = rechargeNode.getChildByName("GoldLabel").getComponent(cc.Label);
                         label.string = value;
 
+                        let goldIcon = rechargeNode.getChildByName("GoldIcon").getComponent(cc.Sprite);
+                        let spriteName = "zhuanshi-";
+                        if (value < 50) {
+                            spriteName += "1";
+                        } else if (value >= 50 && value < 200) {
+                            spriteName += "2";
+                        } else if (value >= 200 && value < 500) {
+                            spriteName += "3";
+                        } else if (value >= 500 && value < 1000) {
+                            spriteName += "4";
+                        } else if (value >= 1000 && value < 2000) {
+                            spriteName += "5";
+                        } else {
+                            spriteName += "6";
+                        }
+
+                        goldIcon.spriteFrame = this.newFace.getSpriteFrame(spriteName);
                         this.goldBuyList.addChild(rechargeNode);
                         rechargeNode.on(cc.Node.EventType.TOUCH_END, (event) => {
                             this.exchange(label.string);
