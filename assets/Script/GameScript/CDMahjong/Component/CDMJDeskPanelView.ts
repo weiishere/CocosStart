@@ -1160,31 +1160,47 @@ export default class CDMJDeskPanelView extends ViewComponent {
         }, 1000));
         const switchCards = this.getData().gameData.myCards.switchOutCardDefault;
         console.log('switchOutCard', switchCards);
-
+        1
         this.mainCardList.forEach(card => (card.getComponent("CardItemView") as CardItemView).reSetChooseFalse());
-        switchCards.forEach(item => {
-            for (let i = 0, l = this.mainCardList.length; i < l; i++) {
-                const _card = this.mainCardList[i].getComponent("CardItemView") as CardItemView;
-                if (_card.cardNumber === item && !_card.isChoose) {
-                    _card.setChooseAndStand();
-                    break;
+        window.setTimeout(() => {
+            switchCards.forEach(item => {
+                for (let i = 0, l = this.mainCardList.length; i < l; i++) {
+                    const _card = this.mainCardList[i].getComponent("CardItemView") as CardItemView;
+                    if (_card.cardNumber === item && !_card.isChoose) {
+                        console.log('1~~~~~~~~~', item);
+                        _card.setChooseAndStand();
+                        console.log(_card.isChoose);
+                        break;
+                    }
                 }
-            }
-        })
+            });
+        }, 300)
     }
     /**所有玩家完成切三张选牌 */
     switchCardDone() {
         this.node.getChildByName('switchCardAlert').active = false;
         this.mainCardList.forEach(card => (card.getComponent("CardItemView") as CardItemView).reSetChooseFalse());//先全部落下
-        this.mainCardList.forEach(card => {
-            const _cardscript = card.getComponent("CardItemView") as CardItemView;
-            for (let i = 0, l = this.getData().gameData.myCards.switchInCard.length; i < l; i++) {
-                if (!_cardscript.isChoose && _cardscript.cardNumber === this.getData().gameData.myCards.switchInCard[i]) {
-                    _cardscript.setChooseAndStand();
-                    continue;
+        window.setTimeout(() => {
+            this.getData().gameData.myCards.switchInCard.forEach(item => {
+                for (let i = 0, l = this.mainCardList.length; i < l; i++) {
+                    const _card = this.mainCardList[i].getComponent("CardItemView") as CardItemView;
+                    if (_card.cardNumber === item && !_card.isChoose) {
+                        console.log('2~~~~~~~~~', item);
+                        _card.setChooseAndStand();
+                        _card.setStress(true);
+                        console.log(_card.isChoose);
+                        break;
+                    }
                 }
-            }
-        });
+            })
+            this.scheduleOnce(() => {
+                this.mainCardList.forEach(card => {
+                    const _card = (card.getComponent("CardItemView") as CardItemView);
+                    _card.reSetChooseFalse();
+                    _card.setStress(false);
+                });//全部落下
+            }, 2);
+        }, 300);
     }
     /**更新倒计时 */
     updateCountDown(): void {
