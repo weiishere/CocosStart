@@ -32,17 +32,19 @@ export default class GateStartPanel extends ViewComponent {
     bonusBtn: cc.Node = null;
     @property(cc.Node)
     serviceBtn: cc.Node = null;
+    @property(cc.Node)
+    exchangeEntrance: cc.Node = null;
+    @property(cc.Node)
+    gaemContent: cc.Node = null;
 
     private mahjongEntrance: cc.Node;
     private pdkEntrance: cc.Node;
-    private exchangeEntrance: cc.Node;
     private otherGamePanel: cc.Node;
 
     protected async bindUI() {
         this.mahjongEntrance = this.root.getChildByName("gameBg1");
         this.pdkEntrance = this.root.getChildByName("gameBg2");
         this.otherGamePanel = this.root.getChildByName("otherGame");
-        this.exchangeEntrance = this.root.getChildByName("gameBg3");
         this.initEffect();
     }
 
@@ -61,23 +63,49 @@ export default class GateStartPanel extends ViewComponent {
         exchangeNode.runAction(_action3);
 
         const erbaGaneNode = this.root.getChildByName("otherGame").getChildByName("game_ebg").getChildByName("hot");
-        const _action4 = cc.repeatForever(cc.sequence(cc.scaleTo(0.1, 1.1),cc.scaleTo(0.4, 1.1),
-        cc.sequence(cc.rotateBy(0.05, 5), cc.rotateBy(0.05, -5), cc.rotateBy(0.05, 5), cc.rotateBy(0.05, -5), cc.rotateBy(0.05, 5), cc.rotateBy(0.05, -5),
-        cc.scaleTo(0.1, 1),cc.scaleTo(0.4, 1), cc.callFunc(() => { }))));
+        const _action4 = cc.repeatForever(cc.sequence(cc.scaleTo(0.1, 1.1), cc.scaleTo(0.4, 1.1),
+            cc.sequence(cc.rotateBy(0.05, 5), cc.rotateBy(0.05, -5), cc.rotateBy(0.05, 5), cc.rotateBy(0.05, -5), cc.rotateBy(0.05, 5), cc.rotateBy(0.05, -5),
+                cc.scaleTo(0.1, 1), cc.scaleTo(0.4, 1), cc.callFunc(() => { }))));
         erbaGaneNode.runAction(_action4);
     }
 
-    protected async bindEvent() {
-        this.mahjongEntrance.on(cc.Node.EventType.TOUCH_END, () => {
-            (Facade.Instance.retrieveProxy(ProxyDefine.Gate) as GateProxy).joinClub();
-        }, this, true);
+    getGateProxy() {
+        return <GateProxy>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
+    }
 
-        this.otherGamePanel.children.forEach(node => {
-            node.on(cc.Node.EventType.TOUCH_START, (eventData, item) => {
-                const _action = cc.sequence(cc.scaleTo(0.1, 1.1), cc.scaleTo(0.1, 1), cc.callFunc(() => { }));
-                eventData.target.runAction(_action);
-                if (node.name === 'game_ebg') {
-                    (Facade.Instance.retrieveProxy(ProxyDefine.Gate) as GateProxy).joinTuiTongZi();
+    addButton(node: cc.Node) {
+        let button = node.addComponent(cc.Button);
+
+        button.transition = cc.Button.Transition.SCALE;
+        button.zoomScale = 1.05;
+        button.duration = 0.1;
+    }
+
+    protected async bindEvent() {
+        // this.mahjongEntrance.on(cc.Node.EventType.TOUCH_END, () => {
+        //     (Facade.Instance.retrieveProxy(ProxyDefine.Gate) as GateProxy).joinClub();
+        // }, this, true);
+
+        // this.otherGamePanel.children.forEach(node => {
+        //     node.on(cc.Node.EventType.TOUCH_START, (eventData, item) => {
+        //         const _action = cc.sequence(cc.scaleTo(0.1, 1.1), cc.scaleTo(0.1, 1), cc.callFunc(() => { }));
+        //         eventData.target.runAction(_action);
+        //         if (node.name === 'game_ebg') {
+        //             (Facade.Instance.retrieveProxy(ProxyDefine.Gate) as GateProxy).joinTuiTongZi();
+        //         } else {
+        //             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '游戏开发中，敬请期待...', toastOverlay: false }, '');
+        //         }
+        //     }, this, true);
+        // });
+
+
+        this.gaemContent.children.forEach(node => {
+            this.addButton(node);
+            node.on(cc.Node.EventType.TOUCH_END, (eventData, item) => {
+                if (node.name === 'game-cdmj') {
+                    this.getGateProxy().joinClub();
+                } else if (node.name === 'game-ebg') {
+                    this.getGateProxy().joinTuiTongZi();
                 } else {
                     Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '游戏开发中，敬请期待...', toastOverlay: false }, '');
                 }

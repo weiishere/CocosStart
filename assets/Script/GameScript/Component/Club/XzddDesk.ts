@@ -9,9 +9,15 @@ const { ccclass, property } = cc._decorator;
 export default class XzddDesk extends BaseDesk {
 
     @property(cc.Label)
+    roomTypeLabel: cc.Label = null;
+    @property(cc.Label)
     anteLabel: cc.Label = null;
     @property(cc.Label)
+    enterLimitLabel: cc.Label = null;
+    @property(cc.Label)
     roundCountLabel: cc.Label = null;
+    @property(cc.Node)
+    deskBG: cc.Node = null;
     @property(cc.Sprite)
     head1: cc.Sprite = null;
     @property(cc.Sprite)
@@ -20,6 +26,8 @@ export default class XzddDesk extends BaseDesk {
     head3: cc.Sprite = null;
     @property(cc.Sprite)
     head4: cc.Sprite = null;
+
+    _maxPlayerNum: number;
 
     initData(s2CClubRoomInfoBase: S2CClubRoomInfoBase) {
 
@@ -34,22 +42,38 @@ export default class XzddDesk extends BaseDesk {
             roomType = "四人三房";
         }
 
+        this._maxPlayerNum = s2CClubRoomInfoBase.maxPlayerNum;
+
+        this.setDeskBG();
+
         this.roomNo = s2CClubRoomInfoBase.roomNo;
         this.basicScore = s2CClubRoomInfoBase.basicScore;
         this.enterLimit = s2CClubRoomInfoBase.enterLimit;
-        this.anteLabel.string = `${roomType}${s2CClubRoomInfoBase.basicScore}底分`;
+        this.roomTypeLabel.string = roomType;
+        this.anteLabel.string = `分:${s2CClubRoomInfoBase.basicScore}`;
+        this.enterLimitLabel.string = `入:${s2CClubRoomInfoBase.enterLimit}`;
         this.setRoundCount(s2CClubRoomInfoBase.currentGameCount, s2CClubRoomInfoBase.gameCount);
-
-        let gameParamObj = JSON.parse(s2CClubRoomInfoBase.gameParam);
-
-        if (this.isHuanSanZhang(gameParamObj)) {
-            this.anteLabel.string += `(换三张)`
-        }
 
         let userInfos = s2CClubRoomInfoBase.userInfos;
 
+        let gameParamObj = JSON.parse(s2CClubRoomInfoBase.gameParam);
+        if (this.isHuanSanZhang(gameParamObj)) {
+            this.roomTypeLabel.string += `(换三张)`
+        }
+
+
         for (const userInfo of userInfos) {
             this.sitDown(userInfo.head, userInfo.nickname, userInfo.seatNo);
+        }
+    }
+
+    setDeskBG() {
+        if (this._maxPlayerNum === 2) {
+            this.deskBG.getComponent("ExtendSprite").index = 0;
+        } else if (this._maxPlayerNum === 3) {
+            this.deskBG.getComponent("ExtendSprite").index = 1;
+        } else if (this._maxPlayerNum === 4) {
+            this.deskBG.getComponent("ExtendSprite").index = 2;
         }
     }
 
