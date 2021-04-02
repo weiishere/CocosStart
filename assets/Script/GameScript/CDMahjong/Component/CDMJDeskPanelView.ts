@@ -344,6 +344,21 @@ export default class CDMJDeskPanelView extends ViewComponent {
             cc.loader.loadRes(`textures/desk/face/face(${i})`, cc.Texture2D, (err, item) => { });
         }
     }
+    trggerSwitchingCardView(isShow: boolean) {
+        const target = this.node.getChildByName('switchingAlert');
+        if (isShow) {
+            target.active = true;
+            target.opacity = 255;
+            cc.tween(target.getChildByName('zhuandong')).by(5, { rotation: 360 }).repeatForever().start();
+        } else {
+            this.scheduleOnce(() => {
+                cc.tween(target.getChildByName('zhuandong')).by(0.5, { opacity: 0 }).call(() => {
+                    target.active = false;
+                }).start();
+            }, 0.2);
+        }
+
+    }
     bindEvent(): void { }
     /**绑定游戏操作事件（杠碰胡等） */
     bindGameOpreationEvent(callBack: (node: cc.Node, correlationInfoData) => void): void {
@@ -366,6 +381,16 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**绑定出牌回调 */
     bindShowCardEvent(showCardEvent: (card: number) => void) {
         this.showCardEvent = showCardEvent;
+    }
+    /**绑定选定换三张牌回调 */
+    switchCardDoneHandler() {
+        let switchCardArr = [];
+        this.mainCardList.forEach(card => {
+            const cardScript = (card.getComponent("CardItemView") as CardItemView);
+            if (cardScript.isChoose) { switchCardArr.push(cardScript.cardNumber) }
+        });
+        if (switchCardArr.length < 3) switchCardArr = this.getData().gameData.myCards.switchOutCardDefault;
+        Facade.Instance.sendNotification(CDMJCommandDefine.SureSwitchCard, { switchCardArr }, '');
     }
     /**初始化方向盘 */
     private initDeskAiming(playerId): void {
@@ -433,7 +458,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.getData().gameData.myCards.curCardList.map(item => {
             const card = this.addCardToNode(this.mainCardListPanel, item, "mine", 'setUp', {
                 touchEndCallback: function () {
-                    debugger
                     if (self.getData().gameData.switchCardCountDown !== 0) return;
                     const script = this.node.getComponent("CardItemView") as CardItemView;
                     if (script.isChoose) {
@@ -531,8 +555,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**更新杠碰牌 */
     updateMyBarAndTouchCard(): void {
         //先更新杠/碰
-
-
         const barItems = [];
         this.getData().gameData.myCards.barCard.map(item => {
             const barItem = new cc.Node('barItem');
@@ -556,9 +578,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.barCard.removeAllChildren();
         this.barCard.width = 0;
         barItems.forEach(n => this.barCard.addChild(n));
-
-
-
         const touchItems = [];
         this.getData().gameData.myCards.touchCard.map(item => {
             const touchItem = new cc.Node('touchItem');
@@ -579,80 +598,19 @@ export default class CDMJDeskPanelView extends ViewComponent {
             const _gameIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;
             if (this.positionNode[_gameIndex].name === 'p-top') {
                 //更新对家手牌
-                this.updateMyBarAndTouchCardHelper(partner, this.frontBarCard, this.frontTouchCard, 'front');
+                myhelper.updateMyBarAndTouchCardHelper.bind(this)(partner, this.frontBarCard, this.frontTouchCard, 'front');
+                //this.updateMyBarAndTouchCardHelper(partner, this.frontBarCard, this.frontTouchCard, 'front');
             } else if (this.positionNode[_gameIndex].name === 'p-left') {
                 //更新左方手牌
-                this.updateMyBarAndTouchCardHelper(partner, this.leftBarCard, this.leftTouchCard, 'left');
+                myhelper.updateMyBarAndTouchCardHelper.bind(this)(partner, this.leftBarCard, this.leftTouchCard, 'left');
+                //this.updateMyBarAndTouchCardHelper(partner, this.leftBarCard, this.leftTouchCard, 'left');
             } else if (this.positionNode[_gameIndex].name === 'p-right') {
                 //更新右方手牌
-                this.updateMyBarAndTouchCardHelper(partner, this.rightBarCard, this.rightTouchCard, 'right');
+                myhelper.updateMyBarAndTouchCardHelper.bind(this)(partner, this.rightBarCard, this.rightTouchCard, 'right');
+                //this.updateMyBarAndTouchCardHelper(partner, this.rightBarCard, this.rightTouchCard, 'right');
             }
         });
 
-    }
-    /**-----更新杠、碰牌组辅助方法 */
-    private updateMyBarAndTouchCardHelper(partner: PartnerCard, playerBarCard: cc.Node, playerTouchCard: cc.Node, position: PositionType) {
-
-        playerBarCard.width = 0;
-        playerBarCard.height = 0;
-        const barItems = [];
-        partner.partnerCards.barCard.forEach(item => {
-            const barItem = new cc.Node('barItem');
-            const layoutCom = barItem.addComponent(cc.Layout);
-            layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
-            if (position === 'front') {
-                if (item.barType === 0 || item.barType === 1) {
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 0) });
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(-72, 0) });
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(-144, 0) });
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(-72, 28) });
-                } else if (item.barType === 2) {
-                    //----------------------------------------暗杠,最上面一张需要盖住
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 0) });
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(-72, 0) });
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(-144, 0) });
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(-72, 29), fallShowStatus: 'hide' });
-                }
-            } else {
-                if (item.barType === 0 || item.barType === 1) {
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 90) });
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 60) });
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 30) });
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 74) });
-                } else if (item.barType === 2) {
-                    //----------------------------------------暗杠,最上面一张需要盖住
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 90) });
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 60) });
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 30) });
-                    this.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 74), fallShowStatus: 'hide' });
-                }
-            }
-            barItems.push(barItem);
-        });
-        playerBarCard.removeAllChildren();
-        barItems.forEach(n => playerBarCard.addChild(n));
-
-        playerTouchCard.width = 0;
-        playerTouchCard.height = 0;
-        const touchItems = [];
-        partner.partnerCards.touchCard.forEach(item => {
-            const touchItem = new cc.Node('touchItem');
-            const layoutCom = touchItem.addComponent(cc.Layout);
-            layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
-            if (position === 'front') {
-                this.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(-36, 0) });//.setPosition(cc.v2(-36, 0));
-                this.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(36, 0) });//.setPosition(cc.v2(36, 0));
-                this.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 28) });//.setPosition(cc.v2(0, 28));
-            } else {
-                this.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 64) });//.setPosition(cc.v2(-36, 0));
-                this.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 32) });//.setPosition(cc.v2(36, 0));
-                this.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 57) });//.setPosition(cc.v2(0, 28));
-            }
-            touchItems.push(touchItem);
-            //playerTouchCard.addChild(touchItem);
-        });
-        playerTouchCard.removeAllChildren();
-        touchItems.forEach(n => playerTouchCard.addChild(n));
     }
     /**更新用户手牌/胡牌 */
     updateHandCardAndHuCard(): void {
@@ -720,10 +678,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
             }
         } else if (this.getData().gameData.myCards.handCard === 0 && eventName.length === 1 && eventName.indexOf('touch') !== -1) {
             //刚刚碰了，所以没有摸牌
-
         }
-        //console.log('xzddS2CDoNextOperation.nextStep.datas=====2222', disableCard);
-
         if (eventName.indexOf('show') !== -1) {
             if (this.getData().gameData.myCards.disableCard.length !== 0) {
                 disableCard.forEach(item => {
@@ -740,12 +695,10 @@ export default class CDMJDeskPanelView extends ViewComponent {
                 })
             }
         }
-
         // else {
         //     //全部牌都不可以出
         //     self.mainCardList.map(item => (item.getComponent("CardItemView") as CardItemView).isActive = false);
         // }
-
         //先检测本家胡牌
         this.huCard.removeAllChildren();
         this.huCard.width = 0;
@@ -753,8 +706,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
         if (this.getData().gameData.myCards.hadHuCard !== 0) {
             this.addCardToNode(this.huCard, this.getData().gameData.myCards.hadHuCard, "mine", 'fall');
         }
-
-
         //再检测对家手牌
         this.getData().gameData.partnerCardsList.forEach(partner => {
             const _gameIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;
@@ -802,34 +753,19 @@ export default class CDMJDeskPanelView extends ViewComponent {
             const _gameIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;
             if (this.positionNode[_gameIndex].name === 'p-top') {
                 //更新对家手牌
-                this.updateHandCardAndHuCardHelper(partner, this.frontHuCard, this.node.getChildByName("frontJobNode").getChildByName("ting"), 'front');
+                myhelper.updateHandCardAndHuCardHelper.bind(this)(partner, this.frontHuCard, this.node.getChildByName("frontJobNode").getChildByName("ting"), 'front');
             } else if (this.positionNode[_gameIndex].name === 'p-left') {
                 //更新左方手牌
-                this.updateHandCardAndHuCardHelper(partner, this.leftHuCard, this.node.getChildByName("leftJobNode").getChildByName("ting"), 'left');
+                myhelper.updateHandCardAndHuCardHelper.bind(this)(partner, this.leftHuCard, this.node.getChildByName("leftJobNode").getChildByName("ting"), 'left');
             } else if (this.positionNode[_gameIndex].name === 'p-right') {
                 //更新右方手牌
-                this.updateHandCardAndHuCardHelper(partner, this.rightHuCard, this.node.getChildByName("rightJobNode").getChildByName("ting"), 'right');
+                myhelper.updateHandCardAndHuCardHelper.bind(this)(partner, this.rightHuCard, this.node.getChildByName("rightJobNode").getChildByName("ting"), 'right');
             }
         });
         //更新剩余牌数
         const remainCardNum = this.node.getChildByName("remainWrap").getChildByName("remainCard").getComponent(cc.Label);
         remainCardNum.string = this.getData().gameData.remainCard + '';
         //}
-    }
-    /**-----辅助方法 */
-    private updateHandCardAndHuCardHelper(partner: PartnerCard, playerHuCard: cc.Node, tingNode: cc.Node, position: PositionType): void {
-        const _hadHuCard = this.getData().gameData.partnerCardsList.find(item => item.playerId === partner.playerId).partnerCards.hadHuCard;
-        playerHuCard.removeAllChildren();
-        playerHuCard.width = 0;
-        playerHuCard.height = 0;
-        if (_hadHuCard !== 0) {
-            this.addCardToNode(playerHuCard, _hadHuCard, position, 'fall');
-        }
-        //对家是否听牌
-        const status = this.getData().gameData.partnerCardsList.find(item => item.playerId === partner.playerId).partnerCards.status;
-        if (status.isBaoHu) {
-            tingNode.active = false;
-        }
     }
     /**更新方向盘 */
     updatedDeskAiming(): void {
@@ -995,27 +931,18 @@ export default class CDMJDeskPanelView extends ViewComponent {
             const positionName = self.positionNode[playerIndex].name;
             if (positionName === 'p-top') {
                 //更新对方打出牌
-                _card = this.createOutCardHelper(this.frontOutCardList, playerIndex, 0.6, 'front');
+                _card = myhelper.createOutCardHelper.bind(this)(this.frontOutCardList, playerIndex, 0.6, 'front');
             } else if (positionName === 'p-left') {
                 //更新左方打出牌
-                _card = this.createOutCardHelper(this.leftOutCardList, playerIndex, 1.3, 'left');
+                _card = myhelper.createOutCardHelper.bind(this)(this.leftOutCardList, playerIndex, 1.3, 'left');
             } else if (positionName === 'p-right') {
                 //更新右方打出牌
-                _card = this.createOutCardHelper(this.rightOutCardList, playerIndex, 1.3, 'right');
+                _card = myhelper.createOutCardHelper.bind(this)(this.rightOutCardList, playerIndex, 1.3, 'right');
             }
         }
         if (!_card) return;
         this.arrowCard = _card;
         (_card.getComponent("CardItemView") as CardItemView).setArrows(true);
-    }
-    /**-----辅助方法 */
-    private createOutCardHelper(playerOutCardList: cc.Node, playerIndex: number, scale: number, position: PositionType): cc.Node {
-        const player = this.getPlayerByIndex(playerIndex);
-        const partner: PartnerCard = this.getData().gameData.partnerCardsList.find(item => item.playerId === player.playerId);
-        const card = this.addCardToNode(playerOutCardList, partner.partnerCards.outCardList[partner.partnerCards.outCardList.length - 1], position, "fall")
-        card.setPosition(cc.v2(0, 0));
-        card.setScale(scale);
-        return card;
     }
     /**获取outCard数据最后一个删除（考虑到性能没有做重刷） */
     deleteOutCard(playerIndex, card): void {
@@ -1064,30 +991,21 @@ export default class CDMJDeskPanelView extends ViewComponent {
             // }
         });
         this.getData().gameData.partnerCardsList.forEach(partner => {
-
             const _gameIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;
             if (this.positionNode[_gameIndex].name === 'p-top') {
                 //更新对家出牌
                 this.frontOutCardList.removeAllChildren();
-                this.updateOutCardHelper(partner, this.frontOutCardList, 0.6, 'front');
+                myhelper.updateOutCardHelper.bind(this)(partner, this.frontOutCardList, 0.6, 'front');
             } else if (this.positionNode[_gameIndex].name === 'p-left') {
                 //更新左方出牌
                 this.leftOutCardList.removeAllChildren();
-                this.updateOutCardHelper(partner, this.leftOutCardList, 1.3, 'left');
+                myhelper.updateOutCardHelper.bind(this)(partner, this.leftOutCardList, 1.3, 'left');
             } else if (this.positionNode[_gameIndex].name === 'p-right') {
                 //更新右方出牌
                 this.rightOutCardList.removeAllChildren();
-                this.updateOutCardHelper(partner, this.rightOutCardList, 1.3, 'right');
+                myhelper.updateOutCardHelper.bind(this)(partner, this.rightOutCardList, 1.3, 'right');
             }
         })
-    }
-    /**-----辅助方法 */
-    private updateOutCardHelper(partner: PartnerCard, playerOutCardList: cc.Node, scale: number, position: PositionType) {
-        partner.partnerCards.outCardList.map((item, index) => {
-            const card = this.addCardToNode(playerOutCardList, item, position, "fall")
-            card.setPosition(cc.v2(0, 0));
-            card.setScale(scale);
-        });
     }
     /**更新待选牌组框且执行事件 */
     updateChooseCardsAndHandler(launch: (card: number) => void) {
@@ -1229,7 +1147,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     }
     /**显示要换3张的牌(一局只会执行一次) */
     showSwitchCardList(): void {
-        debugger
+
         this.node.getChildByName('switchCardAlert').active = true;
         !this.timer3 && (this.timer3 = window.setInterval(() => {
             if (this.getData().gameData.switchCardCountDown !== 0) {
@@ -1257,6 +1175,16 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**所有玩家完成切三张选牌 */
     switchCardDone() {
         this.node.getChildByName('switchCardAlert').active = false;
+        this.mainCardList.forEach(card => (card.getComponent("CardItemView") as CardItemView).reSetChooseFalse());//先全部落下
+        this.mainCardList.forEach(card => {
+            const _cardscript = card.getComponent("CardItemView") as CardItemView;
+            for (let i = 0, l = this.getData().gameData.myCards.switchInCard.length; i < l; i++) {
+                if (!_cardscript.isChoose && _cardscript.cardNumber === this.getData().gameData.myCards.switchInCard[i]) {
+                    _cardscript.setChooseAndStand();
+                    continue;
+                }
+            }
+        });
     }
     /**更新倒计时 */
     updateCountDown(): void {

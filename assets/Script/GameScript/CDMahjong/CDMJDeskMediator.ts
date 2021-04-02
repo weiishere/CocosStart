@@ -93,7 +93,9 @@ export default class CDMJDeskMediator extends BaseMediator {
             CDMJCommandDefine.DingzhangDone,
             CDMJCommandDefine.AllDingzhangDone,
             CDMJCommandDefine.SwitchOutCard,
-            CDMJCommandDefine.SwitchCardDonePush
+            CDMJCommandDefine.SwitchCardDonePush,
+            CDMJCommandDefine.SureSwitchCardPush,
+            CDMJCommandDefine.SureSwitchCard
         ];
     }
 
@@ -385,11 +387,21 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateDingZhangView();
                 CDMJMusicManager.dingzhangOver();
                 break;
-            case CDMJCommandDefine.SwitchOutCard://选择要换的牌
+            case CDMJCommandDefine.SwitchOutCard://选择要换的牌（执行一次）
                 this.DeskPanelViewScript.showSwitchCardList();
                 break;
-            case CDMJCommandDefine.SwitchCardDonePush://选择要换的牌
+            case CDMJCommandDefine.SwitchCardDonePush://全部玩家确认了换三张的牌
+                this.DeskPanelViewScript.updateMyCurCardList();
+                this.DeskPanelViewScript.trggerSwitchingCardView(false);
                 this.DeskPanelViewScript.switchCardDone();
+                break;
+            case CDMJCommandDefine.SureSwitchCardPush://玩家换三张牌选定点按钮后推送
+                //打开切换动效
+                this.DeskPanelViewScript.trggerSwitchingCardView(true);
+                break;
+            case CDMJCommandDefine.SureSwitchCard://换三张牌选定
+                const { switchCardArr } = notification.getBody();
+                this.getDeskProxy().sureSwitchCard(switchCardArr);
                 break;
         }
     }

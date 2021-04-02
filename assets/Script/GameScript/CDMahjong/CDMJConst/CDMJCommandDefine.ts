@@ -33,5 +33,7 @@ export enum CDMJCommandDefine {
     DingzhangDone = "CDML_DingzhangDone",
     AllDingzhangDone = "CDMJ_AllDingzhangDone",
     SwitchOutCard = "SwitchOutCard",
-    SwitchCardDonePush = "SwitchCardDonePush"
+    SureSwitchCardPush = "SureSwitchCardPush",
+    SwitchCardDonePush = "SwitchCardDonePush",
+    SureSwitchCard = "SureSwitchCard"
 }

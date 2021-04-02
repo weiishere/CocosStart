@@ -127,6 +127,10 @@ export class CDMJDeskProxy extends BaseProxy {
         this.getDeskData().gameSetting.gameRoundNum = xsddS2CBeginDealData.currentGameCount;
         this.sendNotification(CDMJCommandDefine.LicensingCardPush);
     }
+    sureSwitchCard(switchCardArr: Array<number>) {
+        this.getGameData().myCards.switchOutCardDefault = switchCardArr;
+        (<XzddProxy>this.facade.retrieveProxy(ProxyDefine.Xzdd)).huanSanZhang(switchCardArr);
+    }
     private doEventData(oprts: Array<XzddOperation>) {
 
         oprts.forEach(op => {
@@ -504,7 +508,7 @@ export class CDMJDeskProxy extends BaseProxy {
     /**收到换三张的提示信息 */
     chooseSwitchOutCard(chooseCardList: Array<number>): void {
         if (this.getGameData().myCards.switchInCard.length !== 0) return;
-        this.getGameData().switchCardCountDown = 300;
+        this.getGameData().switchCardCountDown = 30;
         //this.getGameData().myCards.switchOutCard = chooseCardList;
         this.sendNotification(CDMJCommandDefine.SwitchOutCard);
     }
