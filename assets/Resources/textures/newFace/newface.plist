@@ -270,7 +270,7 @@
                 <key>spriteSourceSize</key>
                 <string>{162,61}</string>
                 <key>textureRect</key>
-                <string>{{1625,0},{162,61}}</string>
+                <string>{{1681,0},{162,61}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -406,6 +406,21 @@
                 <string>{118,46}</string>
                 <key>textureRect</key>
                 <string>{{113,0},{118,46}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
+            <key>inner_bg.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{56,56}</string>
+                <key>spriteSourceSize</key>
+                <string>{56,56}</string>
+                <key>textureRect</key>
+                <string>{{1625,0},{56,56}}</string>
                 <key>textureRotated</key>
                 <false/>
             </dict>
@@ -723,7 +738,7 @@
             <key>size</key>
             <string>{1848,1509}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:4c0fb845c33f0f3e70c8844a51eb0e0b:7fe0cff5de43b56952b559f80d4fbad7:a1d9c5c662a5fa87b4bb651e3e925a77$</string>
+            <string>$TexturePacker:SmartUpdate:1977c6f9347fc1757b0b72a52541ce96:f1269449a8f3f3a0576d2783aa4b0e13:a1d9c5c662a5fa87b4bb651e3e925a77$</string>
             <key>textureFileName</key>
             <string>newface.png</string>
         </dict>
