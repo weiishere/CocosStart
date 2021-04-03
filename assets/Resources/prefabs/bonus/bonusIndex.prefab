@@ -264,7 +264,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 801.3,
-      "height": 405
+      "height": 395
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -350,7 +350,7 @@
       "ctor": "Float64Array",
       "array": [
         17.733,
-        187.35000000000002,
+        201.65000000000003,
         0,
         0,
         0,
@@ -524,8 +524,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        378.519,
-        12.941,
+        367.136,
+        -17.945,
         0,
         0,
         0,
@@ -709,7 +709,7 @@
     "_alignFlags": 1,
     "_left": 0,
     "_right": 0,
-    "_top": -15.000000000000028,
+    "_top": -35.00000000000003,
     "_bottom": 0,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,
@@ -787,7 +787,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 761,
-      "height": 223
+      "height": 233
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -799,7 +799,7 @@
       "ctor": "Float64Array",
       "array": [
         11.305,
-        7.350000000000023,
+        16.650000000000034,
         0,
         0,
         0,
@@ -2210,10 +2210,10 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "82e6507a-9143-474e-8a6e-53ab4177120f"
+      "__uuid__": "1e843520-3c8c-4735-8f6c-1e9466482775"
     },
-    "_type": 0,
-    "_sizeMode": 1,
+    "_type": 1,
+    "_sizeMode": 0,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -2224,7 +2224,7 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": {
-      "__uuid__": "a78d4ce0-69f0-41c0-9909-3af3bc4bcb93"
+      "__uuid__": "211e3353-b22e-48fe-a5d4-b22b0622d57e"
     },
     "_id": ""
   },
@@ -2295,7 +2295,7 @@
       "ctor": "Float64Array",
       "array": [
         11,
-        -134.14999999999998,
+        -129.84999999999997,
         0,
         0,
         0,
@@ -2528,9 +2528,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 169,
+      "g": 186,
+      "b": 230,
       "a": 255
     },
     "_contentSize": {
@@ -2745,9 +2745,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 206,
-      "g": 203,
-      "b": 203,
+      "r": 169,
+      "g": 186,
+      "b": 230,
       "a": 255
     },
     "_contentSize": {
@@ -3152,9 +3152,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 169,
+      "g": 186,
+      "b": 230,
       "a": 255
     },
     "_contentSize": {
@@ -3668,9 +3668,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 169,
+      "g": 186,
+      "b": 230,
       "a": 255
     },
     "_contentSize": {
@@ -4184,9 +4184,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 169,
+      "g": 186,
+      "b": 230,
       "a": 255
     },
     "_contentSize": {
@@ -4510,7 +4510,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "82e6507a-9143-474e-8a6e-53ab4177120f"
+      "__uuid__": "1e843520-3c8c-4735-8f6c-1e9466482775"
     },
     "_type": 1,
     "_sizeMode": 0,
@@ -4524,7 +4524,7 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": {
-      "__uuid__": "a78d4ce0-69f0-41c0-9909-3af3bc4bcb93"
+      "__uuid__": "211e3353-b22e-48fe-a5d4-b22b0622d57e"
     },
     "_id": ""
   },
@@ -4587,9 +4587,9 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "e0a40aeb-a4c0-4557-91c7-a86382090d7c"
+      "__uuid__": "c0e81cad-9a2d-466d-a506-824b446e3d9e"
     },
-    "_type": 0,
+    "_type": 1,
     "_sizeMode": 0,
     "_fillType": 0,
     "_fillCenter": {
@@ -4614,7 +4614,7 @@
     "_layoutSize": {
       "__type__": "cc.Size",
       "width": 801.3,
-      "height": 405
+      "height": 395
     },
     "_resize": 1,
     "_N$layoutType": 2,
@@ -4626,7 +4626,7 @@
     "_N$startAxis": 0,
     "_N$paddingLeft": 20,
     "_N$paddingRight": 20,
-    "_N$paddingTop": -15,
+    "_N$paddingTop": -35,
     "_N$paddingBottom": 20,
     "_N$spacingX": 0,
     "_N$spacingY": 10,
@@ -4663,7 +4663,7 @@
     "_prefab": {
       "__id__": 122
     },
-    "_opacity": 255,
+    "_opacity": 200,
     "_color": {
       "__type__": "cc.Color",
       "r": 255,
