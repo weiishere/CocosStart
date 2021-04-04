@@ -36,8 +36,7 @@ export default class CDMJRecordAlert extends ViewComponent {
         });
         this.quitRoom.on(cc.Node.EventType.TOUCH_START, () => {
             cc.tween(this.quitRoom).to(0.1, { scale: 1.1 }).to(0.1, { scale: 1 }).call(() => {
-                this.getXzddProxy().logout();
-                Facade.Instance.sendNotification(CDMJCommandDefine.ExitDeskPanel, {}, '');
+                Facade.Instance.sendNotification(CDMJCommandDefine.QuitGame, {}, '');
             }).start();
         });
 
@@ -64,10 +63,7 @@ export default class CDMJRecordAlert extends ViewComponent {
     start() {
     }
 
-    startNextRoundBtnCountdown(time: number) {
-        if (this.quitRoom.active) {
-            return;
-        }
+    startNextRoundBtnCountdown(time: number, isExitGame: boolean) {
         if (time <= 0) {
             return;
         }
@@ -75,7 +71,11 @@ export default class CDMJRecordAlert extends ViewComponent {
             time--;
             this.countdownLabel.string = time + "";
             if (time <= 0) {
-                this.getXzddProxy().goOn();
+                if (isExitGame) {
+                    Facade.Instance.sendNotification(CDMJCommandDefine.QuitGame, {}, '');
+                } else {
+                    this.getXzddProxy().goOn();
+                }
             }
         }, 1, time - 1);
     }
@@ -156,19 +156,28 @@ export default class CDMJRecordAlert extends ViewComponent {
             playerData: []
         }
 
+        let time = gameResult.time;
         let userName = this.getLocalCacheDataProxy().getLoginData().userName;
 
-        // 是否显示退出按钮
-        this.quitRoom.active = gameResult.currentGameCount >= gameResult.totalGameCount;
+        if (gameResult.totalGameCount > 0) {
+            // 是否显示退出按钮
+            this.quitRoom.active = gameResult.currentGameCount >= gameResult.totalGameCount;
+            if (gameResult.isShowQuitBtn) {
+                this.quitRoom.active = true;
+            }
 
-        if (gameResult.isShowQuitBtn) {
+            // 有退出按钮就没有下一局按钮
+            this.goOnBtn.active = !this.quitRoom.active;
+
+            if (this.quitRoom.active) {
+                time = 0;
+            }
+        } else {
             this.quitRoom.active = true;
+            this.goOnBtn.active = true;
         }
 
-        // 有退出按钮就没有下一局按钮
-        this.goOnBtn.active = !this.quitRoom.active;
-
-        this.startNextRoundBtnCountdown(gameResult.time);
+        this.startNextRoundBtnCountdown(time, gameResult.totalGameCount < 1);
 
         let myAzimuth: number = 0;
         let myPlayerRecordData: PlayerRecordData;

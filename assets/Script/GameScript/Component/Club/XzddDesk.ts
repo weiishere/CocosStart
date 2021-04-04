@@ -87,7 +87,11 @@ export default class XzddDesk extends BaseDesk {
     }
 
     setRoundCount(currentGameCount: number, gameCount: number) {
-        this.roundCountLabel.string = `第${currentGameCount}/${gameCount}局`;
+        if (gameCount > 0) {
+            this.roundCountLabel.string = `第${currentGameCount}/${gameCount}局`;
+        } else {
+            this.roundCountLabel.string = "";
+        }
     }
 
     /**

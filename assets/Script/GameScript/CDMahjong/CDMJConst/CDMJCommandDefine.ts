@@ -16,6 +16,7 @@ export enum CDMJCommandDefine {
     /**摸牌 */
     GetGameCardPush = "CDMJ_GetGameCardPush",
     ExitDeskPanel = "CDMJ_ExitDeskPanel",
+    QuitGame = "CDMJ_QuitGame",
     ShowCardPush = "CDMJ_ShowCardPush",
     ShowCard = "CDMJ_ShowCard",
     ShowCardNotificationPush = "CDMJ_ShowCardNotificationPush",

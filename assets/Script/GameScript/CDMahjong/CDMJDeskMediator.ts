@@ -95,6 +95,7 @@ export default class CDMJDeskMediator extends BaseMediator {
             CDMJCommandDefine.SwitchOutCard,
             CDMJCommandDefine.SwitchCardDonePush,
             CDMJCommandDefine.SureSwitchCardPush,
+            CDMJCommandDefine.QuitGame,
             CDMJCommandDefine.SureSwitchCard
         ];
     }
@@ -131,6 +132,11 @@ export default class CDMJDeskMediator extends BaseMediator {
 
     }
 
+    private quitGame() {
+        this.getCdmjProxy().logout();
+        this.sendNotification(CDMJCommandDefine.ExitDeskPanel);
+    }
+
     public async handleNotification(notification: INotification) {
 
         const gameData = this.getDeskProxy().getGameData();
@@ -165,8 +171,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                             //退出房间
                             const { playerList } = this.getDeskProxy().repository.deskData;
                             if (playerList.length < seatNumber) {
-                                this.getCdmjProxy().logout();
-                                this.sendNotification(CDMJCommandDefine.ExitDeskPanel);
+                                this.quitGame();
                             } else {
                                 this.sendNotification(CommandDefine.OpenToast, { content: '抱歉，牌局未完成，请勿退出牌局' });
                             }
@@ -402,6 +407,9 @@ export default class CDMJDeskMediator extends BaseMediator {
             case CDMJCommandDefine.SureSwitchCard://换三张牌选定
                 const { switchCardArr } = notification.getBody();
                 this.getDeskProxy().sureSwitchCard(switchCardArr);
+                break;
+            case CDMJCommandDefine.QuitGame://换三张牌选定
+                this.quitGame();
                 break;
         }
     }

@@ -48,7 +48,9 @@ export class GateCommand extends BaseCommand {
                 cc.log("websocket 鉴权成功");
 
                 // 测试用的
-                //this.getGateProxy().joinClub();
+                // this.getGateProxy().joinClub();
+
+
                 this.sendNotification(CommandDefine.CloseLoginPanel);
 
                 let loginData = this.getLocalCacheDataProxy().getLoginData();
