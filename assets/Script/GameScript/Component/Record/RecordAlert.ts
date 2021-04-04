@@ -238,7 +238,7 @@ export default class RecordAlert extends ViewComponent {
         let recordDetailNode = this.getRecordPrefab(recorDetailData.gameSubClass);
         let script = <BaseRecordDetail>recordDetailNode.getComponent(BaseRecordDetail);
         recordDetailNode.y = 66;
-        script.loadData(false, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount, totalLength, recorDetailData.playerData);
+        script.loadData(false, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount, totalLength, recorDetailData.playerData, recorDetailData.gameSubClass);
         this.node.addChild(recordDetailNode);
     }
 

@@ -18,9 +18,9 @@ export default class RecordDetail extends BaseRecordDetail {
     @property(cc.Node)
     detailItem: cc.Node = null;
     @property(cc.Node)
-    shouQiBtn: cc.Node = null;
-    @property(cc.Node)
     detailItemContent: cc.Node = null;
+    @property(cc.Node)
+    shouQiBtn: cc.Node = null;
     @property(cc.Node)
     itemContent: cc.Node = null;
     @property(cc.Prefab)
@@ -53,7 +53,7 @@ export default class RecordDetail extends BaseRecordDetail {
     }
 
     loadData(showBG: boolean, userName: string, roomNo: number, currentGameCount: number, totalGameCount: number,
-        playerData: Array<PlayerRecordData>, timer?: string) {
+        playerData: Array<PlayerRecordData>, gameSubClass: number, timer?: string) {
         this._playerData = playerData;
         this._thisUserName = userName;
         this.bg.active = showBG;

@@ -137,7 +137,7 @@ export default class RecordDetailList extends ViewComponent {
         this.recordContent.addChild(recordDetailNode);
 
         script.loadData(true, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount,
-            totalLength, recorDetailData.playerData, recorDetailData.gameTime);
+            totalLength, recorDetailData.playerData, recorDetailData.gameSubClass, recorDetailData.gameTime);
     }
 
     // update (dt) {}

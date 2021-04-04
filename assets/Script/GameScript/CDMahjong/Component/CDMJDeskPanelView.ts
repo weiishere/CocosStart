@@ -1096,7 +1096,12 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.node.getChildByName("remainWrap").active = true;//显示剩余牌数
         const deskInfoStr = this.node.getChildByName('deskInfo').getChildByName('deskInfoStr').getComponent(cc.Label);
         const { totalRound, gameRoundNum, baseScore, fanTime } = this.getData().deskData.gameSetting;
-        deskInfoStr.string = `第${gameRoundNum + 1}/${totalRound}局\n底分:${baseScore} / 翻数:${fanTime}`;
+
+        let gameRoundStr = "";
+        if (totalRound > 0) {
+            gameRoundStr = `第${gameRoundNum + 1}/${totalRound}局\n`;
+        }
+        deskInfoStr.string = `${gameRoundStr}底分:${baseScore} / 翻数:${fanTime}`;
     }
     /**更新定章信息 */
     updateDingZhangView(): void {

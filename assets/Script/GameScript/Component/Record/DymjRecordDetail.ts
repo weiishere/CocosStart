@@ -1,5 +1,6 @@
 import Facade from '../../../Framework/care/Facade';
 import ViewComponent from '../../Base/ViewComponent';
+import { GameNoDefine } from '../../GameConst/GameNoDefine';
 import { ProxyDefine } from '../../MahjongConst/ProxyDefine';
 import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
 import { ConfigProxy } from '../../Proxy/ConfigProxy';
@@ -15,11 +16,27 @@ export default class RecordDetail extends BaseRecordDetail {
     recordInfo: cc.Node = null;
     @property(cc.Prefab)
     cardItemPrefab: cc.Prefab = null;
+    @property(cc.Node)
+    detailBtn: cc.Node = null;
+    @property(cc.Node)
+    detailItem: cc.Node = null;
+    @property(cc.Node)
+    detailItemContent: cc.Node = null;
+    @property(cc.Node)
+    shouQiBtn: cc.Node = null;
+    @property(cc.Node)
+    itemContent: cc.Node = null;
 
     protected bindUI(): void {
 
     }
     protected bindEvent(): void {
+        this.detailBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            this.detailItem.active = true;
+        });
+        this.shouQiBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            this.detailItem.active = false;
+        });
     }
 
     public getConfigProxy() {
@@ -34,7 +51,7 @@ export default class RecordDetail extends BaseRecordDetail {
     }
 
     loadData(showBG: boolean, userName: string, roomNo: number, currentGameCount: number, totalGameCount: number,
-        playerData: Array<PlayerRecordData>, timer?: string) {
+        playerData: Array<PlayerRecordData>, gameSubClass: number, timer?: string) {
         this.bg.active = showBG;
         this.roomNoLabel.string = "房间号：" + roomNo;
         this.roundLabel.string = "局数：" + currentGameCount + "/" + totalGameCount;
@@ -47,6 +64,12 @@ export default class RecordDetail extends BaseRecordDetail {
         playerData.forEach(v => {
             if (v.userName === userName) {
                 this.loadRecordInfo(this.recordInfo, true, v);
+
+                if (gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI) {
+                    this.loadItemContent(v.detailRemark);
+                } else {
+                    this.detailBtn.active = false;
+                }
             } else {
                 let re = cc.instantiate(this.recordInfo);
                 re.y = -124;
@@ -89,6 +112,7 @@ export default class RecordDetail extends BaseRecordDetail {
             winlossLabel.string = playerData.winloss + "";
         }
         if (isMy) {
+            this.detailBtn.active = true;
             userInfoLabel.string = "自己";
         } else {
             userInfoLabel.string = "对家";
@@ -198,6 +222,22 @@ export default class RecordDetail extends BaseRecordDetail {
         cardItemPrefab.y = 0;
 
         return cardItemPrefab;
+    }
+
+    loadItemContent(detailRemark: string[]) {
+        this.detailItemContent.removeAllChildren();
+        for (const detailValue of detailRemark) {
+            let values = detailValue.split(",");
+
+            let content = cc.instantiate(this.itemContent);
+            content.active = true;
+            for (let index = 0; index < content.childrenCount; index++) {
+                const tmpNode = content.children[index];
+                tmpNode.getComponent(cc.Label).string = values[index];
+            }
+
+            this.detailItemContent.addChild(content);
+        }
     }
 
 }

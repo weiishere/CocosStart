@@ -51,7 +51,7 @@ export default class BaseRecordDetail extends ViewComponent {
     }
 
     loadData(showBG: boolean, userName: string, roomNo: number, currentGameCount: number, totalGameCount: number,
-        playerData: Array<PlayerRecordData>, timer?: string) {
+        playerData: Array<PlayerRecordData>, gameSubClass: number, timer?: string) {
     }
 
 }

@@ -87,9 +87,9 @@ export default class CDMJRecordAlert extends ViewComponent {
      */
     getResultDesc(list: XzddGameUIResultItem[], azimuth: number) {
         for (const value of list) {
-            if ((azimuth === 0 && value.azimuth1 > 0) || (azimuth === 1 && value.azimuth2 > 0) ||
-                (azimuth === 2 && value.azimuth3 > 0) || (azimuth === 3 && value.azimuth4 > 0)) {
-                if (value.itemType === 6 || value.itemType === 7) {
+            let azimuths = [value.azimuth1, value.azimuth2, value.azimuth3, value.azimuth4];
+            if (azimuths[azimuth] > 0) {
+                if (value.itemType === 6 || value.itemType === 7 || value.itemType === 8 || value.itemType === 9) {
                     return value.name;
                 }
             }
@@ -257,7 +257,7 @@ export default class CDMJRecordAlert extends ViewComponent {
         let recordDetailNode = this.getRecordPrefab(gameSubClass);
         let script = <BaseRecordDetail>recordDetailNode.getComponent(BaseRecordDetail);
         recordDetailNode.y = 66;
-        script.loadData(false, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount, totalLength, recorDetailData.playerData);
+        script.loadData(false, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount, totalLength, recorDetailData.playerData, recorDetailData.gameSubClass);
         this.node.addChild(recordDetailNode);
     }
 
