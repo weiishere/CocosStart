@@ -175,6 +175,11 @@ export default class CDMJRecordAlert extends ViewComponent {
         } else {
             this.quitRoom.active = true;
             this.goOnBtn.active = true;
+
+            if (gameResult.isShowQuitBtn) {
+                this.goOnBtn.active = false;
+                time = 0;
+            }
         }
 
         this.startNextRoundBtnCountdown(time, gameResult.totalGameCount < 1);
