@@ -15,6 +15,7 @@ export enum PrefabDefine {
     RecordDetailList = "prefabs/recordDetailList",
     UpdatePromptAlert = "prefabs/updatePromptAlert",
     XzddDesk = "prefabs/club/xzddDesk",
+    PopupWindow = "prefabs/popupWindow",
     DymjRecordItem = "prefabs/record/dymjRecordItem",
     XzddRecordItem = "prefabs/record/xzddRecordItem",
     TuiTongZiRecordItem = "prefabs/record/tuiTongZiRecordItem",

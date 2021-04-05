@@ -1,9 +1,110 @@
+import Facade from '../../../Framework/care/Facade';
 import { S2CClubRoomInfoBase } from '../../GameData/Club/s2c/S2CClubRoomInfoBase';
+import { CommandDefine } from '../../MahjongConst/CommandDefine';
 import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
 import BaseDesk from './BaseDesk';
-import { GameNoDefine } from '../../GameConst/GameNoDefine';
 
 const { ccclass, property } = cc._decorator;
+
+
+class MahjongVipRule {
+    /** 自摸加底 */
+    public static ZI_MO_JIA_DI = 0;
+    /** 自摸加番 */
+    public static ZI_MO_JIA_FAN = 1;
+    /** 天地胡 */
+    public static TIAN_DI_HU = 2;
+    /** 幺九将对 */
+    public static YAO_JIU_JIANG_DUI = 3;
+    /** 点杠花（点炮） */
+    public static DIAN_GANG_HUA_DIAN_PAO = 4;
+    /** 点杠花（自摸） */
+    public static DIAN_GANG_HUA_ZI_MO = 5;
+    /** 天胡 */
+    public static TIAN_HU = 6;
+    /** 地胡 */
+    public static DI_HU = 7;
+    /** 换3张 */
+    public static Huan3Zhang = 16;
+    /** 门清 */
+    public static MEN_QING = 19;
+    /** 中张 */
+    public static ZHONG_ZHANG = 20;
+    /** 海底捞 */
+    public static HAI_DI_LAO = 21;
+    /** 海底炮 */
+    public static HAI_DI_PAO = 23;
+    /** 至少2番起胡 */
+    public static MIN_TWO_FAN_HU = 25;
+
+    public static values = [
+        {
+            key: MahjongVipRule.ZI_MO_JIA_DI,
+            name: "自摸加底"
+        },
+        {
+            key: MahjongVipRule.ZI_MO_JIA_FAN,
+            name: "自摸加番"
+        },
+        {
+            key: MahjongVipRule.TIAN_DI_HU,
+            name: "天地胡"
+        },
+        {
+            key: MahjongVipRule.YAO_JIU_JIANG_DUI,
+            name: "幺九将对"
+        },
+        {
+            key: MahjongVipRule.DIAN_GANG_HUA_DIAN_PAO,
+            name: "点杠花(点炮)"
+        },
+        {
+            key: MahjongVipRule.DIAN_GANG_HUA_ZI_MO,
+            name: "点杠花(自摸)"
+        },
+        // {
+        //     key: MahjongVipRule.TIAN_HU,
+        //     name: "天胡"
+        // },
+        // {
+        //     key: MahjongVipRule.DI_HU,
+        //     name: "地胡"
+        // },
+        {
+            key: MahjongVipRule.Huan3Zhang,
+            name: "换三张"
+        },
+        {
+            key: MahjongVipRule.MEN_QING,
+            name: "门清"
+        },
+        {
+            key: MahjongVipRule.ZHONG_ZHANG,
+            name: "断幺九"
+        },
+        {
+            key: MahjongVipRule.HAI_DI_LAO,
+            name: "海底捞"
+        },
+        {
+            key: MahjongVipRule.HAI_DI_PAO,
+            name: "海底炮"
+        },
+        {
+            key: MahjongVipRule.MIN_TWO_FAN_HU,
+            name: "2番起胡"
+        },
+    ];
+
+    public static getRuleName(ruleValue: number) {
+        for (const value of this.values) {
+            if (value.key === ruleValue) {
+                return value.name;
+            }
+        }
+        return "";
+    }
+}
 
 @ccclass
 export default class XzddDesk extends BaseDesk {
@@ -26,8 +127,19 @@ export default class XzddDesk extends BaseDesk {
     head3: cc.Sprite = null;
     @property(cc.Sprite)
     head4: cc.Sprite = null;
+    @property(cc.Node)
+    detailBtn: cc.Node = null;
 
     _maxPlayerNum: number;
+    ruleStr: string;
+
+    bindEvent() {
+        super.bindEvent();
+
+        this.detailBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenPopupWindow, { title: "详情", content: this.ruleStr }, null);
+        });
+    }
 
     initData(s2CClubRoomInfoBase: S2CClubRoomInfoBase) {
 
@@ -41,6 +153,8 @@ export default class XzddDesk extends BaseDesk {
         } else if (s2CClubRoomInfoBase.roomType === 3) {
             roomType = "四人三房";
         }
+
+        this.setRuleStr(s2CClubRoomInfoBase)
 
         this._maxPlayerNum = s2CClubRoomInfoBase.maxPlayerNum;
 
@@ -61,9 +175,28 @@ export default class XzddDesk extends BaseDesk {
             this.roomTypeLabel.string += `(换三张)`
         }
 
-
         for (const userInfo of userInfos) {
             this.sitDown(userInfo.head, userInfo.nickname, userInfo.seatNo);
+        }
+    }
+
+    setRuleStr(s2CClubRoomInfoBase: S2CClubRoomInfoBase) {
+        this.ruleStr = "";
+        if (s2CClubRoomInfoBase.roomType === 0) {
+            this.ruleStr += "7张 "
+        }
+        let gameParamObj = JSON.parse(s2CClubRoomInfoBase.gameParam);
+
+        this.ruleStr += `${gameParamObj.maxFanNum}番封顶 `;
+        let rules: number[] = gameParamObj.rules;
+
+        if (rules) {
+            rules.forEach((v, i) => {
+                let ruleName = MahjongVipRule.getRuleName(v);
+                if (ruleName) {
+                    this.ruleStr += ruleName + " ";
+                }
+            })
         }
     }
 
