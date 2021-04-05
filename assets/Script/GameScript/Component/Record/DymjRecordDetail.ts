@@ -54,7 +54,11 @@ export default class RecordDetail extends BaseRecordDetail {
         playerData: Array<PlayerRecordData>, gameSubClass: number, timer?: string) {
         this.bg.active = showBG;
         this.roomNoLabel.string = "房间号：" + roomNo;
-        this.roundLabel.string = "局数：" + currentGameCount + "/" + totalGameCount;
+        if (totalGameCount > 0) {
+            this.roundLabel.string = "局数：" + currentGameCount + "/" + totalGameCount;
+        } else {
+            this.roundLabel.node.active = false;
+        }
         if (timer) {
             this.timeLabel.string = timer;
         } else {
