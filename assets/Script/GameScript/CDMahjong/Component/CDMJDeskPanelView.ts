@@ -404,7 +404,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         } else if (myGameIndex === 2) {
             this.positionNode = [this.deskAiming.top, this.deskAiming.left, this.deskAiming.bottom, this.deskAiming.right]
         } else if (myGameIndex === 3) {
-            this.positionNode = [this.deskAiming.left, this.deskAiming.top, this.deskAiming.right, this.deskAiming.bottom]
+            this.positionNode = [this.deskAiming.left, this.deskAiming.bottom, this.deskAiming.right, this.deskAiming.top]
         }
         //positionNode[gameData.positionIndex].active = true;
     }
@@ -494,6 +494,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
             //}
             cardScript.bindLaunch((node: cc.Node, position) => {
                 //console.log("出牌", node);
+                if (this.getData().gameData.switchCardCountDown !== 0) return;
                 if (this.isAllowShowCard === false) {
                     node.setPosition(cc.v3(0, 0, 0));
                     return;
@@ -583,9 +584,9 @@ export default class CDMJDeskPanelView extends ViewComponent {
             const touchItem = new cc.Node('touchItem');
             const layoutCom = touchItem.addComponent(cc.Layout);
             layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
-            this.addCardToNode(touchItem, item, "mine", "fall", { position: cc.v2(-36, 0) });//.setPosition(cc.v2(-36, 0));
-            this.addCardToNode(touchItem, item, "mine", "fall", { position: cc.v2(36, 0) });//.setPosition(cc.v2(36, 0));
-            this.addCardToNode(touchItem, item, "mine", "fall", { position: cc.v2(0, 28) });//.setPosition(cc.v2(0, 28));
+            this.addCardToNode(touchItem, item, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-36, 0));
+            this.addCardToNode(touchItem, item, "mine", "fall", { position: cc.v2(72, 0) });//.setPosition(cc.v2(36, 0));
+            this.addCardToNode(touchItem, item, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 28));
             //this.touchCard.addChild(touchItem);
             touchItems.push(touchItem);
         });

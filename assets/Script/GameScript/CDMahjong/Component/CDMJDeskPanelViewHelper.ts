@@ -87,13 +87,16 @@ export default {
             const layoutCom = touchItem.addComponent(cc.Layout);
             layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
             if (position === 'front') {
-                self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(-36, 0) });//.setPosition(cc.v2(-36, 0));
-                self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(36, 0) });//.setPosition(cc.v2(36, 0));
-                self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 28) });//.setPosition(cc.v2(0, 28));
+                self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-36, 0));
+                self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(72, 0) });//.setPosition(cc.v2(36, 0));
+                self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 28));
             } else {
-                self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 64) });//.setPosition(cc.v2(-36, 0));
-                self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 32) });//.setPosition(cc.v2(36, 0));
-                self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 57) });//.setPosition(cc.v2(0, 28));
+                // self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 64) });//.setPosition(cc.v2(-36, 0));
+                // self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 32) });//.setPosition(cc.v2(36, 0));
+                // self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 57) });//.setPosition(cc.v2(0, 28));
+                self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 32) });//.setPosition(cc.v2(-36, 0));
+                self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(36, 0));
+                self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, -32) });//.setPosition(cc.v2(0, 28));
             }
             touchItems.push(touchItem);
             //playerTouchCard.addChild(touchItem);
