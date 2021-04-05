@@ -328,15 +328,22 @@ export class GatePanelMediator extends BaseMediator {
                 break;
             case CommandDefine.UpdatePlayerGold:
                 let userGold: UserGold = notification.getBody();
-                this.userHeaderScript.updateGold(userGold.newGold);
+
+                if (this.userHeaderScript) {
+                    this.userHeaderScript.updateGold(userGold.newGold);
+                }
                 break;
             case CommandDefine.UpdateNickname:
                 let nickname = notification.getBody();
-                this.userHeaderScript.updateNickname(nickname);
+                if (this.userHeaderScript) {
+                    this.userHeaderScript.updateNickname(nickname);
+                }
                 break;
             case CommandDefine.UpdateHead:
                 let head = notification.getBody();
-                this.userHeaderScript.updateHead(head);
+                if (this.userHeaderScript) {
+                    this.userHeaderScript.updateHead(head);
+                }
                 break;
             case CommandDefine.AudioCommand:
                 this.musciHandle(notification);
