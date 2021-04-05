@@ -421,7 +421,7 @@ export class GatePanelMediator extends BaseMediator {
 
 
                 //this.sendNotification(NotificationTypeDefine.BgMusicPlay);
-                MusicManager.getInstance().playMusic(AudioSourceDefine.BackMusic2);
+                MusicManager.getInstance().playMusic(AudioSourceDefine.BackMusic4);
                 this.sendNotification(CommandDefine.OpenToast, { content: "欢迎回来" });
 
                 let gameStartResource = cc.loader.getRes(PrefabDefine.GameStartPanel, cc.Prefab);

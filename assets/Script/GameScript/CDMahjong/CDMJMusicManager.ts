@@ -178,38 +178,53 @@ const GrilSoundConfig = {
 export class CDMJMusicManager {
     static cdmjAudioPath = "audio/cdmj/";
 
+    static isPth: boolean = true;
+
     static put(mjValue: number, defaultSex = 'boy') {
         let type = "wan";
-
-        // 判断筒子还是条子
-        if (mjValue >= 0 && mjValue < 9) {
-            type = "wan";
-        } else if (mjValue >= 9 && mjValue < 18) {
-            type = "tong";
-        } else if (mjValue >= 18 && mjValue <= 27) {
-            type = "tiao";
-        }
-
         let resName = "";
-        mjValue = (mjValue % 9 + 1);
-        if (defaultSex === "boy") {
-            for (const value of BoySoundConfig.values) {
-                if (value.name === mjValue + type) {
-                    let index = Math.floor(Math.random() * value.res.length);
-                    resName = value.res[index];
-                    break;
-                }
-            }
-        } else if (defaultSex === "girl") {
-            for (const value of GrilSoundConfig.values) {
-                if (value.name === mjValue + type) {
-                    let index = Math.floor(Math.random() * value.res.length);
-                    resName = value.res[index];
-                    break;
-                }
-            }
-        }
 
+        if (!this.isPth) {
+            // 判断筒子还是条子
+            if (mjValue >= 0 && mjValue < 9) {
+                type = "wan";
+            } else if (mjValue >= 9 && mjValue < 18) {
+                type = "tong";
+            } else if (mjValue >= 18 && mjValue <= 27) {
+                type = "tiao";
+            }
+
+            mjValue = (mjValue % 9 + 1);
+            if (defaultSex === "boy") {
+                for (const value of BoySoundConfig.values) {
+                    if (value.name === mjValue + type) {
+                        let index = Math.floor(Math.random() * value.res.length);
+                        resName = value.res[index];
+                        break;
+                    }
+                }
+            } else if (defaultSex === "girl") {
+                for (const value of GrilSoundConfig.values) {
+                    if (value.name === mjValue + type) {
+                        let index = Math.floor(Math.random() * value.res.length);
+                        resName = value.res[index];
+                        break;
+                    }
+                }
+            }
+        } else {
+            // 普通话
+            // 判断筒子还是条子
+            if (mjValue >= 0 && mjValue < 9) {
+                type = "1";
+            } else if (mjValue >= 9 && mjValue < 18) {
+                type = "2";
+            } else if (mjValue >= 18 && mjValue <= 27) {
+                type = "3";
+            }
+            mjValue = (mjValue % 9 + 1);
+            resName = `pth/mjt${type}_${mjValue}`;
+        }
 
         let audioUrl = this.cdmjAudioPath + resName;
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, audioUrl, AudioNotificationTypeDefine.PlayEffect);
@@ -242,42 +257,71 @@ export class CDMJMusicManager {
     }
 
     static peng(defaultSex = 'boy') {
-        let pengValue = ["sc_" + defaultSex + "_peng", "sc_" + defaultSex + "_peng0", "sc_" + defaultSex + "_peng1", "sc_" + defaultSex + "_peng2"];
-        let randomIndex = Math.floor((Math.random() * pengValue.length));
-        let pengUrl = this.cdmjAudioPath + pengValue[randomIndex];
+        let pengUrl = "";
+        if (!this.isPth) {
+            let pengValue = ["sc_" + defaultSex + "_peng", "sc_" + defaultSex + "_peng0", "sc_" + defaultSex + "_peng1", "sc_" + defaultSex + "_peng2"];
+            let randomIndex = Math.floor((Math.random() * pengValue.length));
+            pengUrl = this.cdmjAudioPath + pengValue[randomIndex];
+        } else {
+            pengUrl = `${this.cdmjAudioPath}pth/peng`;
+        }
 
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, pengUrl, AudioNotificationTypeDefine.PlayEffect);
     }
 
     static gangGuaFeng(defaultSex = 'boy') {
-        let gangValue = ["sc_" + defaultSex + "_gang", "sc_" + defaultSex + "_gang0", "sc_" + defaultSex + "_gang3"];
-        let randomIndex = Math.floor((Math.random() * gangValue.length));
-        let gangUrl = this.cdmjAudioPath + gangValue[randomIndex];
+        let gangUrl = "";
+
+        if (!this.isPth) {
+            let gangValue = ["sc_" + defaultSex + "_gang", "sc_" + defaultSex + "_gang0", "sc_" + defaultSex + "_gang3"];
+            let randomIndex = Math.floor((Math.random() * gangValue.length));
+            gangUrl = this.cdmjAudioPath + gangValue[randomIndex];
+        } else {
+            gangUrl = `${this.cdmjAudioPath}pth/gang`;
+        }
 
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, gangUrl, AudioNotificationTypeDefine.PlayEffect);
     }
 
     static gangXiaYu(defaultSex = 'boy') {
-        let gangValue = ["sc_" + defaultSex + "_gang", "sc_" + defaultSex + "_gang1", "sc_" + defaultSex + "_gang3"];
-        let randomIndex = Math.floor((Math.random() * gangValue.length));
-        let gangUrl = this.cdmjAudioPath + gangValue[randomIndex];
+        let gangUrl = "";
+
+        if (!this.isPth) {
+            let gangValue = ["sc_" + defaultSex + "_gang", "sc_" + defaultSex + "_gang1", "sc_" + defaultSex + "_gang3"];
+            let randomIndex = Math.floor((Math.random() * gangValue.length));
+            gangUrl = this.cdmjAudioPath + gangValue[randomIndex];
+        } else {
+            gangUrl = `${this.cdmjAudioPath}pth/gang`;
+        }
 
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, gangUrl, AudioNotificationTypeDefine.PlayEffect);
     }
 
     static dianPao(defaultSex = 'boy') {
-        let huValue = ["sc_" + defaultSex + "_hu", "sc_" + defaultSex + "_hu0", "sc_" + defaultSex + "_hu1"];
-        let randomIndex = Math.floor((Math.random() * huValue.length));
-        let huUrl = this.cdmjAudioPath + huValue[randomIndex];
+        let huUrl = "";
+
+        if (!this.isPth) {
+            let huValue = ["sc_" + defaultSex + "_hu", "sc_" + defaultSex + "_hu0", "sc_" + defaultSex + "_hu1"];
+            let randomIndex = Math.floor((Math.random() * huValue.length));
+            huUrl = this.cdmjAudioPath + huValue[randomIndex];
+        } else {
+            huUrl = `${this.cdmjAudioPath}pth/hu`;
+        }
 
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, huUrl, AudioNotificationTypeDefine.PlayEffect);
         this.he();
     }
 
     static ziMo(defaultSex = 'boy') {
-        let huValue = ["sc_" + defaultSex + "_hu", "sc_" + defaultSex + "_hu1", "sc_" + defaultSex + "_hu_zimo"];
-        let randomIndex = Math.floor((Math.random() * huValue.length));
-        let huUrl = this.cdmjAudioPath + huValue[randomIndex];
+        let huUrl = "";
+
+        if (!this.isPth) {
+            let huValue = ["sc_" + defaultSex + "_hu", "sc_" + defaultSex + "_hu1", "sc_" + defaultSex + "_hu_zimo"];
+            let randomIndex = Math.floor((Math.random() * huValue.length));
+            huUrl = this.cdmjAudioPath + huValue[randomIndex];
+        } else {
+            huUrl = `${this.cdmjAudioPath}pth/zimo`;
+        }
 
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, huUrl, AudioNotificationTypeDefine.PlayEffect);
         this.he();
@@ -289,12 +333,16 @@ export class CDMJMusicManager {
     }
 
     static diHu(defaultSex = 'boy') {
-        let huValue = ["sc_" + defaultSex + "_hu"];
-        // let randomIndex = Math.floor((Math.random() * huValue.length));
-        let huUrl = this.cdmjAudioPath + huValue[0];
+        let huUrl = "";
+        if (!this.isPth) {
+            let huValue = ["sc_" + defaultSex + "_hu"];
+            // let randomIndex = Math.floor((Math.random() * huValue.length));
+            huUrl = this.cdmjAudioPath + huValue[0];
+        } else {
+            huUrl = `${this.cdmjAudioPath}pth/hu`;
+        }
 
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, huUrl, AudioNotificationTypeDefine.PlayEffect);
-
         this.he();
     }
 
