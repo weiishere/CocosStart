@@ -26,6 +26,10 @@ export default class DeskList extends ViewComponent {
     deskContainer: cc.Node = null;
     @property(cc.Node)
     chooseSpeedPanel: cc.Node = null;
+    @property(cc.Node)
+    roomTypeNode: cc.Node = null;
+    @property(cc.Node)
+    triggerBar: cc.Node = null;
 
     waitHandleDesk = [];
 
@@ -51,7 +55,25 @@ export default class DeskList extends ViewComponent {
                 //console.log(score);
                 this.dispatchCustomEvent(DeskListEventDefine.SpeedJoinDeskEvent, score);
             })
+        });
 
+        this.triggerBar.on(cc.Node.EventType.TOUCH_END, () => {
+            let deskContainer = this.node.getChildByName("DeskContainer");
+
+            let moveDistance = 238;
+            let isShow = this.roomTypeNode.x > -770;
+            let deskAction = null;
+            let action = null;
+
+            if (isShow) {
+                action = cc.moveBy(0.3, -moveDistance, 0);
+                deskAction = cc.moveBy(0.3, -moveDistance, 0);
+            } else {
+                action = cc.moveBy(0.3, moveDistance, 0);
+                deskAction = cc.moveBy(0.3, moveDistance, 0);
+            }
+            deskContainer.runAction(deskAction);
+            this.roomTypeNode.runAction(action);
         });
     }
     closeChooseSpeedPanel() {
@@ -131,7 +153,7 @@ export default class DeskList extends ViewComponent {
         if (this.getRoomInfo(roomInfo.roomNo)) {
             return;
         }
-        
+
         this.roomInfoArray.push(roomInfo);
         // 如果当前添加房间类型和选中的类型不相同，就直接添加到数组中
         if (this.roomType > -1 && this.roomType !== roomInfo.roomType) {
@@ -373,7 +395,7 @@ export default class DeskList extends ViewComponent {
     }
 
     selectRoomType(toggle: cc.Toggle) {
-        
+
         if (toggle.node.name === 'roomTypeAll') {
             this.roomType = -1;
         } else if (toggle.node.name === 'roomType21') {
