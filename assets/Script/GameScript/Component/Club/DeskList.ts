@@ -61,7 +61,7 @@ export default class DeskList extends ViewComponent {
             let deskContainer = this.node.getChildByName("DeskContainer");
 
             let moveDistance = 238;
-            let isShow = this.roomTypeNode.x > -770;
+            let isShow = this.roomTypeNode.x > -700;
             let deskAction = null;
             let action = null;
 
