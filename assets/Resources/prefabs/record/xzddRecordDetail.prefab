@@ -4771,11 +4771,11 @@
     "detailItem": {
       "__id__": 96
     },
-    "shouQiBtn": {
-      "__id__": 105
-    },
     "detailItemContent": {
       "__id__": 98
+    },
+    "shouQiBtn": {
+      "__id__": 105
     },
     "itemContent": {
       "__id__": 108

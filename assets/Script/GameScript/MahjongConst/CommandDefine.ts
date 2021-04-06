@@ -59,6 +59,7 @@ export enum CommandDefine {
     ShowDeskChatMsg = "ShowDeskChatMsg",
     closeLoginPanel = "closeLoginPanel",
     OpenNoticeAlert = "OpenNoticeAlert",
+    OpenPopupWindow = "OpenPopupWindow",
     UpdateLeessang = "UpdateLeessang",
     ChangePlayerGold = "ChangePlayerGold",
 }

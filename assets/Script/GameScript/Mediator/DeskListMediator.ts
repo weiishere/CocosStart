@@ -21,6 +21,7 @@ import { GameNoDefine } from "../GameConst/GameNoDefine";
 import { DymjProxy } from "../Proxy/DymjProxy";
 import { GateProxy } from '../Proxy/GateProxy';
 import { XzddProxy } from "../CDMahjong/XzddProxy";
+import PopupWindow from "../Component/General/PopupWindow";
 
 export class DeskListMediator extends BaseMediator {
 
@@ -93,7 +94,8 @@ export class DeskListMediator extends BaseMediator {
 
     protected inAdvanceLoadFiles(): string[] {
         return [
-            PrefabDefine.XzddDesk
+            PrefabDefine.XzddDesk,
+            PrefabDefine.PopupWindow,
         ];
     }
 
@@ -105,7 +107,16 @@ export class DeskListMediator extends BaseMediator {
             CommandDefine.UpdateHead,
             CommandDefine.WebSocketReconnect,
             CommandDefine.ForcedOffline,
+            CommandDefine.OpenPopupWindow,
         ];
+    }
+
+    openPopupWindow(content: any) {
+        let res = cc.loader.getRes(PrefabDefine.PopupWindow);
+        let popupWindow: cc.Node = cc.instantiate(res);
+
+        let script = <PopupWindow>popupWindow.getComponent("PopupWindow")
+        script.show(this.view, content.title, content.content);
     }
 
     public handleNotification(notification: INotification): void {
@@ -136,6 +147,10 @@ export class DeskListMediator extends BaseMediator {
 
         if (notification.getName() === CommandDefine.ForcedOffline) {
             this.destroyView();
+        }
+
+        if (notification.getName() === CommandDefine.OpenPopupWindow) {
+            this.openPopupWindow(notification.getBody());
         }
 
         if (notification.getName() !== CommandDefine.OpenDeskList) {
