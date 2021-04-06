@@ -296,7 +296,7 @@ export class CDMJDeskProxy extends BaseProxy {
                 //碰杠胡
                 this.doEventData(xzddS2CDoNextOperation.nextStep.oprts);
             }
-            console.log('xzddS2CDoNextOperation.nextStep.datas=====', xzddS2CDoNextOperation.nextStep.datas);
+            //console.log('xzddS2CDoNextOperation.nextStep.datas=====', xzddS2CDoNextOperation.nextStep.datas);
             this.getGameData().myCards.disableCard = xzddS2CDoNextOperation.nextStep.datas || [];
             //this.doEventData(dymjS2CDoNextOperation.nextStep.oprts);
         }
@@ -325,7 +325,6 @@ export class CDMJDeskProxy extends BaseProxy {
                 giveCard = xzddGameOperation.peng.mjValue;
                 this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();//去掉引碰者出牌
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = ['show'];
-                //console.log('disableCard=========', this.getGameData().myCards.disableCard);
             } else if (xzddGameOperation.oprtType === DymjOperationType.GANG) {
                 const barType: BarType = { barCard: xzddGameOperation.gang.mjValues[0], barType: xzddGameOperation.gang.gangType as 0 | 1 | 2 };
                 this.getGameData().myCards.barCard.push(barType);
@@ -517,6 +516,7 @@ export class CDMJDeskProxy extends BaseProxy {
         this.getGameData().switchCardCountDown = 0;
         this.getGameData().myCards.switchInCard = xzddOpHuan3ZhangMahjongsBroadCast.newMahjongs;
         this.getGameData().myCards.curCardList = xzddOpHuan3ZhangMahjongsBroadCast.spValuesSorted;
+        // console.log('newMahjongs--------------', this.getGameData().myCards.switchInCard);
         this.sendNotification(CDMJCommandDefine.SwitchCardDonePush);
     }
     /** 更新玩家金币 */

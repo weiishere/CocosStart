@@ -391,20 +391,30 @@ export default class CDMJDeskPanelView extends ViewComponent {
         });
         if (switchCardArr.length < 3) switchCardArr = this.getData().gameData.myCards.switchOutCardDefault;
         Facade.Instance.sendNotification(CDMJCommandDefine.SureSwitchCard, { switchCardArr }, '');
+        this.node.getChildByName('switchCardAlert').active = false;
     }
     /**初始化方向盘 */
     private initDeskAiming(playerId): void {
         this.positionNode = [this.deskAiming.bottom, this.deskAiming.right, this.deskAiming.top, this.deskAiming.left];
         //const { head, nickname, userName, gold } = loginData;
         const myGameIndex = this.getData().deskData.playerList.find(item => item.playerId === playerId).gameIndex;
+        // if (myGameIndex === 0) {
+        //     this.positionNode = [this.deskAiming.bottom, this.deskAiming.right, this.deskAiming.top, this.deskAiming.left]
+        // } else if (myGameIndex === 1) {
+        //     this.positionNode = [this.deskAiming.right, this.deskAiming.top, this.deskAiming.left, this.deskAiming.bottom]
+        // } else if (myGameIndex === 2) {
+        //     this.positionNode = [this.deskAiming.top, this.deskAiming.left, this.deskAiming.bottom, this.deskAiming.right]
+        // } else if (myGameIndex === 3) {
+        //     this.positionNode = [this.deskAiming.left, this.deskAiming.bottom, this.deskAiming.right, this.deskAiming.top]
+        // }
         if (myGameIndex === 0) {
             this.positionNode = [this.deskAiming.bottom, this.deskAiming.right, this.deskAiming.top, this.deskAiming.left]
         } else if (myGameIndex === 1) {
-            this.positionNode = [this.deskAiming.right, this.deskAiming.top, this.deskAiming.left, this.deskAiming.bottom]
+            this.positionNode = [this.deskAiming.left, this.deskAiming.bottom, this.deskAiming.right, this.deskAiming.top]
         } else if (myGameIndex === 2) {
             this.positionNode = [this.deskAiming.top, this.deskAiming.left, this.deskAiming.bottom, this.deskAiming.right]
         } else if (myGameIndex === 3) {
-            this.positionNode = [this.deskAiming.left, this.deskAiming.bottom, this.deskAiming.right, this.deskAiming.top]
+            this.positionNode = [this.deskAiming.right, this.deskAiming.top, this.deskAiming.left, this.deskAiming.bottom]
         }
         //positionNode[gameData.positionIndex].active = true;
     }
@@ -613,6 +623,32 @@ export default class CDMJDeskPanelView extends ViewComponent {
         });
 
     }
+    /**禁用牌 */
+    updateDisableCard() {
+        const disableCard = this.getData().gameData.myCards.disableCard;
+        const card = this.handCard.children[0];
+        if (card) {
+            const cardScript = (card.getComponent("CardItemView") as CardItemView);
+            if (disableCard.some(item => item === cardScript.cardNumber)) cardScript.setDisable();
+        }
+        const eventName = this.getData().gameData.eventData.gameEventData.myGameEvent.eventName;
+        if (eventName.indexOf('show') !== -1) {
+            if (this.getData().gameData.myCards.disableCard.length !== 0) {
+                disableCard.forEach(item => {
+                    this.mainCardList.forEach(card => {
+                        const _card = card.getComponent("CardItemView") as CardItemView;
+                        _card.isActive = true;
+                        if (_card.cardNumber === item) _card.setDisable();
+                    })
+                })
+            } else {
+                this.mainCardList.forEach(card => {
+                    const _card = card.getComponent("CardItemView") as CardItemView;
+                    _card.isActive = true;
+                })
+            }
+        }
+    }
     /**更新用户手牌/胡牌 */
     updateHandCardAndHuCard(): void {
         const self = this;
@@ -655,7 +691,8 @@ export default class CDMJDeskPanelView extends ViewComponent {
             //判断手牌是否可出
             // console.log(disableCard);
             // console.log('disableCard=========', disableCard.some(item => item === _card.cardNumber));
-            if (disableCard.some(item => item === _card.cardNumber)) _card.setDisable();
+            
+            //if (disableCard.some(item => item === _card.cardNumber)) _card.setDisable();
 
             //配置可胡牌
             const _mayHuCard = self.getData().gameData.myCards.mayHuCards.find(item => item.putCard === _card.cardNumber);
@@ -680,22 +717,23 @@ export default class CDMJDeskPanelView extends ViewComponent {
         } else if (this.getData().gameData.myCards.handCard === 0 && eventName.length === 1 && eventName.indexOf('touch') !== -1) {
             //刚刚碰了，所以没有摸牌
         }
-        if (eventName.indexOf('show') !== -1) {
-            if (this.getData().gameData.myCards.disableCard.length !== 0) {
-                disableCard.forEach(item => {
-                    self.mainCardList.forEach(card => {
-                        const _card = card.getComponent("CardItemView") as CardItemView;
-                        _card.isActive = true;
-                        if (_card.cardNumber === item) _card.setDisable();
-                    })
-                })
-            } else {
-                self.mainCardList.forEach(card => {
-                    const _card = card.getComponent("CardItemView") as CardItemView;
-                    _card.isActive = true;
-                })
-            }
-        }
+        // if (eventName.indexOf('show') !== -1) {
+        //     if (this.getData().gameData.myCards.disableCard.length !== 0) {
+        //         disableCard.forEach(item => {
+        //             self.mainCardList.forEach(card => {
+        //                 const _card = card.getComponent("CardItemView") as CardItemView;
+        //                 _card.isActive = true;
+        //                 if (_card.cardNumber === item) _card.setDisable();
+        //             })
+        //         })
+        //     } else {
+        //         self.mainCardList.forEach(card => {
+        //             const _card = card.getComponent("CardItemView") as CardItemView;
+        //             _card.isActive = true;
+        //         })
+        //     }
+        // }
+
         // else {
         //     //全部牌都不可以出
         //     self.mainCardList.map(item => (item.getComponent("CardItemView") as CardItemView).isActive = false);
@@ -1173,7 +1211,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
                 for (let i = 0, l = this.mainCardList.length; i < l; i++) {
                     const _card = this.mainCardList[i].getComponent("CardItemView") as CardItemView;
                     if (_card.cardNumber === item && !_card.isChoose) {
-                        console.log('1~~~~~~~~~', item);
                         _card.setChooseAndStand();
                         console.log(_card.isChoose);
                         break;

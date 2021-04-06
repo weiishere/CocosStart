@@ -271,6 +271,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateCountDown();
                 this.DeskPanelViewScript.updateMyCurCardList(() => {
                     this.DeskPanelViewScript.updateHandCardAndHuCard();
+                    this.DeskPanelViewScript.updateDisableCard();
                     this.DeskPanelViewScript.updateOutCard();
                     //在这里加入发牌动画
                     this.getCdmjProxy().dealOver();
@@ -285,6 +286,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateMyCurCardList();
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
+                //this.DeskPanelViewScript.updateDisableCard();
                 this.DeskPanelViewScript.updateMyBarAndTouchCard();
                 this.DeskPanelViewScript.updateOutCard();
                 this.DeskPanelViewScript.updatedDeskAiming();
@@ -294,6 +296,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 break;
             case CDMJCommandDefine.GetGameCardPush://摸牌
                 this.DeskPanelViewScript.updateHandCardAndHuCard();//更新手牌
+                this.DeskPanelViewScript.updateDisableCard();
                 this.DeskPanelViewScript.updateMyOperationBtu();//可能有杠/胡
                 this.DeskPanelViewScript.updatedDeskAiming();
                 this.DeskPanelViewScript.updateCountDown();
@@ -303,6 +306,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateMyCurCardList();
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
+                //this.DeskPanelViewScript.updateDisableCard();
                 this.DeskPanelViewScript.updateMyOperationBtu();
                 this.DeskPanelViewScript.createOutCard((playerInfo as PlayerInfo).gameIndex);
                 this.playEventSound('', showCard);
@@ -311,7 +315,7 @@ export default class CDMJDeskMediator extends BaseMediator {
             case CDMJCommandDefine.EventDonePush://玩家处理操作之后的推送
                 this.DeskPanelViewScript.updateMyCurCardList();
                 this.DeskPanelViewScript.updateOtherCurCardList();
-                //this.DeskPanelViewScript.updateHandCardAndHuCard();
+                this.DeskPanelViewScript.updateHandCardAndHuCard();
                 this.DeskPanelViewScript.updateMyBarAndTouchCard();
                 this.DeskPanelViewScript.updateMyOperationBtu();
                 this.DeskPanelViewScript.updatedDeskAiming();
@@ -326,6 +330,7 @@ export default class CDMJDeskMediator extends BaseMediator {
             case CDMJCommandDefine.ShowCardNotificationPush://通知出牌
                 this.DeskPanelViewScript.updateMyOperationBtu();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
+                this.DeskPanelViewScript.updateDisableCard();
                 this.DeskPanelViewScript.updateCountDown();//更新倒计时
                 this.DeskPanelViewScript.updatedDeskAiming();
                 break;
