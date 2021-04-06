@@ -373,6 +373,7 @@ export default class DeskList extends ViewComponent {
     }
 
     selectRoomType(toggle: cc.Toggle) {
+        
         if (toggle.node.name === 'roomTypeAll') {
             this.roomType = -1;
         } else if (toggle.node.name === 'roomType21') {
