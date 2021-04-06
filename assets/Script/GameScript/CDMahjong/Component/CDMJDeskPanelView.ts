@@ -652,6 +652,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**更新用户手牌/胡牌 */
     updateHandCardAndHuCard(): void {
         const self = this;
+        if (this.getData().gameData.myCards.setFace === -1) return;
         //if (type === 'hand') {
         //先检测本方手牌
         const disableCard = this.getData().gameData.myCards.disableCard;
@@ -691,7 +692,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
             //判断手牌是否可出
             // console.log(disableCard);
             // console.log('disableCard=========', disableCard.some(item => item === _card.cardNumber));
-            
+
             //if (disableCard.some(item => item === _card.cardNumber)) _card.setDisable();
 
             //配置可胡牌

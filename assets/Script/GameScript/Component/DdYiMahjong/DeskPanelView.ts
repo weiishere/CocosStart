@@ -62,11 +62,12 @@ export default class DeskPanelView extends ViewComponent {
     private scheduleCallBack: () => void;
     private cardChooseAlert: cc.Node;
     private isAllowShowCard = true;//是否允许出牌
-    private gameEventWarn: { touchWarn: cc.Node, huWarn: cc.Node, burWarn: cc.Node, xiayuWarn: cc.Node, zimoWarn: cc.Node, gameBeginWarn: cc.Node } = {
+    private gameEventWarn: { touchWarn: cc.Node, huWarn: cc.Node, burWarn: cc.Node, xiayuWarn: cc.Node, guafengWarn: cc.Node, zimoWarn: cc.Node, gameBeginWarn: cc.Node } = {
         touchWarn: null,
         huWarn: null,
         burWarn: null,
         xiayuWarn: null,
+        guafengWarn: null,
         zimoWarn: null,
         gameBeginWarn: null
     }
@@ -246,6 +247,7 @@ export default class DeskPanelView extends ViewComponent {
         this.gameEventWarn.huWarn = this.gameEventView.getChildByName("hu_2x");
         this.gameEventWarn.burWarn = this.gameEventView.getChildByName("gang_2x");
         this.gameEventWarn.xiayuWarn = this.gameEventView.getChildByName("xiayu_2x");
+        this.gameEventWarn.guafengWarn = this.gameEventView.getChildByName("gaufeng");
         this.gameEventWarn.zimoWarn = this.gameEventView.getChildByName("zimo_2x");
         this.gameEventWarn.gameBeginWarn = this.gameEventView.getChildByName("gameBegin");
         //#endregion
@@ -705,7 +707,7 @@ export default class DeskPanelView extends ViewComponent {
             case 'touch': effectNode = this.gameEventWarn.touchWarn; break;
             case 'hu': effectNode = this.gameEventWarn.huWarn; break;
             case 'xiayu': effectNode = this.gameEventWarn.xiayuWarn; break;
-            case 'guafeng': effectNode = this.gameEventWarn.xiayuWarn; break;//刮风，图片待换
+            case 'guafeng': effectNode = this.gameEventWarn.guafengWarn; break;//刮风，图片待换
             case 'zimo': effectNode = this.gameEventWarn.zimoWarn; break;
             case 'gameBegin': effectNode = this.gameEventWarn.gameBeginWarn; break;
             case 'gameEnd': break;
