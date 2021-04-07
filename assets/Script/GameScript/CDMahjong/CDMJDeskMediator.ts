@@ -259,7 +259,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 break;
             case CDMJCommandDefine.ExitDeskPanel:
                 this.getDeskProxy().getDeskData().gameSetting.roomId = 0;
-                this.deskPanel.destroy();
+                this.deskPanel && this.deskPanel.destroy();
                 //this.view && this.view.destroy();
                 break;
             case CDMJCommandDefine.LicensingCardPush://发牌
