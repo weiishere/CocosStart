@@ -10,6 +10,7 @@ import { ResponseCode } from '../../GameConst/ResponseCode';
 import { GateProxy } from '../../Proxy/GateProxy';
 import { DateUtil } from '../../Util/DateUtil';
 import { getUserOrderInfo } from '../bonus/MyBonus';
+import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
 
 const { ccclass, property } = cc._decorator;
 
@@ -82,23 +83,21 @@ export default class GiveAwayPanel extends ViewComponent {
             this.giveAwayUserInfo.node.color = new cc.Color(215, 215, 215);
             this.giveAwayUserHead.active = false;
             if (event.string.length === 7) {
-                getUserOrderInfo(event.string, (res) => {
-                    if (res.code === 200) {
-                        this.giveAwayUserInfo.string = res.data.nickName;
-                        cc.loader.load(res.data.headUrl, (error, item) => {
-                            if (error) {
-                                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '玩家头像获取失败' }, '');
-                            } else {
-                                this.giveAwayUserHead.active = true;
-                                this.giveAwayUserHead.getComponent(cc.Sprite).spriteFrame = new cc.SpriteFrame(item);
-                            }
-                        });
+                let param = {
+                    userName: event.string,
+                }
+                let url = this.getConfigProxy().facadeUrl + "user/getUserInfo"
+                LoginAfterHttpUtil.send(url, (res) => {
+                    if (res.hd === "success") {
+                        this.giveAwayUserInfo.string = res.bd.nickname;
+                        this.giveAwayUserHead.active = true;
+                        SpriteLoadUtil.loadSprite(this.giveAwayUserHead.getComponent(cc.Sprite), res.bd.head);
                     } else {
-
-                        this.giveAwayUserInfo.string = '无此玩家，请检查';
-                        this.giveAwayUserInfo.node.color = new cc.Color(255, 0, 0);
+                        Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '玩家头像获取失败' }, '');
                     }
-                });
+                }, (error) => {
+                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '玩家头像获取失败' }, '');
+                }, HttpUtil.METHOD_POST, param)
             } else {
                 this.giveAwayUserInfo.string = '---';
             }

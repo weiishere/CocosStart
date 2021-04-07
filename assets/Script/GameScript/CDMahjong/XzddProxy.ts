@@ -193,6 +193,8 @@ export class XzddProxy extends ModuleProxy {
             errorMsg = "房间不存在";
         } else if (errorCode === XzddErrorCode.UNDER_LIMIT) {
             errorMsg = "低于准入限制";
+        } else {
+            errorMsg = errorCode + "";
         }
 
         if (msgType === XzddProtocol.S_PLAYER_LOGIN || msgType === XzddProtocol.S_ENTER_ROOM) {
