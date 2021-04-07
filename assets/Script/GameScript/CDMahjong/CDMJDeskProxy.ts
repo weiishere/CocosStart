@@ -103,8 +103,8 @@ export class CDMJDeskProxy extends BaseProxy {
             if (this.isMy(user.name)) {
                 self.getGameData().myCards.curCardList = user.initSpValuesSorted;
                 if (user.isBank) {
-                    const lastCard = self.getGameData().myCards.curCardList.pop();
-                    self.getGameData().myCards.handCard = lastCard;
+                    // const lastCard = self.getGameData().myCards.curCardList.pop();
+                    // self.getGameData().myCards.handCard = lastCard;
                 }
             } else {
                 let partnerCard = self.getGameData().partnerCardsList.find(partner => partner.playerId === user.name);
@@ -363,6 +363,7 @@ export class CDMJDeskProxy extends BaseProxy {
                     this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();//去掉引炮者出牌
                     _deskEventName = 'hu';
                 }
+                this.getGameData().myCards.status.isHadHu = true;
             } else if (xzddGameOperation.oprtType === DymjOperationType.TING) {
                 _deskEventName = 'ting';
                 givePlayer = this.getPlayerByGameIndex(xzddGameOperation.ting.playerAzimuth);
@@ -438,6 +439,7 @@ export class CDMJDeskProxy extends BaseProxy {
                 partnerCard.partnerCards.hadHuCard = xzddGameOperation.hu.mjValue;
                 partnerCard.partnerCards.isHandCard = false;
                 partnerCard.partnerCards.handCard = 0;
+                partnerCard.partnerCards.status.isHadHu = true;
                 _deskEventName = xzddGameOperation.hu.huType === 1 ? 'zimo' : 'hu';
                 _deskEventCorrelationInfoData = xzddGameOperation.hu;
                 giveCard = xzddGameOperation.hu.mjValue;
@@ -458,6 +460,7 @@ export class CDMJDeskProxy extends BaseProxy {
         //更新中间大字数据
         this.getGameData().eventData.gameEventData.deskGameEvent.eventName = _deskEventName;
         this.getGameData().eventData.gameEventData.deskGameEvent.correlationInfoData = _deskEventCorrelationInfoData;
+        this.sendNotification(CDMJCommandDefine.RefreshPlayerPush);
         this.sendNotification(CDMJCommandDefine.EventDonePush, { givePlayer, giveCard, playerGameIndex: playerInfo.gameIndex, isMe: this.isMy(playerInfo.playerId), eventName: _deskEventName });
     }
 
@@ -539,26 +542,49 @@ export class CDMJDeskProxy extends BaseProxy {
     }
     private clearGameData() {
         //清空数据
-        const _partnerCardsList = JSON.parse(JSON.stringify(this.repository.gameData.partnerCardsList));
-        (_partnerCardsList as Array<PartnerCard>).forEach(item => {
-            item.partnerCards =
-            {
-                "curCardList": [],
-                "handCard": 0,
-                "curCardCount": 0,
-                "isHandCard": false,
-                "touchCard": [],
-                "barCard": [],
-                "hadHuCard": 0,
-                "outCardList": [],
-                "setFace": -1,
-                "status": {
-                    "isHadHu": false,
-                    "isBaoHu": false
+        let _partnerCardsList = [];
+        const { playerList } = this.repository.deskData
+        playerList.forEach(element => {
+            if (this.isMy(element.playerId)) { }
+            _partnerCardsList.push({
+                playerId: element.playerId,
+                partnerCards: {
+                    "curCardList": [],
+                    "handCard": 0,
+                    "curCardCount": 0,
+                    "isHandCard": false,
+                    "touchCard": [],
+                    "barCard": [],
+                    "hadHuCard": 0,
+                    "outCardList": [],
+                    "setFace": -1,
+                    "status": {
+                        "isHadHu": false,
+                        "isBaoHu": false
+                    }
                 }
-            }
-
+            })
         });
+        // const _partnerCardsList = JSON.parse(JSON.stringify(this.repository.gameData.partnerCardsList));
+        // (_partnerCardsList as Array<PartnerCard>).forEach(item => {
+        //     item.partnerCards =
+        //     {
+        //         "curCardList": [],
+        //         "handCard": 0,
+        //         "curCardCount": 0,
+        //         "isHandCard": false,
+        //         "touchCard": [],
+        //         "barCard": [],
+        //         "hadHuCard": 0,
+        //         "outCardList": [],
+        //         "setFace": -1,
+        //         "status": {
+        //             "isHadHu": false,
+        //             "isBaoHu": false
+        //         }
+        //     }
+
+        // });
         this.repository.gameData = JSON.parse(JSON.stringify(this.dataBackup.gameData));//Object.assign({}, this.dataBackup.gameData);
         this.repository.gameData.partnerCardsList = _partnerCardsList;
     }
@@ -567,6 +593,7 @@ export class CDMJDeskProxy extends BaseProxy {
     gameOver(dymjGameResult: XzddGameResult) {
         this.getGameData().eventData.gameEventData.deskGameEvent.eventName = 'gameEnd';
         this.clearGameData();
+
         //更新用户金币
         dymjGameResult.players.forEach(player => {
             this.repository.deskData.playerList.find(item => item.playerId === player.userName).playerGold = player.credit;

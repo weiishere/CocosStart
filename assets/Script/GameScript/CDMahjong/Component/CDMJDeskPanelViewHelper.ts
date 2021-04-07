@@ -1,8 +1,7 @@
 import CardItemView, { PositionType } from '../../Component/DdYiMahjong/CardItemView';
-import { PartnerCard } from '../CDMJDeskRepository';
+import { PartnerCard, BarType } from '../CDMJDeskRepository';
 import CDMJDeskPanelView from './CDMJDeskPanelView';
-
-export default {
+const helper = {
     /**换三张的抽出牌helper，是否可以抽出 */
     bindSwitchExtractionUpHelper: function (cardNumber) {
         const self: CDMJDeskPanelView = this;
@@ -29,7 +28,7 @@ export default {
         if (!lastFace) return true;
         if (lastFace.indexOf(cardNumber) === -1) {
             //当前选择的牌是否与之前的选择的花色不同，之前的全部落下
-            
+
             if (_count >= 3) this.mainCardList.forEach(card => (card.getComponent("CardItemView") as CardItemView).reSetChooseFalse());
         } else {
             //花色相同
@@ -40,10 +39,7 @@ export default {
     /**-----更新杠、碰牌组辅助方法 */
     updateMyBarAndTouchCardHelper: function (partner: PartnerCard, playerBarCard: cc.Node, playerTouchCard: cc.Node, position: PositionType) {
         const self: CDMJDeskPanelView = this;
-        playerBarCard.width = 0;
-        playerBarCard.height = 0;
-        const barItems = [];
-        partner.partnerCards.barCard.forEach(item => {
+        helper.isAllowUpdatehelper<BarType>(playerBarCard, partner.partnerCards.barCard, (param) => param.barCard, (item) => {
             const barItem = new cc.Node('barItem');
             const layoutCom = barItem.addComponent(cc.Layout);
             layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
@@ -74,15 +70,11 @@ export default {
                     self.addCardToNode(barItem, item.barCard, position, "fall", { position: cc.v2(0, 74), fallShowStatus: 'hide' });
                 }
             }
-            barItems.push(barItem);
-        });
-        playerBarCard.removeAllChildren();
-        barItems.forEach(n => playerBarCard.addChild(n));
+            return barItem;
+        })
 
-        playerTouchCard.width = 0;
-        playerTouchCard.height = 0;
-        const touchItems = [];
-        partner.partnerCards.touchCard.forEach(item => {
+
+        helper.isAllowUpdatehelper<number>(playerTouchCard, partner.partnerCards.touchCard, (param) => param, (item) => {
             const touchItem = new cc.Node('touchItem');
             const layoutCom = touchItem.addComponent(cc.Layout);
             layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
@@ -91,20 +83,14 @@ export default {
                 self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(72, 0) });//.setPosition(cc.v2(36, 0));
                 self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 28));
             } else {
-                // self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 64) });//.setPosition(cc.v2(-36, 0));
-                // self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 32) });//.setPosition(cc.v2(36, 0));
-                // self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 57) });//.setPosition(cc.v2(0, 28));
                 self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 32) });//.setPosition(cc.v2(-36, 0));
                 self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(36, 0));
                 self.addCardToNode(touchItem, item, position, "fall", { position: cc.v2(0, -32) });//.setPosition(cc.v2(0, 28));
             }
-            touchItems.push(touchItem);
-            //playerTouchCard.addChild(touchItem);
+            return touchItem;
         });
-        playerTouchCard.removeAllChildren();
-        touchItems.forEach(n => playerTouchCard.addChild(n));
     },
-    updateHandCardAndHuCardHelper: function (partner: PartnerCard, playerHuCard: cc.Node, tingNode: cc.Node, position: PositionType): void {
+    updateHandCardAndHuCardHelper: function (partner: PartnerCard, playerHuCard: cc.Node, tingNode: cc.Node, huNode: cc.Node, position: PositionType): void {
         const self: CDMJDeskPanelView = this;
         const _hadHuCard = self.getData().gameData.partnerCardsList.find(item => item.playerId === partner.playerId).partnerCards.hadHuCard;
         playerHuCard.removeAllChildren();
@@ -118,6 +104,8 @@ export default {
         if (status.isBaoHu) {
             tingNode.active = false;
         }
+        huNode.active = status.isHadHu;
+        
     },
     createOutCardHelper: function (playerOutCardList: cc.Node, playerIndex: number, scale: number, position: PositionType): cc.Node {
         const self: CDMJDeskPanelView = this;
@@ -135,5 +123,33 @@ export default {
             card.setPosition(cc.v2(0, 0));
             card.setScale(scale);
         });
+    },
+    isAllowUpdatehelper<T>(parentNode: cc.Node, source: Array<T>, getNumber: (param: T) => number, addItemHandler: (cardNumber: T) => cc.Node): boolean {
+        if (source.length === 0) {
+            return false;
+        } else if (source.length > 0) {
+            if (parentNode.children.length === source.length) {
+                return false;
+            } else if (parentNode.children.length > source.length) {
+                parentNode.removeAllChildren();
+                parentNode.width = 0;
+                parentNode.height = 0;
+                source.forEach(item => parentNode.addChild(addItemHandler(item)));
+            } else if (parentNode.children.length < source.length) {
+                source.forEach(so => {
+                    const isCloud = parentNode.children.some(child => {
+                        let result = false;
+                        const c = child.children[0].getComponent("CardItemView") as CardItemView;
+                        if (c.cardNumber === getNumber(so)) result = true;
+                        return result;
+                    });
+                    if (!isCloud) {
+                        parentNode.addChild(addItemHandler(so));
+                    }
+                })
+            }
+        }
     }
 }
+
+export default helper;

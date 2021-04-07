@@ -276,6 +276,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                     //在这里加入发牌动画
                     this.getCdmjProxy().dealOver();
                 });
+                this.DeskPanelViewScript.updatePlayerHeadView();
                 break;
             case CDMJCommandDefine.ReStartGamePush://下一局
                 // 开始游戏前关掉结算信息界面
@@ -287,7 +288,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
                 //this.DeskPanelViewScript.updateDisableCard();
-                this.DeskPanelViewScript.updateMyBarAndTouchCard();
+                this.DeskPanelViewScript.updateBarAndTouchCard();
                 this.DeskPanelViewScript.updateOutCard();
                 this.DeskPanelViewScript.updatedDeskAiming();
                 this.DeskPanelViewScript.updateRoomInfo();
@@ -316,7 +317,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateMyCurCardList();
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
-                this.DeskPanelViewScript.updateMyBarAndTouchCard();
+                this.DeskPanelViewScript.updateBarAndTouchCard();
                 this.DeskPanelViewScript.updateMyOperationBtu();
                 this.DeskPanelViewScript.updatedDeskAiming();
                 // const givePlayer: PlayerInfo = notification.getBody().givePlayer;
