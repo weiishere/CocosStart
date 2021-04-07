@@ -26,6 +26,7 @@ export default class DymjDesk extends BaseDesk {
         this.roomNo = s2CClubRoomInfoBase.roomNo;
         this.basicScore = s2CClubRoomInfoBase.basicScore;
         this.enterLimit = s2CClubRoomInfoBase.enterLimit;
+        this.roomType = s2CClubRoomInfoBase.roomType;
         this.anteLabel.string = `${GameNoDefine.getGameName(s2CClubRoomInfoBase.gameSubClass)}${s2CClubRoomInfoBase.basicScore}底分`;
         this.setRoundCount(s2CClubRoomInfoBase.currentGameCount, s2CClubRoomInfoBase.gameCount);
 
@@ -78,5 +79,8 @@ export default class DymjDesk extends BaseDesk {
         headSprite.node.active = false;
     }
 
+    getMaxPlayerNum() {
+        return 2;
+    }
     // update (dt) {}
 }

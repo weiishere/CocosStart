@@ -10,6 +10,7 @@ export default class BaseDesk extends ViewComponent {
     roomNo: number = 0;
     enterLimit: number = 0;
     basicScore: number = 0;
+    roomType: number = 0;
 
     protected bindUI(): void {
     }
@@ -34,6 +35,11 @@ export default class BaseDesk extends ViewComponent {
      * 获得坐下的人数
      */
     getSitDownCount(): number {
+        return 0;
+    }
+
+    /** 获得最大人数 */
+    getMaxPlayerNum(): number {
         return 0;
     }
 
