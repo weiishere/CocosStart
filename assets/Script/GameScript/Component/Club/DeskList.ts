@@ -376,7 +376,7 @@ export default class DeskList extends ViewComponent {
         let desks = [];
         for (const deskNode of this.deskContainer.children) {
             let script = <BaseDesk>deskNode.getComponent(BaseDesk);
-            if (score === script.basicScore && script.getSitDownCount() < 2) {
+            if (score === script.basicScore && script.getSitDownCount() < script.getMaxPlayerNum()) {
                 desks.push(deskNode);
             }
         }
@@ -388,7 +388,7 @@ export default class DeskList extends ViewComponent {
         desks.sort((a, b) => {
             let script1 = <BaseDesk>a.getComponent(BaseDesk);
             let script2 = <BaseDesk>b.getComponent(BaseDesk);
-            return script1.getSitDownCount() - script2.getSitDownCount();
+            return script2.getSitDownCount() - script1.getSitDownCount();
         })
 
         return desks[0].getComponent(BaseDesk).roomNo;

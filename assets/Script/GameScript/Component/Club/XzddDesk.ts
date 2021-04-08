@@ -163,6 +163,7 @@ export default class XzddDesk extends BaseDesk {
         this.roomNo = s2CClubRoomInfoBase.roomNo;
         this.basicScore = s2CClubRoomInfoBase.basicScore;
         this.enterLimit = s2CClubRoomInfoBase.enterLimit;
+        this.roomType = s2CClubRoomInfoBase.roomType;
         this.roomTypeLabel.string = roomType;
         this.anteLabel.string = `分:${s2CClubRoomInfoBase.basicScore}`;
         this.enterLimitLabel.string = `入:${s2CClubRoomInfoBase.enterLimit}`;
@@ -273,6 +274,10 @@ export default class XzddDesk extends BaseDesk {
         nicknameLabel.string = "";
         headSprite.spriteFrame = null;
         headSprite.node.active = false;
+    }
+
+    getMaxPlayerNum() {
+        return this._maxPlayerNum;
     }
 
     // update (dt) {}
