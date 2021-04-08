@@ -23,11 +23,16 @@ export default class RecordDetail extends BaseRecordDetail {
     shouQiBtn: cc.Node = null;
     @property(cc.Node)
     itemContent: cc.Node = null;
+    @property(cc.Node)
+    oppositionToggleNode: cc.Node = null;
     @property(cc.Prefab)
     cardItemPrefab: cc.Prefab = null;
 
     _playerData: Array<PlayerRecordData> = null;
     _thisUserName: string;
+
+    /** 游戏人数 */
+    _gamePlayerNum: number = 4;
 
     protected bindUI(): void {
 
@@ -55,6 +60,7 @@ export default class RecordDetail extends BaseRecordDetail {
     loadData(showBG: boolean, userName: string, roomNo: number, currentGameCount: number, totalGameCount: number,
         playerData: Array<PlayerRecordData>, gameSubClass: number, timer?: string) {
         this._playerData = playerData;
+        this._gamePlayerNum = this._playerData.length;
         this._thisUserName = userName;
         this.bg.active = showBG;
         this.roomNoLabel.string = "房间号：" + roomNo;
@@ -67,6 +73,10 @@ export default class RecordDetail extends BaseRecordDetail {
             this.timeLabel.string = timer;
         } else {
             this.timeLabel.string = "";
+        }
+
+        if (this._gamePlayerNum === 3) {
+            this.oppositionToggleNode.active = false;
         }
 
         playerData.forEach(v => {
@@ -266,7 +276,7 @@ export default class RecordDetail extends BaseRecordDetail {
 
     getNextSeatNo(seatNo: number) {
         let nextSeatNo = seatNo + 1;
-        if (nextSeatNo >= 4) {
+        if (nextSeatNo >= this._gamePlayerNum) {
             nextSeatNo = 0;
         }
         return nextSeatNo;
@@ -275,7 +285,7 @@ export default class RecordDetail extends BaseRecordDetail {
     getUpSeatNo(seatNo: number) {
         let nextSeatNo = seatNo - 1;
         if (nextSeatNo < 0) {
-            nextSeatNo = 3;
+            nextSeatNo = this._gamePlayerNum - 1;
         }
         return nextSeatNo;
     }

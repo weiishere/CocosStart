@@ -15,6 +15,8 @@ export default class XzddRecord extends BaseRecord {
     detailBtn: cc.Node = null;
     @property(cc.Node)
     playerItemNode: cc.Node = null;
+    /** 游戏人数 */
+    _gamePlayerNum: number = 4;
 
     protected bindUI(): void {
     }
@@ -69,7 +71,7 @@ export default class XzddRecord extends BaseRecord {
 
     getNextSeatNo(seatNo: number) {
         let nextSeatNo = seatNo + 1;
-        if (nextSeatNo >= 4) {
+        if (nextSeatNo >= this._gamePlayerNum) {
             nextSeatNo = 0;
         }
         return nextSeatNo;
@@ -78,7 +80,7 @@ export default class XzddRecord extends BaseRecord {
     getUpSeatNo(seatNo: number) {
         let nextSeatNo = seatNo - 1;
         if (nextSeatNo < 0) {
-            nextSeatNo = 3;
+            nextSeatNo = this._gamePlayerNum - 1;
         }
         return nextSeatNo;
     }
@@ -89,27 +91,32 @@ export default class XzddRecord extends BaseRecord {
 
         let playerInfoNode = this.node.getChildByName("playerInfo");
 
+        this._gamePlayerNum = data.roomPlayerCreditDtos.length;
+
         let myRoomPlayerCreditDto = this.getRoomPlayerCreditByUserName(data.roomPlayerCreditDtos, userName);
         let palyerItem = this.createPlayerItemPlus(myRoomPlayerCreditDto, "自己");
         playerInfoNode.addChild(palyerItem);
 
         let roomPlayerCreditDto = null;
 
-        roomPlayerCreditDto = this.getRoomPlayerCreditBySeatNo(data.roomPlayerCreditDtos, this.getOppositionSeatNo(myRoomPlayerCreditDto.seatNo));
-        if (roomPlayerCreditDto) {
-            palyerItem = this.createPlayerItemPlus(roomPlayerCreditDto, "对家");
-            playerInfoNode.addChild(palyerItem);
+        // 三人麻将是没有对家的
+        if (this._gamePlayerNum !== 3) {
+            roomPlayerCreditDto = this.getRoomPlayerCreditBySeatNo(data.roomPlayerCreditDtos, this.getOppositionSeatNo(myRoomPlayerCreditDto.seatNo));
+            if (roomPlayerCreditDto) {
+                palyerItem = this.createPlayerItemPlus(roomPlayerCreditDto, "对家");
+                playerInfoNode.addChild(palyerItem);
+            }
         }
 
         roomPlayerCreditDto = this.getRoomPlayerCreditBySeatNo(data.roomPlayerCreditDtos, this.getNextSeatNo(myRoomPlayerCreditDto.seatNo))
         if (roomPlayerCreditDto) {
-            palyerItem = this.createPlayerItemPlus(roomPlayerCreditDto, "上家");
+            palyerItem = this.createPlayerItemPlus(roomPlayerCreditDto, "下家");
             playerInfoNode.addChild(palyerItem);
         }
 
         roomPlayerCreditDto = this.getRoomPlayerCreditBySeatNo(data.roomPlayerCreditDtos, this.getUpSeatNo(myRoomPlayerCreditDto.seatNo))
         if (roomPlayerCreditDto) {
-            palyerItem = this.createPlayerItemPlus(roomPlayerCreditDto, "下家");
+            palyerItem = this.createPlayerItemPlus(roomPlayerCreditDto, "上家");
             playerInfoNode.addChild(palyerItem);
         }
 

@@ -8,7 +8,7 @@
   },
   "packageName": "org.cocos2d.helloworld",
   "startScene": "93e956a7-e180-4cd8-888d-45095d609248",
-  "title": "quewang",
+  "title": "dalianmeng",
   "webOrientation": "auto",
   "inlineSpriteFrames": true,
   "inlineSpriteFrames_native": true,
@@ -23,7 +23,7 @@
   "fb-instant-games": {},
   "android": {
     "REMOTE_SERVER_ROOT": "",
-    "packageName": "org.cc.quewang"
+    "packageName": "org.cc.dalianmeng"
   },
   "ios": {
     "REMOTE_SERVER_ROOT": "",
