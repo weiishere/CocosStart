@@ -151,12 +151,14 @@ export default class DeskList extends ViewComponent {
 
     addDesk(roomInfo: S2CClubRoomInfoBase) {
         if (this.getRoomInfo(roomInfo.roomNo)) {
+            cc.log("addDesk ==== 1");
             return;
         }
 
         this.roomInfoArray.push(roomInfo);
         // 如果当前添加房间类型和选中的类型不相同，就直接添加到数组中
         if (this.roomType > -1 && this.roomType !== roomInfo.roomType) {
+            cc.log("addDesk ==== 2");
             return;
         }
 
@@ -165,11 +167,13 @@ export default class DeskList extends ViewComponent {
 
     addDeskNode(roomInfo: S2CClubRoomInfoBase) {
         if (this.getDeskNode(roomInfo.roomNo)) {
+            cc.log("addDeskNode ==== 1");
             return;
         }
 
         let desk = this.createDeskPrefab(roomInfo.gameSubClass);
         if (!desk) {
+            cc.log("addDeskNode ==== 2");
             return;
         }
 
@@ -209,11 +213,11 @@ export default class DeskList extends ViewComponent {
     }
 
     deteleDesk(roomNo: number) {
+        this.removeRoomInfo(roomNo);
         this.waitHandleDesk.push(roomNo);
     }
 
     deleteDeskNode(roomNo: number) {
-        this.removeRoomInfo(roomNo);
         let deskScript = this.getDeskNode(roomNo);
         if (deskScript == null) {
             return;
