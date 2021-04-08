@@ -247,7 +247,7 @@ export default class CDMJRecordAlert extends ViewComponent {
             recorDetailData.playerData.push(playerRecordData);
         });
 
-        myPlayerRecordData.detailRemark = this.getDetailGameResult(myAzimuth, gameResult.list);
+        myPlayerRecordData.detailRemark = this.getDetailGameResult(myAzimuth, gameResult.list, gameResult.players.length);
 
         this.createRecordDetailItem(recorDetailData, gameResult.totalGameCount);
     }
@@ -281,7 +281,7 @@ export default class CDMJRecordAlert extends ViewComponent {
         return cc.instantiate(data);
     }
 
-    getDetailGameResult(myAzimuth: number, gameResultItems: XzddGameUIResultItem[]) {
+    getDetailGameResult(myAzimuth: number, gameResultItems: XzddGameUIResultItem[], gamePlayerNumber: number) {
         let itemResults = [];
         for (const gameResultItem of gameResultItems) {
             if (gameResultItem.type === "total") {
@@ -355,7 +355,7 @@ export default class CDMJRecordAlert extends ViewComponent {
                 if (changeCredit < 0 && winloss < 0) {
                     continue;
                 }
-                azimuthStr += this.getAzimuthName(myAzimuth, index) + " ";
+                azimuthStr += this.getAzimuthName(myAzimuth, index, gamePlayerNumber) + " ";
             }
 
             let resultItem = `${resultName},${changeCredit},${azimuthStr}`;
@@ -378,16 +378,20 @@ export default class CDMJRecordAlert extends ViewComponent {
         return 0;
     }
 
-    getAzimuthName(myAzimuth: number, azimuthType: number) {
+    getAzimuthName(myAzimuth: number, azimuthType: number, gamePlayerNumber: number) {
         let duiJiaAzimuth = this.getDuiJiaAzimuth(myAzimuth);
-        let shangJiaAzimuth = this.getShangJiaAzimuth(myAzimuth);
-        let xiaJiaAzimuth = this.getXiaJiaAzimuth(myAzimuth);
+        // 3人麻将没有对家
+        if (gamePlayerNumber === 3) {
+            duiJiaAzimuth = -1;
+        }
+        let shangJiaAzimuth = this.getShangJiaAzimuth(myAzimuth, gamePlayerNumber);
+        let xiaJiaAzimuth = this.getXiaJiaAzimuth(myAzimuth, gamePlayerNumber);
 
-        if (duiJiaAzimuth == azimuthType) {
+        if (duiJiaAzimuth === azimuthType) {
             return "对家";
-        } else if (shangJiaAzimuth == azimuthType) {
+        } else if (shangJiaAzimuth === azimuthType) {
             return "上家";
-        } else if (xiaJiaAzimuth == azimuthType) {
+        } else if (xiaJiaAzimuth === azimuthType) {
             return "下家";
         }
         return "自己";
@@ -418,24 +422,24 @@ export default class CDMJRecordAlert extends ViewComponent {
      * @param myAzimuth
      * @return
      */
-    getShangJiaAzimuth(myAzimuth: number) {
+    getShangJiaAzimuth(myAzimuth: number, gamePlayerNumber: number) {
         let index = myAzimuth - 1;
         if (index < 0) {
-            index = 3;
+            index = gamePlayerNumber - 1;
         }
 
         return index;
     }
 
     /**
-     * 获得上家方位
+     * 获得下家方位
      * 
      * @param myAzimuth
      * @return
      */
-    getXiaJiaAzimuth(myAzimuth: number) {
+    getXiaJiaAzimuth(myAzimuth: number, gamePlayerNumber: number) {
         let index = myAzimuth + 1;
-        if (index > 3) {
+        if (index >= gamePlayerNumber) {
             index = 0;
         }
 
