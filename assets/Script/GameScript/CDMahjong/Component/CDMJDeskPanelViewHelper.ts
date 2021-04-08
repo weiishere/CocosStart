@@ -105,7 +105,7 @@ const helper = {
             tingNode.active = false;
         }
         huNode.active = status.isHadHu;
-        
+
     },
     createOutCardHelper: function (playerOutCardList: cc.Node, playerIndex: number, scale: number, position: PositionType): cc.Node {
         const self: CDMJDeskPanelView = this;
@@ -126,6 +126,9 @@ const helper = {
     },
     isAllowUpdatehelper<T>(parentNode: cc.Node, source: Array<T>, getNumber: (param: T) => number, addItemHandler: (cardNumber: T) => cc.Node): boolean {
         if (source.length === 0) {
+            parentNode.removeAllChildren();
+            parentNode.width = 0;
+            parentNode.height = 0;
             return false;
         } else if (source.length > 0) {
             if (parentNode.children.length === source.length) {
@@ -137,11 +140,9 @@ const helper = {
                 source.forEach(item => parentNode.addChild(addItemHandler(item)));
             } else if (parentNode.children.length < source.length) {
                 source.forEach(so => {
-                    const isCloud = parentNode.children.some(child => {
-                        let result = false;
+                    const isCloud = parentNode.children.length === 0 ? false : parentNode.children.some(child => {
                         const c = child.children[0].getComponent("CardItemView") as CardItemView;
-                        if (c.cardNumber === getNumber(so)) result = true;
-                        return result;
+                        return c.cardNumber === getNumber(so);
                     });
                     if (!isCloud) {
                         parentNode.addChild(addItemHandler(so));

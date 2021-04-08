@@ -11541,7 +11541,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 200,
-      "height": 70
+      "height": 85
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -11552,7 +11552,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -469.47399999999993,
+        -457.4749999999999,
         308.031,
         0,
         0,
@@ -11690,8 +11690,8 @@
     "_alignFlags": 5,
     "_left": 0,
     "_right": 0,
-    "_top": 6.533000000000003,
-    "_bottom": 4.707,
+    "_top": 14.033000000000003,
+    "_bottom": 12.207,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,
     "_isAbsLeft": true,
@@ -11760,9 +11760,9 @@
     "alignMode": 1,
     "_target": null,
     "_alignFlags": 9,
-    "_left": 97.52600000000007,
+    "_left": 109.52500000000003,
     "_right": 0,
-    "_top": 31.968999999999994,
+    "_top": 24.468999999999994,
     "_bottom": 0,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,
@@ -11836,8 +11836,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -472.163,
-        251.433,
+        -460.164,
+        245.43400000000003,
         0,
         0,
         0,
@@ -12124,9 +12124,9 @@
     "alignMode": 1,
     "_target": null,
     "_alignFlags": 9,
-    "_left": 119.83699999999999,
+    "_left": 131.836,
     "_right": 0,
-    "_top": 108.56700000000001,
+    "_top": 114.56599999999997,
     "_bottom": 0,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,
@@ -17963,6 +17963,7 @@
     "maskWrap": {
       "__id__": 447
     },
+    "labelAtlas1": null,
     "_id": ""
   },
   {

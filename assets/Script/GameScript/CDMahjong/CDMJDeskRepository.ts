@@ -177,6 +177,7 @@ export type DeskData = {
         roomId: number,
         /** 座位数 */
         seatNumber: number,
+        roomName: string
     },
     /**牌局记录 */
     roundRecordArr: Array<RecordType>
@@ -289,7 +290,8 @@ export class DeskRepository {
             baseScore: 1,
             fanTime: 1,
             roomId: 0,
-            seatNumber: 4
+            seatNumber: 4,
+            roomName: '成都麻将'
         },
         /**牌局记录 */
         roundRecordArr: []

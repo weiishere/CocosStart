@@ -337,6 +337,7 @@ export class CDMJDeskProxy extends BaseProxy {
                 }
                 givePlayer = this.getPlayerByGameIndex(xzddGameOperation.gang.playerAzimuth);
                 giveCard = xzddGameOperation.gang.mjValues[0];
+                debugger
                 if (barType.barType === 1) {
                     this.getGameData().myCards.touchCard = this.getGameData().myCards.touchCard.filter(item => item !== giveCard);
                 }
@@ -785,6 +786,7 @@ export class CDMJDeskProxy extends BaseProxy {
         this.getDeskData().gameSetting.fanTime = dymjS2CEnterRoom.fanNum;
         this.getDeskData().gameSetting.roomId = dymjS2CEnterRoom.roomId;
         this.getDeskData().gameSetting.seatNumber = dymjS2CEnterRoom.seatNumber;
+        this.getDeskData().gameSetting.roomName = dymjS2CEnterRoom.roomName;
         this.updateUserInfo(dymjS2CEnterRoom.players);
     }
 

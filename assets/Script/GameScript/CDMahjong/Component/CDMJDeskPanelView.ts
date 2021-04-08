@@ -30,6 +30,8 @@ export default class CDMJDeskPanelView extends ViewComponent {
     @property(cc.Node)
     maskWrap: cc.Node = null;
 
+    @property(cc.LabelAtlas)
+    labelAtlas1: cc.LabelAtlas = null;
 
     private mainCardListPanel: cc.Node;
     private touchCard: cc.Node;
@@ -574,21 +576,21 @@ export default class CDMJDeskPanelView extends ViewComponent {
         //先更新杠/碰
         // const barItems = [];
         // this.getData().gameData.myCards.barCard.map(item => {
-            // const barItem = new cc.Node('barItem');
-            // const layoutCom = barItem.addComponent(cc.Layout);
-            // layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
-            // if (item.barType === 0 || item.barType === 1) {
-            //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 0));
-            //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-72, 0));
-            //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-144, 0) });//.setPosition(cc.v2(-144, 0));
-            //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 28) });//.setPosition(cc.v2(-72, 28));
-            // } else if (item.barType === 2) {
-            //     //----------------------------------------暗杠,最上面一张需要盖住
-            //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 0));
-            //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-72, 0));
-            //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-144, 0) });//.setPosition(cc.v2(-144, 0));
-            //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 29), fallShowStatus: 'hide' });//.setPosition(cc.v2(-72, 28));
-            // }
+        // const barItem = new cc.Node('barItem');
+        // const layoutCom = barItem.addComponent(cc.Layout);
+        // layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
+        // if (item.barType === 0 || item.barType === 1) {
+        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 0));
+        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-72, 0));
+        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-144, 0) });//.setPosition(cc.v2(-144, 0));
+        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 28) });//.setPosition(cc.v2(-72, 28));
+        // } else if (item.barType === 2) {
+        //     //----------------------------------------暗杠,最上面一张需要盖住
+        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 0));
+        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-72, 0));
+        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-144, 0) });//.setPosition(cc.v2(-144, 0));
+        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 29), fallShowStatus: 'hide' });//.setPosition(cc.v2(-72, 28));
+        // }
         //     //this.barCard.addChild(barItem);
         //     barItems.push(barItem);
         // });
@@ -1162,11 +1164,13 @@ export default class CDMJDeskPanelView extends ViewComponent {
     updateRoomInfo(): void {
         this.node.getChildByName("remainWrap").active = true;//显示剩余牌数
         const deskInfoStr = this.node.getChildByName('deskInfo').getChildByName('deskInfoStr').getComponent(cc.Label);
-        const { totalRound, gameRoundNum, baseScore, fanTime } = this.getData().deskData.gameSetting;
+        const { totalRound, gameRoundNum, baseScore, fanTime, roomName } = this.getData().deskData.gameSetting;
 
-        let gameRoundStr = "";
+        let gameRoundStr = roomName;
         if (totalRound > 0) {
-            gameRoundStr = `第${gameRoundNum + 1}/${totalRound}局\n`;
+            gameRoundStr += `\n第${gameRoundNum + 1}/${totalRound}局\n`;
+        } else {
+            gameRoundStr += `(不限局数)\n`
         }
         deskInfoStr.string = `${gameRoundStr}底分:${baseScore} / 翻数:${fanTime}`;
     }
