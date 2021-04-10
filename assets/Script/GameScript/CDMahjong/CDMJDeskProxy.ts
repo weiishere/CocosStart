@@ -217,6 +217,7 @@ export class CDMJDeskProxy extends BaseProxy {
             // }
         } else {
             //console.log('dymjS2CPlayerGet.getMjValue', dymjS2CPlayerGet.getMjValue);
+            this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
             let { partnerCards } = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
             partnerCards.isHandCard = true;
             partnerCards.handCard = xzddS2CPlayerGet.getMjValue;
@@ -337,7 +338,7 @@ export class CDMJDeskProxy extends BaseProxy {
                 }
                 givePlayer = this.getPlayerByGameIndex(xzddGameOperation.gang.playerAzimuth);
                 giveCard = xzddGameOperation.gang.mjValues[0];
-                debugger
+                // debugger
                 if (barType.barType === 1) {
                     this.getGameData().myCards.touchCard = this.getGameData().myCards.touchCard.filter(item => item !== giveCard);
                 }
@@ -543,28 +544,30 @@ export class CDMJDeskProxy extends BaseProxy {
     }
     private clearGameData() {
         //清空数据
+        // debugger
         let _partnerCardsList = [];
         const { playerList } = this.repository.deskData
         playerList.forEach(element => {
-            if (this.isMy(element.playerId)) { }
-            _partnerCardsList.push({
-                playerId: element.playerId,
-                partnerCards: {
-                    "curCardList": [],
-                    "handCard": 0,
-                    "curCardCount": 0,
-                    "isHandCard": false,
-                    "touchCard": [],
-                    "barCard": [],
-                    "hadHuCard": 0,
-                    "outCardList": [],
-                    "setFace": -1,
-                    "status": {
-                        "isHadHu": false,
-                        "isBaoHu": false
+            if (!this.isMy(element.playerId)) { 
+                _partnerCardsList.push({
+                    playerId: element.playerId,
+                    partnerCards: {
+                        "curCardList": [],
+                        "handCard": 0,
+                        "curCardCount": 0,
+                        "isHandCard": false,
+                        "touchCard": [],
+                        "barCard": [],
+                        "hadHuCard": 0,
+                        "outCardList": [],
+                        "setFace": -1,
+                        "status": {
+                            "isHadHu": false,
+                            "isBaoHu": false
+                        }
                     }
-                }
-            })
+                })
+            }
         });
         // const _partnerCardsList = JSON.parse(JSON.stringify(this.repository.gameData.partnerCardsList));
         // (_partnerCardsList as Array<PartnerCard>).forEach(item => {
