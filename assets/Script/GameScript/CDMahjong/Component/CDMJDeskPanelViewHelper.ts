@@ -124,7 +124,7 @@ const helper = {
             card.setScale(scale);
         });
     },
-    isAllowUpdatehelper<T>(parentNode: cc.Node, source: Array<T>, getNumber: (param: T) => number, addItemHandler: (cardNumber: T) => cc.Node): boolean {
+    isAllowUpdatehelper<T>(parentNode: cc.Node, source: Array<T>, getNumber: (param: T) => number, addItemHandler: (cardNumber: T) => cc.Node, addHandler?: () => void): boolean {
         if (source.length === 0) {
             parentNode.removeAllChildren();
             parentNode.width = 0;
@@ -148,6 +148,7 @@ const helper = {
                         parentNode.addChild(addItemHandler(so));
                     }
                 })
+                addHandler && addHandler();
             }
         }
     }

@@ -317,7 +317,7 @@ export class CDMJDeskProxy extends BaseProxy {
             //let correlationInfoData = this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;//清空可能的杠选牌
             this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = {};//清空可能的杠选牌
             let correlationInfoData = {};
-
+            
             if (xzddGameOperation.oprtType === XzddOperationType.PENG) {
                 this.getGameData().myCards.touchCard.push(xzddGameOperation.peng.mjValue);
                 _deskEventName = 'touch';
@@ -338,7 +338,6 @@ export class CDMJDeskProxy extends BaseProxy {
                 }
                 givePlayer = this.getPlayerByGameIndex(xzddGameOperation.gang.playerAzimuth);
                 giveCard = xzddGameOperation.gang.mjValues[0];
-                // debugger
                 if (barType.barType === 1) {
                     this.getGameData().myCards.touchCard = this.getGameData().myCards.touchCard.filter(item => item !== giveCard);
                 }
@@ -397,13 +396,14 @@ export class CDMJDeskProxy extends BaseProxy {
                     this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();
                 }
             } else if (xzddGameOperation.oprtType === XzddOperationType.GANG) {
-                _deskEventName = 'bar';
                 _deskEventCorrelationInfoData = xzddGameOperation.gang;
                 giveCard = xzddGameOperation.gang.mjValues[0];
                 const burObj: BarType = { barCard: xzddGameOperation.gang.mjValues[0], barType: xzddGameOperation.gang.gangType as 0 | 1 | 2 };
                 givePlayer = this.getPlayerByGameIndex(xzddGameOperation.gang.playerAzimuth);//引杠者
+                _deskEventName = 'bar';
                 if (xzddGameOperation.gang.gangType === 0) {
                     //点杠
+                    _deskEventName = 'guafeng'
                     partnerCard.partnerCards.curCardCount -= 3;
                     let count = 0;
                     partnerCard.partnerCards.curCardList = partnerCard.partnerCards.curCardList.filter((item, index) => {
@@ -416,6 +416,7 @@ export class CDMJDeskProxy extends BaseProxy {
                     }
                 } else if (xzddGameOperation.gang.gangType === 1) {
                     //抢杠
+                    _deskEventName = 'bar';
                     partnerCard.partnerCards.isHandCard = false;
                     partnerCard.partnerCards.handCard = 0;
                     if (this.isMy(givePlayer.playerId)) {
@@ -428,6 +429,7 @@ export class CDMJDeskProxy extends BaseProxy {
 
                 } else if (xzddGameOperation.gang.gangType === 2) {
                     //暗杠
+                    _deskEventName = 'xiayu'
                     partnerCard.partnerCards.curCardCount -= 4;
                     let count = 0;
                     partnerCard.partnerCards.curCardList = partnerCard.partnerCards.curCardList.filter((item, index) => {
@@ -544,11 +546,10 @@ export class CDMJDeskProxy extends BaseProxy {
     }
     private clearGameData() {
         //清空数据
-        // debugger
         let _partnerCardsList = [];
         const { playerList } = this.repository.deskData
         playerList.forEach(element => {
-            if (!this.isMy(element.playerId)) { 
+            if (!this.isMy(element.playerId)) {
                 _partnerCardsList.push({
                     playerId: element.playerId,
                     partnerCards: {

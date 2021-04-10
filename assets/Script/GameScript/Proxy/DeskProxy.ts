@@ -201,6 +201,7 @@ export class DeskProxy extends BaseProxy {
             }
         } else {
             //console.log('dymjS2CPlayerGet.getMjValue', dymjS2CPlayerGet.getMjValue);
+            this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
             let { partnerCards } = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
             partnerCards.isHandCard = true;
             partnerCards.handCard = dymjS2CPlayerGet.getMjValue;

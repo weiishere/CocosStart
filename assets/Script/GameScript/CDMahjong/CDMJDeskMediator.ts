@@ -96,7 +96,8 @@ export default class CDMJDeskMediator extends BaseMediator {
             CDMJCommandDefine.SwitchCardDonePush,
             CDMJCommandDefine.SureSwitchCardPush,
             CDMJCommandDefine.QuitGame,
-            CDMJCommandDefine.SureSwitchCard
+            CDMJCommandDefine.SureSwitchCard,
+            CDMJCommandDefine.ClearDeskGameView
         ];
     }
 
@@ -417,6 +418,8 @@ export default class CDMJDeskMediator extends BaseMediator {
             case CDMJCommandDefine.QuitGame://换三张牌选定
                 this.quitGame();
                 break;
+            case CDMJCommandDefine.ClearDeskGameView:
+                this.DeskPanelViewScript.clearDeskGameView();
         }
     }
 }
