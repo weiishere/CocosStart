@@ -38,6 +38,10 @@ export default class BaseDesk extends ViewComponent {
         return 0;
     }
 
+    isFull(): boolean {
+        return false;
+    }
+
     /** 获得最大人数 */
     getMaxPlayerNum(): number {
         return 0;

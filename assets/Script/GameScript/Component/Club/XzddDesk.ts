@@ -239,6 +239,10 @@ export default class XzddDesk extends BaseDesk {
         return count;
     }
 
+    isFull() {
+        return this.getSitDownCount() == this._maxPlayerNum;
+    }
+
     sitDown(head: string, nickname: string, seatNo: number) {
         let headSprite: cc.Sprite = null;
         if (seatNo === 1) {
