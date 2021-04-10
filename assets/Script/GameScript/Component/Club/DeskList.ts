@@ -437,7 +437,7 @@ export default class DeskList extends ViewComponent {
         } else if (toggle.node.name === 'roomType43') {
             this.roomType = 3;
         } else {
-            CommonUtil.toast("游戏开发中，")
+            CommonUtil.toast("敬请期待.....")
             return;
         }
 
