@@ -174,7 +174,7 @@ export default class DeskList extends ViewComponent {
 
         let desk = this.createDeskPrefab(roomInfo.gameSubClass);
         if (!desk) {
-            cc.log("addDeskNode ==== 2");
+            cc.log("addDeskNode ==== " + roomInfo.gameSubClass);
             return;
         }
 
