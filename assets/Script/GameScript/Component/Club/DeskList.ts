@@ -11,6 +11,7 @@ import { PrefabDefine } from '../../MahjongConst/PrefabDefine';
 import BaseDesk from './BaseDesk';
 import { GameNoDefine } from '../../GameConst/GameNoDefine';
 import { S2CClubRoomPlayerInfo } from '../../GameData/Club/s2c/S2CClubRoomPlayerInfo';
+import { CommonUtil } from '../../Util/CommonUtil';
 
 const { ccclass, property } = cc._decorator;
 
@@ -173,7 +174,7 @@ export default class DeskList extends ViewComponent {
 
         let desk = this.createDeskPrefab(roomInfo.gameSubClass);
         if (!desk) {
-            cc.log("addDeskNode ==== 2");
+            cc.log("addDeskNode ==== " + roomInfo.gameSubClass);
             return;
         }
 
@@ -230,10 +231,23 @@ export default class DeskList extends ViewComponent {
             let script1 = <BaseDesk>d1.getComponent(BaseDesk);
             let script2 = <BaseDesk>d2.getComponent(BaseDesk);
 
+            let count1 = script1.getSitDownCount();
+            if (script1.isFull()) { //人满了设置为0，表示人满了的桌子靠后
+                count1 = 0;
+            }
+            let count2 = script2.getSitDownCount();
+            if (script2.isFull()) {
+                count2 = 0;
+            }
+
             // 根据座位人数排序
-            let res = script2.getSitDownCount() - script1.getSitDownCount();
+            let res = count2 - count1;
             if (res === 0) {
-                res = script1.basicScore - script2.basicScore;
+                // 这里再次计算，目的是让人满的桌子在空桌子的前面
+                res = script2.getSitDownCount() - script1.getSitDownCount();
+                if (res === 0) {
+                    res = script1.basicScore - script2.basicScore;
+                }
             }
             return res;
         })
@@ -244,10 +258,22 @@ export default class DeskList extends ViewComponent {
             let script1 = <BaseDesk>d1.getComponent(BaseDesk);
             let script2 = <BaseDesk>d2.getComponent(BaseDesk);
 
+            let count1 = script1.getSitDownCount();
+            if (script1.isFull()) {
+                count1 = 0;
+            }
+            let count2 = script2.getSitDownCount();
+            if (script2.isFull()) {
+                count2 = 0;
+            }
+
             // 根据座位人数排序
-            let res = script2.getSitDownCount() - script1.getSitDownCount();
+            let res = count2 - count1;
             if (res === 0) {
-                res = script1.basicScore - script2.basicScore;
+                res = script2.getSitDownCount() - script1.getSitDownCount();
+                if (res === 0) {
+                    res = script1.basicScore - script2.basicScore;
+                }
             }
             return res;
         })
@@ -400,7 +426,7 @@ export default class DeskList extends ViewComponent {
 
     selectRoomType(toggle: cc.Toggle) {
 
-        if (toggle.node.name === 'roomTypeAll') {
+        if (toggle.node.name === 'allGame') {
             this.roomType = -1;
         } else if (toggle.node.name === 'roomType21') {
             this.roomType = 0;
@@ -410,6 +436,9 @@ export default class DeskList extends ViewComponent {
             this.roomType = 2;
         } else if (toggle.node.name === 'roomType43') {
             this.roomType = 3;
+        } else {
+            CommonUtil.toast("敬请期待.....")
+            return;
         }
 
         this.loadDeskNode();

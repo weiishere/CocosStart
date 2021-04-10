@@ -33,6 +33,7 @@ import { XzddShowHuan3ZhangMahjongs } from '../GameData/Xzdd/s2c/XzddShowHuan3Zh
 import { XzddHuan3ZhangMahjongs } from '../GameData/Xzdd/c2s/XzddHuan3ZhangMahjongs';
 import { XzddOpHuan3ZhangMahjongsRsp } from '../GameData/Xzdd/s2c/XzddOpHuan3ZhangMahjongsRsp';
 import { XzddOpHuan3ZhangMahjongsBroadCast } from '../GameData/Xzdd/s2c/XzddOpHuan3ZhangMahjongsBroadCast';
+import { CommandDefine } from '../MahjongConst/CommandDefine';
 
 /**
  * 血战到底消息数据代理类
@@ -193,6 +194,8 @@ export class XzddProxy extends ModuleProxy {
             errorMsg = "房间不存在";
         } else if (errorCode === XzddErrorCode.UNDER_LIMIT) {
             errorMsg = "低于准入限制";
+        } else if (errorCode === XzddErrorCode.ROOM_FULL) {
+            errorMsg = "来晚了，人数满了，换一张桌子吧！";
         } else {
             errorMsg = errorCode + "";
         }
@@ -202,6 +205,7 @@ export class XzddProxy extends ModuleProxy {
             this.joinRoomNo = null;
         }
 
+        this.sendNotification(CommandDefine.CloseLoadingPanel);
         this.getGateProxy().toast(errorMsg);
         cc.log("Xzdd错误码: ", errorMsg);
         return true;

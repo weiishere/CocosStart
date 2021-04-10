@@ -185,7 +185,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                         } else if (node.name === 'helpIcon') {
                             this.DeskPanelViewScript.openHelperAlert();
                         } else if (node.name === 'setIcon') {
-                            this.sendNotification(CDMJCommandDefine.OpenSetting);
+                            this.sendNotification(CommandDefine.OpenSetting);
                         } else if (node.name === 'chatIcon') {
                             this.sendNotification(CDMJCommandDefine.OpenChatBox);
                         }
