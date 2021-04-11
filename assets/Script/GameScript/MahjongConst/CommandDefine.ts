@@ -60,6 +60,7 @@ export enum CommandDefine {
     closeLoginPanel = "closeLoginPanel",
     OpenNoticeAlert = "OpenNoticeAlert",
     OpenPopupWindow = "OpenPopupWindow",
+    OpenXzddRuleDetail = "OpenXzddRuleDetail",
     UpdateLeessang = "UpdateLeessang",
     ChangePlayerGold = "ChangePlayerGold",
 }

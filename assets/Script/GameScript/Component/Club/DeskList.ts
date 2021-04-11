@@ -184,7 +184,7 @@ export default class DeskList extends ViewComponent {
         script.initData(roomInfo);
     }
 
-    getRoomInfo(roomNo: number) {
+    getRoomInfo(roomNo: number): S2CClubRoomInfoBase {
         for (const roomInfo of this.roomInfoArray) {
             if (roomInfo.roomNo === roomNo) {
                 return roomInfo;
