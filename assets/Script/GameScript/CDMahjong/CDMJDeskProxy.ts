@@ -292,7 +292,7 @@ export class CDMJDeskProxy extends BaseProxy {
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = ["show"];
                 this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = {};
                 //不能出的牌(用户报胡之后/定缺后不能出的牌)
-                this.getGameData().myCards.disableCard = xzddS2CDoNextOperation.nextStep.datas || [];
+                //this.getGameData().myCards.disableCard = xzddS2CDoNextOperation.nextStep.datas || [];
             } else if (xzddS2CDoNextOperation.nextStep.type === 2) {
                 //碰杠胡
                 this.doEventData(xzddS2CDoNextOperation.nextStep.oprts);

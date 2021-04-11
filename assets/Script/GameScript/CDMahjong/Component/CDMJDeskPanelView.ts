@@ -586,27 +586,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**更新杠碰牌 */
     updateBarAndTouchCard(): void {
         //先更新杠/碰
-        // const barItems = [];
-        // this.getData().gameData.myCards.barCard.map(item => {
-        // const barItem = new cc.Node('barItem');
-        // const layoutCom = barItem.addComponent(cc.Layout);
-        // layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
-        // if (item.barType === 0 || item.barType === 1) {
-        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 0));
-        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-72, 0));
-        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-144, 0) });//.setPosition(cc.v2(-144, 0));
-        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 28) });//.setPosition(cc.v2(-72, 28));
-        // } else if (item.barType === 2) {
-        //     //----------------------------------------暗杠,最上面一张需要盖住
-        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 0));
-        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-72, 0));
-        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-144, 0) });//.setPosition(cc.v2(-144, 0));
-        //     this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 29), fallShowStatus: 'hide' });//.setPosition(cc.v2(-72, 28));
-        // }
-        //     //this.barCard.addChild(barItem);
-        //     barItems.push(barItem);
-        // });
-        //----杠牌
         myhelper.isAllowUpdatehelper<BarType>(this.barCard, this.getData().gameData.myCards.barCard, (param: BarType) => param.barCard, (item) => {
             const barItem = new cc.Node('barItem');
             const layoutCom = barItem.addComponent(cc.Layout);
@@ -638,25 +617,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
         }, () => {
             this.UpdateMayHuCard();
         })
-
-        // this.barCard.removeAllChildren();
-        // this.barCard.width = 0;
-        // barItems.forEach(n => this.barCard.addChild(n));
-        // const touchItems = [];
-        // this.getData().gameData.myCards.touchCard.map(item => {
-        //     const touchItem = new cc.Node('touchItem');
-        //     const layoutCom = touchItem.addComponent(cc.Layout);
-        //     layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
-        //     this.addCardToNode(touchItem, item, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-36, 0));
-        //     this.addCardToNode(touchItem, item, "mine", "fall", { position: cc.v2(72, 0) });//.setPosition(cc.v2(36, 0));
-        //     this.addCardToNode(touchItem, item, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 28));
-        //     //this.touchCard.addChild(touchItem);
-        //     touchItems.push(touchItem);
-        // });
-        // this.touchCard.removeAllChildren();
-        // this.touchCard.width = 0;
-        // touchItems.forEach(n => this.touchCard.addChild(n));
-
         //更新其他玩家杠/碰
         this.getData().gameData.partnerCardsList.forEach(partner => {
             const _gameIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;
@@ -722,7 +682,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
         //if (this.getData().gameData.myCards.setFace === -1) return;
         //if (type === 'hand') {
         //先检测本方手牌
-        const disableCard = this.getData().gameData.myCards.disableCard;
         this.handCard.removeAllChildren();
         this.handCard.width = 0;
         //this.handCard.height = 0;
@@ -1171,7 +1130,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
             })).easing(cc.easeOut(3.0));
             _card.runAction(action);
         } else {
-            if (!gameIndex) return;
+            //if (!gameIndex) return;
             let playerShowCardWrap: cc.Node;
             let moveBy = { x: 0, y: -70 };
             if (this.positionNode[gameIndex].name === 'p-top') {
