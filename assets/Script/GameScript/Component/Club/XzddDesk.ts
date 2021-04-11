@@ -3,6 +3,7 @@ import { S2CClubRoomInfoBase } from '../../GameData/Club/s2c/S2CClubRoomInfoBase
 import { CommandDefine } from '../../MahjongConst/CommandDefine';
 import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
 import BaseDesk from './BaseDesk';
+import DeskList from './DeskList';
 
 const { ccclass, property } = cc._decorator;
 
@@ -137,7 +138,7 @@ export default class XzddDesk extends BaseDesk {
         super.bindEvent();
 
         this.detailBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            Facade.Instance.sendNotification(CommandDefine.OpenPopupWindow, { title: "详情", content: this.ruleStr }, null);
+            Facade.Instance.sendNotification(CommandDefine.OpenXzddRuleDetail, { content: this.ruleStr, roomNo: this.roomNo }, null);
         });
     }
 

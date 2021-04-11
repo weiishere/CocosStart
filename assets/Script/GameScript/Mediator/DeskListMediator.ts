@@ -22,6 +22,7 @@ import { DymjProxy } from "../Proxy/DymjProxy";
 import { GateProxy } from '../Proxy/GateProxy';
 import { XzddProxy } from "../CDMahjong/XzddProxy";
 import PopupWindow from "../Component/General/PopupWindow";
+import XzddRuleDetail from "../Component/Club/XzddRuleDetail";
 
 export class DeskListMediator extends BaseMediator {
 
@@ -96,6 +97,7 @@ export class DeskListMediator extends BaseMediator {
         return [
             PrefabDefine.XzddDesk,
             PrefabDefine.PopupWindow,
+            PrefabDefine.XzddRuleDetail,
         ];
     }
 
@@ -108,6 +110,7 @@ export class DeskListMediator extends BaseMediator {
             CommandDefine.WebSocketReconnect,
             CommandDefine.ForcedOffline,
             CommandDefine.OpenPopupWindow,
+            CommandDefine.OpenXzddRuleDetail,
         ];
     }
 
@@ -117,6 +120,17 @@ export class DeskListMediator extends BaseMediator {
 
         let script = <PopupWindow>popupWindow.getComponent("PopupWindow")
         script.show(this.view, content.title, content.content);
+    }
+
+    openRuleDetailWindow(data: any) {
+        let res = cc.loader.getRes(PrefabDefine.XzddRuleDetail);
+        let ruleDetail: cc.Node = cc.instantiate(res);
+        this.view.addChild(ruleDetail);
+
+        let roomInfo = this.getViewScript().getRoomInfo(data.roomNo);
+
+        let script = <XzddRuleDetail>ruleDetail.getComponent("XzddRuleDetail");
+        script.loadData(data.content, roomInfo.userInfos);
     }
 
     public handleNotification(notification: INotification): void {
@@ -151,6 +165,9 @@ export class DeskListMediator extends BaseMediator {
 
         if (notification.getName() === CommandDefine.OpenPopupWindow) {
             this.openPopupWindow(notification.getBody());
+        }
+        if (notification.getName() === CommandDefine.OpenXzddRuleDetail) {
+            this.openRuleDetailWindow(notification.getBody());
         }
 
         if (notification.getName() !== CommandDefine.OpenDeskList) {

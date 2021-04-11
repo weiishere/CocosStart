@@ -16,11 +16,13 @@ export enum PrefabDefine {
     UpdatePromptAlert = "prefabs/updatePromptAlert",
     XzddDesk = "prefabs/club/xzddDesk",
     PopupWindow = "prefabs/popupWindow",
+    XzddRuleDetail = "prefabs/club/xzddRuleDetail",
     DymjRecordItem = "prefabs/record/dymjRecordItem",
     XzddRecordItem = "prefabs/record/xzddRecordItem",
     TuiTongZiRecordItem = "prefabs/record/tuiTongZiRecordItem",
     DymjRecordDetail = "prefabs/record/dymjRecordDetail",
     XdzzRecordDetail = "prefabs/record/xzddRecordDetail",
+    XdzzRecordDetailOver = "prefabs/record/xzddRecordDetailOver",
     /** 个人中心 */
     MyCenter = "prefabs/myCenter",
     ShareAlert = "prefabs/shareAlert",
