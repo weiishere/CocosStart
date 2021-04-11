@@ -21,6 +21,7 @@ export enum PrefabDefine {
     TuiTongZiRecordItem = "prefabs/record/tuiTongZiRecordItem",
     DymjRecordDetail = "prefabs/record/dymjRecordDetail",
     XdzzRecordDetail = "prefabs/record/xzddRecordDetail",
+    XdzzRecordDetailOver = "prefabs/record/xzddRecordDetailOver",
     /** 个人中心 */
     MyCenter = "prefabs/myCenter",
     ShareAlert = "prefabs/shareAlert",
