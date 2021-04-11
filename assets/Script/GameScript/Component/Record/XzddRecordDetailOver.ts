@@ -66,7 +66,6 @@ export default class OpenRecordAlter extends BaseRecordDetail {
         this._playerData = playerData;
         this._gamePlayerNum = this._playerData.length;
         this._thisUserName = userName;
-        this.bg.active = showBG;
         this.roomNoLabel.string = "房间号：" + roomNo;
         if (totalGameCount > 0) {
             this.roundLabel.string = "局数：" + currentGameCount + "/" + totalGameCount;
@@ -249,10 +248,6 @@ export default class OpenRecordAlter extends BaseRecordDetail {
     }
 
     buildCardItemPrefab(mjValue) {
-        // 从游戏记录中获取的牌值需要加+1，由于结算的时候保存到数据库的牌值是没有加+1的
-        if (this.bg.active) {
-            mjValue++;
-        }
         let cardItemPrefab = cc.instantiate(this.cardItemPrefab)
         let script = <CardItemView>cardItemPrefab.getComponent("CardItemView");
         script.show("mine", "fall", mjValue);
