@@ -50,13 +50,18 @@ export default class Setting extends ViewComponent {
         this.changeUser.active = isShowChangeUserBtn;
         this.versionLabel.string = "V." + version;
         // this.versionLabel.node.active = isShowChangeUserBtn;
+
+        this.musicToggle.node.getChildByName("Background").active = !this.musicToggle.isChecked;
+        this.effectToggle.node.getChildByName("Background").active = !this.effectToggle.isChecked;
     }
 
     musicOnOff() {
+        this.musicToggle.node.getChildByName("Background").active = !this.musicToggle.isChecked;
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, !this.musicToggle.isChecked, AudioNotificationTypeDefine.PauseAudio);
     }
 
     effectOnOff() {
+        this.effectToggle.node.getChildByName("Background").active = !this.effectToggle.isChecked;
         Facade.Instance.sendNotification(CommandDefine.AudioCommand, !this.effectToggle.isChecked, AudioNotificationTypeDefine.PauseEffect);
     }
     // update (dt) {}

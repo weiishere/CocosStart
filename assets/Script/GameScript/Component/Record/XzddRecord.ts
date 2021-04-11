@@ -107,17 +107,18 @@ export default class XzddRecord extends BaseRecord {
                 playerInfoNode.addChild(palyerItem);
             }
         }
+        if (this._gamePlayerNum >= 3) {
+            roomPlayerCreditDto = this.getRoomPlayerCreditBySeatNo(data.roomPlayerCreditDtos, this.getNextSeatNo(myRoomPlayerCreditDto.seatNo))
+            if (roomPlayerCreditDto) {
+                palyerItem = this.createPlayerItemPlus(roomPlayerCreditDto, "下家");
+                playerInfoNode.addChild(palyerItem);
+            }
 
-        roomPlayerCreditDto = this.getRoomPlayerCreditBySeatNo(data.roomPlayerCreditDtos, this.getNextSeatNo(myRoomPlayerCreditDto.seatNo))
-        if (roomPlayerCreditDto) {
-            palyerItem = this.createPlayerItemPlus(roomPlayerCreditDto, "下家");
-            playerInfoNode.addChild(palyerItem);
-        }
-
-        roomPlayerCreditDto = this.getRoomPlayerCreditBySeatNo(data.roomPlayerCreditDtos, this.getUpSeatNo(myRoomPlayerCreditDto.seatNo))
-        if (roomPlayerCreditDto) {
-            palyerItem = this.createPlayerItemPlus(roomPlayerCreditDto, "上家");
-            playerInfoNode.addChild(palyerItem);
+            roomPlayerCreditDto = this.getRoomPlayerCreditBySeatNo(data.roomPlayerCreditDtos, this.getUpSeatNo(myRoomPlayerCreditDto.seatNo))
+            if (roomPlayerCreditDto) {
+                palyerItem = this.createPlayerItemPlus(roomPlayerCreditDto, "上家");
+                playerInfoNode.addChild(palyerItem);
+            }
         }
 
     }
