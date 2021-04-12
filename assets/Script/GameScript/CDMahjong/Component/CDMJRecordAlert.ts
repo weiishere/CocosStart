@@ -90,7 +90,11 @@ export default class CDMJRecordAlert extends ViewComponent {
             let azimuths = [value.azimuth1, value.azimuth2, value.azimuth3, value.azimuth4];
             if (azimuths[azimuth] > 0) {
                 if (value.itemType === 6 || value.itemType === 7 || value.itemType === 8 || value.itemType === 9) {
-                    return value.name;
+                    if (value.huCount > 1) {
+                        return value.huNames[azimuth];
+                    } else {
+                        return value.name;
+                    }
                 }
             }
         }
