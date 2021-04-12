@@ -152,7 +152,7 @@ export default class XzddDesk extends BaseDesk {
         } else if (s2CClubRoomInfoBase.roomType === 2) {
             roomType = "三人两房";
         } else if (s2CClubRoomInfoBase.roomType === 3) {
-            roomType = "四人三房";
+            roomType = "血战到底";
         }
 
         this.setRuleStr(s2CClubRoomInfoBase)
