@@ -415,7 +415,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         // } else if (myGameIndex === 3) {
         //     this.positionNode = [this.deskAiming.left, this.deskAiming.bottom, this.deskAiming.right, this.deskAiming.top]
         // }
-        if (seatNumber === 1 || seatNumber === 2||seatNumber === 4) {
+        if (seatNumber === 1 || seatNumber === 2 || seatNumber === 4) {
             if (myGameIndex === 0) {
                 this.positionNode = [this.deskAiming.bottom, this.deskAiming.right, this.deskAiming.top, this.deskAiming.left]
             } else if (myGameIndex === 1) {
@@ -451,6 +451,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
             let headWrap: cc.Node;
             if (self.isMe(false, player.playerId)) {
                 headWrap = myHeadNode;
+                headWrap.getChildByName('masterSign').active = this.getData().gameData.myCards.status.isHadHu;
             } else {
                 if (self.positionNode[player.gameIndex].name === 'p-top') {
                     //更新对家头像信息
@@ -465,9 +466,11 @@ export default class CDMJDeskPanelView extends ViewComponent {
                     rightHeadNode.active = true;
                     headWrap = rightHeadNode;
                 }
+                headWrap.getChildByName('masterSign').active = this.getData().gameData.partnerCardsList.find(item => item.playerId === player.playerId).partnerCards.status.isHadHu;
             }
             if (!headWrap) return;
             headWrap.getChildByName('masterSign').active = player.master;
+
             headWrap.getChildByName("nickName").getComponent(cc.Label).string = player.playerName;//昵称
             headWrap.getChildByName("uid").getComponent(cc.Label).string = player.playerId;//ID
             headWrap.getChildByName("goldView").getChildByName("myGlod").getComponent(cc.Label).string = player.playerGold.toFixed(2);//金币
@@ -752,9 +755,9 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.huCard.height = 0;
         if (this.getData().gameData.myCards.hadHuCard !== 0) {
             this.addCardToNode(this.huCard, this.getData().gameData.myCards.hadHuCard, "mine", 'fall');
-            this.node.getChildByName("myJobNode").getChildByName("huSign").active = true;
+            this.node.getChildByName("headList").getChildByName('myHead').getChildByName("huSign").active = true;
         } else {
-            this.node.getChildByName("myJobNode").getChildByName("huSign").active = false;
+            this.node.getChildByName("headList").getChildByName('myHead').getChildByName("huSign").active = false;
         }
         //再检测对家手牌
         this.getData().gameData.partnerCardsList.forEach(partner => {
@@ -805,19 +808,19 @@ export default class CDMJDeskPanelView extends ViewComponent {
                 //更新对家手牌
                 myhelper.updateHandCardAndHuCardHelper.bind(this)(partner, this.frontHuCard,
                     this.node.getChildByName("frontJobNode").getChildByName("ting"),
-                    this.node.getChildByName("frontJobNode").getChildByName("huSign"),
+                    this.node.getChildByName("headList").getChildByName('frontHead').getChildByName("huSign"),
                     'front');
             } else if (this.positionNode[_gameIndex].name === 'p-left') {
                 //更新左方手牌
                 myhelper.updateHandCardAndHuCardHelper.bind(this)(partner, this.leftHuCard,
                     this.node.getChildByName("leftJobNode").getChildByName("ting"),
-                    this.node.getChildByName("leftJobNode").getChildByName("huSign"),
+                    this.node.getChildByName("headList").getChildByName('leftHead').getChildByName("huSign"),
                     'left');
             } else if (this.positionNode[_gameIndex].name === 'p-right') {
                 //更新右方手牌
                 myhelper.updateHandCardAndHuCardHelper.bind(this)(partner, this.rightHuCard,
                     this.node.getChildByName("rightJobNode").getChildByName("ting"),
-                    this.node.getChildByName("rightJobNode").getChildByName("huSign"),
+                    this.node.getChildByName("headList").getChildByName('rightHead').getChildByName("huSign"),
                     'right');
             }
         });
@@ -829,7 +832,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**更新方向盘 */
     updatedDeskAiming(): void {
         this.positionNode.forEach(node => node.active = false);
-        this.positionNode[this.getData().gameData.positionIndex].active = true;
+        if (this.getData().gameData.positionIndex !== -1) this.positionNode[this.getData().gameData.positionIndex].active = true;
     }
     /**更新操作按钮组 */
     updateMyOperationBtu(param?: any): void {
@@ -973,7 +976,11 @@ export default class CDMJDeskPanelView extends ViewComponent {
                 const label = newNode.addComponent(cc.Label);
                 label.string = playerChangeGold < 0 ? '' + playerChangeGold : '+' + playerChangeGold;
                 label.fontSize = 38;
-                newNode.color = new cc.Color(240, 240, 75, 255);
+                if (playerChangeGold > 0) {
+                    newNode.color = new cc.Color(240, 240, 75, 255);
+                }else{
+                    newNode.color = new cc.Color(73, 244, 140, 255);
+                }
                 headWrap.addChild(newNode);
                 cc.tween(newNode).to(0.5, { position: cc.v3(0, 100, 0) }).delay(2.5).to(0.5, { opacity: 0 }).call(() => { newNode.destroy(); }).start();
             }
@@ -1352,7 +1359,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         //先清除打出牌
         jobLayoutArr.forEach(layout => {
             layout.getChildByName('outCardList').removeAllChildren();
-            layout.getChildByName('huSign').active = false;
+            //layout.getChildByName('huSign').active = false;
             layout.getChildByName('ting').active = false;
             const jobLayout = layout.getChildByName('jobLayout');
             jobLayout.getChildByName('mainCardListPanel').removeAllChildren();
@@ -1360,6 +1367,10 @@ export default class CDMJDeskPanelView extends ViewComponent {
             jobLayout.getChildByName('barCard').removeAllChildren();
             jobLayout.getChildByName('handCard').removeAllChildren();
             jobLayout.getChildByName('huCard').removeAllChildren();
+        });
+        //胡牌
+        this.node.getChildByName('headList').children.forEach(headNode => {
+            headNode.getChildByName('huSign').active = false;
         });
     }
     /**打开刷新层 */
