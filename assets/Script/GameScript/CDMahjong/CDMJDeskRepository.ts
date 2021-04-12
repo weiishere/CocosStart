@@ -230,7 +230,7 @@ export class DeskRepository {
         ],
         countDownTime: 0,
         switchCardCountDown: 0,
-        positionIndex: 0,
+        positionIndex: -1,
         remainCard: 0,
         eventData: {
             deskEventData: {

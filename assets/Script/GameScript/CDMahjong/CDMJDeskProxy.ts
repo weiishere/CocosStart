@@ -299,6 +299,8 @@ export class CDMJDeskProxy extends BaseProxy {
             }
             //console.log('xzddS2CDoNextOperation.nextStep.datas=====', xzddS2CDoNextOperation.nextStep.datas);
             this.getGameData().myCards.disableCard = xzddS2CDoNextOperation.nextStep.datas || [];
+            const huList = (xzddS2CDoNextOperation.nextStep.args && xzddS2CDoNextOperation.nextStep.args.list) ? xzddS2CDoNextOperation.nextStep.args.list : [];
+            this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
             //this.doEventData(dymjS2CDoNextOperation.nextStep.oprts);
         }
         this.sendNotification(CDMJCommandDefine.ShowCardNotificationPush);
