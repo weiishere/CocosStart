@@ -47,14 +47,18 @@ export class GateCommand extends BaseCommand {
                 // 这里处理后续功能
                 cc.log("websocket 鉴权成功");
 
-                // 测试用的
+                // ------------------------------测试用的，直接进入到桌子列表界面
                 // this.getGateProxy().joinClub();
+                // MusicManager.getInstance().playMusic(AudioSourceDefine.BackMusic4);
+                // ------------------------------测试用的，直接进入到桌子列表界面
 
 
                 this.sendNotification(CommandDefine.CloseLoginPanel);
 
+                // ---------------------进入主页放开这里
                 let loginData = this.getLocalCacheDataProxy().getLoginData();
                 this.sendNotification(CommandDefine.InitGateMainPanel, { loginData })
+                // ---------------------进入主页放开这里
 
                 this.handleOfflineData();
                 break;
