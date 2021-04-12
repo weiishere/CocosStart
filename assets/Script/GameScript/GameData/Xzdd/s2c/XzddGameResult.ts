@@ -20,4 +20,6 @@ export class XzddGameResult {
     roomNo: number
     /** 是否显示退出按钮 */
     isShowQuitBtn: boolean;
+    /** 结算时间 */
+    balanceTime: string;
 }

@@ -157,6 +157,7 @@ export default class CDMJRecordAlert extends ViewComponent {
             gameSubClass: gameSubClass,
             roomNo: gameResult.roomNo,
             currentGameCount: gameResult.currentGameCount,
+            gameTime: gameResult.balanceTime,
             playerData: []
         }
 
@@ -261,7 +262,8 @@ export default class CDMJRecordAlert extends ViewComponent {
 
         let recordDetailNode = this.getRecordPrefab(gameSubClass);
         let script = <BaseRecordDetail>recordDetailNode.getComponent(BaseRecordDetail);
-        script.loadData(false, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount, totalLength, recorDetailData.playerData, recorDetailData.gameSubClass);
+        script.loadData(false, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount, totalLength,
+            recorDetailData.playerData, recorDetailData.gameSubClass, recorDetailData.gameTime);
         this.node.addChild(recordDetailNode);
     }
 
