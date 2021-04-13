@@ -3,42 +3,28 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1, minimum-scale=1,maximum-scale=1,minimal-ui=true">
-    <title>紫运阁-欢迎下载</title>
-    <style>
-        html{
-            margin: 0;
-            padding: 0;
-            height: 100%;
-        }
-        body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            background-image: url(bg.png);
-            background-size: cover; 
-            text-align: center;
-            position: relative;
-        }
-
-        .downLoadBtu {
-            background-image: url(btu.png);
-            background-size: contain;
-            background-color: transparent;
-            border: 0;
-            width: 210px;
-            height: 65px;
-            margin:auto;
-            left: 0;
-            right: 0;
-            position: absolute;
-            bottom: 10%;
-        }
-    </style>
+    <meta name="viewport"
+        content="width=device-width,user-scalable=no,initial-scale=1, minimum-scale=1,maximum-scale=1,minimal-ui=true">
+    <title>CDN</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <button class='downLoadBtu'></button>
+    <div>CODE：<span id='code'></span></div>
+
 </body>
+<script>
+    var getUrlParameter = function (name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]); return null;
+    };
+
+    $(document).ready(function () {
+        var code = getUrlParameter('code');
+        $('#code').html(code);
+    });
+</script>
 
 </html>
