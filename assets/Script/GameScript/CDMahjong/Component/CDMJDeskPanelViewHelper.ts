@@ -92,6 +92,7 @@ const helper = {
     },
     updateHandCardAndHuCardHelper: function (partner: PartnerCard, playerHuCard: cc.Node, tingNode: cc.Node, huNode: cc.Node, position: PositionType): void {
         const self: CDMJDeskPanelView = this;
+        if (helper.isHadHu(self, partner.playerId) && playerHuCard.children.length !== 0) return;
         const _hadHuCard = self.getData().gameData.partnerCardsList.find(item => item.playerId === partner.playerId).partnerCards.hadHuCard;
         playerHuCard.removeAllChildren();
         playerHuCard.width = 0;
@@ -118,6 +119,8 @@ const helper = {
     },
     updateOutCardHelper: function (partner: PartnerCard, playerOutCardList: cc.Node, scale: number, position: PositionType) {
         const self: CDMJDeskPanelView = this;
+        if (helper.isHadHu(self, partner.playerId) && playerOutCardList.children.length !== 0) return;
+        playerOutCardList.removeAllChildren();
         partner.partnerCards.outCardList.map((item, index) => {
             const card = self.addCardToNode(playerOutCardList, item, position, "fall")
             card.setPosition(cc.v2(0, 0));
@@ -151,6 +154,22 @@ const helper = {
                 addHandler && addHandler();
             }
         }
+    },
+    isHadHu: (that: CDMJDeskPanelView, playerId: string): boolean => {
+        const _gameIndex = that.getIndexByPlayerId(playerId).gameIndex;
+        let playerHuCard: cc.Node;
+        if (that.positionNode[_gameIndex].name === 'p-top') {
+            playerHuCard = that.frontHuCard;
+        } else if (that.positionNode[_gameIndex].name === 'p-left') {
+            playerHuCard = that.leftHuCard;
+        } else if (that.positionNode[_gameIndex].name === 'p-right') {
+            playerHuCard = that.rightHuCard;
+        } else if (that.positionNode[_gameIndex].name === 'p-bottom') {
+            playerHuCard = that.huCard;
+        }
+        const partnerPlayer = that.getData().gameData.partnerCardsList.find(item => item.playerId === playerId);
+        let _hadHuCard = partnerPlayer ? partnerPlayer!.partnerCards.hadHuCard : that.getData().gameData.myCards.hadHuCard;
+        return _hadHuCard !== 0 && playerHuCard.children.length !== 0;//已经胡了就不更新了
     }
 }
 

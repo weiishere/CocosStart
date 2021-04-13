@@ -20,6 +20,7 @@ import { DeskPanelViewEventDefine } from "../../GameConst/Event/DeskPanelViewEve
 import { MsgObj } from "../../Component/DdYiMahjong/ChatBox";
 import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
 import myhelper from "./CDMJDeskPanelViewHelper";
+import helper from "./CDMJDeskPanelViewHelper";
 
 @ccclass
 export default class CDMJDeskPanelView extends ViewComponent {
@@ -36,7 +37,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     private mainCardListPanel: cc.Node;
     private touchCard: cc.Node;
     private barCard: cc.Node;
-    private huCard: cc.Node;
+    public huCard: cc.Node;
     private outCardList: cc.Node;
     public mainCardList: Array<cc.Node> = [];
     private handCard: cc.Node = null;
@@ -44,7 +45,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     private frontMainCardListPanel: cc.Node;
     private frontTouchCard: cc.Node;
     private frontBarCard: cc.Node;
-    private frontHuCard: cc.Node;
+    public frontHuCard: cc.Node;
     private frontOutCardList: cc.Node;
     private frontMainCardList: Array<cc.Node> = [];
     private frontHandCard: cc.Node = null;
@@ -52,7 +53,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     private leftMainCardListPanel: cc.Node;
     private leftTouchCard: cc.Node;
     private leftBarCard: cc.Node;
-    private leftHuCard: cc.Node;
+    public leftHuCard: cc.Node;
     private leftOutCardList: cc.Node;
     private leftMainCardList: Array<cc.Node> = [];
     private leftHandCard: cc.Node = null;
@@ -60,12 +61,12 @@ export default class CDMJDeskPanelView extends ViewComponent {
     private rightMainCardListPanel: cc.Node;
     private rightTouchCard: cc.Node;
     private rightBarCard: cc.Node;
-    private rightHuCard: cc.Node;
+    public rightHuCard: cc.Node;
     private rightOutCardList: cc.Node;
     private rightMainCardList: Array<cc.Node> = [];
     private rightHandCard: cc.Node = null;
 
-    private positionNode: Array<cc.Node>;
+    public positionNode: Array<cc.Node>;
     private opreationArea: cc.Node;
     private gameEventView: cc.Node;
     private deskOpreationIconWrap: cc.Node;
@@ -485,6 +486,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     }
     /**更新自己主牌 */
     updateMyCurCardList(effectDone?: () => void): void {
+        if (helper.isHadHu(this, this.getSelfPlayer().userName) && this.mainCardListPanel.children.length !== 0) return;
         this.mainCardList = [];
         const self = this;
         this.mainCardListPanel.removeAllChildren();
@@ -562,23 +564,26 @@ export default class CDMJDeskPanelView extends ViewComponent {
     }
     /**更新其他玩家的主牌 */
     updateOtherCurCardList(): void {
-
         this.getData().gameData.partnerCardsList.forEach(partner => {
+            
             const playerIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;
             if (this.positionNode[playerIndex].name === 'p-top') {
                 //更新对家主牌
+                if (helper.isHadHu(this, partner.playerId) && this.frontMainCardListPanel.children.length !== 0) return;
                 this.frontMainCardListPanel.removeAllChildren();
                 for (let i = 0, l = partner.partnerCards.curCardList.length; i < l; i++) {
                     this.addCardToNode(this.frontMainCardListPanel, this.isSuper ? partner.partnerCards.curCardList[i] : 0, "front", 'setUp', { scale: 0.5 });
                 }
             } else if (this.positionNode[playerIndex].name === 'p-left') {
                 //更新左方主牌
+                if (helper.isHadHu(this, partner.playerId) && this.leftMainCardListPanel.children.length !== 0) return;
                 this.leftMainCardListPanel.removeAllChildren();
                 for (let i = 0, l = partner.partnerCards.curCardList.length; i < l; i++) {
                     this.addCardToNode(this.leftMainCardListPanel, this.isSuper ? partner.partnerCards.curCardList[i] : 0, "left", 'setUp');
                 }
             } else if (this.positionNode[playerIndex].name === 'p-right') {
                 //更新右方主牌
+                if (helper.isHadHu(this, partner.playerId) && this.rightMainCardListPanel.children.length !== 0) return;
                 this.rightMainCardListPanel.removeAllChildren();
                 for (let i = 0, l = partner.partnerCards.curCardList.length; i < l; i++) {
                     this.addCardToNode(this.rightMainCardListPanel, this.isSuper ? partner.partnerCards.curCardList[i] : 0, "right", 'setUp');
@@ -588,7 +593,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     }
     /**更新杠碰牌 */
     updateBarAndTouchCard(): void {
-        //先更新杠/碰
+        //先更新杠牌
         myhelper.isAllowUpdatehelper<BarType>(this.barCard, this.getData().gameData.myCards.barCard, (param: BarType) => param.barCard, (item) => {
             const barItem = new cc.Node('barItem');
             const layoutCom = barItem.addComponent(cc.Layout);
@@ -978,7 +983,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
                 label.fontSize = 38;
                 if (playerChangeGold > 0) {
                     newNode.color = new cc.Color(240, 240, 75, 255);
-                }else{
+                } else {
                     newNode.color = new cc.Color(73, 244, 140, 255);
                 }
                 headWrap.addChild(newNode);
@@ -1062,15 +1067,12 @@ export default class CDMJDeskPanelView extends ViewComponent {
             const _gameIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;
             if (this.positionNode[_gameIndex].name === 'p-top') {
                 //更新对家出牌
-                this.frontOutCardList.removeAllChildren();
                 myhelper.updateOutCardHelper.bind(this)(partner, this.frontOutCardList, 0.6, 'front');
             } else if (this.positionNode[_gameIndex].name === 'p-left') {
                 //更新左方出牌
-                this.leftOutCardList.removeAllChildren();
                 myhelper.updateOutCardHelper.bind(this)(partner, this.leftOutCardList, 1.3, 'left');
             } else if (this.positionNode[_gameIndex].name === 'p-right') {
                 //更新右方出牌
-                this.rightOutCardList.removeAllChildren();
                 myhelper.updateOutCardHelper.bind(this)(partner, this.rightOutCardList, 1.3, 'right');
             }
         })
