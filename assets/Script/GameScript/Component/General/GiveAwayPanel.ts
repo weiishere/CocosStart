@@ -251,7 +251,7 @@ export default class GiveAwayPanel extends ViewComponent {
             moneyLabel.node.color = color;
         } else {
             typeLabel.string = "赠送给 " + userStr;
-            let color = cc.color().fromHEX("#008567")
+            let color = cc.color().fromHEX("#FFFFFF")
             moneyLabel.node.color = color;
         }
 

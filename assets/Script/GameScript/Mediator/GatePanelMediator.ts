@@ -337,6 +337,7 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.OpenNoticeAlert,
             CommandDefine.OpenMyPlayer,
             CommandDefine.OpenMyEnterPrise,
+            CommandDefine.UpdateClubSimpleInfo,
         ];
     }
 
@@ -475,6 +476,7 @@ export class GatePanelMediator extends BaseMediator {
                 this.gateStartPanelScript.updateNickname(loginData.nickname);
                 this.gateStartPanelScript.updateHead(loginData.head);
                 this.gateStartPanelScript.updateUserName(loginData.userName);
+                this.gateStartPanelScript.updateClubSimpleInfo();
 
                 this.updateLeessang(this.getConfigProxy().leessang);
                 if (!cc.sys.localStorage.getItem('today') || (cc.sys.localStorage.getItem('today') !== ((new Date()).getDate() + ''))) {
@@ -511,6 +513,11 @@ export class GatePanelMediator extends BaseMediator {
                 break;
             case CommandDefine.OpenMyEnterPrise:
                 this.openMyEnterPrise();
+                break;
+            case CommandDefine.UpdateClubSimpleInfo:
+                if (this.gameStartPanel) {
+                    this.gateStartPanelScript.updateClubSimpleInfo();
+                }
                 break;
         }
     }

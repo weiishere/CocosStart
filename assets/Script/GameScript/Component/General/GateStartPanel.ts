@@ -15,6 +15,9 @@ import { TuiTongZiProxy } from "../../TuiTongZi/TuiTongZiProxy";
 import { DymjMusicManager } from '../../Other/DymjMusicManager';
 import { ConfigProxy } from "../../Proxy/ConfigProxy";
 import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
+import { LoginAfterHttpUtil } from "../../Util/LoginAfterHttpUtil";
+import { HttpUtil } from "../../Util/HttpUtil";
+import { GameNoDefine } from "../../GameConst/GameNoDefine";
 
 @ccclass
 export default class GateStartPanel extends ViewComponent {
@@ -197,11 +200,25 @@ export default class GateStartPanel extends ViewComponent {
         if (this.clubGameDeskLabel) this.clubGameDeskLabel.string = `${value}桌游戏中`;
     }
 
+    updateClubSimpleInfo() {
+        let url = this.getConfigProxy().facadeUrl + "club/getCreateRoomInfo";
+        let param = {
+            gameSubClass: GameNoDefine.XUE_ZHAN_DAO_DI,
+        }
+        LoginAfterHttpUtil.send(url, (result) => {
+            if (result.hd === 'success') {
+                this.updateClubGameDeskLabel(result.bd.gameRoomCount);
+                this.updateClubWaitDeskLabel(result.bd.waitBeginRoomCount);
+            }
+        }, (err) => {
+
+        }, HttpUtil.METHOD_POST, param)
+    }
+
     // onLoad () {
     // }
 
     start() {
-
     }
 
     // update (dt) {}

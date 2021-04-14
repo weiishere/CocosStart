@@ -219,6 +219,8 @@ export class DeskListMediator extends BaseMediator {
         this.view.destroy();
         this.userHeaderScript = null;
         this.view = null;
+
+        this.sendNotification(CommandDefine.UpdateClubSimpleInfo);
     }
 
     private reconnectHandle() {

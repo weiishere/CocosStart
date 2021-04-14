@@ -65,4 +65,5 @@ export enum CommandDefine {
     ChangePlayerGold = "ChangePlayerGold",
     OpenMyPlayer = "OpenMyPlayer",
     OpenMyEnterPrise = "OpenMyEnterPrise",
+    UpdateClubSimpleInfo = "UpdateClubSimpleInfo",
 }
