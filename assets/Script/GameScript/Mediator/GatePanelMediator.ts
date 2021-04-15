@@ -52,6 +52,10 @@ export class GatePanelMediator extends BaseMediator {
         return <WebSockerProxy>this.facade.retrieveProxy(ProxyDefine.WebSocket);
     }
 
+    public getGateProxy() {
+        return <GateProxy>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
+    }
+
     protected prefabSource(): string {
         return PrefabDefine.GatePanel;
     }
@@ -83,6 +87,7 @@ export class GatePanelMediator extends BaseMediator {
             PrefabDefine.DymjRecordDetail,
             PrefabDefine.XdzzRecordDetail,
             PrefabDefine.XdzzRecordDetailOver,
+            PrefabDefine.BindSuperior,
         ];
     }
 
@@ -253,6 +258,12 @@ export class GatePanelMediator extends BaseMediator {
         this.viewComponent.addChild(myEnterPrise);
     }
 
+    private openBindSuperior() {
+        let res = cc.loader.getRes(PrefabDefine.BindSuperior);
+        let bindSuperior = cc.instantiate(res);
+        this.viewComponent.addChild(bindSuperior);
+    }
+
     /** 切换账号 */
     private changeUserHandle() {
         // 暂停音乐
@@ -338,6 +349,7 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.OpenMyPlayer,
             CommandDefine.OpenMyEnterPrise,
             CommandDefine.UpdateClubSimpleInfo,
+            CommandDefine.OpenBindSuperior,
         ];
     }
 
@@ -486,6 +498,9 @@ export class GatePanelMediator extends BaseMediator {
                         }
                     });
                 }
+
+                this.getGateProxy().getInviteCode();
+
                 break;
             case CommandDefine.OpenLoadingPanel:
                 this.loadingPanel = new cc.Node('Loading');
@@ -513,6 +528,9 @@ export class GatePanelMediator extends BaseMediator {
                 break;
             case CommandDefine.OpenMyEnterPrise:
                 this.openMyEnterPrise();
+                break;
+            case CommandDefine.OpenBindSuperior:
+                this.openBindSuperior();
                 break;
             case CommandDefine.UpdateClubSimpleInfo:
                 if (this.gameStartPanel) {

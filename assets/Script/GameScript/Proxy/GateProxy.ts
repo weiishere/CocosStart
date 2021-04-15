@@ -133,7 +133,7 @@ export class GateProxy extends BaseProxy {
         }, HttpUtil.METHOD_POST, param);
     }
 
-    private getInviteCode() {
+    public getInviteCode() {
         let param = {
             userName: this.getLocalCacheDataProxy().getLoginData().userName,
         }
@@ -143,10 +143,13 @@ export class GateProxy extends BaseProxy {
                 this.getLocalCacheDataProxy().setInviteCode(response);
             } else {
                 this.getLocalCacheDataProxy().setInviteCode("");
+
+                this.sendNotification(CommandDefine.OpenBindSuperior);
             }
         }, (err) => {
             this.toast("获取邀请码失败！");
             this.getLocalCacheDataProxy().setInviteCode("");
+            this.sendNotification(CommandDefine.OpenBindSuperior);
         }, HttpUtil.METHOD_POST, param);
     }
 
@@ -163,9 +166,6 @@ export class GateProxy extends BaseProxy {
 
         // 登录成功之后连接socket
         this.connectWebSocket();
-
-        // 获得邀请码
-        this.getInviteCode();
 
         this.getSystemNotice();
     }

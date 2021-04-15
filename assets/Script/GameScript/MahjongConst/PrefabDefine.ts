@@ -40,5 +40,6 @@ export enum PrefabDefine {
     ChatBox = "prefabs/chatBox",
     ReloadPanel = "prefabs/markReloadBg",
     ScoreChooseBtu = "prefabs/scoreChooseBtu",
-    NoticeAlert = "prefabs/noticePromptAlert"
+    NoticeAlert = "prefabs/noticePromptAlert",
+    BindSuperior = "prefabs/bindSuperior",
 }
