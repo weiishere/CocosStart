@@ -193,7 +193,6 @@ export default class ExchangePanel extends ViewComponent {
     // onLoad () {}
 
     start() {
-
     }
 
     hideNode() {
@@ -280,6 +279,10 @@ export default class ExchangePanel extends ViewComponent {
 
     getConfigProxy() {
         return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
+    }
+
+    getLocalCacheDataProxy(): LocalCacheDataProxy {
+        return <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
     }
 
     updatePageBtn(active) {
@@ -421,6 +424,9 @@ export default class ExchangePanel extends ViewComponent {
             this.findLog(this.pageIndex);
         } else if (event.target.name === "convert") {
             this.convertNode.active = true;
+            if (!this.getLocalCacheDataProxy().getIsSetExchangePwd()) {
+                Facade.Instance.sendNotification(CommandDefine.OpenSetExchangePwd, null, '');
+            }
         } else if (event.target.name === "convertLog") {
             this.convertLogTitleUpdate();
             this.logNode.active = true;

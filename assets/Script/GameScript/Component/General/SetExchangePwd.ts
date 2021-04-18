@@ -156,6 +156,7 @@ export default class NewClass extends cc.Component {
 
                 loginData.phoneNo = phoneNo;
                 this.getLocalCacheDataProxy().setLoginData(loginData);
+                this.getLocalCacheDataProxy().setIsSetExchangePwd(true);
 
             } else {
                 if (res.bd === ServerCode.SECURITY_CODE_ERROR) {

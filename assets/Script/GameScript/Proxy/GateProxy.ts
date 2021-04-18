@@ -168,6 +168,7 @@ export class GateProxy extends BaseProxy {
         this.connectWebSocket();
 
         this.getSystemNotice();
+        this.getIsSetExchangePwdStatus();
     }
 
     private getSystemNotice() {
@@ -183,6 +184,20 @@ export class GateProxy extends BaseProxy {
             }
         }, (err) => {
             this.toast("获取系统公告失败！");
+        }, HttpUtil.METHOD_POST, param);
+    }
+
+    private getIsSetExchangePwdStatus() {
+        let param = {
+        }
+
+        let url = this.getFacadeUrl() + "exchange/isSetExchangePwd";
+        LoginAfterHttpUtil.send(url, (response) => {
+            if (response.hd === "success") {
+                this.getLocalCacheDataProxy().setIsSetExchangePwd(true);
+            }
+        }, (err) => {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '获取是否设置兑换密码失败' + err, toastOverlay: true }, '');
         }, HttpUtil.METHOD_POST, param);
     }
 

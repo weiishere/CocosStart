@@ -1,9 +1,10 @@
 import { LoginData } from '../GameData/LoginData';
 import Proxy from '../../Framework/patterns/proxy/Proxy';
-export class LocalCacheDataProxy extends Proxy{
+export class LocalCacheDataProxy extends Proxy {
     static LOGIN_DATA: string = "LOGIN_DATA";
     static TOKEN: string = "TOKEN";
     static INVITE_CODE: string = "INVITE_CODE";
+    static IS_SET_EXCHANGE_PWD: string = "IS_SET_EXCHANGE_PWD";
 
     private localStorage: any = null;
     private cache: Map<string, any> = null;
@@ -65,6 +66,14 @@ export class LocalCacheDataProxy extends Proxy{
 
     setInviteCode(inviteCode: string) {
         this.setCache(LocalCacheDataProxy.INVITE_CODE, inviteCode);
+    }
+
+    getIsSetExchangePwd(){
+        return this.getCache(LocalCacheDataProxy.IS_SET_EXCHANGE_PWD);
+    }
+
+    setIsSetExchangePwd(value: boolean) {
+        this.setCache(LocalCacheDataProxy.IS_SET_EXCHANGE_PWD, value);
     }
 
     getCache(key: string): any {
