@@ -66,5 +66,6 @@ export enum CommandDefine {
     OpenMyPlayer = "OpenMyPlayer",
     OpenMyEnterPrise = "OpenMyEnterPrise",
     OpenBindSuperior = "OpenBindSuperior",
+    OpenSetExchangePwd = "OpenSetExchangePwd",
     UpdateClubSimpleInfo = "UpdateClubSimpleInfo",
 }

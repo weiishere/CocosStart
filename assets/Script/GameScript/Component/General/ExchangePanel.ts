@@ -7,6 +7,8 @@ import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
 import { CommandDefine } from '../../MahjongConst/CommandDefine';
 import { LoginAfterHttpUtil } from '../../Util/LoginAfterHttpUtil';
 import { GateProxy } from '../../Proxy/GateProxy';
+import { ServerCode } from '../../GameConst/ServerCode';
+import md5 from '../../Util/MD5';
 
 const { ccclass, property } = cc._decorator;
 
@@ -45,6 +47,10 @@ export default class ExchangePanel extends ViewComponent {
     vipExchange: cc.Node = null;
     @property(cc.SpriteAtlas)
     newFace: cc.SpriteAtlas = null;
+    @property(cc.Node)
+    retrievePwd: cc.Node = null;
+    @property(cc.EditBox)
+    exchangePwdEditBox: cc.EditBox = null;
 
     /** 查询的url */
     findUrl: string = "";
@@ -82,6 +88,10 @@ export default class ExchangePanel extends ViewComponent {
             this.findLog(this.pageIndex);
         });
 
+        this.retrievePwd.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenSetExchangePwd, null, '');
+        });
+
         this.ConvertBtn.on(cc.Node.EventType.TOUCH_END, () => {
             let localCacheDataProxy = <LocalCacheDataProxy><unknown>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
             const getEditBox = (nodeName): cc.Node => this.node.getChildByName("ConvertNode").getChildByName(nodeName).getChildByName("EditBox");
@@ -96,19 +106,31 @@ export default class ExchangePanel extends ViewComponent {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '您的余额不足！', toastOverlay: true }, '');
                 return;
             }
+
+            const exchangePwd = this.exchangePwdEditBox.string.trim();
+            if (exchangePwd === '') {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '请输入兑换密码！', toastOverlay: true }, '');
+                return;
+            }
+
             let configProxy: ConfigProxy = <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
             let token = localCacheDataProxy.getUserToken();
             let url = configProxy.facadeUrl + "exchange/alipayGiveOut";
             let param = {
                 alipayAccount: alipayAccount,
                 alipayName: alipayName,
-                gold: gold
+                gold: gold,
+                exchangePwd: md5(exchangePwd),
             }
             LoginAfterHttpUtil.send(url, (response) => {
                 if (response.hd === "success") {
                     Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '兑换已成功提交，预计30分钟内到账，请关注！', toastOverlay: true }, '');
                 } else {
-                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '对不起，兑换失败！', toastOverlay: true }, '');
+                    if (response.bd === ServerCode.PWD_ERROR) {
+                        Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '密码错误！', toastOverlay: true }, '');
+                    } else {
+                        Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '对不起，兑换失败！', toastOverlay: true }, '');
+                    }
                 }
             }, (err) => {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '参数异常：' + err, toastOverlay: true }, '');

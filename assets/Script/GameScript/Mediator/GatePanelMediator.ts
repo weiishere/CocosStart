@@ -88,6 +88,7 @@ export class GatePanelMediator extends BaseMediator {
             PrefabDefine.XdzzRecordDetail,
             PrefabDefine.XdzzRecordDetailOver,
             PrefabDefine.BindSuperior,
+            PrefabDefine.SetExchangePwd,
         ];
     }
 
@@ -264,6 +265,12 @@ export class GatePanelMediator extends BaseMediator {
         this.viewComponent.addChild(bindSuperior);
     }
 
+    private openSetExchangePwd() {
+        let res = cc.loader.getRes(PrefabDefine.SetExchangePwd);
+        let setExchangePwd = cc.instantiate(res);
+        this.viewComponent.addChild(setExchangePwd);
+    }
+
     /** 切换账号 */
     private changeUserHandle() {
         // 暂停音乐
@@ -350,6 +357,7 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.OpenMyEnterPrise,
             CommandDefine.UpdateClubSimpleInfo,
             CommandDefine.OpenBindSuperior,
+            CommandDefine.OpenSetExchangePwd,
         ];
     }
 
@@ -531,6 +539,9 @@ export class GatePanelMediator extends BaseMediator {
                 break;
             case CommandDefine.OpenBindSuperior:
                 this.openBindSuperior();
+                break;
+            case CommandDefine.OpenSetExchangePwd:
+                this.openSetExchangePwd();
                 break;
             case CommandDefine.UpdateClubSimpleInfo:
                 if (this.gameStartPanel) {

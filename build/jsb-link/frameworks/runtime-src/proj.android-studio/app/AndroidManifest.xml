@@ -34,7 +34,7 @@
         </activity>
         <!--微信授权登陆-->
         <activity
-            android:name= ".wxapi.WXEntryActivity"
+            android:name= "org.cocos2dx.javascript.wxapi.WXEntryActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"

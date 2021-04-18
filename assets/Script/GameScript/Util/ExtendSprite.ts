@@ -20,6 +20,9 @@ export default class ExtendSprite extends cc.Component {
 
     }
 
+    get index() {
+        return this._index;
+    }
     set index(_index: number) {
         this._index = _index;
 

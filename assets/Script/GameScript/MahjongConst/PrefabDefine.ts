@@ -42,4 +42,5 @@ export enum PrefabDefine {
     ScoreChooseBtu = "prefabs/scoreChooseBtu",
     NoticeAlert = "prefabs/noticePromptAlert",
     BindSuperior = "prefabs/bindSuperior",
+    SetExchangePwd = "prefabs/setExchangePwd",
 }
