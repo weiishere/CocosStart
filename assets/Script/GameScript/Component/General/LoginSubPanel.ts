@@ -16,6 +16,7 @@ export class LoginSubPanel extends ViewComponent {
     private phoneInput: cc.EditBox = null;
     private verificationInput: cc.EditBox = null;
     private inviteInput: cc.EditBox = null;
+    private nicknameEditBox: cc.EditBox = null;
     private loginButton: cc.Node = null;
     private cancleButton: cc.Node = null;
     private order: "reg" | "login";
@@ -23,6 +24,7 @@ export class LoginSubPanel extends ViewComponent {
         this.phoneInput = this.root.getChildByName("bg").getChildByName("PhoneInput").getComponent(cc.EditBox);
         this.verificationInput = this.root.getChildByName("bg").getChildByName("VerificationInput").getComponent(cc.EditBox);
         this.inviteInput = this.root.getChildByName("bg").getChildByName("InviteInput").getComponent(cc.EditBox);
+        this.nicknameEditBox = this.root.getChildByName("bg").getChildByName("nickname").getComponent(cc.EditBox);
 
         this.loginButton = this.root.getChildByName("bg").getChildByName("btuWrap").getChildByName("LoginSubmit");
         this.cancleButton = this.root.getChildByName("bg").getChildByName("btuWrap").getChildByName("Cancle");
@@ -44,7 +46,7 @@ export class LoginSubPanel extends ViewComponent {
 
             let normalNode = this.verButton.getChildByName("NormalBtn");
             if (normalNode.active) {
-                this.dispatchCustomEvent(GateEventDefine.GET_VERIFY_CODE, new PhoneRegisterOrLoginData(phoneNo, "", ""));
+                this.dispatchCustomEvent(GateEventDefine.GET_VERIFY_CODE, new PhoneRegisterOrLoginData(phoneNo, "", "", ""));
             }
         });
     }
@@ -53,10 +55,12 @@ export class LoginSubPanel extends ViewComponent {
         cc.tween(this.root).to(0.2, { scale: 1.0, opacity: 255 }, { easing: 'sineOut' }).start();
         if (order === 'login') {
             this.root.getChildByName("bg").getChildByName("title").getComponent(cc.Label).string = "玩家登录";
-            this.root.getChildByName("bg").getChildByName("InviteInput").active = false;
+            this.inviteInput.node.active = false;
+            this.nicknameEditBox.node.active = false;
         } else {
             this.root.getChildByName("bg").getChildByName("title").getComponent(cc.Label).string = "玩家注册";
-            this.root.getChildByName("bg").getChildByName("InviteInput").active = true;
+            this.inviteInput.node.active = true;
+            this.nicknameEditBox.node.active = true;
         }
     }
     /**
@@ -112,12 +116,20 @@ export class LoginSubPanel extends ViewComponent {
             return;
         }
 
-        if (this.order === "reg" && inviteCode === '') {
-            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '新注册玩家请输入邀请码', toastOverlay: false }, '');
-            return;
+        let nickname = this.nicknameEditBox.string;
+        if (this.order === "reg") {
+            if (inviteCode === '') {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '新注册玩家请输入邀请码', toastOverlay: false }, '');
+                return;
+            }
+
+            if (nickname === '') {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '新注册玩家请输入邀请码', toastOverlay: false }, '');
+                return;
+            }
         }
-        this.dispatchCustomEvent(GateEventDefine.LOGIN_BTN_EVENT, new PhoneRegisterOrLoginData(phoneNo, code, inviteCode));
-        
+        this.dispatchCustomEvent(GateEventDefine.LOGIN_BTN_EVENT, new PhoneRegisterOrLoginData(phoneNo, code, inviteCode, nickname));
+
     }
     public cancle(): void {
         // cc.tween(this.root).to(0.2, { scale: 1.0, opacity: 50 }, { easing: 'sineOut' }).call(()=>{
