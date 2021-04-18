@@ -71,7 +71,7 @@ export default class MyPlayer extends ViewComponent {
         //关闭
         this.closeButton.on(cc.Node.EventType.TOUCH_END, () => {
             this.node.destroy();
-            this._closeCallBack();
+            this._closeCallBack && this._closeCallBack();
         }, this);
     }
     getConfigProxy() {

@@ -170,9 +170,14 @@ export default class CardItemView extends cc.Component {
         this.isActive = active;
     }
     /**设置可胡的牌 */
-    public setHuCard(mayHuCards: MayHuCard): void {
-        this.mayHuCards = mayHuCards;
-        this.node.getChildByName("down").active = true;//设置可胡的牌
+    public setHuCard(mayHuCards?: MayHuCard): void {
+        if (!mayHuCards) {
+            this.mayHuCards = null;
+            this.node.getChildByName("down").active = false
+        } else {
+            this.mayHuCards = mayHuCards;
+            this.node.getChildByName("down").active = true;//设置可胡的牌
+        }
     }
     /**设置为禁用(置灰) */
     setDisable() {

@@ -554,18 +554,18 @@ export default class CDMJDeskPanelView extends ViewComponent {
             let index = 0;
             this.schedule(() => {
                 const card = this.mainCardListPanel.children[index];
-                cc.tween(card).to(0.15, { position: cc.v3(0, -10), opacity: 255, scale: 1 }, { easing: 'easeBackInOut' }).to(0.05, { position: cc.v3(0, 0) }).call(() => {
+                cc.tween(card).to(0.1, { position: cc.v3(0, -10), opacity: 255, scale: 1 }, { easing: 'easeBackInOut' }).to(0.05, { position: cc.v3(0, 0) }).call(() => {
                     (card.getComponent("CardItemView") as CardItemView).setMainHide(true);
                 }).start();
                 index++;
                 if (index === this.mainCardListPanel.children.length - 1) { effectDone(); }
-            }, 0.2, this.mainCardListPanel.children.length - 1)
+            }, 0.12, this.mainCardListPanel.children.length - 1)
         }
     }
     /**更新其他玩家的主牌 */
     updateOtherCurCardList(): void {
         this.getData().gameData.partnerCardsList.forEach(partner => {
-            
+
             const playerIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;
             if (this.positionNode[playerIndex].name === 'p-top') {
                 //更新对家主牌
@@ -675,13 +675,14 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.getData().gameData.myCards.mayHuCards.forEach(item => {
             this.mainCardList.forEach(card => {
                 const c = card.getComponent("CardItemView") as CardItemView;
-                if (c.cardNumber === item.putCard) c.setHuCard(item);
+                c.setHuCard(c.cardNumber === item.putCard ? item : null);
             })
         })
         if (this.handCard.children.length !== 0) {
             const cardScript = (this.handCard.children[0].getComponent("CardItemView") as CardItemView);
             const _mayHuCard = this.getData().gameData.myCards.mayHuCards.find(item => item.putCard === cardScript.cardNumber);
-            if (_mayHuCard) cardScript.setHuCard(_mayHuCard);
+            //if (_mayHuCard) cardScript.setHuCard(_mayHuCard);
+            cardScript.setHuCard(_mayHuCard);
         }
     }
     /**更新用户手牌/胡牌 */
@@ -1182,11 +1183,9 @@ export default class CDMJDeskPanelView extends ViewComponent {
         const leftHeadNode = this.node.getChildByName("headList").getChildByName("leftHead");
         const rightHeadNode = this.node.getChildByName("headList").getChildByName("rightHead");
         const dingzhangIconBuild = (headNode: cc.Node, dz: number) => {
-            if (dz === -1) {
-                const fase = headNode.getChildByName('face');
-                if (fase) fase.destroy();
-                return;
-            }
+            if (dz === -1) return;
+            const fase = headNode.getChildByName('face');
+            if (fase) { headNode.removeChild(fase); fase.destroy(); }
             const newNode = new cc.Node('face');
             const sprite = newNode.addComponent(cc.Sprite);
             newNode.setScale(0.8);

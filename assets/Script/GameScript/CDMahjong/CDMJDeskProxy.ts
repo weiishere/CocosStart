@@ -319,7 +319,7 @@ export class CDMJDeskProxy extends BaseProxy {
             //let correlationInfoData = this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;//清空可能的杠选牌
             this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = {};//清空可能的杠选牌
             let correlationInfoData = {};
-            
+
             if (xzddGameOperation.oprtType === XzddOperationType.PENG) {
                 this.getGameData().myCards.touchCard.push(xzddGameOperation.peng.mjValue);
                 _deskEventName = 'touch';
@@ -360,7 +360,7 @@ export class CDMJDeskProxy extends BaseProxy {
                     const partnerCards = this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards;
                     partnerCards.barCard = partnerCards.barCard.filter(card => card.barCard !== xzddGameOperation.hu.mjValue);
                     partnerCards.touchCard.push(xzddGameOperation.hu.mjValue);
-                } else {
+                } else if (xzddGameOperation.hu.huType === 0) {
                     //别人点炮
                     givePlayer = this.getPlayerByGameIndex(xzddGameOperation.hu.playerAzimuth);//引炮者
                     this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();//去掉引炮者出牌
@@ -378,6 +378,9 @@ export class CDMJDeskProxy extends BaseProxy {
             }
             // 自己剩下的牌
             this.getGameData().myCards.curCardList = xzddGameOperation.spValuesSorted;
+            // const huList = xzddGameOperation.huList;
+            // this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item., huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
+
         } else {
             let partnerCard = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
             _deskEventName = '';//别人的事件
