@@ -10,6 +10,7 @@ import { CommandDefine } from "../../MahjongConst/CommandDefine";
 import { ProxyDefine } from "../../MahjongConst/ProxyDefine";
 import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
 import { ConfigProxy } from "../../Proxy/ConfigProxy";
+import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
 import { HttpUtil } from "../../Util/HttpUtil";
 import { LoginAfterHttpUtil } from "../../Util/LoginAfterHttpUtil";
 
@@ -69,6 +70,25 @@ export default class NewClass extends cc.Component {
             return;
         }
 
+        let param = {
+            inviteCode: superior,
+        }
+        let url = this.getConfigProxy().facadeUrl + "user/bindInviteCode"
+        LoginAfterHttpUtil.send(url, (res) => {
+            if (res.hd === "success") {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '绑定上级成功' }, '');
+                this.getLocalCacheDataProxy().setInviteCode(superior);
+                this.node.destroy();
+            } else {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '绑定失败' }, '');
+            }
+        }, (error) => {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '绑定失败' }, '');
+        }, HttpUtil.METHOD_POST, param)
+    }
+
+    protected getLocalCacheDataProxy(): LocalCacheDataProxy {
+        return <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
     }
 
     private getConfigProxy() {
