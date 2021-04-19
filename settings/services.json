@@ -1,7 +1,8 @@
 {
 	"game": {
-		"name": "未知游戏",
-		"appid": "UNKNOW"
+		"name": "ziyunge",
+		"appid": "682104567",
+		"cid": "0"
 	},
 	"configs": [
 		{
@@ -28,6 +29,15 @@
 		},
 		{
 			"appid": "UNKNOW"
+		},
+		{
+			"appid": "682104567",
+			"services": [
+				{
+					"service_id": "270",
+					"enable": false
+				}
+			]
 		}
 	],
 	"needExecNative": true
