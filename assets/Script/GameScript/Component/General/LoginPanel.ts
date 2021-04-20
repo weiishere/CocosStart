@@ -76,7 +76,7 @@ export class LoginPanel extends ViewComponent {
         script.startVerifyCountdown();
     }
     public onLoginWX(){
-        TSSDKTool.wxLoginResult('001X36Ga1omUSA02p3la18E7142X36GO');
+        TSSDKTool.wxLogin();
     }
 
 
