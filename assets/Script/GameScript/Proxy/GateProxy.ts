@@ -101,6 +101,28 @@ export class GateProxy extends BaseProxy {
     }
 
     /**
+     * 微信登录或者注册
+     * @param phoneRegisterOrLoginData 
+     */
+    public wxloginOrRegiter(code: string) {
+        let url = this.getFacadeUrl() + "/register/wechat";
+        HttpUtil.send(url, (response) => {
+            if (response.hd === "success") {
+                this.toast("请求完成，请稍后！" + response.bd);
+                this.loginAfterHandle(response.bd);
+                Facade.Instance.sendNotification(CommandDefine.closeLoginPanel, '', '')
+            } else {
+                // 返回错误码，提示用户
+                let errorCode = parseInt(response.bd);
+                cc.log("注册失败，错误码: ", errorCode);
+                this.toast("抱歉，微信授权失败！");
+            }
+        }, (error, requestData, status) => {
+            this.toast("请求服务器失败！-" + status);
+        }, HttpUtil.METHOD_POST, { code });
+    }
+
+    /**
      * 本地缓存数据登录
      * @param loginData 
      */
