@@ -4,6 +4,23 @@
     <dict>
         <key>frames</key>
         <dict>
+            <key>arrow2.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>anchor</key>
+                <string>{0.5,0.5}</string>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{75,50}</string>
+                <key>spriteSourceSize</key>
+                <string>{75,50}</string>
+                <key>textureRect</key>
+                <string>{{1157,546},{75,50}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
             <key>m_bottom_bar.png</key>
             <dict>
                 <key>aliases</key>
@@ -375,7 +392,7 @@
             <key>size</key>
             <string>{1466,626}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:454cf49054baea57b8e550eea2d1290e:3270e7718f3bd8850eb71e71a5b4a2be:58c0e0504adf84d3d71b9842b28c49ec$</string>
+            <string>$TexturePacker:SmartUpdate:c88c266a16b2f93209509465246ad43c:d21e00b22dc136a25c0626cd4a158c91:58c0e0504adf84d3d71b9842b28c49ec$</string>
             <key>textureFileName</key>
             <string>singleApp.png</string>
         </dict>

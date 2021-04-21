@@ -39,7 +39,8 @@ export const getUserOrderInfo = (targetId?, callBack?) => {
 export const initNoRecoreNode = (): cc.Node => {
     const node = new cc.Node('noRecord');
     const label = node.addComponent(cc.Label);
-    label.fontSize = 24;
+    node.color = new cc.Color(180, 180, 180);
+    label.fontSize = 20;
     label.string = '无记录';
     return node;
 }
@@ -73,16 +74,19 @@ export default class MyBonus extends ViewComponent {
 
     bindUI() {
         this.loading = this.node.getChildByName('loading');
-        getUserOrderInfo(undefined, (res) => {
-            //判断是不是盟主
-            this.node.getChildByName("bg").getChildByName("bg2_hl").active = true;
-            this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_2").active = true;
-            this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_4").active = true;
-            if (res.data.accountType === 666 || res.data.accountType === 888) {
-                this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_1").active = true;
-                this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_3").active = true;
-            }
-        });
+        // getUserOrderInfo(undefined, (res) => {
+        //     //判断是不是盟主
+        //     this.node.getChildByName("bg").getChildByName("bg2_hl").active = true;
+        //     this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_2").active = true;
+        //     this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_4").active = true;
+        //     if (res.data.accountType === 666 || res.data.accountType === 888) {
+        //         this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_1").active = true;
+        //         this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_3").active = true;
+        //     }
+        // });
+
+        //单独成麻只显示“提取记录”
+        this.node.getChildByName("bg").getChildByName("bg3_hl").getChildByName("item_title_4").active = true;
     }
 
     bindEvent() {

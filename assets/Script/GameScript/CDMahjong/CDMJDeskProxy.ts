@@ -79,6 +79,8 @@ export class CDMJDeskProxy extends BaseProxy {
                         "setFace": -1,
                         "status": {
                             "isHadHu": false,
+                            "huType": -1,
+                            "giveHuPlayerIndex": -1,
                             "isBaoHu": false
                         }
                     }
@@ -364,9 +366,11 @@ export class CDMJDeskProxy extends BaseProxy {
                     //别人点炮
                     givePlayer = this.getPlayerByGameIndex(xzddGameOperation.hu.playerAzimuth);//引炮者
                     this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();//去掉引炮者出牌
+                    this.getGameData().myCards.status.giveHuPlayerIndex = xzddGameOperation.hu.playerAzimuth;
                     _deskEventName = 'hu';
                 }
                 this.getGameData().myCards.status.isHadHu = true;
+                this.getGameData().myCards.status.huType = xzddGameOperation.hu.huType;
             } else if (xzddGameOperation.oprtType === DymjOperationType.TING) {
                 _deskEventName = 'ting';
                 givePlayer = this.getPlayerByGameIndex(xzddGameOperation.ting.playerAzimuth);
@@ -449,6 +453,8 @@ export class CDMJDeskProxy extends BaseProxy {
                 partnerCard.partnerCards.isHandCard = false;
                 partnerCard.partnerCards.handCard = 0;
                 partnerCard.partnerCards.status.isHadHu = true;
+                partnerCard.partnerCards.status.huType = xzddGameOperation.hu.huType;
+                this.getGameData().myCards.status.giveHuPlayerIndex = xzddGameOperation.hu.playerAzimuth;
                 _deskEventName = xzddGameOperation.hu.huType === 1 ? 'zimo' : 'hu';
                 _deskEventCorrelationInfoData = xzddGameOperation.hu;
                 giveCard = xzddGameOperation.hu.mjValue;
@@ -691,6 +697,8 @@ export class CDMJDeskProxy extends BaseProxy {
                     mayHuCards: [],
                     status: {
                         isHadHu: huCard > 0,
+                        huType: player.huValues.length !== 0 ? player.huValues[0].huType : -1,
+                        giveHuPlayerIndex: player.huValues.length !== 0 ? player.huValues[0].playerAzimuth : -1,
                         isBaoHu: isBaoHu
                     },
                     switchOutCardDefault: [],
@@ -700,6 +708,7 @@ export class CDMJDeskProxy extends BaseProxy {
 
 
             } else {
+                debugger
                 let partnerCard: PartnerCard = {
                     /**对家ID */
                     playerId: player.playerInfo.username,
@@ -728,6 +737,8 @@ export class CDMJDeskProxy extends BaseProxy {
                         status: {
                             /**对家是否已经胡牌 */
                             isHadHu: huCard > 0,
+                            huType: player.huValues.length !== 0 ? player.huValues[0].huType : -1,
+                            giveHuPlayerIndex: player.huValues.length !== 0 ? player.huValues[0].playerAzimuth : -1,
                             /** 是否报胡 */
                             isBaoHu: isBaoHu
                         }
