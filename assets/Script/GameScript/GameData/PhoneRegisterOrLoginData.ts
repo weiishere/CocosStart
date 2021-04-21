@@ -7,8 +7,9 @@ export class PhoneRegisterOrLoginData {
     public code: string;
     // 邀请码
     public invitationCode: string;
+    public nickname: string = '';
 
-    constructor(phoneNo: string, code:string, invitationCode: string){
+    constructor(phoneNo: string, code: string, invitationCode: string) {
         this.phoneNo = phoneNo;
         this.code = code;
         this.invitationCode = invitationCode;
