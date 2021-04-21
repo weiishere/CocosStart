@@ -278,7 +278,7 @@ export default class DeskList extends ViewComponent {
             let res = count2 - count1;
             if (res === 0) {
                 // 这里再次计算，目的是让人满的桌子在空桌子的前面
-                res = script2.getSitDownCount() - script1.getSitDownCount();
+                res = script1.getSitDownCount() - script2.getSitDownCount();
                 if (res === 0) {
                     res = script1.basicScore - script2.basicScore;
                 }
