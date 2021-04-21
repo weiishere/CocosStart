@@ -79,6 +79,9 @@ export type PartnerCard = {
         status: {
             /**对家是否已经胡牌 */
             isHadHu: boolean,
+            /**胡类型 -1，未胡， 0：点炮 1：自摸 2：抢杠 */
+            huType: number,
+            giveHuPlayerIndex: number,
             /** 是否报胡 */
             isBaoHu: boolean
         }
@@ -106,6 +109,10 @@ export type GameData = {
         status: {
             /**对家是否已经胡牌 */
             isHadHu: boolean,
+            /**胡类型 -1，未胡， 0：点炮 1：自摸 2：抢杠 */
+            huType: number,
+            /**引炮者 */
+            giveHuPlayerIndex: number,
             /** 是否报胡 */
             isBaoHu: boolean
         }
@@ -198,6 +205,8 @@ export class DeskRepository {
             setFace: -1,
             status: {
                 isHadHu: false,
+                huType: -1,
+                giveHuPlayerIndex: -1,
                 isBaoHu: false
             },
             cardsChoose: [],
@@ -223,6 +232,8 @@ export class DeskRepository {
                     setFace: -1,
                     status: {
                         isHadHu: false,
+                        huType: -1,
+                        giveHuPlayerIndex: -1,
                         isBaoHu: false
                     }
                 },

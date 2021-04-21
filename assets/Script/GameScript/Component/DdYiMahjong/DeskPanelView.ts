@@ -19,6 +19,7 @@ import { CommandDefine } from "../../MahjongConst/CommandDefine";
 import { DeskPanelViewEventDefine } from "../../GameConst/Event/DeskPanelViewEventDefine";
 import { MsgObj } from "./ChatBox";
 import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
+import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
 
 @ccclass
 export default class DeskPanelView extends ViewComponent {
@@ -355,13 +356,14 @@ export default class DeskPanelView extends ViewComponent {
             headWrap.getChildByName("nickName").getComponent(cc.Label).string = player.playerName;//昵称
             headWrap.getChildByName("uid").getComponent(cc.Label).string = player.playerId;//ID
             headWrap.getChildByName("goldView").getChildByName("myGlod").getComponent(cc.Label).string = player.playerGold + '';//金币
-            cc.loader.load(player.playerHeadImg, (error, item) => {
-                if (error) {
-                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '玩家头像获取失败' }, '');
-                } else {
-                    headWrap.getChildByName("head").getComponent(cc.Sprite).spriteFrame = new cc.SpriteFrame(item);
-                }
-            });
+            // cc.loader.load(player.playerHeadImg, (error, item) => {
+            //     if (error) {
+            //         Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '玩家头像获取失败' }, '');
+            //     } else {
+            //         headWrap.getChildByName("head").getComponent(cc.Sprite).spriteFrame = new cc.SpriteFrame(item);
+            //     }
+            // });
+            SpriteLoadUtil.loadSprite(headWrap.getChildByName("head").getComponent(cc.Sprite), player.playerHeadImg);
         });
     }
 

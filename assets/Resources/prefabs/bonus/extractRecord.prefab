@@ -747,8 +747,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "我的玩家",
-    "_N$string": "我的玩家",
+    "_string": "提取记录",
+    "_N$string": "提取记录",
     "_fontSize": 36,
     "_lineHeight": 36,
     "_enableWrapText": true,
@@ -1338,7 +1338,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 561,
-      "height": 419
+      "height": 397
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1350,7 +1350,7 @@
       "ctor": "Float64Array",
       "array": [
         -285,
-        -60,
+        -71,
         0,
         0,
         0,
@@ -2331,7 +2331,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 545,
-      "height": 419
+      "height": 401
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -2343,7 +2343,7 @@
       "ctor": "Float64Array",
       "array": [
         290,
-        -60,
+        -69,
         0,
         0,
         0,
