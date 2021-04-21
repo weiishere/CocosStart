@@ -105,7 +105,7 @@ export default class NewClass extends cc.Component {
 
             count--;
             if (count < 0) {
-                extendsSprite.index = 1;
+                extendsSprite.index = 0;
                 label.string = "获取验证码";
             } else {
                 label.string = count + "s";
