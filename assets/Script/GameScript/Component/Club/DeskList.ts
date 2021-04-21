@@ -12,6 +12,10 @@ import BaseDesk from './BaseDesk';
 import { GameNoDefine } from '../../GameConst/GameNoDefine';
 import { S2CClubRoomPlayerInfo } from '../../GameData/Club/s2c/S2CClubRoomPlayerInfo';
 import { CommonUtil } from '../../Util/CommonUtil';
+import { GateProxy } from '../../Proxy/GateProxy';
+import Facade from '../../../Framework/care/Facade';
+import { ProxyDefine } from '../../MahjongConst/ProxyDefine';
+import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
 
 const { ccclass, property } = cc._decorator;
 
@@ -31,6 +35,12 @@ export default class DeskList extends ViewComponent {
     roomTypeNode: cc.Node = null;
     @property(cc.Node)
     triggerBar: cc.Node = null;
+    @property(cc.Label)
+    fullLabel: cc.Label = null;
+    @property(cc.Label)
+    waitLabel: cc.Label = null;
+    @property(cc.Node)
+    userHeaderNode: cc.Node = null;
 
     waitHandleDesk = [];
 
@@ -82,6 +92,11 @@ export default class DeskList extends ViewComponent {
         if (this.chooseSpeedPanel.opacity === 0) return;
         cc.tween(this.chooseSpeedPanel).to(0.05, { opacity: 0, position: cc.v3(this.chooseSpeedPanel.x, this.chooseSpeedPanel.y) }).call(() => { }).start();
     }
+
+    getUserHeaderScript() {
+        return this.userHeaderNode.getComponent("UserHeader");
+    }
+
     openChooseSpeedPanel(clickHandler) {
         this.chooseSpeedPanel.active = true;
         this.chooseSpeedPanel.opacity = 0;
@@ -114,6 +129,8 @@ export default class DeskList extends ViewComponent {
 
         this.loadDeskNode();
 
+        this.updateFullAndWaitStatus();
+
         for (const deskNode of this.deskContainer.children) {
             let script = deskNode.getComponent(BaseDesk) as BaseDesk;
             this.basicScoreList.push(script.basicScore);
@@ -132,6 +149,23 @@ export default class DeskList extends ViewComponent {
         }
 
         this.sortDesk();
+    }
+
+    updateFullAndWaitStatus() {
+        let fullCount = 0;
+        let waitCount = 0;
+
+        let roomInfos = this.getRoomInfos();
+        for (const roomInfo of roomInfos) {
+            if (roomInfo.maxPlayerNum === roomInfo.userInfos.length) {
+                fullCount++;
+            } else if (roomInfo.userInfos.length > 0) {
+                waitCount++;
+            }
+        }
+
+        this.fullLabel.string = `满人:${fullCount}桌`;
+        this.waitLabel.string = `等待:${waitCount}桌`;
     }
 
     getRoomInfos(): S2CClubRoomInfoBase[] {
@@ -302,6 +336,8 @@ export default class DeskList extends ViewComponent {
 
             roomInfo.userInfos.push(userInfo);
         }
+
+        this.updateFullAndWaitStatus();
     }
 
     removeRoomPlayer(s2CClubRoomStandUp: S2CClubRoomStandUp) {
@@ -317,6 +353,7 @@ export default class DeskList extends ViewComponent {
                 break;
             }
         }
+        this.updateFullAndWaitStatus();
     }
 
     updateRoomInfo(s2CClubPushRoomRound: S2CClubPushRoomRound) {
@@ -444,6 +481,22 @@ export default class DeskList extends ViewComponent {
         this.loadDeskNode();
     }
 
+    copyID() {
+        let userName = this.getLocalCacheDataProxy().getLoginData().userName;
+        if (CC_JSB) {
+            (<any>jsb).copyTextToClipboard(userName);
+            this.getGateProxy().toast("复制成功");
+        }
+    }
+
+    public getGateProxy(): GateProxy {
+        return <GateProxy>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
+    }
+
+    public getLocalCacheDataProxy(): LocalCacheDataProxy {
+        return <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
+    }
+
     update(dt) {
 
         if (this.waitHandleDesk.length === 0) {
@@ -457,4 +510,5 @@ export default class DeskList extends ViewComponent {
             this.addDeskNode(value);
         }
     }
+
 }
