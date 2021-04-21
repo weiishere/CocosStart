@@ -14,12 +14,20 @@ import { GateProxy } from "../../Proxy/GateProxy";
 import { TuiTongZiProxy } from "../../TuiTongZi/TuiTongZiProxy";
 import { DymjMusicManager } from '../../Other/DymjMusicManager';
 import { ConfigProxy } from "../../Proxy/ConfigProxy";
+import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
+import { LoginAfterHttpUtil } from "../../Util/LoginAfterHttpUtil";
+import { HttpUtil } from "../../Util/HttpUtil";
+import { GameNoDefine } from "../../GameConst/GameNoDefine";
 
 @ccclass
 export default class GateStartPanel extends ViewComponent {
 
     @property(cc.Node)
     settingBtn: cc.Node = null;
+    @property(cc.Node)
+    myPerformance: cc.Node = null;
+    @property(cc.Node)
+    bottomNode: cc.Node = null;
     @property(cc.Node)
     helpBtn: cc.Node = null;
     @property(cc.Node)
@@ -36,6 +44,20 @@ export default class GateStartPanel extends ViewComponent {
     exchangeEntrance: cc.Node = null;
     @property(cc.Node)
     gaemContent: cc.Node = null;
+    @property(cc.Sprite)
+    headSprite: cc.Sprite = null;
+    @property(cc.Label)
+    nicknameLabel: cc.Label = null;
+    @property(cc.Label)
+    userNameLabel: cc.Label = null;
+    @property(cc.Label)
+    goldLabel: cc.Label = null;
+    @property(cc.Label)
+    clubWaitDeskLabel: cc.Label = null;
+    @property(cc.Label)
+    clubGameDeskLabel: cc.Label = null;
+    @property(cc.Node)
+    goldNode: cc.Node = null;
 
     private mahjongEntrance: cc.Node;
     private pdkEntrance: cc.Node;
@@ -45,35 +67,13 @@ export default class GateStartPanel extends ViewComponent {
         this.mahjongEntrance = this.root.getChildByName("gameBg1");
         this.pdkEntrance = this.root.getChildByName("gameBg2");
         this.otherGamePanel = this.root.getChildByName("otherGame");
-        this.initEffect();
-    }
-
-    private initEffect(): void {
-        // const pdkNode = this.root.getChildByName("gameBg2").getChildByName("gameItem2");
-        // const _action2 = cc.repeatForever(cc.sequence(cc.rotateTo(1, 5), cc.rotateTo(1, -5), cc.callFunc(() => { })));
-        // pdkNode.runAction(_action2);
-
-
-        const mahjongNode = this.root.getChildByName("gameBg1").getChildByName("gameItem1");
-        const _action = cc.repeatForever(cc.sequence(cc.moveBy(1, cc.v2(0, 10)), cc.moveBy(1, cc.v2(0, -10)), cc.callFunc(() => { })));
-        mahjongNode.runAction(_action);
-
-        const exchangeNode = this.root.getChildByName("gameBg3").getChildByName("gameItem3");
-        const _action3 = cc.repeatForever(cc.sequence(cc.scaleTo(1.2, 1.02), cc.scaleTo(1.2, 0.98), cc.callFunc(() => { })));
-        exchangeNode.runAction(_action3);
-
-        const erbaGaneNode = this.root.getChildByName("otherGame").getChildByName("game_ebg").getChildByName("hot");
-        const _action4 = cc.repeatForever(cc.sequence(cc.scaleTo(0.1, 1.1), cc.scaleTo(0.4, 1.1),
-            cc.sequence(cc.rotateBy(0.05, 5), cc.rotateBy(0.05, -5), cc.rotateBy(0.05, 5), cc.rotateBy(0.05, -5), cc.rotateBy(0.05, 5), cc.rotateBy(0.05, -5),
-                cc.scaleTo(0.1, 1), cc.scaleTo(0.4, 1), cc.callFunc(() => { }))));
-        erbaGaneNode.runAction(_action4);
     }
 
     getGateProxy() {
         return <GateProxy>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
     }
 
-    addButton(node: cc.Node) {
+    addButton(node: cc.Node, scale: number = 1.05) {
         let button = node.addComponent(cc.Button);
 
         button.transition = cc.Button.Transition.SCALE;
@@ -82,22 +82,37 @@ export default class GateStartPanel extends ViewComponent {
     }
 
     protected async bindEvent() {
-        // this.mahjongEntrance.on(cc.Node.EventType.TOUCH_END, () => {
-        //     (Facade.Instance.retrieveProxy(ProxyDefine.Gate) as GateProxy).joinClub();
-        // }, this, true);
+        let lianmeng = this.node.getChildByName("m_ract");
+        this.addButton(lianmeng);
+        lianmeng.on(cc.Node.EventType.TOUCH_END, () => {
+            this.joinClub();
+        });
 
-        // this.otherGamePanel.children.forEach(node => {
-        //     node.on(cc.Node.EventType.TOUCH_START, (eventData, item) => {
-        //         const _action = cc.sequence(cc.scaleTo(0.1, 1.1), cc.scaleTo(0.1, 1), cc.callFunc(() => { }));
-        //         eventData.target.runAction(_action);
-        //         if (node.name === 'game_ebg') {
-        //             (Facade.Instance.retrieveProxy(ProxyDefine.Gate) as GateProxy).joinTuiTongZi();
-        //         } else {
-        //             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '游戏开发中，敬请期待...', toastOverlay: false }, '');
-        //         }
-        //     }, this, true);
-        // });
+        this.headSprite.node.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenMyCenter, null, '')
+        });
 
+        this.bottomNode.children.forEach(node => {
+            this.addButton(node, 1.1);
+            node.on(cc.Node.EventType.TOUCH_END, (eventData, item) => {
+                if (node.name === 'm_hongli') {
+                } else if (node.name === 'm_wdyj_btu') {
+                }
+            }, this, true);
+        });
+
+        this.myPerformance.children.forEach(node => {
+            this.addButton(node);
+            node.on(cc.Node.EventType.TOUCH_END, (eventData, item) => {
+                if (node.name === 'm_wdwj_btu') {
+                    Facade.Instance.sendNotification(CommandDefine.OpenMyPlayer, null, '');
+                } else if (node.name === 'm_wdyj_btu') {
+                    Facade.Instance.sendNotification(CommandDefine.OpenMyEnterPrise, null, '');
+                } else if (node.name === 'm_wdhl_btu') {
+                    Facade.Instance.sendNotification(CommandDefine.OpenBonusIndex, null, '');
+                }
+            }, this, true);
+        });
 
         this.gaemContent.children.forEach(node => {
             this.addButton(node);
@@ -147,17 +162,63 @@ export default class GateStartPanel extends ViewComponent {
         this.serviceBtn.on(cc.Node.EventType.TOUCH_END, () => {
             cc.sys.openURL(this.getConfigProxy().serviceUrl);
         });
+
+        this.goldNode.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenExchangePanel, null, '')
+        });
     }
 
     getConfigProxy() {
         return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
     }
 
+    joinClub() {
+        this.getGateProxy().joinClub();
+    }
+
+    updateUserName(userName: string) {
+        if (this.userNameLabel) this.userNameLabel.string = userName;
+    }
+
+    updateHead(head: string) {
+        this.headSprite && SpriteLoadUtil.loadSprite(this.headSprite, head);
+    }
+
+    updateNickname(nickname: string) {
+        if (this.nicknameLabel) this.nicknameLabel.string = nickname;
+    }
+
+    updateGold(gold: number) {
+        if (this.goldLabel) this.goldLabel.string = gold + "";
+    }
+
+    updateClubWaitDeskLabel(value: number) {
+        if (this.clubWaitDeskLabel) this.clubWaitDeskLabel.string = `${value}桌等待中`;
+    }
+
+    updateClubGameDeskLabel(value: number) {
+        if (this.clubGameDeskLabel) this.clubGameDeskLabel.string = `${value}桌游戏中`;
+    }
+
+    updateClubSimpleInfo() {
+        let url = this.getConfigProxy().facadeUrl + "club/getCreateRoomInfo";
+        let param = {
+            gameSubClass: GameNoDefine.XUE_ZHAN_DAO_DI,
+        }
+        LoginAfterHttpUtil.send(url, (result) => {
+            if (result.hd === 'success') {
+                this.updateClubGameDeskLabel(result.bd.gameRoomCount);
+                this.updateClubWaitDeskLabel(result.bd.waitBeginRoomCount);
+            }
+        }, (err) => {
+
+        }, HttpUtil.METHOD_POST, param)
+    }
+
     // onLoad () {
     // }
 
     start() {
-
     }
 
     // update (dt) {}

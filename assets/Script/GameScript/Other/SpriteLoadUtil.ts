@@ -10,7 +10,13 @@ export class SpriteLoadUtil {
             sprite.spriteFrame = new cc.SpriteFrame(texture);
         } else {
             cc.loader.load(url, (error, item) => {
-                sprite.spriteFrame = new cc.SpriteFrame(item)
+                if (error) {
+                    cc.log("load sprite url : ", error);
+                    return;
+                }
+                if (sprite && sprite.node && sprite.node.isValid) {
+                    sprite.spriteFrame = new cc.SpriteFrame(item)
+                }
             });
         }
     }

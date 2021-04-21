@@ -63,4 +63,7 @@ export enum CommandDefine {
     OpenXzddRuleDetail = "OpenXzddRuleDetail",
     UpdateLeessang = "UpdateLeessang",
     ChangePlayerGold = "ChangePlayerGold",
+    OpenMyPlayer = "OpenMyPlayer",
+    OpenMyEnterPrise = "OpenMyEnterPrise",
+    UpdateClubSimpleInfo = "UpdateClubSimpleInfo",
 }

@@ -1,3 +1,5 @@
+
+import { TSSDKTool } from "../../Util/TSSDKTool";
 const { ccclass, property } = cc._decorator;
 import ViewComponent from "../../Base/ViewComponent";
 import { PrefabDefine } from "../../MahjongConst/PrefabDefine"
@@ -73,6 +75,10 @@ export class LoginPanel extends ViewComponent {
         let script = this.phoneLoginNode.getComponent("LoginSubPanel");
         script.startVerifyCountdown();
     }
+    public onLoginWX(){
+        TSSDKTool.wxLogin();
+    }
+
 
     start() {
         // cc.loader.loadRes('textures/gate/gate_bg', cc.SpriteFrame, (error, img) => {

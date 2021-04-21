@@ -18,12 +18,14 @@ import { WebSockerProxy } from '../Proxy/WebSocketProxy';
 import MyCenter from '../Component/General/MyCenter';
 import NoticeAlert from "../Component/General/NoticeAlert";
 import RecordDetailList from "../Component/Record/RecordDetailList";
+import GateStartPanel from "../Component/General/GateStartPanel";
 
 export class GatePanelMediator extends BaseMediator {
     //private gatePanelView: GatePanelView = null;
     //private component: cc.Component;
     private scrollMsgNode: cc.Node;
     private gatePanelView: GatePanelView;
+    private gateStartPanelScript: GateStartPanel;
     private toastActive = false;
     private gateProxy: GateProxy;
     private gameStartPanel: cc.Node;
@@ -64,7 +66,7 @@ export class GatePanelMediator extends BaseMediator {
             PrefabDefine.PromptWindow,
             PrefabDefine.ScrollMsgNode,
             PrefabDefine.UserInfoPanel,
-            PrefabDefine.GameStartPanel,
+            PrefabDefine.GameStartPanelNew,
             PrefabDefine.Setting,
             PrefabDefine.ExchangePanel,
             PrefabDefine.RecordPanel,
@@ -73,6 +75,8 @@ export class GatePanelMediator extends BaseMediator {
             PrefabDefine.ShareAlert,
             PrefabDefine.GiveAwayPanel,
             PrefabDefine.BonusIndex,
+            PrefabDefine.MyPlayer,
+            PrefabDefine.MyEnterPrise,
             PrefabDefine.DymjRecordItem,
             PrefabDefine.XzddRecordItem,
             PrefabDefine.TuiTongZiRecordItem,
@@ -237,6 +241,18 @@ export class GatePanelMediator extends BaseMediator {
         }
     }
 
+    private openMyPlayer() {
+        let res = cc.loader.getRes(PrefabDefine.MyPlayer);
+        let myPlayer = cc.instantiate(res);
+        this.viewComponent.addChild(myPlayer);
+    }
+
+    private openMyEnterPrise() {
+        let res = cc.loader.getRes(PrefabDefine.MyEnterPrise);
+        let myEnterPrise = cc.instantiate(res);
+        this.viewComponent.addChild(myEnterPrise);
+    }
+
     /** 切换账号 */
     private changeUserHandle() {
         // 暂停音乐
@@ -318,7 +334,10 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.OpenUpdatePromptAlert,
             CommandDefine.closeLoginPanel,
             CommandDefine.UpdateLeessang,
-            CommandDefine.OpenNoticeAlert
+            CommandDefine.OpenNoticeAlert,
+            CommandDefine.OpenMyPlayer,
+            CommandDefine.OpenMyEnterPrise,
+            CommandDefine.UpdateClubSimpleInfo,
         ];
     }
 
@@ -333,17 +352,27 @@ export class GatePanelMediator extends BaseMediator {
                 if (this.userHeaderScript) {
                     this.userHeaderScript.updateGold(userGold.newGold);
                 }
+
+                if (this.gameStartPanel) {
+                    this.gateStartPanelScript.updateGold(userGold.newGold);
+                }
                 break;
             case CommandDefine.UpdateNickname:
                 let nickname = notification.getBody();
                 if (this.userHeaderScript) {
                     this.userHeaderScript.updateNickname(nickname);
                 }
+                if (this.gameStartPanel) {
+                    this.gateStartPanelScript.updateNickname(nickname);
+                }
                 break;
             case CommandDefine.UpdateHead:
                 let head = notification.getBody();
                 if (this.userHeaderScript) {
                     this.userHeaderScript.updateHead(head);
+                }
+                if (this.gameStartPanel) {
+                    this.gateStartPanelScript.updateHead(head);
                 }
                 break;
             case CommandDefine.AudioCommand:
@@ -424,7 +453,6 @@ export class GatePanelMediator extends BaseMediator {
                 if (this.gameStartPanel) {
                     return;
                 }
-                const userInfoPanel = cc.loader.getRes(PrefabDefine.UserInfoPanel, cc.Prefab);
                 const { loginData } = notification.getBody();
 
 
@@ -432,15 +460,23 @@ export class GatePanelMediator extends BaseMediator {
                 MusicManager.getInstance().playMusic(AudioSourceDefine.BackMusic4);
                 this.sendNotification(CommandDefine.OpenToast, { content: "欢迎回来" });
 
-                let gameStartResource = cc.loader.getRes(PrefabDefine.GameStartPanel, cc.Prefab);
+                let gameStartResource = cc.loader.getRes(PrefabDefine.GameStartPanelNew, cc.Prefab);
                 this.gameStartPanel = cc.instantiate(gameStartResource);
                 this.viewComponent.addChild(this.gameStartPanel);
 
-                const _userInfoPanel = cc.instantiate(userInfoPanel) as cc.Node;
-                this.gameStartPanel.addChild(_userInfoPanel);
-                // _userInfoPanel.parent = cc.find("Canvas");
-                this.userHeaderScript = (_userInfoPanel as cc.Node).getComponent('UserHeader');
-                this.userHeaderScript.showAcount(loginData);
+                this.gateStartPanelScript = this.gameStartPanel.getComponent("GateStartPanel")
+
+                // const userInfoPanel = cc.loader.getRes(PrefabDefine.UserInfoPanel, cc.Prefab);
+                // const _userInfoPanel = cc.instantiate(userInfoPanel) as cc.Node;
+                // this.gameStartPanel.addChild(_userInfoPanel);
+                // this.userHeaderScript = (_userInfoPanel as cc.Node).getComponent('UserHeader');
+                // this.userHeaderScript.showAcount(loginData);
+
+                this.gateStartPanelScript.updateGold(loginData.gold);
+                this.gateStartPanelScript.updateNickname(loginData.nickname);
+                this.gateStartPanelScript.updateHead(loginData.head);
+                this.gateStartPanelScript.updateUserName(loginData.userName);
+                this.gateStartPanelScript.updateClubSimpleInfo();
 
                 this.updateLeessang(this.getConfigProxy().leessang);
                 if (!cc.sys.localStorage.getItem('today') || (cc.sys.localStorage.getItem('today') !== ((new Date()).getDate() + ''))) {
@@ -471,6 +507,17 @@ export class GatePanelMediator extends BaseMediator {
                 break;
             case CommandDefine.closeLoginPanel:
                 cc.find('Canvas/phoneLoginAlert').destroy();
+                break;
+            case CommandDefine.OpenMyPlayer:
+                this.openMyPlayer();
+                break;
+            case CommandDefine.OpenMyEnterPrise:
+                this.openMyEnterPrise();
+                break;
+            case CommandDefine.UpdateClubSimpleInfo:
+                if (this.gameStartPanel) {
+                    this.gateStartPanelScript.updateClubSimpleInfo();
+                }
                 break;
         }
     }
