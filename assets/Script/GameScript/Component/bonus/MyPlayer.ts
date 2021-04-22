@@ -18,6 +18,7 @@ import PageCommand from "../../Util/PageCommand";
 import { ConfigProxy } from "../../Proxy/ConfigProxy";
 import { initNoRecoreNode } from './MyBonus';
 import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
+import { getUserOrderInfo } from "./MyBonus";
 
 const { ccclass, property } = cc._decorator;
 
@@ -85,37 +86,41 @@ export default class MyPlayer extends ViewComponent {
         //${/*localCacheDataProxy.getLoginData().userName*/}
         self.loading.active = true;
         this.scrollViewContent.removeAllChildren();
-        HttpUtil.send(bonusUrl + `/api/v1/gamePlayer?userName=${localCacheDataProxy.getLoginData().userName}&pageSize=${this.pageSize}&currentPage=${currentPage}`, res => {
-            self.loading.active = false;
-            if (res.code === 200) {
-                // const p = parseInt((res.data.totalNum / this.pageSize) + '');
-                // this.pageCount = (res.data.totalNum % this.pageSize) > 0 ? (p + 1) : p;
-                this.pageCommand.init(res.data.totalNum, this.pageSize);
-                const userOrderInfo = JSON.parse(window.localStorage['userOrderInfo']);
-                cc.loader.loadRes(PrefabDefine.MyPlayerItem, cc.Prefab, (err, myPlayerItem) => {
-                    this.node.getChildByName("bg3_hl").getChildByName("playerNum").getComponent(cc.Label).string = "您目前的玩家数量：" + res.data.totalNum;
-                    res.data.list.forEach(element => {
-                        const myPlayerItemNode: cc.Node = cc.instantiate(myPlayerItem);
-                        myPlayerItemNode.getChildByName("name").getComponent(cc.Label).string = element.nickName;
-                        myPlayerItemNode.getChildByName("playerId").getComponent(cc.Label).string = element.userName;
-                        myPlayerItemNode.getChildByName("playNum").getComponent(cc.Label).string = element.gameNum;
-                        myPlayerItemNode.getChildByName("ww_mzicon").active = element.accountType === 666;//是否显示盟主
-                        myPlayerItemNode.getChildByName("regTime").getComponent(cc.Label).string = element.createDate;
-                        myPlayerItemNode.getChildByName("ww_sq").active = (userOrderInfo.accountType === 666 || userOrderInfo.accountType === 888);//element.accountType === 666;//是否显示分配比例按钮
-                        (myPlayerItemNode.getComponent('MyPlayerItem') as MyPlayerItem).init(element);
-                        SpriteLoadUtil.loadSprite(myPlayerItemNode.getChildByName("head").getComponent(cc.Sprite), element.headUrl);
-                        this.scrollViewContent.addChild(myPlayerItemNode);
+        getUserOrderInfo(localCacheDataProxy.getLoginData().userName, ({ data }) => {
+            HttpUtil.send(bonusUrl + `/api/v1/gamePlayer?userName=${localCacheDataProxy.getLoginData().userName}&pageSize=${this.pageSize}&currentPage=${currentPage}`, res => {
+                self.loading.active = false;
+                if (res.code === 200) {
+                    // const p = parseInt((res.data.totalNum / this.pageSize) + '');
+                    // this.pageCount = (res.data.totalNum % this.pageSize) > 0 ? (p + 1) : p;
+                    this.pageCommand.init(res.data.totalNum, this.pageSize);
+                    //const userOrderInfo = JSON.parse(window.localStorage['userOrderInfo']);
+                    const userOrderInfo = data;//JSON.parse(cc.sys.localStorage.getItem('userOrderInfo'));
+                    cc.loader.loadRes(PrefabDefine.MyPlayerItem, cc.Prefab, (err, myPlayerItem) => {
+                        this.node.getChildByName("bg3_hl").getChildByName("playerNum").getComponent(cc.Label).string = "您目前的玩家数量：" + res.data.totalNum;
+                        res.data.list.forEach(element => {
+                            const myPlayerItemNode: cc.Node = cc.instantiate(myPlayerItem);
+                            myPlayerItemNode.getChildByName("name").getComponent(cc.Label).string = element.nickName;
+                            myPlayerItemNode.getChildByName("playerId").getComponent(cc.Label).string = element.userName;
+                            myPlayerItemNode.getChildByName("playNum").getComponent(cc.Label).string = element.gameNum;
+                            myPlayerItemNode.getChildByName("ww_mzicon").active = element.accountType === 666;//是否显示盟主
+                            myPlayerItemNode.getChildByName("regTime").getComponent(cc.Label).string = element.createDate;
+                            myPlayerItemNode.getChildByName("ww_sq").active = (userOrderInfo.accountType === 666 || userOrderInfo.accountType === 888);//element.accountType === 666;//是否显示分配比例按钮
+                            (myPlayerItemNode.getComponent('MyPlayerItem') as MyPlayerItem).init(element);
+                            SpriteLoadUtil.loadSprite(myPlayerItemNode.getChildByName("head").getComponent(cc.Sprite), element.headUrl);
+                            this.scrollViewContent.addChild(myPlayerItemNode);
+                        });
+                        if (res.data.list.length === 0) {
+                            this.scrollViewContent.addChild(initNoRecoreNode());
+                        }
                     });
-                    if (res.data.list.length === 0) {
-                        this.scrollViewContent.addChild(initNoRecoreNode());
-                    }
-                });
-            } else {
-                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
-            }
-        }, (err) => {
-            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '数据服务未响应', toastOverlay: true }, '');
-        }, HttpUtil.METHOD_GET, {})
+                } else {
+                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
+                }
+            }, (err) => {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '数据服务未响应', toastOverlay: true }, '');
+            }, HttpUtil.METHOD_GET, {})
+        })
+
     }
 
     start() {

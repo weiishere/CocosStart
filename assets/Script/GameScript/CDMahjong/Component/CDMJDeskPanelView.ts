@@ -696,7 +696,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.handCard.removeAllChildren();
         this.handCard.width = 0;
         //this.handCard.height = 0;
-        if (this.getData().gameData.myCards.handCard !== 0) {
+        if (this.getData().gameData.myCards.handCard !== 0 && this.handCard.children.length === 0) {
             const _handCard = this.addCardToNode(this.handCard, this.getData().gameData.myCards.handCard, "mine", 'setUp', {
                 active: true,
                 purAddNode: node => {

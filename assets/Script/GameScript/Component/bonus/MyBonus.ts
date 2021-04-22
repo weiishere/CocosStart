@@ -22,7 +22,8 @@ export const getUserOrderInfo = (targetId?, callBack?) => {
     let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
     HttpUtil.send(bonusUrl + `/api/v1/account/get?userName=${targetId || localCacheDataProxy.getLoginData().userName}`, res => {
         if (res.code === 200) {
-            if (!targetId) window.localStorage['userOrderInfo'] = JSON.stringify(res.data);
+            //if (!targetId) window.localStorage['userOrderInfo'] = JSON.stringify(res.data);
+            if (!targetId) cc.sys.localStorage.setItem('userOrderInfo', JSON.stringify(res.data));
             /*accountType: 1
             inviteCode: "6043388"
             privilege: 1*/

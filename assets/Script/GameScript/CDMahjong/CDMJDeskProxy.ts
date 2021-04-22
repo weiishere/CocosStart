@@ -708,7 +708,6 @@ export class CDMJDeskProxy extends BaseProxy {
 
 
             } else {
-                debugger
                 let partnerCard: PartnerCard = {
                     /**对家ID */
                     playerId: player.playerInfo.username,
