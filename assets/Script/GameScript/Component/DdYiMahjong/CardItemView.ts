@@ -125,6 +125,7 @@ export default class CardItemView extends cc.Component {
     private cardDir: Array<String> = ['', 'wan1', 'wan2', 'wan3', 'wan4', 'wan5', 'wan6', 'wan7', 'wan8', 'wan9', 'tong1', 'tong2', 'tong3', 'tong4', 'tong5', 'tong6', 'tong7', 'tong8', 'tong9', 'tiao1', 'tiao2', 'tiao3', 'tiao4', 'tiao5', 'tiao6', 'tiao7', 'tiao8', 'tiao9']
     private dragStartPosition: cc.Vec2 = null;
     private arrows: cc.Node;
+    private arrows2: cc.Node;
     onLoad() {
 
     }
@@ -148,6 +149,9 @@ export default class CardItemView extends cc.Component {
         }
 
     }
+    public setArrows2(active?: boolean) {
+        this.arrows2 && (this.arrows2.active = active);
+    }
     /**设置是否选中 */
     public setStress(stress?: boolean) {
         const cardChoose = this.node.getChildByName('cardChoose');
@@ -170,9 +174,14 @@ export default class CardItemView extends cc.Component {
         this.isActive = active;
     }
     /**设置可胡的牌 */
-    public setHuCard(mayHuCards: MayHuCard): void {
-        this.mayHuCards = mayHuCards;
-        this.node.getChildByName("down").active = true;//设置可胡的牌
+    public setHuCard(mayHuCards?: MayHuCard): void {
+        if (!mayHuCards) {
+            this.mayHuCards = null;
+            this.node.getChildByName("down").active = false
+        } else {
+            this.mayHuCards = mayHuCards;
+            this.node.getChildByName("down").active = true;//设置可胡的牌
+        }
     }
     /**设置为禁用(置灰) */
     setDisable() {
@@ -333,6 +342,7 @@ export default class CardItemView extends cc.Component {
         const cardComp = this.node.getComponent(cc.Sprite);
         const faceNode = this.node.getChildByName('face');
         this.arrows = this.node.getChildByName('cardArrows');
+        this.arrows2 = this.node.getChildByName('cardArrows2');
         faceNode.setScale(0.9, 0.9);
         switch (this.position) {
             case 'mine':

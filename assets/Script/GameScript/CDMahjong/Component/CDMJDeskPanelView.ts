@@ -20,6 +20,8 @@ import { DeskPanelViewEventDefine } from "../../GameConst/Event/DeskPanelViewEve
 import { MsgObj } from "../../Component/DdYiMahjong/ChatBox";
 import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
 import myhelper from "./CDMJDeskPanelViewHelper";
+import helper from "./CDMJDeskPanelViewHelper";
+import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
 
 @ccclass
 export default class CDMJDeskPanelView extends ViewComponent {
@@ -36,7 +38,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     private mainCardListPanel: cc.Node;
     private touchCard: cc.Node;
     private barCard: cc.Node;
-    private huCard: cc.Node;
+    public huCard: cc.Node;
     private outCardList: cc.Node;
     public mainCardList: Array<cc.Node> = [];
     private handCard: cc.Node = null;
@@ -44,7 +46,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     private frontMainCardListPanel: cc.Node;
     private frontTouchCard: cc.Node;
     private frontBarCard: cc.Node;
-    private frontHuCard: cc.Node;
+    public frontHuCard: cc.Node;
     private frontOutCardList: cc.Node;
     private frontMainCardList: Array<cc.Node> = [];
     private frontHandCard: cc.Node = null;
@@ -52,7 +54,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     private leftMainCardListPanel: cc.Node;
     private leftTouchCard: cc.Node;
     private leftBarCard: cc.Node;
-    private leftHuCard: cc.Node;
+    public leftHuCard: cc.Node;
     private leftOutCardList: cc.Node;
     private leftMainCardList: Array<cc.Node> = [];
     private leftHandCard: cc.Node = null;
@@ -60,12 +62,12 @@ export default class CDMJDeskPanelView extends ViewComponent {
     private rightMainCardListPanel: cc.Node;
     private rightTouchCard: cc.Node;
     private rightBarCard: cc.Node;
-    private rightHuCard: cc.Node;
+    public rightHuCard: cc.Node;
     private rightOutCardList: cc.Node;
     private rightMainCardList: Array<cc.Node> = [];
     private rightHandCard: cc.Node = null;
 
-    private positionNode: Array<cc.Node>;
+    public positionNode: Array<cc.Node>;
     private opreationArea: cc.Node;
     private gameEventView: cc.Node;
     private deskOpreationIconWrap: cc.Node;
@@ -415,7 +417,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         // } else if (myGameIndex === 3) {
         //     this.positionNode = [this.deskAiming.left, this.deskAiming.bottom, this.deskAiming.right, this.deskAiming.top]
         // }
-        if (seatNumber === 1 || seatNumber === 2||seatNumber === 4) {
+        if (seatNumber === 1 || seatNumber === 2 || seatNumber === 4) {
             if (myGameIndex === 0) {
                 this.positionNode = [this.deskAiming.bottom, this.deskAiming.right, this.deskAiming.top, this.deskAiming.left]
             } else if (myGameIndex === 1) {
@@ -451,6 +453,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
             let headWrap: cc.Node;
             if (self.isMe(false, player.playerId)) {
                 headWrap = myHeadNode;
+                headWrap.getChildByName('masterSign').active = this.getData().gameData.myCards.status.isHadHu;
             } else {
                 if (self.positionNode[player.gameIndex].name === 'p-top') {
                     //更新对家头像信息
@@ -465,23 +468,27 @@ export default class CDMJDeskPanelView extends ViewComponent {
                     rightHeadNode.active = true;
                     headWrap = rightHeadNode;
                 }
+                headWrap.getChildByName('masterSign').active = this.getData().gameData.partnerCardsList.find(item => item.playerId === player.playerId).partnerCards.status.isHadHu;
             }
             if (!headWrap) return;
             headWrap.getChildByName('masterSign').active = player.master;
+
             headWrap.getChildByName("nickName").getComponent(cc.Label).string = player.playerName;//昵称
             headWrap.getChildByName("uid").getComponent(cc.Label).string = player.playerId;//ID
             headWrap.getChildByName("goldView").getChildByName("myGlod").getComponent(cc.Label).string = player.playerGold.toFixed(2);//金币
-            cc.loader.load(player.playerHeadImg, (error, item) => {
-                if (error) {
-                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '玩家头像获取失败' }, '');
-                } else {
-                    headWrap.getChildByName("head").getComponent(cc.Sprite).spriteFrame = new cc.SpriteFrame(item);
-                }
-            });
+            // cc.loader.load(player.playerHeadImg, (error, item) => {
+            //     if (error) {
+            //         Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '玩家头像获取失败' }, '');
+            //     } else {
+            //         headWrap.getChildByName("head").getComponent(cc.Sprite).spriteFrame = new cc.SpriteFrame(item);
+            //     }
+            // });
+            SpriteLoadUtil.loadSprite(headWrap.getChildByName("head").getComponent(cc.Sprite), player.playerHeadImg);
         });
     }
     /**更新自己主牌 */
     updateMyCurCardList(effectDone?: () => void): void {
+        if (helper.isHadHu(this, this.getSelfPlayer().userName) && this.mainCardListPanel.children.length !== 0) return;
         this.mainCardList = [];
         const self = this;
         this.mainCardListPanel.removeAllChildren();
@@ -549,33 +556,36 @@ export default class CDMJDeskPanelView extends ViewComponent {
             let index = 0;
             this.schedule(() => {
                 const card = this.mainCardListPanel.children[index];
-                cc.tween(card).to(0.15, { position: cc.v3(0, -10), opacity: 255, scale: 1 }, { easing: 'easeBackInOut' }).to(0.05, { position: cc.v3(0, 0) }).call(() => {
+                cc.tween(card).to(0.1, { position: cc.v3(0, -10), opacity: 255, scale: 1 }, { easing: 'easeBackInOut' }).to(0.05, { position: cc.v3(0, 0) }).call(() => {
                     (card.getComponent("CardItemView") as CardItemView).setMainHide(true);
                 }).start();
                 index++;
                 if (index === this.mainCardListPanel.children.length - 1) { effectDone(); }
-            }, 0.2, this.mainCardListPanel.children.length - 1)
+            }, 0.12, this.mainCardListPanel.children.length - 1)
         }
     }
     /**更新其他玩家的主牌 */
     updateOtherCurCardList(): void {
-
         this.getData().gameData.partnerCardsList.forEach(partner => {
+
             const playerIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;
             if (this.positionNode[playerIndex].name === 'p-top') {
                 //更新对家主牌
+                if (helper.isHadHu(this, partner.playerId) && this.frontMainCardListPanel.children.length !== 0) return;
                 this.frontMainCardListPanel.removeAllChildren();
                 for (let i = 0, l = partner.partnerCards.curCardList.length; i < l; i++) {
                     this.addCardToNode(this.frontMainCardListPanel, this.isSuper ? partner.partnerCards.curCardList[i] : 0, "front", 'setUp', { scale: 0.5 });
                 }
             } else if (this.positionNode[playerIndex].name === 'p-left') {
                 //更新左方主牌
+                if (helper.isHadHu(this, partner.playerId) && this.leftMainCardListPanel.children.length !== 0) return;
                 this.leftMainCardListPanel.removeAllChildren();
                 for (let i = 0, l = partner.partnerCards.curCardList.length; i < l; i++) {
                     this.addCardToNode(this.leftMainCardListPanel, this.isSuper ? partner.partnerCards.curCardList[i] : 0, "left", 'setUp');
                 }
             } else if (this.positionNode[playerIndex].name === 'p-right') {
                 //更新右方主牌
+                if (helper.isHadHu(this, partner.playerId) && this.rightMainCardListPanel.children.length !== 0) return;
                 this.rightMainCardListPanel.removeAllChildren();
                 for (let i = 0, l = partner.partnerCards.curCardList.length; i < l; i++) {
                     this.addCardToNode(this.rightMainCardListPanel, this.isSuper ? partner.partnerCards.curCardList[i] : 0, "right", 'setUp');
@@ -585,7 +595,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     }
     /**更新杠碰牌 */
     updateBarAndTouchCard(): void {
-        //先更新杠/碰
+        //先更新杠牌
         myhelper.isAllowUpdatehelper<BarType>(this.barCard, this.getData().gameData.myCards.barCard, (param: BarType) => param.barCard, (item) => {
             const barItem = new cc.Node('barItem');
             const layoutCom = barItem.addComponent(cc.Layout);
@@ -667,13 +677,14 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.getData().gameData.myCards.mayHuCards.forEach(item => {
             this.mainCardList.forEach(card => {
                 const c = card.getComponent("CardItemView") as CardItemView;
-                if (c.cardNumber === item.putCard) c.setHuCard(item);
+                c.setHuCard(c.cardNumber === item.putCard ? item : null);
             })
         })
         if (this.handCard.children.length !== 0) {
             const cardScript = (this.handCard.children[0].getComponent("CardItemView") as CardItemView);
             const _mayHuCard = this.getData().gameData.myCards.mayHuCards.find(item => item.putCard === cardScript.cardNumber);
-            if (_mayHuCard) cardScript.setHuCard(_mayHuCard);
+            //if (_mayHuCard) cardScript.setHuCard(_mayHuCard);
+            cardScript.setHuCard(_mayHuCard);
         }
     }
     /**更新用户手牌/胡牌 */
@@ -685,7 +696,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.handCard.removeAllChildren();
         this.handCard.width = 0;
         //this.handCard.height = 0;
-        if (this.getData().gameData.myCards.handCard !== 0) {
+        if (this.getData().gameData.myCards.handCard !== 0 && this.handCard.children.length === 0) {
             const _handCard = this.addCardToNode(this.handCard, this.getData().gameData.myCards.handCard, "mine", 'setUp', {
                 active: true,
                 purAddNode: node => {
@@ -751,10 +762,27 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.huCard.width = 0;
         this.huCard.height = 0;
         if (this.getData().gameData.myCards.hadHuCard !== 0) {
-            this.addCardToNode(this.huCard, this.getData().gameData.myCards.hadHuCard, "mine", 'fall');
-            this.node.getChildByName("myJobNode").getChildByName("huSign").active = true;
+            const _huCard = this.addCardToNode(this.huCard, this.getData().gameData.myCards.hadHuCard, "mine", 'fall');
+            if (this.getData().gameData.myCards.status.huType === 0) {
+                //本人是炮胡，显示箭头
+                (_huCard.getComponent('CardItemView') as CardItemView).setArrows2(true);
+                const gameIndex = this.getData().gameData.myCards.status.giveHuPlayerIndex;
+                if (gameIndex !== -1) {
+                    let _headNode: cc.Node;
+                    if (this.positionNode[gameIndex].name === 'p-top') {
+                        _headNode = this.node.getChildByName("headList").getChildByName('frontHead');
+                    } else if (this.positionNode[gameIndex].name === 'p-left') {
+                        _headNode = this.node.getChildByName("headList").getChildByName('leftHead');
+                    } else if (this.positionNode[gameIndex].name === 'p-right') {
+                        _headNode = this.node.getChildByName("headList").getChildByName('rightHead');
+                    }
+                    _headNode && (_headNode.getChildByName('arrow2').active = true);
+                }
+            }
+            this.node.getChildByName("headList").getChildByName('myHead').getChildByName("huSign").active = true;
         } else {
-            this.node.getChildByName("myJobNode").getChildByName("huSign").active = false;
+            this.node.getChildByName("headList").getChildByName('myHead').getChildByName("huSign").active = false;
+            this.node.getChildByName("headList").children.forEach(headNode => headNode.getChildByName('arrow2') && (headNode.getChildByName('arrow2').active = false));
         }
         //再检测对家手牌
         this.getData().gameData.partnerCardsList.forEach(partner => {
@@ -805,19 +833,19 @@ export default class CDMJDeskPanelView extends ViewComponent {
                 //更新对家手牌
                 myhelper.updateHandCardAndHuCardHelper.bind(this)(partner, this.frontHuCard,
                     this.node.getChildByName("frontJobNode").getChildByName("ting"),
-                    this.node.getChildByName("frontJobNode").getChildByName("huSign"),
+                    this.node.getChildByName("headList").getChildByName('frontHead').getChildByName("huSign"),
                     'front');
             } else if (this.positionNode[_gameIndex].name === 'p-left') {
                 //更新左方手牌
                 myhelper.updateHandCardAndHuCardHelper.bind(this)(partner, this.leftHuCard,
                     this.node.getChildByName("leftJobNode").getChildByName("ting"),
-                    this.node.getChildByName("leftJobNode").getChildByName("huSign"),
+                    this.node.getChildByName("headList").getChildByName('leftHead').getChildByName("huSign"),
                     'left');
             } else if (this.positionNode[_gameIndex].name === 'p-right') {
                 //更新右方手牌
                 myhelper.updateHandCardAndHuCardHelper.bind(this)(partner, this.rightHuCard,
                     this.node.getChildByName("rightJobNode").getChildByName("ting"),
-                    this.node.getChildByName("rightJobNode").getChildByName("huSign"),
+                    this.node.getChildByName("headList").getChildByName('rightHead').getChildByName("huSign"),
                     'right');
             }
         });
@@ -829,7 +857,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**更新方向盘 */
     updatedDeskAiming(): void {
         this.positionNode.forEach(node => node.active = false);
-        this.positionNode[this.getData().gameData.positionIndex].active = true;
+        if (this.getData().gameData.positionIndex !== -1) this.positionNode[this.getData().gameData.positionIndex].active = true;
     }
     /**更新操作按钮组 */
     updateMyOperationBtu(param?: any): void {
@@ -973,7 +1001,11 @@ export default class CDMJDeskPanelView extends ViewComponent {
                 const label = newNode.addComponent(cc.Label);
                 label.string = playerChangeGold < 0 ? '' + playerChangeGold : '+' + playerChangeGold;
                 label.fontSize = 38;
-                newNode.color = new cc.Color(240, 240, 75, 255);
+                if (playerChangeGold > 0) {
+                    newNode.color = new cc.Color(240, 240, 75, 255);
+                } else {
+                    newNode.color = new cc.Color(73, 244, 140, 255);
+                }
                 headWrap.addChild(newNode);
                 cc.tween(newNode).to(0.5, { position: cc.v3(0, 100, 0) }).delay(2.5).to(0.5, { opacity: 0 }).call(() => { newNode.destroy(); }).start();
             }
@@ -1037,7 +1069,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
         if (lastCardNode && (lastCardNode.getComponent('CardItemView') as CardItemView).cardNumber === card) {
             lastCardNode.destroy();
         }
-        //this.arrowCard && (this.arrowCard.getComponent('CardItemView') as CardItemView).setArrows(false);
     }
     /**更新outcard */
     updateOutCard(): void {
@@ -1055,15 +1086,12 @@ export default class CDMJDeskPanelView extends ViewComponent {
             const _gameIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;
             if (this.positionNode[_gameIndex].name === 'p-top') {
                 //更新对家出牌
-                this.frontOutCardList.removeAllChildren();
                 myhelper.updateOutCardHelper.bind(this)(partner, this.frontOutCardList, 0.6, 'front');
             } else if (this.positionNode[_gameIndex].name === 'p-left') {
                 //更新左方出牌
-                this.leftOutCardList.removeAllChildren();
                 myhelper.updateOutCardHelper.bind(this)(partner, this.leftOutCardList, 1.3, 'left');
             } else if (this.positionNode[_gameIndex].name === 'p-right') {
                 //更新右方出牌
-                this.rightOutCardList.removeAllChildren();
                 myhelper.updateOutCardHelper.bind(this)(partner, this.rightOutCardList, 1.3, 'right');
             }
         })
@@ -1174,10 +1202,12 @@ export default class CDMJDeskPanelView extends ViewComponent {
         const rightHeadNode = this.node.getChildByName("headList").getChildByName("rightHead");
         const dingzhangIconBuild = (headNode: cc.Node, dz: number) => {
             if (dz === -1) {
-                const fase = headNode.getChildByName('face');
-                if (fase) fase.destroy();
+                const _face = headNode.getChildByName("face");
+                if (_face) _face.destroy();
                 return;
             }
+            // const fase = headNode.getChildByName('face');
+            // if (fase) { headNode.removeChild(fase); fase.destroy(); }
             const newNode = new cc.Node('face');
             const sprite = newNode.addComponent(cc.Sprite);
             newNode.setScale(0.8);
@@ -1352,7 +1382,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         //先清除打出牌
         jobLayoutArr.forEach(layout => {
             layout.getChildByName('outCardList').removeAllChildren();
-            layout.getChildByName('huSign').active = false;
+            //layout.getChildByName('huSign').active = false;
             layout.getChildByName('ting').active = false;
             const jobLayout = layout.getChildByName('jobLayout');
             jobLayout.getChildByName('mainCardListPanel').removeAllChildren();
@@ -1360,6 +1390,10 @@ export default class CDMJDeskPanelView extends ViewComponent {
             jobLayout.getChildByName('barCard').removeAllChildren();
             jobLayout.getChildByName('handCard').removeAllChildren();
             jobLayout.getChildByName('huCard').removeAllChildren();
+        });
+        //胡牌
+        this.node.getChildByName('headList').children.forEach(headNode => {
+            headNode.getChildByName('huSign').active = false;
         });
     }
     /**打开刷新层 */

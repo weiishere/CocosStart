@@ -90,7 +90,11 @@ export default class CDMJRecordAlert extends ViewComponent {
             let azimuths = [value.azimuth1, value.azimuth2, value.azimuth3, value.azimuth4];
             if (azimuths[azimuth] > 0) {
                 if (value.itemType === 6 || value.itemType === 7 || value.itemType === 8 || value.itemType === 9) {
-                    return value.name;
+                    if (value.huCount > 1) {
+                        return value.huNames[azimuth];
+                    } else {
+                        return value.name;
+                    }
                 }
             }
         }
@@ -153,6 +157,7 @@ export default class CDMJRecordAlert extends ViewComponent {
             gameSubClass: gameSubClass,
             roomNo: gameResult.roomNo,
             currentGameCount: gameResult.currentGameCount,
+            gameTime: gameResult.balanceTime,
             playerData: []
         }
 
@@ -255,14 +260,10 @@ export default class CDMJRecordAlert extends ViewComponent {
     createRecordDetailItem(recorDetailData: RecorDetailData, totalLength: number) {
         let gameSubClass = recorDetailData.gameSubClass;
 
-        if (recorDetailData.playerData.length === 2) {
-            gameSubClass = GameNoDefine.DA_YI_ER_REN_MAHJONG;
-        }
-
         let recordDetailNode = this.getRecordPrefab(gameSubClass);
         let script = <BaseRecordDetail>recordDetailNode.getComponent(BaseRecordDetail);
-        recordDetailNode.y = 66;
-        script.loadData(false, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount, totalLength, recorDetailData.playerData, recorDetailData.gameSubClass);
+        script.loadData(false, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount, totalLength,
+            recorDetailData.playerData, recorDetailData.gameSubClass, recorDetailData.gameTime);
         this.node.addChild(recordDetailNode);
     }
 
@@ -271,7 +272,7 @@ export default class CDMJRecordAlert extends ViewComponent {
         if (gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
             data = cc.loader.getRes(PrefabDefine.DymjRecordDetail, cc.Prefab);
         } else if (gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI) {
-            data = cc.loader.getRes(PrefabDefine.XdzzRecordDetail, cc.Prefab);
+            data = cc.loader.getRes(PrefabDefine.XdzzRecordDetailOver, cc.Prefab);
         }
 
         if (!data) {

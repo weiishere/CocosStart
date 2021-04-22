@@ -79,6 +79,8 @@ export class CDMJDeskProxy extends BaseProxy {
                         "setFace": -1,
                         "status": {
                             "isHadHu": false,
+                            "huType": -1,
+                            "giveHuPlayerIndex": -1,
                             "isBaoHu": false
                         }
                     }
@@ -299,6 +301,8 @@ export class CDMJDeskProxy extends BaseProxy {
             }
             //console.log('xzddS2CDoNextOperation.nextStep.datas=====', xzddS2CDoNextOperation.nextStep.datas);
             this.getGameData().myCards.disableCard = xzddS2CDoNextOperation.nextStep.datas || [];
+            const huList = (xzddS2CDoNextOperation.nextStep.args && xzddS2CDoNextOperation.nextStep.args.list) ? xzddS2CDoNextOperation.nextStep.args.list : [];
+            this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
             //this.doEventData(dymjS2CDoNextOperation.nextStep.oprts);
         }
         this.sendNotification(CDMJCommandDefine.ShowCardNotificationPush);
@@ -317,7 +321,7 @@ export class CDMJDeskProxy extends BaseProxy {
             //let correlationInfoData = this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;//清空可能的杠选牌
             this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData = {};//清空可能的杠选牌
             let correlationInfoData = {};
-            
+
             if (xzddGameOperation.oprtType === XzddOperationType.PENG) {
                 this.getGameData().myCards.touchCard.push(xzddGameOperation.peng.mjValue);
                 _deskEventName = 'touch';
@@ -358,13 +362,15 @@ export class CDMJDeskProxy extends BaseProxy {
                     const partnerCards = this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards;
                     partnerCards.barCard = partnerCards.barCard.filter(card => card.barCard !== xzddGameOperation.hu.mjValue);
                     partnerCards.touchCard.push(xzddGameOperation.hu.mjValue);
-                } else {
+                } else if (xzddGameOperation.hu.huType === 0) {
                     //别人点炮
                     givePlayer = this.getPlayerByGameIndex(xzddGameOperation.hu.playerAzimuth);//引炮者
                     this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();//去掉引炮者出牌
+                    this.getGameData().myCards.status.giveHuPlayerIndex = xzddGameOperation.hu.playerAzimuth;
                     _deskEventName = 'hu';
                 }
                 this.getGameData().myCards.status.isHadHu = true;
+                this.getGameData().myCards.status.huType = xzddGameOperation.hu.huType;
             } else if (xzddGameOperation.oprtType === DymjOperationType.TING) {
                 _deskEventName = 'ting';
                 givePlayer = this.getPlayerByGameIndex(xzddGameOperation.ting.playerAzimuth);
@@ -376,6 +382,9 @@ export class CDMJDeskProxy extends BaseProxy {
             }
             // 自己剩下的牌
             this.getGameData().myCards.curCardList = xzddGameOperation.spValuesSorted;
+            // const huList = xzddGameOperation.huList;
+            // this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item., huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
+
         } else {
             let partnerCard = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
             _deskEventName = '';//别人的事件
@@ -444,6 +453,8 @@ export class CDMJDeskProxy extends BaseProxy {
                 partnerCard.partnerCards.isHandCard = false;
                 partnerCard.partnerCards.handCard = 0;
                 partnerCard.partnerCards.status.isHadHu = true;
+                partnerCard.partnerCards.status.huType = xzddGameOperation.hu.huType;
+                this.getGameData().myCards.status.giveHuPlayerIndex = xzddGameOperation.hu.playerAzimuth;
                 _deskEventName = xzddGameOperation.hu.huType === 1 ? 'zimo' : 'hu';
                 _deskEventCorrelationInfoData = xzddGameOperation.hu;
                 giveCard = xzddGameOperation.hu.mjValue;
@@ -686,6 +697,8 @@ export class CDMJDeskProxy extends BaseProxy {
                     mayHuCards: [],
                     status: {
                         isHadHu: huCard > 0,
+                        huType: player.huValues.length !== 0 ? player.huValues[0].huType : -1,
+                        giveHuPlayerIndex: player.huValues.length !== 0 ? player.huValues[0].playerAzimuth : -1,
                         isBaoHu: isBaoHu
                     },
                     switchOutCardDefault: [],
@@ -723,6 +736,8 @@ export class CDMJDeskProxy extends BaseProxy {
                         status: {
                             /**对家是否已经胡牌 */
                             isHadHu: huCard > 0,
+                            huType: player.huValues.length !== 0 ? player.huValues[0].huType : -1,
+                            giveHuPlayerIndex: player.huValues.length !== 0 ? player.huValues[0].playerAzimuth : -1,
                             /** 是否报胡 */
                             isBaoHu: isBaoHu
                         }
