@@ -338,48 +338,18 @@ export default class DeskList extends ViewComponent {
             let script2 = <BaseDesk>d2.getComponent(BaseDesk);
 
             let count1 = script1.getSitDownCount();
-            if (script1.isFull()) { //人满了设置为0，表示人满了的桌子靠后
-                count1 = 0;
-            }
-            let count2 = script2.getSitDownCount();
-            if (script2.isFull()) {
-                count2 = 0;
-            }
-
-            // 根据座位人数排序
-            let res = count2 - count1;
-            if (res === 0) {
-                // 这里再次计算，目的是让人满的桌子在空桌子的前面
-                res = script1.getSitDownCount() - script2.getSitDownCount();
-                if (res === 0) {
-                    res = script1.basicScore - script2.basicScore;
-                }
-            }
-            return res;
-        })
-    }
-
-    changeDeskAfterSort() {
-        this.deskContainer.children.sort((d1, d2) => {
-            let script1 = <BaseDesk>d1.getComponent(BaseDesk);
-            let script2 = <BaseDesk>d2.getComponent(BaseDesk);
-
-            let count1 = script1.getSitDownCount();
             if (script1.isFull()) {
-                count1 = 0;
+                count1 = -1;
             }
             let count2 = script2.getSitDownCount();
             if (script2.isFull()) {
-                count2 = 0;
+                count2 = -1;
             }
 
             // 根据座位人数排序
             let res = count2 - count1;
             if (res === 0) {
-                res = script2.getSitDownCount() - script1.getSitDownCount();
-                if (res === 0) {
-                    res = script1.basicScore - script2.basicScore;
-                }
+                res = script1.basicScore - script2.basicScore;
             }
             return res;
         })
@@ -446,7 +416,7 @@ export default class DeskList extends ViewComponent {
         }
 
         deskScript.sitDown(s2CClubRoomSitDown.head, s2CClubRoomSitDown.nickname, s2CClubRoomSitDown.seatNo);
-        this.changeDeskAfterSort();
+        this.sortDesk();
     }
 
     standUp(s2CClubRoomStandUp: S2CClubRoomStandUp) {
@@ -457,7 +427,7 @@ export default class DeskList extends ViewComponent {
         }
 
         deskScript.standUp(s2CClubRoomStandUp.seatNo);
-        this.changeDeskAfterSort();
+        this.sortDesk();
     }
 
     setRoundCount(s2CClubPushRoomRound: S2CClubPushRoomRound) {

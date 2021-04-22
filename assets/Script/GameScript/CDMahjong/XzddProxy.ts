@@ -267,12 +267,12 @@ export class XzddProxy extends ModuleProxy {
     /**
      * 准备
      */
-    ready() {
+    ready(score: number = 0) {
         cc.log("发送准备=================CDMJ");
         this.isReadyEnterRoom = false;
         let xzddReady: XzddReady = new XzddReady();
         xzddReady.acctName = this.getUserName();
-        xzddReady.score = 0;
+        xzddReady.score = score;
         this.sendGameData(XzddProtocol.C_READY, xzddReady);
     }
 
