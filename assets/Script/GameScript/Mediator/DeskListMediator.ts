@@ -256,11 +256,12 @@ export class DeskListMediator extends BaseMediator {
 
         this.loadData(s2CJoinClubInfo);
 
-        const userInfoPanel = cc.loader.getRes(PrefabDefine.UserInfoPanel, cc.Prefab);
-        let _userInfoPanel = cc.instantiate(userInfoPanel) as cc.Node;
+        this.userHeaderScript = this.getViewScript().getUserHeaderScript();
+        // const userInfoPanel = cc.loader.getRes(PrefabDefine.UserInfoPanel, cc.Prefab);
+        // let _userInfoPanel = cc.instantiate(userInfoPanel) as cc.Node;
 
-        this.view.addChild(_userInfoPanel);
-        this.userHeaderScript = (_userInfoPanel as cc.Node).getComponent('UserHeader');
+        // this.view.addChild(_userInfoPanel);
+        // this.userHeaderScript = (_userInfoPanel as cc.Node).getComponent('UserHeader');
         this.userHeaderScript.showAcount(this.getLocalCacheDataProxy().getLoginData());
     }
 
