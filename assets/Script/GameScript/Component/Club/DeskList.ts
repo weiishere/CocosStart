@@ -41,12 +41,20 @@ export default class DeskList extends ViewComponent {
     waitLabel: cc.Label = null;
     @property(cc.Node)
     userHeaderNode: cc.Node = null;
+    @property(cc.Node)
+    anteNode: cc.Node = null;
+    @property(cc.Node)
+    selectNode: cc.Node = null;
 
     waitHandleDesk = [];
 
+    private selectAnte: number = 0;
     private roomType: number = -1;
     private roomInfoArray: S2CClubRoomInfoBase[] = null;
     private basicScoreList: Array<number> = [];
+
+    /** 所有底分 */
+    private antes: number[] = [];
 
     start() {
     }
@@ -136,7 +144,9 @@ export default class DeskList extends ViewComponent {
             this.basicScoreList.push(script.basicScore);
         }
         this.basicScoreList = Array.from(new Set(this.basicScoreList));
-        this.basicScoreList.sort((a, b) => a - b)
+        this.basicScoreList.sort((a, b) => a - b);
+
+        this.loadAnteNode();
     }
 
     loadDeskNode() {
@@ -149,6 +159,32 @@ export default class DeskList extends ViewComponent {
         }
 
         this.sortDesk();
+    }
+
+    loadAnteNode() {
+        this.anteNode.removeAllChildren();
+
+        let roomInfos = this.getRoomInfosNotFilterAnte();
+
+        let antes = [];
+        roomInfos.forEach(v => {
+            antes.push(v.basicScore);
+        });
+        antes = Array.from(new Set(antes));
+        antes.push(-1);
+        antes.sort((a, b) => a - b);
+
+        antes.forEach(v => {
+            let res = cc.instantiate(this.selectNode);
+            this.anteNode.addChild(res);
+            if (v === -1) {
+                res.name = "selectNodeAll";
+                res.getChildByName("label").getComponent(cc.Label).string = `全部`;
+            } else {
+                res.name = "selectNode" + v;
+                res.getChildByName("label").getComponent(cc.Label).string = `${v}底分`;
+            }
+        });
     }
 
     updateFullAndWaitStatus() {
@@ -168,7 +204,11 @@ export default class DeskList extends ViewComponent {
         this.waitLabel.string = `等待:${waitCount}桌`;
     }
 
-    getRoomInfos(): S2CClubRoomInfoBase[] {
+    /**
+     * 获得没有通过底分过滤的房间列表
+     * @returns 
+     */
+    getRoomInfosNotFilterAnte(): S2CClubRoomInfoBase[] {
         let roomInfos: S2CClubRoomInfoBase[] = [];
 
         if (this.roomType > -1) {
@@ -184,6 +224,33 @@ export default class DeskList extends ViewComponent {
         return roomInfos;
     }
 
+    getRoomInfos(): S2CClubRoomInfoBase[] {
+        let roomInfos: S2CClubRoomInfoBase[] = [];
+
+        if (this.roomType > -1) {
+            this.roomInfoArray.forEach(v => {
+                if (this.roomType === v.roomType) {
+                    roomInfos.push(v);
+                }
+            });
+        } else {
+            roomInfos = this.roomInfoArray;
+        }
+
+        let tmpRoomInfos = [];
+        if (this.selectAnte > 0) {
+            roomInfos.forEach(v => {
+                if (v.basicScore === this.selectAnte) {
+                    tmpRoomInfos.push(v);
+                }
+            });
+        } else {
+            tmpRoomInfos = roomInfos;
+        }
+
+        return tmpRoomInfos;
+    }
+
     addDesk(roomInfo: S2CClubRoomInfoBase) {
         if (this.getRoomInfo(roomInfo.roomNo)) {
             cc.log("addDesk ==== 1");
@@ -194,6 +261,11 @@ export default class DeskList extends ViewComponent {
         // 如果当前添加房间类型和选中的类型不相同，就直接添加到数组中
         if (this.roomType > -1 && this.roomType !== roomInfo.roomType) {
             cc.log("addDesk ==== 2");
+            return;
+        }
+
+        if (this.selectAnte > 0 && this.selectAnte !== roomInfo.basicScore) {
+            cc.log("addDesk ==== 3");
             return;
         }
 
@@ -459,6 +531,18 @@ export default class DeskList extends ViewComponent {
         })
 
         return desks[0].getComponent(BaseDesk).roomNo;
+    }
+
+    selectRoomAnte(toggle: cc.Toggle) {
+        let name = toggle.node.name.replace("selectNode", "");
+
+        if (name === 'All') {
+            this.selectAnte = 0;
+        } else {
+            this.selectAnte = parseInt(name);
+        }
+
+        this.loadDeskNode();
     }
 
     selectRoomType(toggle: cc.Toggle) {

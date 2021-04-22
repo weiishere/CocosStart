@@ -24,4 +24,6 @@ export class XzddPlayerReconnData {
     /** 是否认输 */
     isGiveUp: boolean;
     huanValues: number[]; //在等待其他玩家选择换牌的阶段时有效, 用户自己选择的换牌
+    /** 胡牌顺序 */
+    huOrder: number;
 }

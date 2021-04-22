@@ -100,6 +100,7 @@ export default class RecordDetailList extends ViewComponent {
                 head: v.head,
                 winloss: v.winloss,
                 detailRemark: gameParam.itemResults,
+                huOrder: 0,
             }
             recorDetailData.playerData.push(playerRecordData);
         });

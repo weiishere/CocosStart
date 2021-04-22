@@ -34,6 +34,7 @@ import { XzddHuan3ZhangMahjongs } from '../GameData/Xzdd/c2s/XzddHuan3ZhangMahjo
 import { XzddOpHuan3ZhangMahjongsRsp } from '../GameData/Xzdd/s2c/XzddOpHuan3ZhangMahjongsRsp';
 import { XzddOpHuan3ZhangMahjongsBroadCast } from '../GameData/Xzdd/s2c/XzddOpHuan3ZhangMahjongsBroadCast';
 import { CommandDefine } from '../MahjongConst/CommandDefine';
+import { XzddReady } from '../GameData/Xzdd/c2s/XzddReady';
 
 /**
  * 血战到底消息数据代理类
@@ -269,9 +270,10 @@ export class XzddProxy extends ModuleProxy {
     ready() {
         cc.log("发送准备=================CDMJ");
         this.isReadyEnterRoom = false;
-        let xzddC2SEnterUserInfo: XzddC2SEnterUserInfo = new XzddC2SEnterUserInfo();
-        xzddC2SEnterUserInfo.acctName = this.getUserName();
-        this.sendGameData(XzddProtocol.C_READY, xzddC2SEnterUserInfo);
+        let xzddReady: XzddReady = new XzddReady();
+        xzddReady.acctName = this.getUserName();
+        xzddReady.score = 0;
+        this.sendGameData(XzddProtocol.C_READY, xzddReady);
     }
 
     /** 下一局 */

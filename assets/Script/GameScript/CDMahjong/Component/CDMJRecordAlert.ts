@@ -241,7 +241,8 @@ export default class CDMJRecordAlert extends ViewComponent {
                 seatNo: v.azimuth,
                 head: v.head,
                 winloss: winlossScore,
-                detailRemark: []
+                detailRemark: [],
+                huOrder: v.huOrder
             }
 
             if (userName === v.userName) {

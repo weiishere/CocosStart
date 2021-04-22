@@ -4,6 +4,7 @@ import { ProxyDefine } from '../../MahjongConst/ProxyDefine';
 import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
 import { ConfigProxy } from '../../Proxy/ConfigProxy';
 import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
+import ExtendSprite from '../../Util/ExtendSprite';
 import CardItemView from '../DdYiMahjong/CardItemView';
 import BaseRecordDetail, { PlayerRecordData } from './BaseRecordDetail';
 const { ccclass, property } = cc._decorator;
@@ -181,6 +182,10 @@ export default class OpenRecordAlter extends BaseRecordDetail {
 
         if (huValue.length > 0) {
             pokerNode.addChild(this.buildHuCard(huValue));
+        }
+
+        if (playerData.huOrder > 0) {
+            recordInfo.getChildByName("huOrder").getComponent(ExtendSprite).index = playerData.huOrder - 1;
         }
     }
 

@@ -19,6 +19,7 @@ export type PlayerRecordData = {
     shouValues: number[],
     huValues: number[],
     detailRemark: string[],
+    huOrder: number,
 }
 
 @ccclass

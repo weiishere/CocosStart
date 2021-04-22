@@ -45,4 +45,6 @@ export class XzddPlayerGameResult {
     /** VIP是否有效 */
     isVipActive: boolean;
     userName: string;
+    /** 胡牌顺序 */
+    huOrder: number;
 }

@@ -15,4 +15,6 @@ export class XzddHu extends MahjongInfo {
     isWuDui: boolean;
     /** 是否请胡 */
     isQingHu: boolean;
+    /** 胡牌顺序 */
+    huOrder: number;
 }
