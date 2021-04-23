@@ -183,7 +183,7 @@ export default class XzddDesk extends BaseDesk {
     }
 
     setRuleStr(s2CClubRoomInfoBase: S2CClubRoomInfoBase) {
-        this.ruleStr = "首局自动开始 对对胡 ";
+        this.ruleStr = "首局自动开始 对对胡 离线30秒自动托管 ";
         if (s2CClubRoomInfoBase.roomType === 0) {
             this.ruleStr += "7张 "
         }

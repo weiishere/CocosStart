@@ -511,14 +511,17 @@ export class GatePanelMediator extends BaseMediator {
 
                 break;
             case CommandDefine.OpenLoadingPanel:
-                this.loadingPanel = new cc.Node('Loading');
-                const label = this.loadingPanel.addComponent(cc.Label);
-                label.string = "Loading";
-                cc.find("Canvas").addChild(this.loadingPanel);
+                if (this.loadingPanel === null || !this.loadingPanel.isValid) {
+                    this.loadingPanel = new cc.Node('Loading');
+                    const label = this.loadingPanel.addComponent(cc.Label);
+                    label.string = "Loading";
+                    cc.find("Canvas").addChild(this.loadingPanel);
+                }
                 break;
             case CommandDefine.CloseLoadingPanel:
                 if (this.loadingPanel && this.loadingPanel.isValid) {
                     this.loadingPanel.destroy();
+                    this.loadingPanel = null;
                 }
                 break;
             case CommandDefine.OpenBonusIndex:

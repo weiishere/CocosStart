@@ -35,6 +35,7 @@ import { XzddOpHuan3ZhangMahjongsRsp } from '../GameData/Xzdd/s2c/XzddOpHuan3Zha
 import { XzddOpHuan3ZhangMahjongsBroadCast } from '../GameData/Xzdd/s2c/XzddOpHuan3ZhangMahjongsBroadCast';
 import { CommandDefine } from '../MahjongConst/CommandDefine';
 import { XzddReady } from '../GameData/Xzdd/c2s/XzddReady';
+import { XzddS2CCheckHu } from '../GameData/Xzdd/s2c/XzddS2CCheckHu';
 
 /**
  * 血战到底消息数据代理类
@@ -183,6 +184,8 @@ export class XzddProxy extends ModuleProxy {
             this.getDeskProxy().chooseSwitchInCard(xzddOpHuan3ZhangMahjongsBroadCast);
         } else if (msgType === XzddProtocol.S_HEARTBEAT) {   //推送玩家退出游戏消息
             this.sendHeartbeat();
+        } else if (msgType === XzddProtocol.S_CHECKHU) {   //返回玩家请求的胡牌数据
+            let XzddS2CCheckHu = <XzddS2CCheckHu>content;
         }
     }
 
@@ -353,6 +356,16 @@ export class XzddProxy extends ModuleProxy {
     }
 
     /**
+     * 查询自己的胡牌
+     */
+    checkHu() {
+        let xzddC2SEnterUserInfo: XzddC2SEnterUserInfo = new XzddC2SEnterUserInfo();
+        xzddC2SEnterUserInfo.acctName = this.getUserName();
+        this.sendGameData(XzddProtocol.C_Game_DealOver, xzddC2SEnterUserInfo, (op: number, msgType: number) => {
+        });
+    }
+
+    /**
      * 登出
      */
     logout() {
@@ -368,6 +381,7 @@ export class XzddProxy extends ModuleProxy {
     sendInteractMsg(msgContent: string) {
         this.sendGameData(XzddProtocol.C_SEND_INTERACT_MSG, msgContent);
     }
+
 
     serverShutDown(): void {
         this.isReadyEnterRoom = false;
