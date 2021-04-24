@@ -1780,20 +1780,20 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 34.85,
+      "width": 55.98,
       "height": 23.94
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.5,
+      "x": 0,
       "y": 0.5
     },
     "_trs": {
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -28.15,
-        -14.959,
+        -56.226,
+        -14,
         0,
         0,
         0,
@@ -1832,8 +1832,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "分:2",
-    "_N$string": "分:2",
+    "_string": "分:100",
+    "_N$string": "分:100",
     "_fontSize": 19,
     "_lineHeight": 19,
     "_enableWrapText": true,
@@ -1888,20 +1888,20 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 45.41,
+      "width": 66.55,
       "height": 23.94
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
-      "x": 0.5,
+      "x": 0,
       "y": 0.5
     },
     "_trs": {
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        26.024,
-        -15.676,
+        7.004,
+        -14,
         0,
         0,
         0,
@@ -1940,8 +1940,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "入:25",
-    "_N$string": "入:25",
+    "_string": "入:7000",
+    "_N$string": "入:7000",
     "_fontSize": 19,
     "_lineHeight": 19,
     "_enableWrapText": true,
