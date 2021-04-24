@@ -250,6 +250,11 @@ export class WebSockerProxy extends Proxy {
         // websocket重连之后进行的处理
         if (this.isReconnect) {
             this.sendNotification(CommandDefine.WebSocketReconnect, null);
+
+            let userData = JSON.parse(resData.dt.content);
+            let userGold = new UserGold();
+            userGold.newGold = userData.gold;
+            this.sendNotification(CommandDefine.UpdatePlayerGold, userGold);
         }
         this.isInitative = false;
         this.isReconnect = false;
