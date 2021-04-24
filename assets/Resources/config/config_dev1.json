@@ -3,5 +3,5 @@
 	"port": "",
 	"configName": "/config/config1.json",
 	"configUrl": "http://122.9.149.45/config/config.json",
-	"version": "0.0.10"
+	"version": "1.0.0"
 }

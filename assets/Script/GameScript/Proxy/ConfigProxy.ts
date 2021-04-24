@@ -65,7 +65,7 @@ export class ConfigProxy extends BaseProxy {
                 // this._port = "80";
                 // this.currentRemoteIp = "139.9.242.13";
 
-                if (otherUrl && this._port) {
+                if (res.json.profile === 'pro') {
                     this.resOtherUrl(otherUrl);
                 } else {
                     this.loadLocalConfig(this._configUrl);
@@ -88,7 +88,6 @@ export class ConfigProxy extends BaseProxy {
                 return;
             }
 
-            // this._ips[0] = "127.0.0.1";
             // 递归获取配置
             this.loadLocalConfigRepeatedly(this._ips, 0);
         }, (err) => {
@@ -100,18 +99,29 @@ export class ConfigProxy extends BaseProxy {
     public loadLocalConfigRepeatedly(_ips: string[], index: number) {
         let ip = this._ips[index];
         this.currentRemoteIp = ip;
-        let configUrl = "http://" + ip + ":" + this._port + this._configName;
+        let configUrl = "";
+        if (this._port) {
+            configUrl = "http://" + ip + ":" + this._port + this._configName;
+        } else {
+            configUrl = "http://" + ip + this._configName;
+        }
 
         let isSueeccd = false;
         HttpUtil.send(configUrl, (response, request, url) => {
-            this._facadeUrl = this.replaceUrl(response.facadeUrl, this.currentRemoteIp + ":" + this._port);
-            this._ggwUrl = this.replaceUrl(response.ggwUrl, this.currentRemoteIp + ":" + this._port);
-            this._staticUrl = this.replaceUrl(response.staticUrl, this.currentRemoteIp + ":" + this._port);
-            if (!this._shareUrl) {
-                this._shareUrl = this.replaceUrl(response.shareUrl, this.currentRemoteIp + ":" + this._port);
+
+            let replaceIp = this.currentRemoteIp;
+            if (this._port) {
+                replaceIp = this.currentRemoteIp + ":" + this._port;
             }
-            this._bonusUrl = this.replaceUrl(response.bonusUrl, this.currentRemoteIp + ":" + this._port);
-            this._iosDownUrl = this.replaceUrl(response.iosDownUrl, this.currentRemoteIp + ":" + this._port);
+
+            this._facadeUrl = this.replaceUrl(response.facadeUrl, replaceIp);
+            this._ggwUrl = this.replaceUrl(response.ggwUrl, replaceIp);
+            this._staticUrl = this.replaceUrl(response.staticUrl, replaceIp);
+            if (!this._shareUrl) {
+                this._shareUrl = this.replaceUrl(response.shareUrl, replaceIp);
+            }
+            this._bonusUrl = this.replaceUrl(response.bonusUrl, replaceIp);
+            this._iosDownUrl = this.replaceUrl(response.iosDownUrl, replaceIp);
             this._serviceUrl = response.serviceUrl;
             this._rechargeServiceUrl = response.rechargeServiceUrl;
             this._leessang = response.leessang;
