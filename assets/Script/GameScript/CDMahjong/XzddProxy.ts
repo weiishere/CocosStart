@@ -201,6 +201,8 @@ export class XzddProxy extends ModuleProxy {
             errorMsg = "低于准入限制";
         } else if (errorCode === XzddErrorCode.ROOM_FULL) {
             errorMsg = "来晚了，人数满了，换一张桌子吧！";
+        } else if (errorCode === XzddErrorCode.GPS_DIST_TOO_CLOSE) {
+            errorMsg = "该房间有玩家离您太近了！";
         } else {
             errorMsg = errorCode + "";
         }
@@ -252,6 +254,8 @@ export class XzddProxy extends ModuleProxy {
         data.playType = 3;
         data.roomId = roomNo;
         data.vipGameSubClass = 1;
+        data.latitude = 0;  // 纬度
+        data.longitude = 0; // 经度
 
         this.sendGameData(XzddProtocol.C_ENTER_ROOM, data, (op: number, msgType: number) => {
             this.isReadyEnterRoom = false;

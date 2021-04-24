@@ -50,4 +50,6 @@ export enum XzddErrorCode {
     UNDER_QUIT_ROOM_LIMIT = 100025,
     /** 包间解散失败 */
     VIP_ROOM_DISSOLVE_FAILURE = 100026,
+    /** 距离太近了 */
+    GPS_DIST_TOO_CLOSE = 100027,
 }

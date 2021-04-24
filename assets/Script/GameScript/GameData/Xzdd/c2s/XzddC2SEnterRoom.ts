@@ -3,4 +3,8 @@ export class XzddC2SEnterRoom {
     playType: number;
     roomId: number;
     vipGameSubClass: number = 1;
+    /** 经度 */
+    longitude: number;
+    /** 纬度 */
+    latitude: number;
 }
