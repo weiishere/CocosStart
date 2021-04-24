@@ -172,6 +172,9 @@ export class GatePanelMediator extends BaseMediator {
 
     /** 打开兑换 */
     private openExchangePanel() {
+        if (this.exchangePanelNode && this.exchangePanelNode.isValid) {
+            return;
+        }
         let exchangePanelResource = cc.loader.getRes(PrefabDefine.ExchangePanel, cc.Prefab);
         this.exchangePanelNode = cc.instantiate(exchangePanelResource);
 

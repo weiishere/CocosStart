@@ -362,43 +362,45 @@ export default class ExchangePanel extends ViewComponent {
                     rechargeNode.x = 0;
                     rechargeNode.y = 0;
                     rechargeNode.active = true;
+                    // if (value === 0) {
+                    //     this.goldBuyList.addChild(this.vipExchange);
+                    //     this.vipExchange.on(cc.Node.EventType.TOUCH_END, (event) => {
+                    //         //const rechargeServiceUrl = this.getConfigProxy();
+                    //         cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
+                    //     });
+                    // } else {
+                    let label = rechargeNode.getChildByName("GoldLabel").getComponent(cc.Label);
+                    label.string = value;
+
+                    let goldIcon = rechargeNode.getChildByName("GoldIcon").getComponent(cc.Sprite);
+                    let spriteName = "zhuanshi-";
                     if (value === 0) {
-                        this.goldBuyList.addChild(this.vipExchange);
-                        this.vipExchange.on(cc.Node.EventType.TOUCH_END, (event) => {
-                            //const rechargeServiceUrl = this.getConfigProxy();
-                            cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
-                        });
+                        spriteName += "6";
+                        label.string = "Vip充值";
+                    } else if (value < 50) {
+                        spriteName += "1";
+                    } else if (value >= 50 && value < 200) {
+                        spriteName += "2";
+                    } else if (value >= 200 && value < 500) {
+                        spriteName += "3";
+                    } else if (value >= 500 && value < 1000) {
+                        spriteName += "4";
+                    } else if (value >= 1000 && value < 2000) {
+                        spriteName += "5";
                     } else {
-                        let label = rechargeNode.getChildByName("GoldLabel").getComponent(cc.Label);
-                        label.string = value;
-
-                        let goldIcon = rechargeNode.getChildByName("GoldIcon").getComponent(cc.Sprite);
-                        let spriteName = "zhuanshi-";
-                        if (value < 50) {
-                            spriteName += "1";
-                        } else if (value >= 50 && value < 200) {
-                            spriteName += "2";
-                        } else if (value >= 200 && value < 500) {
-                            spriteName += "3";
-                        } else if (value >= 500 && value < 1000) {
-                            spriteName += "4";
-                        } else if (value >= 1000 && value < 2000) {
-                            spriteName += "5";
-                        } else {
-                            spriteName += "6";
-                        }
-
-                        goldIcon.spriteFrame = this.newFace.getSpriteFrame(spriteName);
-                        this.goldBuyList.addChild(rechargeNode);
-                        rechargeNode.on(cc.Node.EventType.TOUCH_END, (event) => {
-                            this.exchange(label.string);
-                            // if (/^[0-9]+.?[0-9]$/.test(label.string)) {
-                            //     cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
-                            // } else {
-                            //     this.exchange(label.string);
-                            // }
-                        });
+                        spriteName += "6";
                     }
+
+                    goldIcon.spriteFrame = this.newFace.getSpriteFrame(spriteName);
+                    this.goldBuyList.addChild(rechargeNode);
+                    rechargeNode.on(cc.Node.EventType.TOUCH_END, (event) => {
+                        if (value === 0) {
+                            cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
+                        } else {
+                            this.exchange(label.string);
+                        }
+                    });
+                    // }
                 }
 
             } else {
