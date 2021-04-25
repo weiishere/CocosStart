@@ -78,8 +78,8 @@ export class XzddProxy extends ModuleProxy {
             });
             this.getDeskProxy().updateUserInfo(xzddEnterDeskPushPlyaerList.players)
         } else if (msgType === XzddProtocol.S_GO_ON) {  //继续游戏返回
-            this.sendNotification(CDMJCommandDefine.ReStartGamePush, null);
             this.sendNotification(CDMJCommandDefine.ClearDeskGameView);
+            this.sendNotification(CDMJCommandDefine.ReStartGamePush, null);
         } else if (msgType === XzddProtocol.S_Game_BeginDeal_BroadCast) {   //开始游戏发牌数据
             let xzddS2CBeginDealData: XzddS2CBeginDealData = <XzddS2CBeginDealData>content;
             xzddS2CBeginDealData.players.forEach(v => {

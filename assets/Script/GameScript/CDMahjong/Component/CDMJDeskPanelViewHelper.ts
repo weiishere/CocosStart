@@ -90,6 +90,31 @@ const helper = {
             return touchItem;
         });
     },
+    dingzhangIconBuild: function (headNode: cc.Node, dz: number) {
+        if (dz === -1) {
+            const _face = headNode.getChildByName("face");
+            if (_face) {
+                _face.destroy();
+                headNode.removeChild(_face);
+            }
+            return;
+        }
+        // const fase = headNode.getChildByName('face');
+        // if (fase) { headNode.removeChild(fase); fase.destroy(); }
+        const newNode = new cc.Node('face');
+        const sprite = newNode.addComponent(cc.Sprite);
+        newNode.setScale(0.8);
+        newNode.setRotation(180);
+        newNode.opacity = 0;
+        newNode.x += 40;
+        newNode.y += 80;
+        cc.loader.loadRes(`textures/desk/desk`, cc.SpriteAtlas, (err, item) => {
+            //0：万 1： 筒 2： 条
+            sprite.spriteFrame = item.getSpriteFrame(['img_wan', 'img_tong', 'img_tiao'][dz]);
+        });
+        headNode.addChild(newNode);
+        cc.tween(newNode).to(0.3, { scale: 0.4, opacity: 255, rotation: 0 }).start();
+    },
     updateHandCardAndHuCardHelper: function (partner: PartnerCard, playerHuCard: cc.Node, tingNode: cc.Node, huNode: cc.Node, position: PositionType): void {
         const self: CDMJDeskPanelView = this;
         if (helper.isHadHu(self, partner.playerId) && playerHuCard.children.length !== 0) return;
@@ -106,7 +131,10 @@ const helper = {
             tingNode.active = false;
         }
         huNode.active = status.isHadHu;
-
+        if (status.isHadHu) {
+            if (status.huType === 1) huNode.getChildByName('zimoSign').active = true;
+            else huNode.getChildByName('huSign').active = true;
+        }
     },
     createOutCardHelper: function (playerOutCardList: cc.Node, playerIndex: number, scale: number, position: PositionType): cc.Node {
         const self: CDMJDeskPanelView = this;
