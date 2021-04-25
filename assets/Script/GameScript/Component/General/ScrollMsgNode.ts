@@ -26,16 +26,12 @@ export default class ScrollMsgNode extends cc.Component {
     // LIFE-CYCLE CALLBACKS:
 
     onLoad() {
-        this.startPos = cc.v2(this.maskNode.width / 2, 0)
-
         if (this.contentArr.length == 0) {
             this.node.active = false
         }
-        this.label.node.setPosition(this.startPos)
     }
 
     start() {
-
     }
 
     public updateContent(content: string) {
@@ -54,51 +50,15 @@ export default class ScrollMsgNode extends cc.Component {
             (this.node.getChildByName("MaskNode") as cc.Node).getComponent(cc.Sprite).spriteFrame = spriteFrame;
         }
         this.contentArr.push(content);
-        this.startScroll();
-    }
-    /**
-    * 开始滚动信息
-    * @param content 滚动内容
-    */
-    private startScroll(): void {
 
-        //let self = this
-
-        this.node.active = true
-        if (this.label.node.getActionByTag(0) != null && this.label.node.getActionByTag(0).isDone() == false)//如果正在播放只插入数据
-        {
-            return
-        }
-
-        let scrollFunc = () => {
-            if (this.contentArr.length > 0) {
-                this.contentIndex = this.contentIndex === this.contentArr.length - 1 ? 0 : (this.contentIndex + 1);
-                this.label.string = this.contentArr[this.contentIndex];//.shift();
-                //需要先更新标签的宽度，不然下一帧才更新，这里取到的值就会是原来的值，导致宽度计算错误
-                this.label['_forceUpdateRenderData'](true);
-                this.label.node.setPosition(this.startPos);
-                let distance: number = this.label.node.width + this.label.node.parent.width;
-                let duration: number = distance / 100;
-                let seq = cc.sequence(
-                    cc.moveBy(duration, cc.v2(-distance, 0)),
-                    cc.callFunc(() => {
-                        this.label.string = "";
-                        this.label.node.setPosition(this.startPos);
-                        //self.label.node.position = self.startPos
-
-                        scrollFunc.call(this);
-                    })
-                )
-                seq.setTag(0);
-                this.label.node.runAction(seq);
-            }
-            else {
-                this.node.active = false
-            }
-        }
-        scrollFunc.call(this);
+        this.node.active = true;
+        this.updateLabel();
     }
 
+    private updateLabel() {
+        this.contentIndex = this.contentIndex === this.contentArr.length - 1 ? 0 : (this.contentIndex + 1);
+        this.label.string = this.contentArr[this.contentIndex];
+    }
 
     onDestroy() {
         if (this.label.node) {
@@ -107,5 +67,14 @@ export default class ScrollMsgNode extends cc.Component {
             }
         }
     }
-    // update (dt) {}
+    update(dt) {
+        if (this.label.node.x < -(this.label.node.width + this.node.width / 2)) {
+            this.updateLabel();
+
+            this.label.node.x = this.node.width / 2;
+        }
+
+        // 70 表示滚动的速度
+        this.label.node.x -= dt * 70;
+    }
 }

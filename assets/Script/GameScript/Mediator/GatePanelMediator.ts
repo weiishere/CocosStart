@@ -319,8 +319,7 @@ export class GatePanelMediator extends BaseMediator {
         }
         if (!this.scrollMsgNode) {
             this.scrollMsgNode = cc.instantiate(cc.loader.getRes(PrefabDefine.ScrollMsgNode, cc.Prefab)) as cc.Node;
-            this.gameStartPanel.addChild(this.scrollMsgNode);
-            this.scrollMsgNode.setPosition(cc.v2(30, 233));
+            this.gateStartPanelScript.leessangNode.addChild(this.scrollMsgNode);
             this.scrollMsgNode.getComponent('ScrollMsgNode').createContent(content, 300);
         } else {
             this.scrollMsgNode.getComponent('ScrollMsgNode').updateContent(content);
