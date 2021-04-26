@@ -18,6 +18,7 @@ import { TuiTongZiProxy } from "../TuiTongZi/TuiTongZiProxy";
 import { MusicManager } from "../Other/MusicManager";
 import { AudioSourceDefine } from "../MahjongConst/AudioSourceDefine";
 import { XzddProxy } from "../CDMahjong/XzddProxy";
+import getLocation from "../Util/GetLocation";
 
 export class GateCommand extends BaseCommand {
     private musicManager;
@@ -65,6 +66,9 @@ export class GateCommand extends BaseCommand {
             // case NotificationTypeDefine.BgMusicPlay:
             //     this.musicManager.playMusic(notification.getBody().bgMusic || AudioSourceDefine.BackMusic2);
             //     break;
+            case NotificationTypeDefine.GetLocation:
+                
+                break;
         }
     }
 

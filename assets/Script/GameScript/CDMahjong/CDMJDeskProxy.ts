@@ -336,7 +336,9 @@ export class CDMJDeskProxy extends BaseProxy {
                 _deskEventName = 'bar';
                 _deskEventCorrelationInfoData = correlationInfoData = xzddGameOperation.gang;
                 switch (xzddGameOperation.gang.gangType) {
-                    case 0: _deskEventName = 'guafeng'; break;
+                    case 0: _deskEventName = 'guafeng';
+                        this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();//去掉引杠者出牌
+                        break;
                     case 1: _deskEventName = 'bar'; break;
                     case 2: _deskEventName = 'xiayu'; break;
                 }
@@ -458,10 +460,18 @@ export class CDMJDeskProxy extends BaseProxy {
                 _deskEventName = xzddGameOperation.hu.huType === 1 ? 'zimo' : 'hu';
                 _deskEventCorrelationInfoData = xzddGameOperation.hu;
                 giveCard = xzddGameOperation.hu.mjValue;
+                givePlayer = this.getPlayerByGameIndex(xzddGameOperation.hu.playerAzimuth);//点炮者
                 if (xzddGameOperation.hu.huType === 2) {
                     //被抢杠了
                     this.getGameData().myCards.barCard = this.getGameData().myCards.barCard.filter(card => card.barCard !== xzddGameOperation.hu.mjValue);
                     this.getGameData().myCards.touchCard.push(xzddGameOperation.hu.mjValue);
+                } else if (xzddGameOperation.hu.huType === 0) {
+                    if (this.isMy(givePlayer.playerId)) {
+                        this.getGameData().myCards.outCardList.pop();
+                    } else {
+                        
+                        this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();
+                    }
                 }
             } else if (xzddGameOperation.oprtType === DymjOperationType.TING) {
                 _deskEventName = 'ting';
@@ -475,7 +485,7 @@ export class CDMJDeskProxy extends BaseProxy {
         //更新中间大字数据
         this.getGameData().eventData.gameEventData.deskGameEvent.eventName = _deskEventName;
         this.getGameData().eventData.gameEventData.deskGameEvent.correlationInfoData = _deskEventCorrelationInfoData;
-        this.sendNotification(CDMJCommandDefine.RefreshPlayerPush);
+        //this.sendNotification(CDMJCommandDefine.RefreshPlayerPush);
         this.sendNotification(CDMJCommandDefine.EventDonePush, { givePlayer, giveCard, playerGameIndex: playerInfo.gameIndex, isMe: this.isMy(playerInfo.playerId), eventName: _deskEventName });
     }
 
@@ -564,18 +574,20 @@ export class CDMJDeskProxy extends BaseProxy {
                 _partnerCardsList.push({
                     playerId: element.playerId,
                     partnerCards: {
-                        "curCardList": [],
-                        "handCard": 0,
-                        "curCardCount": 0,
-                        "isHandCard": false,
-                        "touchCard": [],
-                        "barCard": [],
-                        "hadHuCard": 0,
-                        "outCardList": [],
-                        "setFace": -1,
-                        "status": {
-                            "isHadHu": false,
-                            "isBaoHu": false
+                        curCardCount: 0,
+                        curCardList: [],
+                        isHandCard: true,
+                        handCard: 0,
+                        touchCard: [],
+                        barCard: [],
+                        hadHuCard: 0,
+                        outCardList: [],
+                        setFace: -1,
+                        status: {
+                            isHadHu: false,
+                            huType: -1,
+                            giveHuPlayerIndex: -1,
+                            isBaoHu: false
                         }
                     }
                 })
