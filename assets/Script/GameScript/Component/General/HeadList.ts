@@ -79,20 +79,7 @@ export default class HeadList extends ViewComponent {
         headList.y = 0;
         headNode.addChild(headList);
 
-        let texture = cc.loader.getRes(head, cc.Texture2D);
-        if (texture) {
-            sprite.spriteFrame = new cc.SpriteFrame(texture);
-
-            headNode.width = 100;
-            headNode.height = 100;
-        } else {
-            cc.loader.load(head, (error, item) => {
-                sprite.spriteFrame = new cc.SpriteFrame(item)
-
-                headNode.width = 100;
-                headNode.height = 100;
-            });
-        }
+        SpriteLoadUtil.loadSpriteSize(sprite, head, 100, 100);
 
         headNode.on(cc.Node.EventType.TOUCH_END, () => {
             this.cancelSelectHead();

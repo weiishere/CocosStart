@@ -37,6 +37,18 @@ export class SpriteLoadUtil {
         }
     }
 
+    static loadSpriteSize(sprite: cc.Sprite, url: string, width: number, height: number) {
+        if (sprite && sprite.node && sprite.node.isValid) {
+            this.__loadRes(sprite, url).then((value) => {
+                if (sprite && sprite.node && sprite.node.isValid) {
+                    sprite.spriteFrame = value;
+                    sprite.node.width = width;
+                    sprite.node.height = height;
+                }
+            });
+        }
+    }
+
     static async __loadRes(sprite: cc.Sprite, url: string): Promise<cc.SpriteFrame> {
         return new Promise((resolve, reject) => {
             let spriteFrame = null;
