@@ -98,6 +98,7 @@ export class DeskListMediator extends BaseMediator {
             PrefabDefine.XzddDesk,
             PrefabDefine.PopupWindow,
             PrefabDefine.XzddRuleDetail,
+            PrefabDefine.ScoreChooseBtu,
         ];
     }
 

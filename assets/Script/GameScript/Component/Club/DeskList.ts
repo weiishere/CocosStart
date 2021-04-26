@@ -83,7 +83,6 @@ export default class DeskList extends ViewComponent {
 
         this.kuaiSuBtn.on(cc.Node.EventType.TOUCH_END, () => {
             this.openChooseSpeedPanel((score) => {
-                //console.log(score);
                 this.dispatchCustomEvent(DeskListEventDefine.SpeedJoinDeskEvent, score);
             })
         });
@@ -121,21 +120,19 @@ export default class DeskList extends ViewComponent {
         this.chooseSpeedPanel.active = true;
         this.chooseSpeedPanel.opacity = 0;
         this.chooseSpeedPanel.setPosition(cc.v3(this.chooseSpeedPanel.x, this.chooseSpeedPanel.y + 30));
-        cc.loader.loadRes(PrefabDefine.ScoreChooseBtu, cc.Prefab, (err, chooseScoreBtu) => {
-            this.chooseSpeedPanel.getChildByName("panel").removeAllChildren();
-            this.basicScoreList.forEach(item => {
-                const _chooseScoreBtu: cc.Node = cc.instantiate(chooseScoreBtu);
-                _chooseScoreBtu.getChildByName("Label").getComponent(cc.Label).string = item + '底分';
-                this.chooseSpeedPanel.getChildByName("panel").addChild(_chooseScoreBtu);
-                _chooseScoreBtu.on(cc.Node.EventType.TOUCH_END, () => {
-                    clickHandler(item);
-                    this.closeChooseSpeedPanel();
-                }, this);
-                cc.tween(this.chooseSpeedPanel).to(0.1, { opacity: 255, position: cc.v3(this.chooseSpeedPanel.x, this.chooseSpeedPanel.y - 30) }).call(() => { }).start();
-            });
 
+        let chooseScoreBtu = cc.loader.getRes(PrefabDefine.ScoreChooseBtu, cc.Prefab);
+        this.chooseSpeedPanel.getChildByName("panel").removeAllChildren();
+        this.basicScoreList.forEach(item => {
+            const _chooseScoreBtu: cc.Node = cc.instantiate(chooseScoreBtu);
+            _chooseScoreBtu.getChildByName("Label").getComponent(cc.Label).string = item + '底分';
+            this.chooseSpeedPanel.getChildByName("panel").addChild(_chooseScoreBtu);
+            _chooseScoreBtu.on(cc.Node.EventType.TOUCH_END, () => {
+                clickHandler(item);
+                this.closeChooseSpeedPanel();
+            }, this);
+            cc.tween(this.chooseSpeedPanel).to(0.1, { opacity: 255, position: cc.v3(this.chooseSpeedPanel.x, this.chooseSpeedPanel.y - 30) }).call(() => { }).start();
         });
-
     }
     loadDeskList(s2CJoinClubInfo: S2CJoinClubInfo) {
         if (!s2CJoinClubInfo) {
@@ -151,47 +148,19 @@ export default class DeskList extends ViewComponent {
         this.displayRoomInfos = this.roomInfoArray;
 
         this.deskContainerList.numItems = this.roomInfoArray.length;
-        // this.loadDeskNode();
 
         this.updateFullAndWaitStatus();
-
-        for (const deskNode of this.deskContainer.children) {
-            let script = deskNode.getComponent(BaseDesk) as BaseDesk;
-            this.basicScoreList.push(script.basicScore);
-        }
-        this.basicScoreList = Array.from(new Set(this.basicScoreList));
-        this.basicScoreList.sort((a, b) => a - b);
-
+        this.loadBasicScoreList();
         this.loadAnteNode();
     }
 
-    // loadDeskNode() {
-    //     // 先删除所有子节点，避免重复显示
-    //     this.deskContainer.removeAllChildren();
-
-    //     let roomInfos = this.getRoomInfos();
-    //     for (const roomInfo of roomInfos) {
-    //         this.addDeskNode(roomInfo);
-    //     }
-
-    //     this.sortDesk();
-    // }
-
-    loadnode(startIndex) {
-        let roomInfos = this.getRoomInfos();
-        let length = roomInfos.length;
-        if (startIndex >= length) {
-            return;
+    loadBasicScoreList() {
+        this.basicScoreList = [];
+        for (const roomInfo of this.displayRoomInfos) {
+            this.basicScoreList.push(roomInfo.basicScore);
         }
-        // cc.log("startIndex: ", startIndex + ", length: ", length);
-        let end = startIndex + this.loadCount;
-        for (let index = startIndex; index < end; index++) {
-            if (index >= length) {
-                break;
-            }
-            let roomInfo = roomInfos[index];
-            this.addDeskNode(roomInfo);
-        }
+        this.basicScoreList = Array.from(new Set(this.basicScoreList));
+        this.basicScoreList.sort((a, b) => a - b);
     }
 
     /**
@@ -236,6 +205,8 @@ export default class DeskList extends ViewComponent {
         // this.deskContainer.removeAllChildren();
 
         this.displayRoomInfos = this.getRoomInfos();
+        this.loadBasicScoreList();
+
         this.sortRoomInfo(this.displayRoomInfos);
         // 设置显示个数
         this.deskContainerList.numItems = this.displayRoomInfos.length;
@@ -648,28 +619,6 @@ export default class DeskList extends ViewComponent {
         } else {
             this.addDeskNode(value);
         }
-    }
-
-    updateDeskPosition() {
-        if (this.deskContainer.childrenCount === 0) {
-            return;
-        }
-
-        let width = this.deskContainer.width - 600;
-        let x = this.deskContainer.x + width;
-
-        if (x < this.node.width - 16) {
-            this.loadnode(this.deskContainer.childrenCount);
-        }
-
-        // let nodes = this.deskContainer.children;
-        // let moveNodes = [];
-        // for (const node of nodes) {
-        //     let pos = this.getDeskPosition(node);
-        //     if (pos.x <= -400) {
-        //         moveNodes.push(node);
-        //     }
-        // }
     }
 
     getDeskPosition(node: cc.Node) {
