@@ -143,6 +143,10 @@ export default class XzddDesk extends BaseDesk {
     }
 
     initData(s2CClubRoomInfoBase: S2CClubRoomInfoBase) {
+        this.head1.node.active = false;
+        this.head2.node.active = false;
+        this.head3.node.active = false;
+        this.head4.node.active = false;
 
         let roomType = "";
         if (s2CClubRoomInfoBase.roomType === 0) {

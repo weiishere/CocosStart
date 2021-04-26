@@ -158,6 +158,7 @@ export default class NewClass extends cc.Component {
                 this.getLocalCacheDataProxy().setLoginData(loginData);
                 this.getLocalCacheDataProxy().setIsSetExchangePwd(true);
 
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '兑换密码设置成功' }, '');
             } else {
                 if (res.bd === ServerCode.SECURITY_CODE_ERROR) {
                     Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '验证码不正确' }, '');

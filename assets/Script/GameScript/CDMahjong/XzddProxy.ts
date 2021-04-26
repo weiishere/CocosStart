@@ -235,6 +235,7 @@ export class XzddProxy extends ModuleProxy {
                 return;
             }
         }
+        this.sendNotification(CommandDefine.OpenLoadingPanel);
 
         this.isReadyEnterRoom = true;
         this.joinRoomNo = roomNo;
@@ -245,6 +246,8 @@ export class XzddProxy extends ModuleProxy {
         this.sendGameData(XzddProtocol.C_PLAYER_LOGIN, data, (op: number, msgType: number) => {
             this.isReadyEnterRoom = false;
             this.joinRoomNo = null;
+
+            this.sendNotification(CommandDefine.CloseLoadingPanel);
         });
     }
 
@@ -260,6 +263,7 @@ export class XzddProxy extends ModuleProxy {
         this.sendGameData(XzddProtocol.C_ENTER_ROOM, data, (op: number, msgType: number) => {
             this.isReadyEnterRoom = false;
             this.joinRoomNo = null;
+            this.sendNotification(CommandDefine.CloseLoadingPanel);
         });
     }
     /**

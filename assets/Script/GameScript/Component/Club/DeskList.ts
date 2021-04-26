@@ -16,6 +16,7 @@ import { GateProxy } from '../../Proxy/GateProxy';
 import Facade from '../../../Framework/care/Facade';
 import { ProxyDefine } from '../../MahjongConst/ProxyDefine';
 import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
+import List from '../../Util/List';
 
 const { ccclass, property } = cc._decorator;
 
@@ -29,6 +30,10 @@ export default class DeskList extends ViewComponent {
     dymjDesk: cc.Prefab = null;
     @property(cc.Node)
     deskContainer: cc.Node = null;
+    @property(List)
+    deskContainerList: List = null;
+    @property(cc.ScrollView)
+    deskContainerScrollView: cc.ScrollView = null;
     @property(cc.Node)
     chooseSpeedPanel: cc.Node = null;
     @property(cc.Node)
@@ -48,6 +53,10 @@ export default class DeskList extends ViewComponent {
 
     waitHandleDesk = [];
 
+    /** 可视范围个数 */
+    private displayAreaCount: number = 10;
+    private loadCount = 6;
+
     private selectAnte: number = 0;
     private roomType: number = -1;
     private roomInfoArray: S2CClubRoomInfoBase[] = null;
@@ -55,6 +64,9 @@ export default class DeskList extends ViewComponent {
 
     /** 所有底分 */
     private antes: number[] = [];
+
+    /** 当前显示的内容 */
+    private displayRoomInfos: S2CClubRoomInfoBase[] = null;
 
     start() {
     }
@@ -133,9 +145,13 @@ export default class DeskList extends ViewComponent {
         this.roomInfoArray = s2CJoinClubInfo.roomInfos;
         if (!this.roomInfoArray) {
             this.roomInfoArray = [];
+        } else {
+            this.sortRoomInfo(this.roomInfoArray);
         }
+        this.displayRoomInfos = this.roomInfoArray;
 
-        this.loadDeskNode();
+        this.deskContainerList.numItems = this.roomInfoArray.length;
+        // this.loadDeskNode();
 
         this.updateFullAndWaitStatus();
 
@@ -149,16 +165,80 @@ export default class DeskList extends ViewComponent {
         this.loadAnteNode();
     }
 
-    loadDeskNode() {
-        // 先删除所有子节点，避免重复显示
-        this.deskContainer.removeAllChildren();
+    // loadDeskNode() {
+    //     // 先删除所有子节点，避免重复显示
+    //     this.deskContainer.removeAllChildren();
 
+    //     let roomInfos = this.getRoomInfos();
+    //     for (const roomInfo of roomInfos) {
+    //         this.addDeskNode(roomInfo);
+    //     }
+
+    //     this.sortDesk();
+    // }
+
+    loadnode(startIndex) {
         let roomInfos = this.getRoomInfos();
-        for (const roomInfo of roomInfos) {
+        let length = roomInfos.length;
+        if (startIndex >= length) {
+            return;
+        }
+        // cc.log("startIndex: ", startIndex + ", length: ", length);
+        let end = startIndex + this.loadCount;
+        for (let index = startIndex; index < end; index++) {
+            if (index >= length) {
+                break;
+            }
+            let roomInfo = roomInfos[index];
             this.addDeskNode(roomInfo);
         }
+    }
 
-        this.sortDesk();
+    /**
+     * List组件中的渲染方法
+     * @param item 
+     * @param idx 
+     */
+    onListGridRender(item: cc.Node, idx: number) {
+        let roomInfo = this.displayRoomInfos[idx];
+
+        let script = <BaseDesk>item.getComponent(BaseDesk);
+        script.initData(roomInfo);
+    }
+
+    /** List 组件中的单击事件 */
+    onListGridSelectEvent(event: cc.Event) {
+    }
+
+    sortRoomInfo(roomInfos: S2CClubRoomInfoBase[]) {
+        roomInfos.sort((d1, d2) => {
+            let count1 = d1.userInfos.length;
+            if (count1 >= d1.maxPlayerNum) {
+                count1 = -1;
+            }
+            let count2 = d2.userInfos.length;
+            if (count2 >= d2.maxPlayerNum) {
+                count2 = -1;
+            }
+
+            // 根据座位人数排序
+            let res = count2 - count1;
+            if (res === 0) {
+                res = d1.basicScore - d2.basicScore;
+            }
+            return res;
+        })
+    }
+
+    loadDeskNode() {
+        // 先删除所有子节点，避免重复显示
+        // this.deskContainerScrollView.scrollToBottomLeft(0.01);
+        // this.deskContainer.removeAllChildren();
+
+        this.displayRoomInfos = this.getRoomInfos();
+        this.sortRoomInfo(this.displayRoomInfos);
+        // 设置显示个数
+        this.deskContainerList.numItems = this.displayRoomInfos.length;
     }
 
     loadAnteNode() {
@@ -273,21 +353,23 @@ export default class DeskList extends ViewComponent {
     }
 
     addDeskNode(roomInfo: S2CClubRoomInfoBase) {
-        if (this.getDeskNode(roomInfo.roomNo)) {
-            cc.log("addDeskNode ==== 1");
-            return;
-        }
+        this.loadDeskNode();
 
-        let desk = this.createDeskPrefab(roomInfo.gameSubClass);
-        if (!desk) {
-            cc.log("addDeskNode ==== " + roomInfo.gameSubClass);
-            return;
-        }
+        // if (this.getDeskNode(roomInfo.roomNo)) {
+        //     cc.log("addDeskNode ==== 1");
+        //     return;
+        // }
 
-        this.deskContainer.addChild(desk);
+        // let desk = this.createDeskPrefab(roomInfo.gameSubClass);
+        // if (!desk) {
+        //     cc.log("addDeskNode ==== " + roomInfo.gameSubClass);
+        //     return;
+        // }
 
-        let script = <BaseDesk>desk.getComponent(BaseDesk);
-        script.initData(roomInfo);
+        // this.deskContainer.addChild(desk);
+
+        // let script = <BaseDesk>desk.getComponent(BaseDesk);
+        // script.initData(roomInfo);
     }
 
     getRoomInfo(roomNo: number): S2CClubRoomInfoBase {
@@ -325,11 +407,12 @@ export default class DeskList extends ViewComponent {
     }
 
     deleteDeskNode(roomNo: number) {
-        let deskScript = this.getDeskNode(roomNo);
-        if (deskScript == null) {
-            return;
-        }
-        deskScript.node.destroy();
+        this.loadDeskNode();
+        // let deskScript = this.getDeskNode(roomNo);
+        // if (deskScript == null) {
+        //     return;
+        // }
+        // deskScript.node.destroy();
     }
 
     sortDesk() {
@@ -511,6 +594,7 @@ export default class DeskList extends ViewComponent {
         } else {
             this.selectAnte = parseInt(name);
         }
+        this.sortRoomInfo(this.roomInfoArray);
 
         this.loadDeskNode();
     }
@@ -531,6 +615,7 @@ export default class DeskList extends ViewComponent {
             CommonUtil.toast("敬请期待.....")
             return;
         }
+        this.sortRoomInfo(this.roomInfoArray);
 
         this.loadDeskNode();
     }
@@ -552,10 +637,10 @@ export default class DeskList extends ViewComponent {
     }
 
     update(dt) {
-
-        if (this.waitHandleDesk.length === 0) {
-            return;
-        }
+        // this.updateDeskPosition();
+        // if (this.waitHandleDesk.length === 0) {
+        //     return;
+        // }
 
         let value = this.waitHandleDesk.shift();
         if ('number' === typeof (value)) {
@@ -565,4 +650,33 @@ export default class DeskList extends ViewComponent {
         }
     }
 
+    updateDeskPosition() {
+        if (this.deskContainer.childrenCount === 0) {
+            return;
+        }
+
+        let width = this.deskContainer.width - 600;
+        let x = this.deskContainer.x + width;
+
+        if (x < this.node.width - 16) {
+            this.loadnode(this.deskContainer.childrenCount);
+        }
+
+        // let nodes = this.deskContainer.children;
+        // let moveNodes = [];
+        // for (const node of nodes) {
+        //     let pos = this.getDeskPosition(node);
+        //     if (pos.x <= -400) {
+        //         moveNodes.push(node);
+        //     }
+        // }
+    }
+
+    getDeskPosition(node: cc.Node) {
+        let pos = this.deskContainer.convertToWorldSpaceAR(node.getPosition());
+        pos.x -= 400 / 2;
+        pos = this.deskContainer.parent.parent.convertToNodeSpaceAR(pos);
+
+        return pos;
+    }
 }

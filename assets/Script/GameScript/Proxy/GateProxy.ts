@@ -17,6 +17,7 @@ import { ResponseCode } from "../GameConst/ResponseCode";
 import Facade from "../../Framework/care/Facade";
 import { SHA1 } from "../Util/Sha1";
 import md5 from "../Util/MD5";
+import { SecurityUtil } from "../Util/SecurityUtil";
 
 
 export class GateProxy extends BaseProxy {
@@ -50,10 +51,10 @@ export class GateProxy extends BaseProxy {
 
     public getVerifyCode(phoneNo: string, callBack: any) {
         let url = this.getFacadeUrl() + "/code/register";
-        let dd = new Date(parseInt((new Date().getTime() / 10000) + '') * 10000).getTime() + ".ziyungeSecret";
+        let secret = SecurityUtil.buildSecret();
         let param = {
             phoneNo: phoneNo,
-            token: md5(dd)
+            token: secret
         }
         HttpUtil.send(url, (response) => {
             if (response.hd === "success") {
