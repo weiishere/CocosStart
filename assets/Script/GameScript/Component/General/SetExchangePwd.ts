@@ -9,6 +9,7 @@ import ExtendSprite from "../../Util/ExtendSprite";
 import { HttpUtil } from "../../Util/HttpUtil";
 import { LoginAfterHttpUtil } from "../../Util/LoginAfterHttpUtil";
 import md5 from "../../Util/MD5";
+import { StringUtil } from "../../Util/StringUtil";
 import ExchangePanel from "./ExchangePanel";
 
 const { ccclass, property } = cc._decorator;
@@ -38,7 +39,7 @@ export default class NewClass extends cc.Component {
         if (loginData.phoneNo) {
             this.phoneLabel.node.active = true;
             this.phoenEditBox.node.active = false;
-            this.phoneLabel.string = `${loginData.phoneNo.substring(0, 3)}****${loginData.phoneNo.substring(loginData.phoneNo.length - 4, loginData.phoneNo.length)}`;
+            this.phoneLabel.string = StringUtil.hidePhoneNo(loginData.phoneNo);
         }
 
         this.getVerifyClick();

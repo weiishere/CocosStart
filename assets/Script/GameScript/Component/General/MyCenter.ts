@@ -9,6 +9,7 @@ import { ConfigProxy } from '../../Proxy/ConfigProxy';
 import { HttpUtil } from '../../Util/HttpUtil';
 import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
 import { CommandDefine } from '../../MahjongConst/CommandDefine';
+import { StringUtil } from '../../Util/StringUtil';
 
 const { ccclass, property } = cc._decorator;
 
@@ -96,7 +97,7 @@ export default class MyCenter extends ViewComponent {
     loadData(loginData: LoginData, inviteCode: string) {
         this.nicknameLabel.string = loginData.nickname;
         // this.phoneNoLabel.string = loginData.phoneNo;
-        this.phoneNoLabel.string = `${loginData.phoneNo.substring(0, 3)}****${loginData.phoneNo.substring(loginData.phoneNo.length - 4, loginData.phoneNo.length)}`;
+        this.phoneNoLabel.string = StringUtil.hidePhoneNo(loginData.phoneNo);
         this.inviteCodeLabel.string = inviteCode;
         SpriteLoadUtil.loadSprite(this.headSprite, loginData.head);
 
