@@ -65,6 +65,8 @@ export default class DeskList extends ViewComponent {
     /** 所有底分 */
     private antes: number[] = [];
 
+    private isLoadDesk: boolean = false;
+
     /** 当前显示的内容 */
     private displayRoomInfos: S2CClubRoomInfoBase[] = null;
 
@@ -105,6 +107,15 @@ export default class DeskList extends ViewComponent {
             deskContainer.runAction(deskAction);
             this.roomTypeNode.runAction(action);
         });
+
+        this.schedule(() => {
+            if (!this.isLoadDesk) {
+                return;
+            }
+
+            this.isLoadDesk = false;
+            this.loadDeskNode();
+        }, 5)
     }
     closeChooseSpeedPanel() {
         this.chooseSpeedPanel.active = false;
@@ -210,6 +221,7 @@ export default class DeskList extends ViewComponent {
         this.sortRoomInfo(this.displayRoomInfos);
         // 设置显示个数
         this.deskContainerList.numItems = this.displayRoomInfos.length;
+        this.updateFullAndWaitStatus();
     }
 
     loadAnteNode() {
@@ -320,7 +332,8 @@ export default class DeskList extends ViewComponent {
             return;
         }
 
-        this.waitHandleDesk.push(roomInfo);
+        // this.waitHandleDesk.push(roomInfo);
+        this.isLoadDesk = true;
     }
 
     addDeskNode(roomInfo: S2CClubRoomInfoBase) {
@@ -374,7 +387,9 @@ export default class DeskList extends ViewComponent {
 
     deteleDesk(roomNo: number) {
         this.removeRoomInfo(roomNo);
-        this.waitHandleDesk.push(roomNo);
+        // this.waitHandleDesk.push(roomNo);
+
+        this.isLoadDesk = true;
     }
 
     deleteDeskNode(roomNo: number) {
@@ -470,7 +485,8 @@ export default class DeskList extends ViewComponent {
         }
 
         deskScript.sitDown(s2CClubRoomSitDown.head, s2CClubRoomSitDown.nickname, s2CClubRoomSitDown.seatNo);
-        this.sortDesk();
+        this.isLoadDesk = true;
+        // this.sortDesk();
     }
 
     standUp(s2CClubRoomStandUp: S2CClubRoomStandUp) {
@@ -481,7 +497,8 @@ export default class DeskList extends ViewComponent {
         }
 
         deskScript.standUp(s2CClubRoomStandUp.seatNo);
-        this.sortDesk();
+        this.isLoadDesk = true;
+        // this.sortDesk();
     }
 
     setRoundCount(s2CClubPushRoomRound: S2CClubPushRoomRound) {
@@ -608,17 +625,12 @@ export default class DeskList extends ViewComponent {
     }
 
     update(dt) {
-        // this.updateDeskPosition();
-        // if (this.waitHandleDesk.length === 0) {
-        //     return;
+        // let value = this.waitHandleDesk.shift();
+        // if ('number' === typeof (value)) {
+        //     this.deleteDeskNode(value);
+        // } else {
+        //     this.addDeskNode(value);
         // }
-
-        let value = this.waitHandleDesk.shift();
-        if ('number' === typeof (value)) {
-            this.deleteDeskNode(value);
-        } else {
-            this.addDeskNode(value);
-        }
     }
 
     getDeskPosition(node: cc.Node) {
