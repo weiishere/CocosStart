@@ -119,6 +119,8 @@ export class CDMJDeskProxy extends BaseProxy {
                         partnerCard.partnerCards.isHandCard = true;
                         //toushi
                         //if (user.initSpValuesSorted[0] !== 0) partnerCard.partnerCards.handCard = partnerCard.partnerCards.curCardList.pop();
+                    } else {
+                        partnerCard.partnerCards.isHandCard = false;
                     }
                 }
 
@@ -331,22 +333,29 @@ export class CDMJDeskProxy extends BaseProxy {
                 this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();//去掉引碰者出牌
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = ['show'];
             } else if (xzddGameOperation.oprtType === DymjOperationType.GANG) {
+                givePlayer = this.getPlayerByGameIndex(xzddGameOperation.gang.playerAzimuth);
                 const barType: BarType = { barCard: xzddGameOperation.gang.mjValues[0], barType: xzddGameOperation.gang.gangType as 0 | 1 | 2 };
                 this.getGameData().myCards.barCard.push(barType);
                 _deskEventName = 'bar';
                 _deskEventCorrelationInfoData = correlationInfoData = xzddGameOperation.gang;
+                giveCard = xzddGameOperation.gang.mjValues[0];
                 switch (xzddGameOperation.gang.gangType) {
                     case 0: _deskEventName = 'guafeng';
                         this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();//去掉引杠者出牌
                         break;
-                    case 1: _deskEventName = 'bar'; break;
-                    case 2: _deskEventName = 'xiayu'; break;
+                    case 1:
+                        _deskEventName = 'bar';
+                        this.getGameData().myCards.handCard = 0;
+                        this.getGameData().myCards.touchCard = this.getGameData().myCards.touchCard.filter(item => item !== giveCard);
+                        break;
+                    case 2: _deskEventName = 'xiayu';
+                        this.getGameData().myCards.handCard = 0;
+                        break;
                 }
-                givePlayer = this.getPlayerByGameIndex(xzddGameOperation.gang.playerAzimuth);
-                giveCard = xzddGameOperation.gang.mjValues[0];
-                if (barType.barType === 1) {
-                    this.getGameData().myCards.touchCard = this.getGameData().myCards.touchCard.filter(item => item !== giveCard);
-                }
+
+                // if (barType.barType === 1) {
+                //     this.getGameData().myCards.touchCard = this.getGameData().myCards.touchCard.filter(item => item !== giveCard);
+                // }
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = ['show'];
             } else if (xzddGameOperation.oprtType === DymjOperationType.HU) {
                 _deskEventCorrelationInfoData = correlationInfoData = xzddGameOperation.hu;
@@ -469,7 +478,7 @@ export class CDMJDeskProxy extends BaseProxy {
                     if (this.isMy(givePlayer.playerId)) {
                         this.getGameData().myCards.outCardList.pop();
                     } else {
-                        
+
                         this.getGameData().partnerCardsList.find(item => item.playerId === givePlayer.playerId).partnerCards.outCardList.pop();
                     }
                 }
@@ -576,7 +585,7 @@ export class CDMJDeskProxy extends BaseProxy {
                     partnerCards: {
                         curCardCount: 0,
                         curCardList: [],
-                        isHandCard: true,
+                        isHandCard: false,
                         handCard: 0,
                         touchCard: [],
                         barCard: [],

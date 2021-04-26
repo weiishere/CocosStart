@@ -601,6 +601,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**更新杠碰牌 */
     updateBarAndTouchCard(): void {
         //先更新杠牌
+        debugger
         myhelper.isAllowUpdatehelper<BarType>(this.barCard, this.getData().gameData.myCards.barCard, (param: BarType) => param.barCard, (item) => {
             const barItem = new cc.Node('barItem');
             const layoutCom = barItem.addComponent(cc.Layout);
@@ -695,6 +696,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**更新用户手牌/胡牌 */
     updateHandCardAndHuCard(): void {
         const self = this;
+        debugger
         if (this.getData().gameData.myCards.handCard === 0) {
             this.handCard.removeAllChildren();
             this.handCard.width = 0;
@@ -1377,14 +1379,11 @@ export default class CDMJDeskPanelView extends ViewComponent {
             jobLayout.getChildByName('handCard').removeAllChildren();
             jobLayout.getChildByName('huCard').removeAllChildren();
         });
-        //胡牌
+        //手牌
         this.node.getChildByName('headList').children.forEach(headNode => {
             headNode.getChildByName('huSign').active = false;
             headNode.getChildByName('huSign').children.forEach(item => item.active = false);
-        });
-        //清除定章信息
-        this.node.getChildByName("headList").children.forEach(headNode => {
-            const _faceNode = headNode.getChildByName('face');
+            const _faceNode = headNode.getChildByName('face');  
             if (_faceNode) headNode.removeChild(_faceNode);
         });
     }
