@@ -95,7 +95,8 @@ export default class MyCenter extends ViewComponent {
 
     loadData(loginData: LoginData, inviteCode: string) {
         this.nicknameLabel.string = loginData.nickname;
-        this.phoneNoLabel.string = loginData.phoneNo;
+        // this.phoneNoLabel.string = loginData.phoneNo;
+        this.phoneNoLabel.string = `${loginData.phoneNo.substring(0, 3)}****${loginData.phoneNo.substring(loginData.phoneNo.length - 4, loginData.phoneNo.length)}`;
         this.inviteCodeLabel.string = inviteCode;
         SpriteLoadUtil.loadSprite(this.headSprite, loginData.head);
 
