@@ -43,4 +43,5 @@ export enum PrefabDefine {
     NoticeAlert = "prefabs/noticePromptAlert",
     BindSuperior = "prefabs/bindSuperior",
     SetExchangePwd = "prefabs/setExchangePwd",
+    CDMJPosition = "prefabs/CDMahjong/CDMJPosition",
 }
