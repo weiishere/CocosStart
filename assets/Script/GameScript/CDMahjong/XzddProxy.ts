@@ -369,7 +369,7 @@ export class XzddProxy extends ModuleProxy {
     checkHu() {
         let xzddC2SEnterUserInfo: XzddC2SEnterUserInfo = new XzddC2SEnterUserInfo();
         xzddC2SEnterUserInfo.acctName = this.getUserName();
-        this.sendGameData(XzddProtocol.S_CHECKHU, xzddC2SEnterUserInfo, (op: number, msgType: number) => {
+        this.sendGameData(XzddProtocol.C_CHECKHU, xzddC2SEnterUserInfo, (op: number, msgType: number) => {
         });
     }
 
