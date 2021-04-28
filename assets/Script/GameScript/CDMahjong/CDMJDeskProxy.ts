@@ -33,6 +33,7 @@ import { XzddOpDingZhangMahjongsBroadCast } from '../GameData/Xzdd/s2c/XzddOpDin
 import { XzddOpHuan3ZhangMahjongsRsp } from '../GameData/Xzdd/s2c/XzddOpHuan3ZhangMahjongsRsp';
 import { XzddOpHuan3ZhangMahjongsBroadCast } from '../GameData/Xzdd/s2c/XzddOpHuan3ZhangMahjongsBroadCast';
 import { XzddS2CCheckHu } from '../GameData/Xzdd/s2c/XzddS2CCheckHu';
+import { CommandDefine } from '../MahjongConst/CommandDefine';
 
 export class CDMJDeskProxy extends BaseProxy {
     public repository: DeskRepository;
@@ -106,7 +107,6 @@ export class CDMJDeskProxy extends BaseProxy {
             if (result) {
                 result.master = user.isBank;
             } else {
-                debugger
                 console.warn('getPlayerInfo err', user.name);
             }
             if (this.isMy(user.name)) {
@@ -159,6 +159,9 @@ export class CDMJDeskProxy extends BaseProxy {
                 _eventName.push("hu");
                 //if (op.hu.isQingHu) this.getGameData().eventData.deskEventData.eventName = "otherQingHu";
                 _correlationInfoData['hu'] = op.hu;
+                if (op.hu.huType === 1) {
+                    this.getGameData().myCards.mayHuCards = [];//自摸的时候不显示
+                }
             } else if (op.oprtType === XzddOperationType.PUT) {
                 _eventName.push("show");
                 //_correlationInfoData;
@@ -215,6 +218,8 @@ export class CDMJDeskProxy extends BaseProxy {
             this.getGameData().myCards.disableCard = xzddS2CPlayerGet.nextStep.datas || [];
             const huList = (xzddS2CPlayerGet.nextStep.args && xzddS2CPlayerGet.nextStep.args.list) ? xzddS2CPlayerGet.nextStep.args.list : [];
             this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
+            console.log(this.getGameData().myCards.mayHuCards);
+
             if (this.getGameData().myCards.status.isBaoHu && !xzddS2CPlayerGet.nextStep.oprts) {
                 window.setTimeout(() => {
                     (<XzddProxy>this.facade.retrieveProxy(ProxyDefine.Xzdd)).putMahkjong(xzddS2CPlayerGet.getMjValue);
@@ -312,6 +317,7 @@ export class CDMJDeskProxy extends BaseProxy {
             this.getGameData().myCards.disableCard = xzddS2CDoNextOperation.nextStep.datas || [];
             const huList = (xzddS2CDoNextOperation.nextStep.args && xzddS2CDoNextOperation.nextStep.args.list) ? xzddS2CDoNextOperation.nextStep.args.list : [];
             this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
+            console.log(this.getGameData().myCards.mayHuCards);
             //this.doEventData(dymjS2CDoNextOperation.nextStep.oprts);
         }
         this.sendNotification(CDMJCommandDefine.ShowCardNotificationPush);
@@ -372,7 +378,6 @@ export class CDMJDeskProxy extends BaseProxy {
                     //自摸（去掉摸牌，因为已经转移到了胡牌）
                     _deskEventName = 'zimo';
                     this.getGameData().myCards.handCard = 0;
-
                 } else if (xzddGameOperation.hu.huType === 2) {
                     //抢杠（抢胡）======================================================
                     _deskEventName = 'hu';
@@ -584,6 +589,10 @@ export class CDMJDeskProxy extends BaseProxy {
     /**更新实时的可胡牌 */
     updateRtMayHuCard(content: XzddS2CCheckHu) {
         this.getGameData().myCards.mayHuCardsRT = content.huList;
+        if (this.getGameData().myCards.mayHuCardsRT.length === 0) {
+            this.sendNotification(CommandDefine.OpenToast, { content: "您暂无可胡牌~" });
+            return;
+        }
         this.sendNotification(CDMJCommandDefine.HuCardListPush);
     }
     private clearGameData() {
@@ -647,7 +656,7 @@ export class CDMJDeskProxy extends BaseProxy {
         dymjGameResult.players.forEach(player => {
             this.repository.deskData.playerList.find(item => item.playerId === player.userName).playerGold = player.credit;
         })
-
+        this.getGameData().myCards.mayHuCardsRT = [];
         this.sendNotification(CDMJCommandDefine.OpenRecordAlter, dymjGameResult);
     }
 

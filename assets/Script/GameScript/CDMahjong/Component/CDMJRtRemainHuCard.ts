@@ -30,8 +30,8 @@ export default class CDMJRtRemainHuCard extends ViewComponent {
     }
 
     bindUI() {
-        // this.getData().gameData.myCards.mayHuCardsRT.forEach(item => {
-        [{ huValue: 3, remainNum: 2, fanNum: 3 }, { huValue: 6, remainNum: 1, fanNum: 3 }, { huValue: 9, remainNum: 1, fanNum: 2 }].forEach(item => {
+        this.getData().gameData.myCards.mayHuCardsRT.forEach(item => {
+            //[{ huValue: 3, remainNum: 2, fanNum: 3 }, { huValue: 6, remainNum: 1, fanNum: 3 }, { huValue: 9, remainNum: 1, fanNum: 2 }].forEach(item => {
             const itemWrap = cc.instantiate(this.ItemNode);
             const cardItem = <cc.Node>cc.instantiate(this.CardItemNode);
             (cardItem.getComponent('CardItemView') as CardItemView).show('mine', 'setUp', item.huValue);

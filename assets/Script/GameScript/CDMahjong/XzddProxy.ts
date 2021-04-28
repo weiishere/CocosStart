@@ -186,7 +186,6 @@ export class XzddProxy extends ModuleProxy {
             this.sendHeartbeat();
         } else if (msgType === XzddProtocol.S_CHECKHU) {   //返回玩家请求的胡牌数据
             let XzddS2CCheckHu = <XzddS2CCheckHu>content;
-            debugger
             this.getDeskProxy().updateRtMayHuCard(XzddS2CCheckHu);
         }
     }
@@ -369,7 +368,6 @@ export class XzddProxy extends ModuleProxy {
      * 查询自己的胡牌
      */
     checkHu() {
-        debugger
         let xzddC2SEnterUserInfo: XzddC2SEnterUserInfo = new XzddC2SEnterUserInfo();
         xzddC2SEnterUserInfo.acctName = this.getUserName();
         this.sendGameData(XzddProtocol.C_CHECKHU, xzddC2SEnterUserInfo, (op: number, msgType: number) => {

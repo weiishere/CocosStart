@@ -35,7 +35,7 @@ export default class CDMJRecordCard extends ViewComponent {
         if (this.getData().gameData.myCards.handCard) outCard['c_' + this.getData().gameData.myCards.handCard]++;
         if (this.getData().gameData.myCards.hadHuCard) outCard['c_' + this.getData().gameData.myCards.hadHuCard]++;
         this.getData().gameData.myCards.curCardList.forEach(item => outCard['c_' + item]++);
-        
+
         this.getData().gameData.partnerCardsList.forEach(p => {
             arrList = arrList.concat(p.partnerCards.outCardList);
             p.partnerCards.touchCard.forEach(item => outCard['c_' + item] += 3);
@@ -58,6 +58,11 @@ export default class CDMJRecordCard extends ViewComponent {
                 const remainLabel = cc.instantiate(this.corner_count); remainLabel.active = true;
                 remainLabel.getChildByName('count').getComponent(cc.Label).string = (4 - outCard['c_' + i]) + '';
                 cardItem.addChild(remainLabel);
+            }
+            if (this.getData().gameData.myCards.mayHuCardsRT.some(item => item.huValue === i)) {
+                const cardLine = <cc.Node>cc.instantiate(this.cardLine);
+                cardLine.active = true;
+                cardItem.addChild(cardLine);
             }
         }
     }

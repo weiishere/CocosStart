@@ -98,7 +98,13 @@ const helper = {
                 headNode.removeChild(_face);
             }
             return;
+        } else {
+            const _face = headNode.getChildByName("face");
+            if (_face) {
+                return;
+            }
         }
+
         // const fase = headNode.getChildByName('face');
         // if (fase) { headNode.removeChild(fase); fase.destroy(); }
         const newNode = new cc.Node('face');
