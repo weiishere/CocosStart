@@ -32,6 +32,7 @@ import { XzddOpDingZhangMahjongsRsp } from '../GameData/Xzdd/s2c/XzddOpDingZhang
 import { XzddOpDingZhangMahjongsBroadCast } from '../GameData/Xzdd/s2c/XzddOpDingZhangMahjongsBroadCast';
 import { XzddOpHuan3ZhangMahjongsRsp } from '../GameData/Xzdd/s2c/XzddOpHuan3ZhangMahjongsRsp';
 import { XzddOpHuan3ZhangMahjongsBroadCast } from '../GameData/Xzdd/s2c/XzddOpHuan3ZhangMahjongsBroadCast';
+import { XzddS2CCheckHu } from '../GameData/Xzdd/s2c/XzddS2CCheckHu';
 
 export class CDMJDeskProxy extends BaseProxy {
     public repository: DeskRepository;
@@ -101,7 +102,13 @@ export class CDMJDeskProxy extends BaseProxy {
         this.getGameData().countDownTime = xsddS2CBeginDealData.time;//倒计时
         const self = this;
         xsddS2CBeginDealData.players.forEach(user => {
-            self.getPlayerInfo(user.name).master = user.isBank;
+            const result = self.getPlayerInfo(user.name);
+            if (result) {
+                result.master = user.isBank;
+            } else {
+                debugger
+                console.warn('getPlayerInfo err', user.name);
+            }
             if (this.isMy(user.name)) {
                 self.getGameData().myCards.curCardList = user.initSpValuesSorted;
                 if (user.isBank) {
@@ -574,6 +581,11 @@ export class CDMJDeskProxy extends BaseProxy {
             this.getDeskData().playerList.forEach(item => item.playerChangeGold = 0);
         }, 2000);
     }
+    /**更新实时的可胡牌 */
+    updateRtMayHuCard(content: XzddS2CCheckHu) {
+        this.getGameData().myCards.mayHuCardsRT = content.huList;
+        this.sendNotification(CDMJCommandDefine.HuCardListPush);
+    }
     private clearGameData() {
         //清空数据
         let _partnerCardsList = [];
@@ -716,6 +728,7 @@ export class CDMJDeskProxy extends BaseProxy {
                     cardsChoose: [],
                     disableCard: [],
                     mayHuCards: [],
+                    mayHuCardsRT: [],
                     status: {
                         isHadHu: huCard > 0,
                         huType: player.huValues.length !== 0 ? player.huValues[0].huType : -1,

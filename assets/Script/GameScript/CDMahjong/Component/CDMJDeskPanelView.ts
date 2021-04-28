@@ -112,12 +112,14 @@ export default class CDMJDeskPanelView extends ViewComponent {
         bottom: null,
         right: null,
     }
-    private deskBtus: { exit: cc.Node, help: cc.Node, record: cc.Node, set: cc.Node, chat: cc.Node } = {
+    private deskBtus: { exit: cc.Node, help: cc.Node, record: cc.Node, set: cc.Node, chat: cc.Node, cardRecord: cc.Node, winCard: cc.Node } = {
         exit: null,
         help: null,
         record: null,
         set: null,
-        chat: null
+        chat: null,
+        cardRecord: null,
+        winCard: null
     }
     private isSuper = false;
     private arrowCard: cc.Node = null;
@@ -292,6 +294,8 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.deskBtus.set = this.node.getChildByName('deskOpreationIcon').getChildByName('setIcon');
         this.deskBtus.set = this.node.getChildByName('deskOpreationIcon').getChildByName('setIcon');
         this.deskBtus.chat = this.node.getChildByName('deskOpreationIcon').getChildByName('chatIcon');
+        this.deskBtus.cardRecord = this.node.getChildByName('deskOpreationIcon').getChildByName('cardRecord');
+        this.deskBtus.winCard = this.node.getChildByName('deskOpreationIcon').getChildByName('winCard');
         //#endregion
 
         this.cardChooseAlert = this.node.getChildByName('cardChooseAlert');
@@ -448,9 +452,9 @@ export default class CDMJDeskPanelView extends ViewComponent {
         const leftHeadNode = this.node.getChildByName("headList").getChildByName("leftHead"); leftHeadNode.active = false;
         const rightHeadNode = this.node.getChildByName("headList").getChildByName("rightHead"); rightHeadNode.active = false;
         const self = this;
-        [myHeadNode, frontHeadNode, leftHeadNode, rightHeadNode].forEach(hrad => {
-            helper.dingzhangIconBuild(hrad, -1);
-        })
+        // [myHeadNode, frontHeadNode, leftHeadNode, rightHeadNode].forEach((hrad, index) => {
+        //         helper.dingzhangIconBuild(hrad, -1);
+        // })
         this.getData().deskData.playerList.forEach(player => {
             let headWrap: cc.Node;
             if (self.isMe(false, player.playerId)) {
@@ -601,7 +605,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**更新杠碰牌 */
     updateBarAndTouchCard(): void {
         //先更新杠牌
-        debugger
         myhelper.isAllowUpdatehelper<BarType>(this.barCard, this.getData().gameData.myCards.barCard, (param: BarType) => param.barCard, (item) => {
             const barItem = new cc.Node('barItem');
             const layoutCom = barItem.addComponent(cc.Layout);
@@ -696,7 +699,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**更新用户手牌/胡牌 */
     updateHandCardAndHuCard(): void {
         const self = this;
-        debugger
         if (this.getData().gameData.myCards.handCard === 0) {
             this.handCard.removeAllChildren();
             this.handCard.width = 0;
@@ -1383,9 +1385,14 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.node.getChildByName('headList').children.forEach(headNode => {
             headNode.getChildByName('huSign').active = false;
             headNode.getChildByName('huSign').children.forEach(item => item.active = false);
-            const _faceNode = headNode.getChildByName('face');  
+            const _faceNode = headNode.getChildByName('face');
             if (_faceNode) headNode.removeChild(_faceNode);
         });
+        const myHeadNode = this.node.getChildByName("headList").getChildByName("myHead"); 
+        const frontHeadNode = this.node.getChildByName("headList").getChildByName("frontHead"); 
+        const leftHeadNode = this.node.getChildByName("headList").getChildByName("leftHead"); 
+        const rightHeadNode = this.node.getChildByName("headList").getChildByName("rightHead"); 
+        [myHeadNode, frontHeadNode, leftHeadNode, rightHeadNode].forEach((hrad, index) => { helper.dingzhangIconBuild(hrad, -1); })
     }
     /**打开刷新层 */
     openReloadPanel() {

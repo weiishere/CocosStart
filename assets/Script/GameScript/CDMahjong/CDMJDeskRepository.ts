@@ -1,3 +1,5 @@
+import { XzddCanHuData } from "../GameData/Xzdd/s2c/XzddCanHuData";
+
 export type PlayerInfo = {
     /**玩家ID */
     playerId: string,
@@ -119,6 +121,7 @@ export type GameData = {
         cardsChoose: Array<number>,
         disableCard: Array<number>,
         mayHuCards: Array<MayHuCard>;
+        mayHuCardsRT: Array<XzddCanHuData>;
         switchOutCardDefault: Array<number>,
         //switchOutCard: Array<number>,
         switchInCard: Array<number>
@@ -212,6 +215,7 @@ export class DeskRepository {
             cardsChoose: [],
             disableCard: [],
             mayHuCards: [],
+            mayHuCardsRT: [],
             switchOutCardDefault: [],
             //switchOutCard: [],
             switchInCard: []

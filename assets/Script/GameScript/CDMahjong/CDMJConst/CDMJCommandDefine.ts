@@ -37,5 +37,8 @@ export enum CDMJCommandDefine {
     SureSwitchCardPush = "SureSwitchCardPush",
     SwitchCardDonePush = "SwitchCardDonePush",
     SureSwitchCard = "SureSwitchCard",
-    ClearDeskGameView = "ClearDeskGameView"
+    ClearDeskGameView = "ClearDeskGameView",
+    OpenCardRecord = "OpenCardRecord",
+    CheckHuCard = "CheckHuCard",
+    HuCardListPush = "HuCardListPush"
 }
