@@ -438,8 +438,8 @@ export default class CDMJDeskMediator extends BaseMediator {
                 cc.find('Canvas/cdmjdeskView').addChild(recodeCardBox);
                 break
             case CDMJCommandDefine.CheckHuCard://检查胡牌
-                //this.getCdmjProxy().checkHu();
-                this.sendNotification(CDMJCommandDefine.HuCardListPush);
+                this.getCdmjProxy().checkHu();
+                //this.sendNotification(CDMJCommandDefine.HuCardListPush);
                 break;
             case CDMJCommandDefine.HuCardListPush://实时胡牌推送，打开窗口
                 const rtMayHuCardBox = <cc.Node>cc.instantiate(cc.loader.getRes(PrefabDefine.RtMayHuCardBox, cc.Prefab));

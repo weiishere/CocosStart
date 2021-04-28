@@ -89,6 +89,7 @@ export class GatePanelMediator extends BaseMediator {
             PrefabDefine.XdzzRecordDetailOver,
             PrefabDefine.BindSuperior,
             PrefabDefine.SetExchangePwd,
+            PrefabDefine.CDMJPosition,
         ];
     }
 
@@ -272,6 +273,12 @@ export class GatePanelMediator extends BaseMediator {
         let res = cc.loader.getRes(PrefabDefine.SetExchangePwd);
         let setExchangePwd = cc.instantiate(res);
         this.viewComponent.addChild(setExchangePwd);
+    }
+
+    private openCDMJPosition() {
+        let res = cc.loader.getRes(PrefabDefine.CDMJPosition);
+        let CDMJPosition = cc.instantiate(res);
+        this.viewComponent.addChild(CDMJPosition);
     }
 
     /** 切换账号 */
@@ -538,6 +545,7 @@ export class GatePanelMediator extends BaseMediator {
                 break;
             case CommandDefine.OpenMyPlayer:
                 this.openMyPlayer();
+                // this.openCDMJPosition();
                 break;
             case CommandDefine.OpenMyEnterPrise:
                 this.openMyEnterPrise();

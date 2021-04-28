@@ -1,6 +1,6 @@
 {
   "ver": "2.3.5",
-  "uuid": "3d942e1a-f08b-433f-acfb-93725093b4e2",
+  "uuid": "b312e0ac-a16a-4122-b70f-d8f60616a39c",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -13,8 +13,8 @@
   "subMetas": {
     "winIcon": {
       "ver": "1.0.4",
-      "uuid": "6d613491-91b7-47f0-b619-28834f04b73b",
-      "rawTextureUuid": "3d942e1a-f08b-433f-acfb-93725093b4e2",
+      "uuid": "a7a32653-fd62-40e6-a089-27cbd327ac68",
+      "rawTextureUuid": "b312e0ac-a16a-4122-b70f-d8f60616a39c",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
