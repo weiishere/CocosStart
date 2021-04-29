@@ -193,18 +193,31 @@ export default class DeskList extends ViewComponent {
     sortRoomInfo(roomInfos: S2CClubRoomInfoBase[]) {
         roomInfos.sort((d1, d2) => {
             let count1 = d1.userInfos.length;
-            if (this.roomType >= 0 && count1 >= d1.maxPlayerNum) {
-                count1 = -1;
+            if (count1 >= d1.maxPlayerNum) {
+                if (this.roomType >= 0 || this.selectAnte > 0) {
+                    count1 = -1;
+                } else {
+                    count1 = 0;
+                }
             }
             let count2 = d2.userInfos.length;
-            if (this.roomType >= 0 && count2 >= d2.maxPlayerNum) {
-                count2 = -1;
+            if (count2 >= d2.maxPlayerNum) {
+                if (this.roomType >= 0 || this.selectAnte > 0) {
+                    count2 = -1;
+                } else {
+                    count2 = 0;
+                }
             }
 
             // 根据座位人数排序
             let res = count2 - count1;
             if (res === 0) {
-                res = d1.basicScore - d2.basicScore;
+                if (this.roomType < 0 && this.selectAnte === 0) {
+                    res = d2.userInfos.length - d1.userInfos.length;
+                }
+                if (res === 0) {
+                    res = d1.basicScore - d2.basicScore;
+                }
             }
             return res;
         })
