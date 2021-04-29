@@ -70,7 +70,8 @@ export class XzddProxy extends ModuleProxy {
             })
             // 这里构建麻将界面
             cc.log("构建CDMJ--sendNotification=================");
-            this.sendNotification(CDMJCommandDefine.InitDeskPanel, { xzddS2CEnterRoom });
+            const takeInGlod = 200;
+            this.sendNotification(CDMJCommandDefine.InitDeskPanel, { xzddS2CEnterRoom, takeInGlod });
         } else if (msgType === XzddProtocol.S_PUSH_DESK_PLAYER_LIST) {// 推送玩家信息
             let xzddEnterDeskPushPlyaerList: XzddEnterDeskPushPlyaerList = <XzddEnterDeskPushPlyaerList>content;
             xzddEnterDeskPushPlyaerList.players.forEach(v => {

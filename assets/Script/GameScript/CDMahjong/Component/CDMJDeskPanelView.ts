@@ -19,9 +19,11 @@ import { CDMJCommandDefine } from "../CDMJConst/CDMJCommandDefine";
 import { DeskPanelViewEventDefine } from "../../GameConst/Event/DeskPanelViewEventDefine";
 import { MsgObj } from "../../Component/DdYiMahjong/ChatBox";
 import { PrefabDefine } from "../../MahjongConst/PrefabDefine";
+import { PrefabDefine as CDMJPrefabDefine } from "../../CDMahjong/CDMJConst/CDMJPrefabDefine";
 import myhelper from "./CDMJDeskPanelViewHelper";
 import helper from "./CDMJDeskPanelViewHelper";
 import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
+import CDMJGlodTakeIn from "./CDMJGlodTakeIn";
 
 @ccclass
 export default class CDMJDeskPanelView extends ViewComponent {
@@ -1167,6 +1169,14 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.cardChooseAlert.active = false;
         const cardListWrap = this.cardChooseAlert.getChildByName("cardList");
         cardListWrap.removeAllChildren();
+    }
+    /**打开带入分数选择框 */
+    openGlodTakeInAndHandler(totalGlod: number, cb: (resultGlod: number) => void) {
+        cc.loader.loadRes(CDMJPrefabDefine.GlodTakeInPanel, cc.Prefab, (error, item) => {
+            const takeInPanelNode: cc.Node = cc.instantiate(item);
+            this.node.addChild(takeInPanelNode);
+            (<CDMJGlodTakeIn>takeInPanelNode.getComponent('CDMJGlodTakeIn')).bindDone(cb);
+        });
     }
     /**展示打出的牌 */
     showCardAlert(gameIndex: number, cardNumber: number): void {

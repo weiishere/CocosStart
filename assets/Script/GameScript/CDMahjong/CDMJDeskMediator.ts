@@ -28,11 +28,11 @@ export default class CDMJDeskMediator extends BaseMediator {
         super(mediatorName, viewComponent);
         this.listenerEvent();
     }
-
+    private takeInGlod: number = -1;
     private listenerEvent() {
         // 加载完成事件
         this.viewComponent.on(DeskPanelViewEventDefine.CDMJDeskPanelViewOnLoadComplate, () => {
-            this.getCdmjProxy().ready();
+            this.getCdmjProxy().ready(this.takeInGlod === -1 ? undefined : this.takeInGlod);
         });
     }
 
@@ -153,13 +153,16 @@ export default class CDMJDeskMediator extends BaseMediator {
 
         switch (notification.getName()) {
             case CDMJCommandDefine.InitDeskPanel:
-                this.roundMark = notification.getBody().xzddS2CEnterRoom.roundMark;
-                this.sendNotification(CommandDefine.CloseLoadingPanel);
+                const { takeInGlod } = notification.getBody();
                 let isReconnect = true;
                 if (!this.view || !this.view.isValid) {
                     isReconnect = false;
                     await this.init();
                 }
+
+                this.takeInGlod = takeInGlod || 0;
+                this.roundMark = notification.getBody().xzddS2CEnterRoom.roundMark;
+                this.sendNotification(CommandDefine.CloseLoadingPanel);
                 this.deskPanel = this.viewComponent.getChildByName('cdmjdeskView');
                 this.DeskPanelViewScript = this.deskPanel.getComponent('CDMJDeskPanelView') as CDMJDeskPanelView;
                 this.getDeskProxy().updateDeskInfo(notification.getBody().xzddS2CEnterRoom);
@@ -167,7 +170,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updatedDeskAiming();
                 // 如果是重连，在这里发送准备消息
                 if (isReconnect) {
-                    this.getCdmjProxy().ready();
+                    this.getCdmjProxy().ready(this.takeInGlod === -1 ? undefined : this.takeInGlod);
                     this.sendNotification(CDMJCommandDefine.ReStartGamePush);
                 } else {
                     //this.musicManager.playMusic(AudioSourceDefine.BackMusic3);
