@@ -229,16 +229,22 @@ export default class CardItemView extends cc.Component {
         }, this);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, (touchEvent) => {
             //通过touchEvent获取当前触摸坐标点
+
             if (!this.isDisable) return;
-            let location = touchEvent.getLocation();
-            if (location.y - this.dragStartPosition.y > 80) {
-                if (this.isPress) {
-                    this.isChoose = true;
-                    this.isDrag = true;
+            if (this.node.y <= -10) {
+                this.node.y = 0;
+            } else {
+                let location = touchEvent.getLocation();
+                if (location.y - this.dragStartPosition.y > 80) {
+                    if (this.isPress) {
+                        this.isChoose = true;
+                        this.isDrag = true;
+                    }
                 }
+                //修改节点位置，注意要使用父节点进行对触摸点进行坐标转换
+                this.node.position = this.node.parent.convertToNodeSpaceAR(location);
             }
-            //修改节点位置，注意要使用父节点进行对触摸点进行坐标转换
-            this.node.position = this.node.parent.convertToNodeSpaceAR(location);
+
         }, this);
         this.node.on(cc.Node.EventType.TOUCH_END, (touchEvent) => {
             if (!this.isDisable) return;
