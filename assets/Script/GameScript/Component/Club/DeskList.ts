@@ -193,11 +193,11 @@ export default class DeskList extends ViewComponent {
     sortRoomInfo(roomInfos: S2CClubRoomInfoBase[]) {
         roomInfos.sort((d1, d2) => {
             let count1 = d1.userInfos.length;
-            if (count1 >= d1.maxPlayerNum) {
+            if (this.roomType >= 0 && count1 >= d1.maxPlayerNum) {
                 count1 = -1;
             }
             let count2 = d2.userInfos.length;
-            if (count2 >= d2.maxPlayerNum) {
+            if (this.roomType >= 0 && count2 >= d2.maxPlayerNum) {
                 count2 = -1;
             }
 
