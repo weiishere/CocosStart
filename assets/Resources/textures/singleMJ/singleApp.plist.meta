@@ -3,8 +3,8 @@
   "uuid": "54b49872-d627-4456-bf68-992ff350868f",
   "rawTextureUuid": "0924ca03-3939-4009-8400-60032274ddb5",
   "size": {
-    "width": 971,
-    "height": 1485
+    "width": 993,
+    "height": 1454
   },
   "type": "Texture Packer",
   "subMetas": {
@@ -17,8 +17,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 224,
-      "trimY": 2,
+      "trimX": 0,
+      "trimY": 0,
       "width": 75,
       "height": 50,
       "rawWidth": 75,
@@ -27,6 +27,61 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          3,
+          5,
+          6,
+          3,
+          4,
+          5,
+          1,
+          3,
+          6,
+          1,
+          2,
+          3,
+          0,
+          1,
+          6
+        ],
+        "x": [
+          75,
+          44,
+          30,
+          1,
+          0,
+          0,
+          75
+        ],
+        "y": [
+          30,
+          50,
+          50,
+          21,
+          19,
+          0,
+          0
+        ],
+        "u": [
+          75,
+          44,
+          30,
+          1,
+          0,
+          0,
+          75
+        ],
+        "v": [
+          30,
+          50,
+          50,
+          21,
+          19,
+          0,
+          0
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -39,8 +94,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 299,
-      "trimY": 2,
+      "trimX": 298,
+      "trimY": 365,
       "width": 78,
       "height": 113,
       "rawWidth": 78,
@@ -49,6 +104,88 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          9,
+          4,
+          5,
+          2,
+          4,
+          9,
+          7,
+          0,
+          1,
+          6,
+          1,
+          2,
+          9,
+          6,
+          2,
+          2,
+          3,
+          4,
+          8,
+          9,
+          5,
+          0,
+          8,
+          5,
+          7,
+          1,
+          6,
+          0,
+          7,
+          8
+        ],
+        "x": [
+          78,
+          0,
+          0,
+          1,
+          3,
+          78,
+          6,
+          70,
+          72,
+          8
+        ],
+        "y": [
+          113,
+          113,
+          3,
+          1,
+          0,
+          0,
+          100,
+          102,
+          13,
+          11
+        ],
+        "u": [
+          376,
+          298,
+          298,
+          299,
+          301,
+          376,
+          304,
+          368,
+          370,
+          306
+        ],
+        "v": [
+          478,
+          478,
+          368,
+          366,
+          365,
+          365,
+          465,
+          467,
+          378,
+          376
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -61,8 +198,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 377,
-      "trimY": 2,
+      "trimX": 747,
+      "trimY": 70,
       "width": 82,
       "height": 82,
       "rawWidth": 82,
@@ -71,6 +208,47 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          0,
+          3,
+          4,
+          0,
+          2,
+          3,
+          0,
+          1,
+          2
+        ],
+        "x": [
+          82,
+          0,
+          0,
+          79,
+          82
+        ],
+        "y": [
+          82,
+          82,
+          79,
+          0,
+          0
+        ],
+        "u": [
+          829,
+          747,
+          747,
+          826,
+          829
+        ],
+        "v": [
+          152,
+          152,
+          149,
+          70,
+          70
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -83,8 +261,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 90,
-      "trimY": 2,
+      "trimX": 671,
+      "trimY": 0,
       "width": 61,
       "height": 61,
       "rawWidth": 61,
@@ -93,6 +271,47 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          0,
+          3,
+          4,
+          1,
+          2,
+          3,
+          0,
+          1,
+          3
+        ],
+        "x": [
+          61,
+          3,
+          0,
+          0,
+          61
+        ],
+        "y": [
+          3,
+          61,
+          61,
+          0,
+          0
+        ],
+        "u": [
+          732,
+          674,
+          671,
+          671,
+          732
+        ],
+        "v": [
+          3,
+          61,
+          61,
+          0,
+          0
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -103,18 +322,59 @@
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
-      "offsetX": -8,
-      "offsetY": -1,
-      "trimX": 459,
-      "trimY": 2,
-      "width": 84,
-      "height": 96,
+      "offsetX": -9.5,
+      "offsetY": -1.5,
+      "trimX": 906,
+      "trimY": 154,
+      "width": 87,
+      "height": 103,
       "rawWidth": 160,
       "rawHeight": 160,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          2,
+          0,
+          1,
+          2,
+          3,
+          0,
+          0,
+          3,
+          4
+        ],
+        "x": [
+          114,
+          114,
+          44,
+          27,
+          47
+        ],
+        "y": [
+          43,
+          133,
+          120,
+          73,
+          30
+        ],
+        "u": [
+          993,
+          993,
+          923,
+          906,
+          926
+        ],
+        "v": [
+          167,
+          257,
+          244,
+          197,
+          154
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -127,8 +387,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 2,
-      "trimY": 1379,
+      "trimX": 0,
+      "trimY": 259,
       "width": 960,
       "height": 104,
       "rawWidth": 960,
@@ -137,6 +397,47 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          2,
+          3,
+          4,
+          1,
+          2,
+          4,
+          0,
+          1,
+          4
+        ],
+        "x": [
+          960,
+          960,
+          0,
+          0,
+          908
+        ],
+        "y": [
+          49,
+          104,
+          104,
+          0,
+          0
+        ],
+        "u": [
+          960,
+          960,
+          0,
+          0,
+          908
+        ],
+        "v": [
+          308,
+          363,
+          363,
+          259,
+          259
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -149,8 +450,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 2,
-      "trimY": 315,
+      "trimX": 257,
+      "trimY": 70,
       "width": 198,
       "height": 80,
       "rawWidth": 198,
@@ -159,6 +460,54 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          0,
+          4,
+          5,
+          1,
+          4,
+          0,
+          2,
+          4,
+          1,
+          2,
+          3,
+          4
+        ],
+        "x": [
+          198,
+          0,
+          0,
+          5,
+          9,
+          198
+        ],
+        "y": [
+          80,
+          80,
+          7,
+          2,
+          0,
+          0
+        ],
+        "u": [
+          455,
+          257,
+          257,
+          262,
+          266,
+          455
+        ],
+        "v": [
+          150,
+          150,
+          77,
+          72,
+          70,
+          70
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -171,8 +520,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 200,
-      "trimY": 315,
+      "trimX": 457,
+      "trimY": 70,
       "width": 213,
       "height": 80,
       "rawWidth": 213,
@@ -181,6 +530,40 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          1,
+          2,
+          3,
+          0,
+          1,
+          3
+        ],
+        "x": [
+          213,
+          0,
+          0,
+          213
+        ],
+        "y": [
+          80,
+          80,
+          0,
+          0
+        ],
+        "u": [
+          670,
+          457,
+          457,
+          670
+        ],
+        "v": [
+          150,
+          150,
+          70,
+          70
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -191,18 +574,52 @@
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
-      "offsetX": 0,
-      "offsetY": 0,
-      "trimX": 2,
-      "trimY": 523,
-      "width": 345,
-      "height": 546,
+      "offsetX": -0.5,
+      "offsetY": 0.5,
+      "trimX": 0,
+      "trimY": 909,
+      "width": 344,
+      "height": 545,
       "rawWidth": 345,
       "rawHeight": 546,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          1,
+          2,
+          3,
+          0,
+          1,
+          3
+        ],
+        "x": [
+          344,
+          0,
+          0,
+          344
+        ],
+        "y": [
+          545,
+          545,
+          0,
+          0
+        ],
+        "u": [
+          344,
+          0,
+          0,
+          344
+        ],
+        "v": [
+          1454,
+          1454,
+          909,
+          909
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -215,8 +632,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 151,
-      "trimY": 2,
+      "trimX": 672,
+      "trimY": 70,
       "width": 73,
       "height": 80,
       "rawWidth": 73,
@@ -225,6 +642,47 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          1,
+          3,
+          4,
+          1,
+          2,
+          3,
+          0,
+          1,
+          4
+        ],
+        "x": [
+          73,
+          53,
+          0,
+          0,
+          73
+        ],
+        "y": [
+          70,
+          80,
+          80,
+          0,
+          0
+        ],
+        "u": [
+          745,
+          725,
+          672,
+          672,
+          745
+        ],
+        "v": [
+          140,
+          150,
+          150,
+          70,
+          70
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -237,8 +695,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 2,
-      "trimY": 115,
+      "trimX": 421,
+      "trimY": 0,
       "width": 120,
       "height": 53,
       "rawWidth": 120,
@@ -247,6 +705,61 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          3,
+          5,
+          6,
+          3,
+          4,
+          5,
+          0,
+          2,
+          3,
+          0,
+          1,
+          2,
+          0,
+          3,
+          6
+        ],
+        "x": [
+          63,
+          120,
+          120,
+          35,
+          0,
+          0,
+          43
+        ],
+        "y": [
+          10,
+          10,
+          42,
+          53,
+          53,
+          0,
+          0
+        ],
+        "u": [
+          484,
+          541,
+          541,
+          456,
+          421,
+          421,
+          464
+        ],
+        "v": [
+          10,
+          10,
+          42,
+          53,
+          53,
+          0,
+          0
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -259,8 +772,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 651,
-      "trimY": 2,
+      "trimX": 0,
+      "trimY": 365,
       "width": 116,
       "height": 108,
       "rawWidth": 116,
@@ -269,6 +782,61 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          0,
+          5,
+          6,
+          4,
+          0,
+          3,
+          2,
+          0,
+          1,
+          2,
+          3,
+          0,
+          4,
+          5,
+          0
+        ],
+        "x": [
+          116,
+          116,
+          0,
+          0,
+          8,
+          60,
+          87
+        ],
+        "y": [
+          58,
+          108,
+          108,
+          50,
+          32,
+          0,
+          0
+        ],
+        "u": [
+          116,
+          116,
+          0,
+          0,
+          8,
+          60,
+          87
+        ],
+        "v": [
+          423,
+          473,
+          473,
+          415,
+          397,
+          365,
+          365
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -281,8 +849,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 646,
-      "trimY": 115,
+      "trimX": 600,
+      "trimY": 495,
       "width": 161,
       "height": 162,
       "rawWidth": 161,
@@ -291,6 +859,89 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          0,
+          9,
+          10,
+          7,
+          8,
+          9,
+          6,
+          9,
+          3,
+          6,
+          7,
+          9,
+          4,
+          5,
+          6,
+          3,
+          4,
+          6,
+          0,
+          3,
+          9,
+          0,
+          1,
+          2,
+          0,
+          2,
+          3
+        ],
+        "x": [
+          161,
+          161,
+          116,
+          97,
+          50,
+          11,
+          0,
+          0,
+          18,
+          58,
+          121
+        ],
+        "y": [
+          46,
+          126,
+          158,
+          162,
+          162,
+          134,
+          101,
+          58,
+          14,
+          0,
+          0
+        ],
+        "u": [
+          761,
+          761,
+          716,
+          697,
+          650,
+          611,
+          600,
+          600,
+          618,
+          658,
+          721
+        ],
+        "v": [
+          541,
+          621,
+          653,
+          657,
+          657,
+          629,
+          596,
+          553,
+          509,
+          495,
+          495
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -303,8 +954,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 370,
-      "trimY": 115,
+      "trimX": 543,
+      "trimY": 0,
       "width": 126,
       "height": 53,
       "rawWidth": 126,
@@ -313,6 +964,62 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          1,
+          2,
+          3,
+          0,
+          1,
+          3,
+          5,
+          6,
+          7,
+          4,
+          5,
+          7
+        ],
+        "x": [
+          55,
+          0,
+          0,
+          55,
+          126,
+          69,
+          69,
+          126
+        ],
+        "y": [
+          53,
+          53,
+          0,
+          0,
+          46,
+          46,
+          14,
+          14
+        ],
+        "u": [
+          598,
+          543,
+          543,
+          598,
+          669,
+          612,
+          612,
+          669
+        ],
+        "v": [
+          53,
+          53,
+          0,
+          0,
+          46,
+          46,
+          14,
+          14
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -325,8 +1032,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 496,
-      "trimY": 115,
+      "trimX": 763,
+      "trimY": 495,
       "width": 150,
       "height": 200,
       "rawWidth": 150,
@@ -335,6 +1042,54 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          2,
+          4,
+          5,
+          2,
+          3,
+          4,
+          0,
+          2,
+          5,
+          0,
+          1,
+          2
+        ],
+        "x": [
+          150,
+          0,
+          0,
+          1,
+          3,
+          150
+        ],
+        "y": [
+          200,
+          200,
+          3,
+          1,
+          0,
+          0
+        ],
+        "u": [
+          913,
+          763,
+          763,
+          764,
+          766,
+          913
+        ],
+        "v": [
+          695,
+          695,
+          498,
+          496,
+          495,
+          495
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -347,8 +1102,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 2,
-      "trimY": 1069,
+      "trimX": 0,
+      "trimY": 697,
       "width": 770,
       "height": 210,
       "rawWidth": 772,
@@ -357,6 +1112,40 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          1,
+          2,
+          3,
+          0,
+          1,
+          3
+        ],
+        "x": [
+          771,
+          1,
+          1,
+          771
+        ],
+        "y": [
+          211,
+          211,
+          1,
+          1
+        ],
+        "u": [
+          770,
+          0,
+          0,
+          770
+        ],
+        "v": [
+          907,
+          907,
+          697,
+          697
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -369,8 +1158,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 413,
-      "trimY": 315,
+      "trimX": 734,
+      "trimY": 0,
       "width": 225,
       "height": 68,
       "rawWidth": 225,
@@ -379,6 +1168,40 @@
       "borderBottom": 0,
       "borderLeft": 46,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          1,
+          2,
+          3,
+          0,
+          1,
+          3
+        ],
+        "x": [
+          225,
+          0,
+          0,
+          225
+        ],
+        "y": [
+          68,
+          68,
+          0,
+          0
+        ],
+        "u": [
+          959,
+          734,
+          734,
+          959
+        ],
+        "v": [
+          68,
+          68,
+          0,
+          0
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -391,8 +1214,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 2,
-      "trimY": 1279,
+      "trimX": 0,
+      "trimY": 154,
       "width": 794,
       "height": 100,
       "rawWidth": 794,
@@ -401,6 +1224,40 @@
       "borderBottom": 0,
       "borderLeft": 12,
       "borderRight": 12,
+      "vertices": {
+        "triangles": [
+          1,
+          2,
+          3,
+          0,
+          1,
+          3
+        ],
+        "x": [
+          794,
+          0,
+          0,
+          794
+        ],
+        "y": [
+          100,
+          100,
+          0,
+          0
+        ],
+        "u": [
+          794,
+          0,
+          0,
+          794
+        ],
+        "v": [
+          254,
+          254,
+          154,
+          154
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -413,8 +1270,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 543,
-      "trimY": 2,
+      "trimX": 796,
+      "trimY": 154,
       "width": 108,
       "height": 102,
       "rawWidth": 108,
@@ -423,6 +1280,40 @@
       "borderBottom": 17,
       "borderLeft": 17,
       "borderRight": 17,
+      "vertices": {
+        "triangles": [
+          1,
+          2,
+          3,
+          0,
+          1,
+          3
+        ],
+        "x": [
+          108,
+          0,
+          0,
+          108
+        ],
+        "y": [
+          102,
+          102,
+          0,
+          0
+        ],
+        "u": [
+          904,
+          796,
+          796,
+          904
+        ],
+        "v": [
+          256,
+          256,
+          154,
+          154
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -435,8 +1326,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 638,
-      "trimY": 315,
+      "trimX": 0,
+      "trimY": 70,
       "width": 255,
       "height": 76,
       "rawWidth": 255,
@@ -445,6 +1336,61 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          1,
+          5,
+          6,
+          2,
+          5,
+          1,
+          3,
+          5,
+          2,
+          3,
+          4,
+          5,
+          0,
+          1,
+          6
+        ],
+        "x": [
+          255,
+          255,
+          0,
+          0,
+          11,
+          20,
+          244
+        ],
+        "y": [
+          23,
+          76,
+          76,
+          20,
+          4,
+          0,
+          0
+        ],
+        "u": [
+          255,
+          255,
+          0,
+          0,
+          11,
+          20,
+          244
+        ],
+        "v": [
+          93,
+          146,
+          146,
+          90,
+          74,
+          70,
+          70
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -457,8 +1403,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 122,
-      "trimY": 115,
+      "trimX": 77,
+      "trimY": 0,
       "width": 124,
       "height": 50,
       "rawWidth": 124,
@@ -467,6 +1413,40 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          1,
+          2,
+          3,
+          0,
+          1,
+          3
+        ],
+        "x": [
+          124,
+          0,
+          0,
+          124
+        ],
+        "y": [
+          50,
+          50,
+          0,
+          0
+        ],
+        "u": [
+          201,
+          77,
+          77,
+          201
+        ],
+        "v": [
+          50,
+          50,
+          0,
+          0
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -479,8 +1459,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 767,
-      "trimY": 2,
+      "trimX": 378,
+      "trimY": 365,
       "width": 116,
       "height": 113,
       "rawWidth": 116,
@@ -489,6 +1469,61 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          3,
+          1,
+          2,
+          3,
+          4,
+          1,
+          4,
+          5,
+          1,
+          0,
+          1,
+          5,
+          0,
+          5,
+          6
+        ],
+        "x": [
+          106,
+          116,
+          116,
+          0,
+          0,
+          88,
+          102
+        ],
+        "y": [
+          4,
+          80,
+          113,
+          113,
+          31,
+          0,
+          0
+        ],
+        "u": [
+          484,
+          494,
+          494,
+          378,
+          378,
+          466,
+          480
+        ],
+        "v": [
+          369,
+          445,
+          478,
+          478,
+          396,
+          365,
+          365
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -501,8 +1536,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 2,
-      "trimY": 395,
+      "trimX": 496,
+      "trimY": 365,
       "width": 298,
       "height": 128,
       "rawWidth": 298,
@@ -511,6 +1546,40 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          1,
+          2,
+          3,
+          0,
+          1,
+          3
+        ],
+        "x": [
+          298,
+          0,
+          0,
+          298
+        ],
+        "y": [
+          128,
+          128,
+          0,
+          0
+        ],
+        "u": [
+          794,
+          496,
+          496,
+          794
+        ],
+        "v": [
+          493,
+          493,
+          365,
+          365
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -523,8 +1592,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 300,
-      "trimY": 395,
+      "trimX": 0,
+      "trimY": 495,
       "width": 298,
       "height": 128,
       "rawWidth": 298,
@@ -533,6 +1602,40 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          1,
+          2,
+          3,
+          0,
+          1,
+          3
+        ],
+        "x": [
+          298,
+          0,
+          0,
+          298
+        ],
+        "y": [
+          128,
+          128,
+          0,
+          0
+        ],
+        "u": [
+          298,
+          0,
+          0,
+          298
+        ],
+        "v": [
+          623,
+          623,
+          495,
+          495
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -545,8 +1648,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 598,
-      "trimY": 395,
+      "trimX": 300,
+      "trimY": 495,
       "width": 298,
       "height": 128,
       "rawWidth": 298,
@@ -555,6 +1658,40 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          1,
+          2,
+          3,
+          0,
+          1,
+          3
+        ],
+        "x": [
+          298,
+          0,
+          0,
+          298
+        ],
+        "y": [
+          128,
+          128,
+          0,
+          0
+        ],
+        "u": [
+          598,
+          300,
+          300,
+          598
+        ],
+        "v": [
+          623,
+          623,
+          495,
+          495
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -567,8 +1704,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 246,
-      "trimY": 115,
+      "trimX": 203,
+      "trimY": 0,
       "width": 124,
       "height": 50,
       "rawWidth": 124,
@@ -577,6 +1714,40 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          1,
+          2,
+          3,
+          0,
+          1,
+          3
+        ],
+        "x": [
+          124,
+          0,
+          0,
+          124
+        ],
+        "y": [
+          50,
+          50,
+          0,
+          0
+        ],
+        "u": [
+          327,
+          203,
+          203,
+          327
+        ],
+        "v": [
+          50,
+          50,
+          0,
+          0
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -589,8 +1760,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 44,
-      "trimY": 2,
+      "trimX": 329,
+      "trimY": 0,
       "width": 46,
       "height": 50,
       "rawWidth": 50,
@@ -599,6 +1770,40 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          1,
+          2,
+          3,
+          0,
+          1,
+          3
+        ],
+        "x": [
+          48,
+          2,
+          2,
+          48
+        ],
+        "y": [
+          50,
+          50,
+          0,
+          0
+        ],
+        "u": [
+          375,
+          329,
+          329,
+          375
+        ],
+        "v": [
+          50,
+          50,
+          0,
+          0
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -611,8 +1816,8 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 2,
-      "trimY": 2,
+      "trimX": 377,
+      "trimY": 0,
       "width": 42,
       "height": 50,
       "rawWidth": 50,
@@ -621,6 +1826,40 @@
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          1,
+          2,
+          3,
+          0,
+          1,
+          3
+        ],
+        "x": [
+          46,
+          4,
+          4,
+          46
+        ],
+        "y": [
+          50,
+          50,
+          0,
+          0
+        ],
+        "u": [
+          419,
+          377,
+          377,
+          419
+        ],
+        "v": [
+          50,
+          50,
+          0,
+          0
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     },
@@ -631,18 +1870,88 @@
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
-      "offsetX": 6,
-      "offsetY": -1,
-      "trimX": 807,
-      "trimY": 115,
-      "width": 162,
-      "height": 96,
+      "offsetX": 9,
+      "offsetY": -7.5,
+      "trimX": 118,
+      "trimY": 365,
+      "width": 178,
+      "height": 111,
       "rawWidth": 210,
       "rawHeight": 160,
       "borderTop": 0,
       "borderBottom": 0,
       "borderLeft": 0,
       "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          1,
+          2,
+          3,
+          1,
+          3,
+          4,
+          0,
+          1,
+          4,
+          6,
+          8,
+          9,
+          6,
+          7,
+          8,
+          5,
+          6,
+          9
+        ],
+        "x": [
+          63,
+          82,
+          82,
+          25,
+          35,
+          203,
+          112,
+          87,
+          120,
+          176
+        ],
+        "y": [
+          34,
+          60,
+          143,
+          116,
+          32,
+          128,
+          128,
+          76,
+          33,
+          33
+        ],
+        "u": [
+          156,
+          175,
+          175,
+          118,
+          128,
+          296,
+          205,
+          180,
+          213,
+          269
+        ],
+        "v": [
+          367,
+          393,
+          476,
+          449,
+          365,
+          461,
+          461,
+          409,
+          366,
+          366
+        ]
+      },
       "spriteType": "normal",
       "subMetas": {}
     }

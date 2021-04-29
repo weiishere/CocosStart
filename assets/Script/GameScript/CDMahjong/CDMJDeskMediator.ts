@@ -434,10 +434,12 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.clearDeskGameView();
                 break;
             case CDMJCommandDefine.OpenCardRecord:
+                if (this.viewComponent.getChildByName('cdmjdeskView').getChildByName('recordCardBg')) return;
                 const recodeCardBox = <cc.Node>cc.instantiate(cc.loader.getRes(PrefabDefine.RecodeCardBox, cc.Prefab));
                 cc.find('Canvas/cdmjdeskView').addChild(recodeCardBox);
                 break
             case CDMJCommandDefine.CheckHuCard://检查胡牌
+                if (this.viewComponent.getChildByName('cdmjdeskView').getChildByName('rtRaminCard')) return;
                 this.getCdmjProxy().checkHu();
                 //this.sendNotification(CDMJCommandDefine.HuCardListPush);
                 break;
