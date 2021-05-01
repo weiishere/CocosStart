@@ -195,6 +195,10 @@ export default class CDMJDeskMediator extends BaseMediator {
                             this.sendNotification(CommandDefine.OpenSetting);
                         } else if (node.name === 'chatIcon') {
                             this.sendNotification(CDMJCommandDefine.OpenChatBox);
+                        } else if (node.name === 'cardRecord') {
+                            this.sendNotification(CDMJCommandDefine.OpenCardRecord);
+                        } else if (node.name === 'winCard') {
+                            this.sendNotification(CDMJCommandDefine.CheckHuCard);
                         }
                     });
                     /**出牌事件 */
@@ -428,6 +432,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.clearDeskGameView();
                 break;
             case CDMJCommandDefine.OpenCardRecord:
+
                 if (this.viewComponent.getChildByName('cdmjdeskView').getChildByName('recordCardBg')) return;
                 const recodeCardBox = <cc.Node>cc.instantiate(cc.loader.getRes(PrefabDefine.RecodeCardBox, cc.Prefab));
                 cc.find('Canvas/cdmjdeskView').addChild(recodeCardBox);
