@@ -28,11 +28,11 @@ export default class CDMJDeskMediator extends BaseMediator {
         super(mediatorName, viewComponent);
         this.listenerEvent();
     }
-    private takeInGlod: number = -1;
+
     private listenerEvent() {
         // 加载完成事件
         this.viewComponent.on(DeskPanelViewEventDefine.CDMJDeskPanelViewOnLoadComplate, () => {
-            this.getCdmjProxy().ready(this.takeInGlod === -1 ? undefined : this.takeInGlod);
+            this.getCdmjProxy().ready();
         });
     }
 
@@ -172,6 +172,8 @@ export default class CDMJDeskMediator extends BaseMediator {
                 } else {
                     //this.musicManager.playMusic(AudioSourceDefine.BackMusic3);
                     // MusicManager.getInstance().playMusic(AudioSourceDefine.BackMusic4);
+                    const { Latitude, Longgitude } = getLocation();
+                    //this.sendNotification(CommandDefine.OpenToast, { content: '经纬度：' + Latitude + "|" + Longgitude });
                     this.DeskPanelViewScript.bindDskOpreationEvent(node => {
                         if (node.name === 'exitIcon') {
                             let seatNumber = this.getDeskProxy().getDeskData().gameSetting.seatNumber;
@@ -433,7 +435,6 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.clearDeskGameView();
                 break;
             case CDMJCommandDefine.OpenCardRecord:
-
                 if (this.viewComponent.getChildByName('cdmjdeskView').getChildByName('recordCardBg')) return;
                 const recodeCardBox = <cc.Node>cc.instantiate(cc.loader.getRes(PrefabDefine.RecodeCardBox, cc.Prefab));
                 cc.find('Canvas/cdmjdeskView').addChild(recodeCardBox);
