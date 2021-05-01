@@ -36,6 +36,7 @@ import { XzddOpHuan3ZhangMahjongsBroadCast } from '../GameData/Xzdd/s2c/XzddOpHu
 import { CommandDefine } from '../MahjongConst/CommandDefine';
 import { XzddReady } from '../GameData/Xzdd/c2s/XzddReady';
 import { XzddS2CCheckHu } from '../GameData/Xzdd/s2c/XzddS2CCheckHu';
+import getLocation from '../Util/GetLocation';
 
 /**
  * 血战到底消息数据代理类
@@ -258,8 +259,19 @@ export class XzddProxy extends ModuleProxy {
         data.playType = 3;
         data.roomId = roomNo;
         data.vipGameSubClass = 1;
-        data.latitude = 0;  // 纬度
-        data.longitude = 0; // 经度
+
+        let { Latitude, Longgitude } = getLocation()
+
+        if (Latitude === '' || Longgitude === '') {
+            this.getGateProxy().toast("没有定位信息，请打开定位权限！");
+            
+            this.isReadyEnterRoom = false;
+            this.joinRoomNo = null;
+            this.sendNotification(CommandDefine.CloseLoadingPanel);
+            return;
+        }
+        data.latitude = Number(Latitude);  // 纬度
+        data.longitude = Number(Longgitude); // 经度
 
         this.sendGameData(XzddProtocol.C_ENTER_ROOM, data, (op: number, msgType: number) => {
             this.isReadyEnterRoom = false;
