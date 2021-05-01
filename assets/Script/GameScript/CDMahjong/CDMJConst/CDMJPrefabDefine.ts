@@ -4,5 +4,6 @@ export enum PrefabDefine {
     CDMJRecordAlert = "prefabs/CDMahjong/CDMJRecordAlert",
     ChatBox = "prefabs/chatBox",
     RecodeCardBox = "prefabs/CDMahjong/CDMJRecordCard",
-    RtMayHuCardBox = "prefabs/CDMahjong/CDMJRtRemainHuCard"
+    RtMayHuCardBox = "prefabs/CDMahjong/CDMJRtRemainHuCard",
+    GlodTakeInPanel = "prefabs/CDMahjong/CDMJGlodTakeInPanel"
 }
