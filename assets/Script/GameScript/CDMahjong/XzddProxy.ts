@@ -73,6 +73,7 @@ export class XzddProxy extends ModuleProxy {
             const takeInGlod = 200;
             this.sendNotification(CDMJCommandDefine.InitDeskPanel, { xzddS2CEnterRoom, takeInGlod });
         } else if (msgType === XzddProtocol.S_PUSH_DESK_PLAYER_LIST) {// 推送玩家信息
+            console.log('~~~~~~~~~~~推送玩家信息')
             let xzddEnterDeskPushPlyaerList: XzddEnterDeskPushPlyaerList = <XzddEnterDeskPushPlyaerList>content;
             xzddEnterDeskPushPlyaerList.players.forEach(v => {
                 v.azimuth -= 1;
@@ -86,6 +87,7 @@ export class XzddProxy extends ModuleProxy {
             xzddS2CBeginDealData.players.forEach(v => {
                 v.azimuth -= 1;
             })
+            console.log('----------------发牌');
             this.getDeskProxy().beginGame(xzddS2CBeginDealData);
         } else if (msgType === XzddProtocol.S_Game_Get) {   //推送玩家摸牌消息
             let xzddS2CPlayerGet: XzddS2CPlayerGet = <XzddS2CPlayerGet>content;
@@ -104,7 +106,7 @@ export class XzddProxy extends ModuleProxy {
         } else if (msgType === XzddProtocol.S_Game_ShowOperation) {   //推送提示玩家操作消息
             let xzddS2CShowOperation: XzddS2CShowOperation = <XzddS2CShowOperation>content;
             xzddS2CShowOperation.playerAzimuth -= 1;
-            console.log('===========', xzddS2CShowOperation.oprts);
+            //console.log('===========', xzddS2CShowOperation.oprts);
             this.getDeskProxy().updateOperationEvent(xzddS2CShowOperation);
         } else if (msgType === XzddProtocol.S_Game_PutRsp_BroadCast) {   //推送玩家出牌消息
             let xzddS2COpPutRsp: XzddS2COpPutRsp = <XzddS2COpPutRsp>content;

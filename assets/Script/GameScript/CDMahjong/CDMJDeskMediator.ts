@@ -146,10 +146,10 @@ export default class CDMJDeskMediator extends BaseMediator {
 
     public async handleNotification(notification: INotification) {
 
-        const gameData = this.getDeskProxy().getGameData();
-        const deskData = this.getDeskProxy().getDeskData();
-        console.log('gameData', gameData);
-        console.log('deskData', deskData);
+        // const gameData = this.getDeskProxy().getGameData();
+        // const deskData = this.getDeskProxy().getDeskData();
+        // console.log('gameData', gameData);
+        // console.log('deskData', deskData);
 
         switch (notification.getName()) {
             case CDMJCommandDefine.InitDeskPanel:
@@ -266,7 +266,8 @@ export default class CDMJDeskMediator extends BaseMediator {
 
                 break;
             case CDMJCommandDefine.RefreshPlayerPush:
-                this.DeskPanelViewScript && this.DeskPanelViewScript.updatePlayerHeadView();
+                this.DeskPanelViewScript && this.DeskPanelViewScript.updatePlayerHeadView(true);
+                
                 break;
             case CDMJCommandDefine.ExitDeskPanel:
                 this.getDeskProxy().getDeskData().gameSetting.roomId = 0;
@@ -398,7 +399,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 }
                 break;
             case CDMJCommandDefine.ChangePlayerGold://金币变化
-                this.facade.sendNotification(CDMJCommandDefine.RefreshPlayerPush, {}, '');
+                //this.facade.sendNotification(CDMJCommandDefine.RefreshPlayerPush, {}, '');
                 this.DeskPanelViewScript.showPlayerGlodChange();
                 break;
             case CDMJCommandDefine.DingzhangDone://玩家定章完成
