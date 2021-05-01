@@ -198,7 +198,7 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 747,
+      "trimX": 911,
       "trimY": 70,
       "width": 82,
       "height": 82,
@@ -235,11 +235,11 @@
           0
         ],
         "u": [
-          829,
-          747,
-          747,
-          826,
-          829
+          993,
+          911,
+          911,
+          990,
+          993
         ],
         "v": [
           152,
@@ -310,6 +310,132 @@
           61,
           0,
           0
+        ]
+      },
+      "spriteType": "normal",
+      "subMetas": {}
+    },
+    "da.png": {
+      "ver": "1.0.4",
+      "uuid": "7dd4b2b5-dffd-4653-afae-6ffaf7266447",
+      "rawTextureUuid": "0924ca03-3939-4009-8400-60032274ddb5",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 257,
+      "trimY": 70,
+      "width": 80,
+      "height": 80,
+      "rawWidth": 80,
+      "rawHeight": 80,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          2,
+          3,
+          4,
+          1,
+          2,
+          4,
+          0,
+          1,
+          4
+        ],
+        "x": [
+          80,
+          74,
+          0,
+          0,
+          80
+        ],
+        "y": [
+          80,
+          80,
+          6,
+          0,
+          0
+        ],
+        "u": [
+          337,
+          331,
+          257,
+          257,
+          337
+        ],
+        "v": [
+          150,
+          150,
+          76,
+          70,
+          70
+        ]
+      },
+      "spriteType": "normal",
+      "subMetas": {}
+    },
+    "duo.png": {
+      "ver": "1.0.4",
+      "uuid": "8fe15464-c641-45cc-b781-23390329e300",
+      "rawTextureUuid": "0924ca03-3939-4009-8400-60032274ddb5",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 339,
+      "trimY": 70,
+      "width": 80,
+      "height": 80,
+      "rawWidth": 80,
+      "rawHeight": 80,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "vertices": {
+        "triangles": [
+          0,
+          3,
+          4,
+          1,
+          2,
+          3,
+          0,
+          1,
+          3
+        ],
+        "x": [
+          80,
+          6,
+          0,
+          0,
+          80
+        ],
+        "y": [
+          6,
+          80,
+          80,
+          0,
+          0
+        ],
+        "u": [
+          419,
+          345,
+          339,
+          339,
+          419
+        ],
+        "v": [
+          76,
+          150,
+          150,
+          70,
+          70
         ]
       },
       "spriteType": "normal",
@@ -450,7 +576,7 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 257,
+      "trimX": 421,
       "trimY": 70,
       "width": 198,
       "height": 80,
@@ -492,12 +618,12 @@
           0
         ],
         "u": [
-          455,
-          257,
-          257,
-          262,
-          266,
-          455
+          619,
+          421,
+          421,
+          426,
+          430,
+          619
         ],
         "v": [
           150,
@@ -520,7 +646,7 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 457,
+      "trimX": 621,
       "trimY": 70,
       "width": 213,
       "height": 80,
@@ -552,10 +678,10 @@
           0
         ],
         "u": [
-          670,
-          457,
-          457,
-          670
+          834,
+          621,
+          621,
+          834
         ],
         "v": [
           150,
@@ -632,7 +758,7 @@
       "rotated": false,
       "offsetX": 0,
       "offsetY": 0,
-      "trimX": 672,
+      "trimX": 836,
       "trimY": 70,
       "width": 73,
       "height": 80,
@@ -669,11 +795,11 @@
           0
         ],
         "u": [
-          745,
-          725,
-          672,
-          672,
-          745
+          909,
+          889,
+          836,
+          836,
+          909
         ],
         "v": [
           140,

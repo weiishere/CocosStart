@@ -710,6 +710,37 @@ export default class CDMJDeskPanelView extends ViewComponent {
             //if (_mayHuCard) cardScript.setHuCard(_mayHuCard);
             cardScript.setHuCard(_mayHuCard);
         }
+        if (this.getData().gameData.myCards.mayHuCards.length <= 1) return;
+        //每个牌出了，可胡的牌总数
+        debugger
+        const counts = this.getData().gameData.myCards.mayHuCards.map(item => ({ cardNumber: item.putCard, count: item.huList.reduce((total, i) => total + i.remainNum, 0) }));
+        const isMoreCount = counts.some(i => i.count !== counts[0].count);//是否数据有不同的
+        if (isMoreCount) {
+            const maxCount = counts.sort((a, b) => b.count - a.count)[0];
+            const maxCounts = counts.filter(i => i.cardNumber === maxCount.cardNumber);//可能存在多个
+            this.mainCardList.forEach(card => {
+                const c = card.getComponent("CardItemView") as CardItemView;
+                if (maxCounts.some(i => i.cardNumber === c.cardNumber)) c.setCorner({ duoSign: true })
+            });
+            if (maxCounts.some(i => i.cardNumber === this.getData().gameData.myCards.handCard)) {
+                (this.handCard.children[0].getComponent("CardItemView") as CardItemView).setCorner({ duoSign: true })
+            }
+        }
+
+        //每个牌出了，可胡的倍数取最大值
+        const fans = this.getData().gameData.myCards.mayHuCards.map(item => ({ cardNumber: item.putCard, maxFans: item.huList.sort((a, b) => b.fanShu - a.fanShu)[0].fanShu }));
+        const isMoreFan = fans.some(i => i.maxFans !== fans[0].maxFans);//是否数据有不同的
+        if (isMoreFan) {
+            const maxFan = fans.sort((a, b) => b.maxFans - a.maxFans)[0];
+            const maxFans = fans.filter(i => i.cardNumber === maxFan.cardNumber);//可能存在多个
+            this.mainCardList.forEach(card => {
+                const c = card.getComponent("CardItemView") as CardItemView;
+                if (maxFans.some(i => i.cardNumber === c.cardNumber)) c.setCorner({ daSign: true })
+            });
+            if (maxFans.some(i => i.cardNumber === this.getData().gameData.myCards.handCard)) {
+                (this.handCard.children[0].getComponent("CardItemView") as CardItemView).setCorner({ daSign: true })
+            }
+        }
     }
     /**更新用户手牌/胡牌 */
     updateHandCardAndHuCard(): void {

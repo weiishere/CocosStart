@@ -63,7 +63,7 @@
                 <key>spriteSourceSize</key>
                 <string>{82,82}</string>
                 <key>textureRect</key>
-                <string>{{747,70},{82,82}}</string>
+                <string>{{911,70},{82,82}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -71,7 +71,7 @@
                 <key>vertices</key>
                 <string>82 82 0 82 0 79 79 0 82 0</string>
                 <key>verticesUV</key>
-                <string>829 152 747 152 747 149 826 70 829 70</string>
+                <string>993 152 911 152 911 149 990 70 993 70</string>
             </dict>
             <key>corner_2.png</key>
             <dict>
@@ -95,6 +95,52 @@
                 <string>61 3 3 61 0 61 0 0 61 0</string>
                 <key>verticesUV</key>
                 <string>732 3 674 61 671 61 671 0 732 0</string>
+            </dict>
+            <key>da.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>anchor</key>
+                <string>{0.5,0.5}</string>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{80,80}</string>
+                <key>spriteSourceSize</key>
+                <string>{80,80}</string>
+                <key>textureRect</key>
+                <string>{{257,70},{80,80}}</string>
+                <key>textureRotated</key>
+                <false/>
+                <key>triangles</key>
+                <string>2 3 4 1 2 4 0 1 4</string>
+                <key>vertices</key>
+                <string>80 80 74 80 0 6 0 0 80 0</string>
+                <key>verticesUV</key>
+                <string>337 150 331 150 257 76 257 70 337 70</string>
+            </dict>
+            <key>duo.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>anchor</key>
+                <string>{0.5,0.5}</string>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{80,80}</string>
+                <key>spriteSourceSize</key>
+                <string>{80,80}</string>
+                <key>textureRect</key>
+                <string>{{339,70},{80,80}}</string>
+                <key>textureRotated</key>
+                <false/>
+                <key>triangles</key>
+                <string>0 3 4 1 2 3 0 1 3</string>
+                <key>vertices</key>
+                <string>80 6 6 80 0 80 0 0 80 0</string>
+                <key>verticesUV</key>
+                <string>419 76 345 150 339 150 339 70 419 70</string>
             </dict>
             <key>huSign.png</key>
             <dict>
@@ -155,7 +201,7 @@
                 <key>spriteSourceSize</key>
                 <string>{198,80}</string>
                 <key>textureRect</key>
-                <string>{{257,70},{198,80}}</string>
+                <string>{{421,70},{198,80}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -163,7 +209,7 @@
                 <key>vertices</key>
                 <string>198 80 0 80 0 7 5 2 9 0 198 0</string>
                 <key>verticesUV</key>
-                <string>455 150 257 150 257 77 262 72 266 70 455 70</string>
+                <string>619 150 421 150 421 77 426 72 430 70 619 70</string>
             </dict>
             <key>m_button3.png</key>
             <dict>
@@ -178,7 +224,7 @@
                 <key>spriteSourceSize</key>
                 <string>{213,80}</string>
                 <key>textureRect</key>
-                <string>{{457,70},{213,80}}</string>
+                <string>{{621,70},{213,80}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -186,7 +232,7 @@
                 <key>vertices</key>
                 <string>213 80 0 80 0 0 213 0</string>
                 <key>verticesUV</key>
-                <string>670 150 457 150 457 70 670 70</string>
+                <string>834 150 621 150 621 70 834 70</string>
             </dict>
             <key>m_dban.png</key>
             <dict>
@@ -224,7 +270,7 @@
                 <key>spriteSourceSize</key>
                 <string>{73,80}</string>
                 <key>textureRect</key>
-                <string>{{672,70},{73,80}}</string>
+                <string>{{836,70},{73,80}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -232,7 +278,7 @@
                 <key>vertices</key>
                 <string>73 70 53 80 0 80 0 0 73 0</string>
                 <key>verticesUV</key>
-                <string>745 140 725 150 672 150 672 70 745 70</string>
+                <string>909 140 889 150 836 150 836 70 909 70</string>
             </dict>
             <key>m_gg.png</key>
             <dict>
@@ -685,7 +731,7 @@
             <key>size</key>
             <string>{993,1454}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:281e85fccd11b6447afa74d0d687043f:c5197dc6a4cac7597e673ac83d496488:58c0e0504adf84d3d71b9842b28c49ec$</string>
+            <string>$TexturePacker:SmartUpdate:cf0c519b51a5e21dc281e8901ff7d20c:3b460bbcedd6c2c7cd95e4e4d4c621db:58c0e0504adf84d3d71b9842b28c49ec$</string>
             <key>textureFileName</key>
             <string>singleApp.png</string>
         </dict>

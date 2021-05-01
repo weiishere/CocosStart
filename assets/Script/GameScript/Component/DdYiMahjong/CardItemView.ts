@@ -149,6 +149,15 @@ export default class CardItemView extends cc.Component {
         }
 
     }
+    /**设置角标
+     * 是否显示“大”角标
+     * 是否显示“多”角标
+     */
+    public setCorner({ daSign, duoSign }: { daSign?: boolean, duoSign?: boolean }) {
+        if (daSign !== undefined) this.node.getChildByName("da").active = daSign;
+        if (duoSign !== undefined) this.node.getChildByName("duo").active = duoSign;
+    }
+    /**设置箭头（用于标明点炮方） */
     public setArrows2(active?: boolean) {
         this.arrows2 && (this.arrows2.active = active);
     }

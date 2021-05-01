@@ -146,23 +146,20 @@ export default class CDMJDeskMediator extends BaseMediator {
 
     public async handleNotification(notification: INotification) {
 
-        // const gameData = this.getDeskProxy().getGameData();
-        // const deskData = this.getDeskProxy().getDeskData();
-        // console.log('gameData', gameData);
-        // console.log('deskData', deskData);
+        const gameData = this.getDeskProxy().getGameData();
+        const deskData = this.getDeskProxy().getDeskData();
+        console.log('gameData', gameData);
+        console.log('deskData', deskData);
 
         switch (notification.getName()) {
             case CDMJCommandDefine.InitDeskPanel:
-                const { takeInGlod } = notification.getBody();
+                this.roundMark = notification.getBody().xzddS2CEnterRoom.roundMark;
+                this.sendNotification(CommandDefine.CloseLoadingPanel);
                 let isReconnect = true;
                 if (!this.view || !this.view.isValid) {
                     isReconnect = false;
                     await this.init();
                 }
-
-                this.takeInGlod = takeInGlod || 0;
-                this.roundMark = notification.getBody().xzddS2CEnterRoom.roundMark;
-                this.sendNotification(CommandDefine.CloseLoadingPanel);
                 this.deskPanel = this.viewComponent.getChildByName('cdmjdeskView');
                 this.DeskPanelViewScript = this.deskPanel.getComponent('CDMJDeskPanelView') as CDMJDeskPanelView;
                 this.getDeskProxy().updateDeskInfo(notification.getBody().xzddS2CEnterRoom);
@@ -170,13 +167,11 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updatedDeskAiming();
                 // 如果是重连，在这里发送准备消息
                 if (isReconnect) {
-                    this.getCdmjProxy().ready(this.takeInGlod === -1 ? undefined : this.takeInGlod);
+                    this.getCdmjProxy().ready();
                     this.sendNotification(CDMJCommandDefine.ReStartGamePush);
                 } else {
                     //this.musicManager.playMusic(AudioSourceDefine.BackMusic3);
                     // MusicManager.getInstance().playMusic(AudioSourceDefine.BackMusic4);
-                    const { Latitude, Longgitude } = getLocation();
-                    //this.sendNotification(CommandDefine.OpenToast, { content: '经纬度：' + Latitude + "|" + Longgitude });
                     this.DeskPanelViewScript.bindDskOpreationEvent(node => {
                         if (node.name === 'exitIcon') {
                             let seatNumber = this.getDeskProxy().getDeskData().gameSetting.seatNumber;
@@ -200,10 +195,6 @@ export default class CDMJDeskMediator extends BaseMediator {
                             this.sendNotification(CommandDefine.OpenSetting);
                         } else if (node.name === 'chatIcon') {
                             this.sendNotification(CDMJCommandDefine.OpenChatBox);
-                        } else if (node.name === 'cardRecord') {
-                            this.sendNotification(CDMJCommandDefine.OpenCardRecord);
-                        } else if (node.name === 'winCard') {
-                            this.sendNotification(CDMJCommandDefine.CheckHuCard);
                         }
                     });
                     /**出牌事件 */
