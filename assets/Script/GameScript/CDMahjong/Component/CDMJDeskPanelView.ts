@@ -114,14 +114,15 @@ export default class CDMJDeskPanelView extends ViewComponent {
         bottom: null,
         right: null,
     }
-    private deskBtus: { exit: cc.Node, help: cc.Node, record: cc.Node, set: cc.Node, chat: cc.Node, cardRecord: cc.Node, winCard: cc.Node } = {
+    private deskBtus: { exit: cc.Node, help: cc.Node, record: cc.Node, set: cc.Node, chat: cc.Node, cardRecord: cc.Node, winCard: cc.Node, location: cc.Node } = {
         exit: null,
         help: null,
         record: null,
         set: null,
         chat: null,
         cardRecord: null,
-        winCard: null
+        winCard: null,
+        location: null
     }
     private isSuper = false;
     private arrowCard: cc.Node = null;
@@ -298,6 +299,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.deskBtus.chat = this.node.getChildByName('deskOpreationIcon').getChildByName('chatIcon');
         this.deskBtus.cardRecord = this.node.getChildByName('deskOpreationIcon').getChildByName('cardRecord');
         this.deskBtus.winCard = this.node.getChildByName('deskOpreationIcon').getChildByName('winCard');
+        this.deskBtus.location = this.node.getChildByName('deskOpreationIcon').getChildByName('location');
         //#endregion
 
         this.cardChooseAlert = this.node.getChildByName('cardChooseAlert');

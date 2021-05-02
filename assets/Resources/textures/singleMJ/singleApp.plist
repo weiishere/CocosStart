@@ -17,7 +17,7 @@
                 <key>spriteSourceSize</key>
                 <string>{75,50}</string>
                 <key>textureRect</key>
-                <string>{{0,0},{75,50}}</string>
+                <string>{{40,0},{75,50}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -25,7 +25,7 @@
                 <key>vertices</key>
                 <string>75 30 44 50 30 50 1 21 0 19 0 0 75 0</string>
                 <key>verticesUV</key>
-                <string>75 30 44 50 30 50 1 21 0 19 0 0 75 0</string>
+                <string>115 30 84 50 70 50 41 21 40 19 40 0 115 0</string>
             </dict>
             <key>cardLine.png</key>
             <dict>
@@ -86,7 +86,7 @@
                 <key>spriteSourceSize</key>
                 <string>{61,61}</string>
                 <key>textureRect</key>
-                <string>{{671,0},{61,61}}</string>
+                <string>{{711,0},{61,61}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -94,7 +94,7 @@
                 <key>vertices</key>
                 <string>61 3 3 61 0 61 0 0 61 0</string>
                 <key>verticesUV</key>
-                <string>732 3 674 61 671 61 671 0 732 0</string>
+                <string>772 3 714 61 711 61 711 0 772 0</string>
             </dict>
             <key>da.png</key>
             <dict>
@@ -293,7 +293,7 @@
                 <key>spriteSourceSize</key>
                 <string>{120,53}</string>
                 <key>textureRect</key>
-                <string>{{421,0},{120,53}}</string>
+                <string>{{461,0},{120,53}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -301,7 +301,7 @@
                 <key>vertices</key>
                 <string>63 10 120 10 120 42 35 53 0 53 0 0 43 0</string>
                 <key>verticesUV</key>
-                <string>484 10 541 10 541 42 456 53 421 53 421 0 464 0</string>
+                <string>524 10 581 10 581 42 496 53 461 53 461 0 504 0</string>
             </dict>
             <key>m_hongli.png</key>
             <dict>
@@ -362,7 +362,7 @@
                 <key>spriteSourceSize</key>
                 <string>{126,53}</string>
                 <key>textureRect</key>
-                <string>{{543,0},{126,53}}</string>
+                <string>{{583,0},{126,53}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -370,7 +370,7 @@
                 <key>vertices</key>
                 <string>55 53 0 53 0 0 55 0 126 46 69 46 69 14 126 14</string>
                 <key>verticesUV</key>
-                <string>598 53 543 53 543 0 598 0 669 46 612 46 612 14 669 14</string>
+                <string>638 53 583 53 583 0 638 0 709 46 652 46 652 14 709 14</string>
             </dict>
             <key>m_panel.png</key>
             <dict>
@@ -431,7 +431,7 @@
                 <key>spriteSourceSize</key>
                 <string>{225,68}</string>
                 <key>textureRect</key>
-                <string>{{734,0},{225,68}}</string>
+                <string>{{774,0},{225,68}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -439,7 +439,7 @@
                 <key>vertices</key>
                 <string>225 68 0 68 0 0 225 0</string>
                 <key>verticesUV</key>
-                <string>959 68 734 68 734 0 959 0</string>
+                <string>999 68 774 68 774 0 999 0</string>
             </dict>
             <key>m_ract3.png</key>
             <dict>
@@ -523,7 +523,7 @@
                 <key>spriteSourceSize</key>
                 <string>{124,50}</string>
                 <key>textureRect</key>
-                <string>{{77,0},{124,50}}</string>
+                <string>{{117,0},{124,50}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -531,7 +531,7 @@
                 <key>vertices</key>
                 <string>124 50 0 50 0 0 124 0</string>
                 <key>verticesUV</key>
-                <string>201 50 77 50 77 0 201 0</string>
+                <string>241 50 117 50 117 0 241 0</string>
             </dict>
             <key>m_wanfa.png</key>
             <dict>
@@ -638,7 +638,7 @@
                 <key>spriteSourceSize</key>
                 <string>{124,50}</string>
                 <key>textureRect</key>
-                <string>{{203,0},{124,50}}</string>
+                <string>{{243,0},{124,50}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -646,7 +646,30 @@
                 <key>vertices</key>
                 <string>124 50 0 50 0 0 124 0</string>
                 <key>verticesUV</key>
-                <string>327 50 203 50 203 0 327 0</string>
+                <string>367 50 243 50 243 0 367 0</string>
+            </dict>
+            <key>position.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>anchor</key>
+                <string>{0.5,0.5}</string>
+                <key>spriteOffset</key>
+                <string>{2,0.5}</string>
+                <key>spriteSize</key>
+                <string>{38,45}</string>
+                <key>spriteSourceSize</key>
+                <string>{48,48}</string>
+                <key>textureRect</key>
+                <string>{{0,0},{38,45}}</string>
+                <key>textureRotated</key>
+                <false/>
+                <key>triangles</key>
+                <string>1 2 3 0 1 3</string>
+                <key>vertices</key>
+                <string>45 46 8 46 7 2 35 1</string>
+                <key>verticesUV</key>
+                <string>38 45 1 45 0 1 28 0</string>
             </dict>
             <key>record.png</key>
             <dict>
@@ -661,7 +684,7 @@
                 <key>spriteSourceSize</key>
                 <string>{50,50}</string>
                 <key>textureRect</key>
-                <string>{{329,0},{46,50}}</string>
+                <string>{{369,0},{46,50}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -669,7 +692,7 @@
                 <key>vertices</key>
                 <string>48 50 2 50 2 0 48 0</string>
                 <key>verticesUV</key>
-                <string>375 50 329 50 329 0 375 0</string>
+                <string>415 50 369 50 369 0 415 0</string>
             </dict>
             <key>winIcon.png</key>
             <dict>
@@ -684,7 +707,7 @@
                 <key>spriteSourceSize</key>
                 <string>{50,50}</string>
                 <key>textureRect</key>
-                <string>{{377,0},{42,50}}</string>
+                <string>{{417,0},{42,50}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -692,7 +715,7 @@
                 <key>vertices</key>
                 <string>46 50 4 50 4 0 46 0</string>
                 <key>verticesUV</key>
-                <string>419 50 377 50 377 0 419 0</string>
+                <string>459 50 417 50 417 0 459 0</string>
             </dict>
             <key>zimoSign.png</key>
             <dict>
@@ -729,9 +752,9 @@
             <key>realTextureFileName</key>
             <string>singleApp.png</string>
             <key>size</key>
-            <string>{993,1454}</string>
+            <string>{999,1454}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:cf0c519b51a5e21dc281e8901ff7d20c:3b460bbcedd6c2c7cd95e4e4d4c621db:58c0e0504adf84d3d71b9842b28c49ec$</string>
+            <string>$TexturePacker:SmartUpdate:f043ddb181f5dc9d3db1d2ed3d0c1ade:a461d0a33010d62a926785b3fcc03f76:58c0e0504adf84d3d71b9842b28c49ec$</string>
             <key>textureFileName</key>
             <string>singleApp.png</string>
         </dict>

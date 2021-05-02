@@ -20,6 +20,7 @@ import ChatBox, { MsgObj } from "../Component/DdYiMahjong/ChatBox";
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { CDMJMusicManager } from "./CDMJMusicManager";
 import getLocation from "../Util/GetLocation";
+import CDMJPosition from "./Component/CDMJPosition";
 
 
 
@@ -103,7 +104,8 @@ export default class CDMJDeskMediator extends BaseMediator {
             CDMJCommandDefine.ClearDeskGameView,
             CDMJCommandDefine.OpenCardRecord,
             CDMJCommandDefine.CheckHuCard,
-            CDMJCommandDefine.HuCardListPush
+            CDMJCommandDefine.HuCardListPush,
+            CDMJCommandDefine.ShowLocationPanel
         ];
     }
 
@@ -201,6 +203,8 @@ export default class CDMJDeskMediator extends BaseMediator {
                             this.sendNotification(CDMJCommandDefine.OpenCardRecord);
                         } else if (node.name === 'winCard') {
                             this.sendNotification(CDMJCommandDefine.CheckHuCard);
+                        } else if (node.name === 'location') {
+                            this.sendNotification(CDMJCommandDefine.ShowLocationPanel);
                         }
                     });
                     /**出牌事件 */
@@ -269,7 +273,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 break;
             case CDMJCommandDefine.RefreshPlayerPush:
                 this.DeskPanelViewScript && this.DeskPanelViewScript.updatePlayerHeadView(true);
-                
+
                 break;
             case CDMJCommandDefine.ExitDeskPanel:
                 this.getDeskProxy().getDeskData().gameSetting.roomId = 0;
@@ -447,6 +451,11 @@ export default class CDMJDeskMediator extends BaseMediator {
             case CDMJCommandDefine.HuCardListPush://实时胡牌推送，打开窗口
                 const rtMayHuCardBox = <cc.Node>cc.instantiate(cc.loader.getRes(PrefabDefine.RtMayHuCardBox, cc.Prefab));
                 cc.find('Canvas/cdmjdeskView').addChild(rtMayHuCardBox);
+                break;
+            case CDMJCommandDefine.ShowLocationPanel:
+                const locationPanel = <cc.Node>cc.instantiate(cc.loader.getRes(PrefabDefine.LocationPanel, cc.Prefab));
+                cc.find('Canvas/cdmjdeskView').addChild(locationPanel);
+                //(locationPanel.getComponent('CDMJPosition') as CDMJPosition).loadData()
                 break;
         }
     }

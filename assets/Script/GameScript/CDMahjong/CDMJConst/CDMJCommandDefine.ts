@@ -40,5 +40,6 @@ export enum CDMJCommandDefine {
     ClearDeskGameView = "ClearDeskGameView",
     OpenCardRecord = "OpenCardRecord",
     CheckHuCard = "CheckHuCard",
-    HuCardListPush = "HuCardListPush"
+    HuCardListPush = "HuCardListPush",
+    ShowLocationPanel= "ShowLocationPanel"
 }
