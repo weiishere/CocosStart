@@ -1566,8 +1566,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 52,
-      "height": 52
+      "width": 42,
+      "height": 47
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -2094,7 +2094,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 131.7,
+      "width": 105.36,
       "height": 37.8
     },
     "_anchorPoint": {
@@ -2148,7 +2148,7 @@
     "_dstBlendFactor": 771,
     "_string": "满人:20桌",
     "_N$string": "满人:20桌",
-    "_fontSize": 30,
+    "_fontSize": 24,
     "_lineHeight": 30,
     "_enableWrapText": true,
     "_N$file": null,
@@ -2202,7 +2202,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 115.02,
+      "width": 92.02,
       "height": 37.8
     },
     "_anchorPoint": {
@@ -2215,7 +2215,7 @@
       "ctor": "Float64Array",
       "array": [
         554.442,
-        -10.116,
+        0.384,
         0,
         0,
         0,
@@ -2256,7 +2256,7 @@
     "_dstBlendFactor": 771,
     "_string": "等待:4桌",
     "_N$string": "等待:4桌",
-    "_fontSize": 30,
+    "_fontSize": 24,
     "_lineHeight": 30,
     "_enableWrapText": true,
     "_N$file": null,

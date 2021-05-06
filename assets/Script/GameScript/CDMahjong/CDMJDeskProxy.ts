@@ -63,7 +63,14 @@ export class CDMJDeskProxy extends BaseProxy {
                 master: false,
                 playerGender: 0,
                 gameIndex: p.azimuth,
+                location: {
+                    /** 经度 */
+                    longitude: p.longitude,
+                    /** 纬度 */
+                    latitude: p.latitude
+                }
             }
+            console.log(p.longitude + '--' + p.latitude);
             playerInfos.push(playerInfo);
             if (!this.isMy(p.username)) {
                 this.repository.gameData.partnerCardsList.push({
@@ -617,26 +624,6 @@ export class CDMJDeskProxy extends BaseProxy {
                 })
             }
         });
-        // const _partnerCardsList = JSON.parse(JSON.stringify(this.repository.gameData.partnerCardsList));
-        // (_partnerCardsList as Array<PartnerCard>).forEach(item => {
-        //     item.partnerCards =
-        //     {
-        //         "curCardList": [],
-        //         "handCard": 0,
-        //         "curCardCount": 0,
-        //         "isHandCard": false,
-        //         "touchCard": [],
-        //         "barCard": [],
-        //         "hadHuCard": 0,
-        //         "outCardList": [],
-        //         "setFace": -1,
-        //         "status": {
-        //             "isHadHu": false,
-        //             "isBaoHu": false
-        //         }
-        //     }
-
-        // });
         this.repository.gameData = JSON.parse(JSON.stringify(this.dataBackup.gameData));//Object.assign({}, this.dataBackup.gameData);
         this.repository.gameData.partnerCardsList = _partnerCardsList;
     }
@@ -675,7 +662,13 @@ export class CDMJDeskProxy extends BaseProxy {
                 playerGender: 0,
                 playerHeadImg: player.playerInfo.head,
                 playerName: player.playerInfo.nickname,
-                master: player.isBank
+                master: player.isBank,
+                location: {
+                    /** 经度 */
+                    longitude: player.playerInfo.longitude,
+                    /** 纬度 */
+                    latitude: player.playerInfo.latitude
+                }
             }
 
             let barCard: Array<BarType> = [];

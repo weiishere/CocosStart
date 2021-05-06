@@ -11503,7 +11503,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 160,
+      "width": 120,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -11557,7 +11557,7 @@
     "_dstBlendFactor": 771,
     "_string": "找回密码",
     "_N$string": "找回密码",
-    "_fontSize": 40,
+    "_fontSize": 30,
     "_lineHeight": 40,
     "_enableWrapText": true,
     "_N$file": null,
