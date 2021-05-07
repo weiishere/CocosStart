@@ -20,6 +20,11 @@ import ChatBox, { MsgObj } from "../Component/DdYiMahjong/ChatBox";
 import { CommandDefine } from "../MahjongConst/CommandDefine";
 import { CDMJMusicManager } from "./CDMJMusicManager";
 import getLocation from "../Util/GetLocation";
+<<<<<<< HEAD
+=======
+import CDMJPosition, { PlayerData } from "./Component/CDMJPosition";
+import { LocalCacheDataProxy } from "../Proxy/LocalCacheDataProxy";
+>>>>>>> 4f9a42a0cd83591f8f5232d695d4692c3463efc9
 
 
 
@@ -447,6 +452,25 @@ export default class CDMJDeskMediator extends BaseMediator {
                 const rtMayHuCardBox = <cc.Node>cc.instantiate(cc.loader.getRes(PrefabDefine.RtMayHuCardBox, cc.Prefab));
                 cc.find('Canvas/cdmjdeskView').addChild(rtMayHuCardBox);
                 break;
+<<<<<<< HEAD
+=======
+            case CDMJCommandDefine.ShowLocationPanel:
+                const locationPanel = <cc.Node>cc.instantiate(cc.loader.getRes(PrefabDefine.LocationPanel, cc.Prefab));
+                cc.find('Canvas/cdmjdeskView').addChild(locationPanel);
+                const playerDatas: PlayerData[] = this.getDeskProxy().repository.deskData.playerList.map(item => ({
+                    userName: item.playerId,
+                    nickname: item.playerName,
+                    seatId: item.gameIndex,
+                    head: item.playerHeadImg,
+                    latitude: item.location.latitude,
+                    longitude: item.location.longitude,
+                }));
+                let localCacheDataProxy = <LocalCacheDataProxy>this.facade.retrieveProxy(ProxyDefine.LocalCacheData);
+                (locationPanel.getComponent('CDMJPosition') as CDMJPosition).loadData(playerDatas,
+                    this.getDeskProxy().repository.deskData.gameSetting.seatNumber,
+                    localCacheDataProxy.getLoginData().userName)
+                break;
+>>>>>>> 4f9a42a0cd83591f8f5232d695d4692c3463efc9
         }
     }
 }

@@ -19,6 +19,13 @@ export type PlayerInfo = {
     gameReadyStatus?: boolean,
     /**是否是庄家 */
     master: boolean,
+    /**位置信息 */
+    location: {
+        /** 经度 */
+        longitude: number,
+        /** 纬度 */
+        latitude: number
+    }
 }
 
 export type BarType = {
@@ -241,6 +248,7 @@ export class DeskRepository {
                         isBaoHu: false
                     }
                 },
+
             }
         ],
         countDownTime: 0,
