@@ -187,7 +187,7 @@ export default class XzddDesk extends BaseDesk {
     }
 
     setRuleStr(s2CClubRoomInfoBase: S2CClubRoomInfoBase) {
-        this.ruleStr = "首局自动开始 对对胡 离线30秒自动托管 ";
+        this.ruleStr = "首局自动开始 离线30秒自动托管 ";
         if (s2CClubRoomInfoBase.roomType === 0) {
             this.ruleStr += "7张 "
         }
@@ -201,6 +201,9 @@ export default class XzddDesk extends BaseDesk {
                 let ruleName = MahjongVipRule.getRuleName(v);
                 if (ruleName) {
                     this.ruleStr += ruleName + " ";
+                }
+                if (v === MahjongVipRule.TIAN_DI_HU) {
+                    this.ruleStr += "对对胡 ";
                 }
             })
         }

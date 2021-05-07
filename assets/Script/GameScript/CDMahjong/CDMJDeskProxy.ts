@@ -218,6 +218,7 @@ export class CDMJDeskProxy extends BaseProxy {
             this.getGameData().myCards.disableCard = xzddS2CPlayerGet.nextStep.datas || [];
             const huList = (xzddS2CPlayerGet.nextStep.args && xzddS2CPlayerGet.nextStep.args.list) ? xzddS2CPlayerGet.nextStep.args.list : [];
             this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
+            console.log(this.getGameData().myCards.mayHuCards);
 
             if (this.getGameData().myCards.status.isBaoHu && !xzddS2CPlayerGet.nextStep.oprts) {
                 window.setTimeout(() => {
@@ -231,6 +232,7 @@ export class CDMJDeskProxy extends BaseProxy {
             //     }, 800);
             // }
         } else {
+            //console.log('dymjS2CPlayerGet.getMjValue', dymjS2CPlayerGet.getMjValue);
             this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
             let { partnerCards } = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
             partnerCards.isHandCard = true;
@@ -270,6 +272,7 @@ export class CDMJDeskProxy extends BaseProxy {
     }
     /**玩家自己完成定章 */
     playerSelfDingzhangDone(xzddOpDingZhangMahjongsRsp: XzddOpDingZhangMahjongsRsp) {
+        //console.log(xzddOpDingZhangMahjongsRsp.dingzhangType);
         this.getGameData().myCards.setFace = xzddOpDingZhangMahjongsRsp.dingzhangType;
         this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
         //this.getGameData().myCards.curCardList.sort((a, b) => a - b);
@@ -310,9 +313,11 @@ export class CDMJDeskProxy extends BaseProxy {
                 //碰杠胡
                 this.doEventData(xzddS2CDoNextOperation.nextStep.oprts);
             }
+            //console.log('xzddS2CDoNextOperation.nextStep.datas=====', xzddS2CDoNextOperation.nextStep.datas);
             this.getGameData().myCards.disableCard = xzddS2CDoNextOperation.nextStep.datas || [];
             const huList = (xzddS2CDoNextOperation.nextStep.args && xzddS2CDoNextOperation.nextStep.args.list) ? xzddS2CDoNextOperation.nextStep.args.list : [];
             this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
+            console.log(this.getGameData().myCards.mayHuCards);
             //this.doEventData(dymjS2CDoNextOperation.nextStep.oprts);
         }
         this.sendNotification(CDMJCommandDefine.ShowCardNotificationPush);
@@ -560,6 +565,7 @@ export class CDMJDeskProxy extends BaseProxy {
         this.getGameData().switchCardCountDown = 0;
         this.getGameData().myCards.switchInCard = xzddOpHuan3ZhangMahjongsBroadCast.newMahjongs;
         this.getGameData().myCards.curCardList = xzddOpHuan3ZhangMahjongsBroadCast.spValuesSorted;
+        // console.log('newMahjongs--------------', this.getGameData().myCards.switchInCard);
         this.sendNotification(CDMJCommandDefine.SwitchCardDonePush);
     }
     /** 更新玩家金币 */
