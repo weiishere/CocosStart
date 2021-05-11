@@ -176,7 +176,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                     //this.musicManager.playMusic(AudioSourceDefine.BackMusic3);
                     // MusicManager.getInstance().playMusic(AudioSourceDefine.BackMusic4);
                     const { Latitude, Longgitude } = getLocation();
-                    //this.sendNotification(CommandDefine.OpenToast, { content: '经纬度：' + Latitude + "|" + Longgitude });
+                    this.sendNotification(CommandDefine.OpenToast, { content: '经纬度：' + Latitude + "|" + Longgitude });
                     this.DeskPanelViewScript.bindDskOpreationEvent(node => {
                         if (node.name === 'exitIcon') {
                             let seatNumber = this.getDeskProxy().getDeskData().gameSetting.seatNumber;

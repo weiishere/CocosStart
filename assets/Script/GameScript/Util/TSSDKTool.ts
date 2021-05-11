@@ -14,10 +14,17 @@ export class TSSDKTool {
      * 调取native微信授权
     */
     public static wxLogin() {
-        console.log("wxLogin");
+        
         if (this.isAndroid) {
             //调用Java代码进行微信登录
             jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "weixin_login", "(Ljava/lang/String;)V", "weixin_login");
+        } else if (this.isIOS) {
+   
+            console.log("wxLogin1");
+
+            jsb.reflection.callStaticMethod("AppController", "sendAuthRequest");
+
+            
         }
     }
 
