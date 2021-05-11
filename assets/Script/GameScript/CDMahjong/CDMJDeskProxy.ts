@@ -633,7 +633,11 @@ export class CDMJDeskProxy extends BaseProxy {
         this.repository.gameData = JSON.parse(JSON.stringify(this.dataBackup.gameData));//Object.assign({}, this.dataBackup.gameData);
         this.repository.gameData.partnerCardsList = _partnerCardsList;
     }
-
+    /**清理事件列表 */
+    clearEventList() {
+        let eventName = this.getGameData().eventData.gameEventData.myGameEvent.eventName;
+        eventName = eventName.indexOf('show') === -1 ? [] : ['show'];
+    }
     /** 游戏结束 */
     gameOver(dymjGameResult: XzddGameResult) {
         this.getGameData().eventData.gameEventData.deskGameEvent.eventName = 'gameEnd';

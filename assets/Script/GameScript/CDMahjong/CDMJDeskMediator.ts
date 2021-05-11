@@ -250,6 +250,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                             this.getCdmjProxy().operation(XzddOperationType.QING_HU, (correlationInfoData.qingHu as XzddHu).mjValue);
                         } else if (node.name === 'pass') {
                             //过
+                            this.getDeskProxy().clearEventList();
                             this.getCdmjProxy().operation(XzddOperationType.XIAO, 0);
                         } else if (node.name === "ding-wan") {
                             this.getCdmjProxy().dingZhang(0);
