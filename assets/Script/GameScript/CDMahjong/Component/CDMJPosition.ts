@@ -81,14 +81,14 @@ export default class CDMJPosition extends cc.Component {
         let playerDatas = [];
 
         let playerData: PlayerData = {
-            userName: '1111',
+            userName: '111',
             nickname: "111",
             seatId: 0,
             head: "http://139.9.242.13/static/userHead/r1380.png",
             latitude: 30.666263206127073,
             longitude: 103.98439487213136,
         }
-        // playerDatas.push(playerData);
+        playerDatas.push(playerData);
 
         playerData = {
             userName: '222',
@@ -116,9 +116,9 @@ export default class CDMJPosition extends cc.Component {
             latitude: 39.8453174337574,
             longitude: 116.44640922546387,
         }
-        playerDatas.push(playerData);
+        // playerDatas.push(playerData);
 
-        this.loadData(playerDatas, 4, "222");
+        this.loadData(playerDatas, 3, "333");
     }
 
     /**
@@ -146,11 +146,19 @@ export default class CDMJPosition extends cc.Component {
                 if (seatStr === "01") {
                     this.setLine(this.line01, dist);
                 } else if (seatStr === "02") {
-                    this.setLine(this.line02, dist);
+                    if (gameCount === 3) {
+                        this.setLine(this.line03, dist);
+                    } else {
+                        this.setLine(this.line02, dist);
+                    }
                 } else if (seatStr === "03") {
                     this.setLine(this.line03, dist);
                 } else if (seatStr === "12") {
-                    this.setLine(this.line12, dist);
+                    if (gameCount === 3) {
+                        this.setLine(this.line13, dist);
+                    }else{
+                        this.setLine(this.line12, dist);
+                    }
                 } else if (seatStr === "13") {
                     this.setLine(this.line13, dist);
                 } else if (seatStr === "23") {

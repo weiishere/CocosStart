@@ -1234,10 +1234,10 @@
       "height": 210,
       "rawWidth": 772,
       "rawHeight": 212,
-      "borderTop": 0,
-      "borderBottom": 0,
-      "borderLeft": 0,
-      "borderRight": 0,
+      "borderTop": 13,
+      "borderBottom": 13,
+      "borderLeft": 13,
+      "borderRight": 13,
       "vertices": {
         "triangles": [
           1,
