@@ -265,7 +265,7 @@ export class XzddProxy extends ModuleProxy {
 
         let { Latitude, Longgitude } = getLocation()
 
-        if (!cc.sys.isBrowser && (Latitude === '' || Longgitude === '')) {
+        if (!cc.sys.isBrowser && ((Latitude === '' || Longgitude === '')||(Latitude === '-1.0' || Longgitude === '-1.0'))) {
             this.getGateProxy().toast("没有定位信息，请打开定位权限！");
             
             this.isReadyEnterRoom = false;

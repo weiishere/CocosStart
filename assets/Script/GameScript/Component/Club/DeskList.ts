@@ -258,7 +258,8 @@ export default class DeskList extends ViewComponent {
                 res.getChildByName("label").getComponent(cc.Label).string = `全部`;
             } else {
                 res.name = "selectNode" + v;
-                res.getChildByName("label").getComponent(cc.Label).string = `${v}底分`;
+                res.getChildByName("label").getComponent(cc.Label).string = `${v}`;
+                res.getChildByName("label").setScale(1.5);
             }
         });
     }

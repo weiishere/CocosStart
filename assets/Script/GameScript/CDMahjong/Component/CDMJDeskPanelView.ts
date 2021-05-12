@@ -718,7 +718,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
         }
         if (this.getData().gameData.myCards.mayHuCards.length <= 1) return;
         //每个牌出了，可胡的牌总数
-        debugger
         const counts = this.getData().gameData.myCards.mayHuCards.map(item => ({ cardNumber: item.putCard, count: item.huList.reduce((total, i) => total + i.remainNum, 0) }));
         const isMoreCount = counts.some(i => i.count !== counts[0].count);//是否数据有不同的
         if (isMoreCount) {
@@ -928,9 +927,11 @@ export default class CDMJDeskPanelView extends ViewComponent {
     }
     /**更新操作按钮组 */
     updateMyOperationBtu(param?: any): void {
+
         this.reSetOpreationBtu();
         this.timer2 && window.clearTimeout(this.timer2);
         const eventName = this.getData().gameData.eventData.gameEventData.myGameEvent.eventName;
+        console.log('eventName', eventName);
         this.isAllowShowCard = true;
         eventName.forEach(item => {
             switch (item) {

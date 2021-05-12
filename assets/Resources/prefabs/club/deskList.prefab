@@ -8923,7 +8923,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 204,
+      "width": 198,
       "height": 80
     },
     "_anchorPoint": {
@@ -8997,8 +8997,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 204,
-      "height": 59
+      "width": 198,
+      "height": 80
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -9009,7 +9009,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        102,
+        99,
         0,
         0,
         0,
@@ -9062,7 +9062,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 198,
-      "height": 80
+      "height": 200
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -9080,8 +9080,8 @@
         0,
         0,
         1,
-        1,
-        1,
+        0.7,
+        0.7,
         0
       ]
     },
@@ -9114,7 +9114,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "38a21ab4-0932-4871-a974-25129cd7741a"
+      "__uuid__": "84fea58f-1b6f-48a6-b2af-b06ed798e6d4"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -9128,7 +9128,7 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": {
-      "__uuid__": "211e3353-b22e-48fe-a5d4-b22b0622d57e"
+      "__uuid__": "54b49872-d627-4456-bf68-992ff350868f"
     },
     "_id": ""
   },
@@ -9170,8 +9170,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 198,
-      "height": 80
+      "width": 200,
+      "height": 200
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -9189,8 +9189,8 @@
         0,
         0,
         1,
-        1,
-        1,
+        0.7,
+        0.7,
         1
       ]
     },
@@ -9223,7 +9223,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "48ed8abc-b9e9-48d2-813e-777d4ea12eca"
+      "__uuid__": "02540db4-8520-4b82-b99e-4c5a8aaee179"
     },
     "_type": 0,
     "_sizeMode": 2,
@@ -9457,7 +9457,7 @@
     "_enabled": true,
     "_layoutSize": {
       "__type__": "cc.Size",
-      "width": 204,
+      "width": 198,
       "height": 80
     },
     "_resize": 1,

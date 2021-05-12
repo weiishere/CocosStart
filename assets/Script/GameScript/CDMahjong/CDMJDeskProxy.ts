@@ -258,6 +258,7 @@ export class CDMJDeskProxy extends BaseProxy {
         // 如果是自己
         if (this.isMy(playerInfo.playerId)) {
             if (xzddS2CShowOperation.oprts) {
+                console.log('xzddS2CShowOperation.oprts----------', xzddS2CShowOperation.oprts);
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
                 this.doEventData(xzddS2CShowOperation.oprts);
             }
@@ -637,6 +638,8 @@ export class CDMJDeskProxy extends BaseProxy {
     clearEventList() {
         let eventName = this.getGameData().eventData.gameEventData.myGameEvent.eventName;
         eventName = eventName.indexOf('show') === -1 ? [] : ['show'];
+        
+        this.sendNotification(CDMJCommandDefine.ShowMyEventPush,{});
     }
     /** 游戏结束 */
     gameOver(dymjGameResult: XzddGameResult) {
