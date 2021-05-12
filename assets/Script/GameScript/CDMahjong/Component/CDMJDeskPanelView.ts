@@ -697,6 +697,11 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**更新可胡牌 */
     updateMayHuCard(): void {
         console.log('update----------', this.getData().gameData.myCards.mayHuCards);
+        this.mainCardList.forEach(card => {
+            const c = card.getComponent("CardItemView") as CardItemView;
+            c.setHuCard();
+            c.setCorner({ duoSign: false, daSign: false })
+        })
         this.getData().gameData.myCards.mayHuCards.forEach(item => {
             this.mainCardList.filter(card => {
                 const c = card.getComponent("CardItemView") as CardItemView;
@@ -705,10 +710,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
                 const c = card.getComponent("CardItemView") as CardItemView;
                 c.setHuCard(item);
             })
-            // this.mainCardList.forEach(card => {
-            //     const c = card.getComponent("CardItemView") as CardItemView;
-            //     c.setHuCard(c.cardNumber === item.putCard ? item : null);
-            // })
+
         })
         if (this.handCard.children.length !== 0) {
             const cardScript = (this.handCard.children[0].getComponent("CardItemView") as CardItemView);
@@ -784,10 +786,12 @@ export default class CDMJDeskPanelView extends ViewComponent {
             _handCard.setPosition(0, 50);
             _handCard.setRotation(-60);
             _card.setStress(true);
-            this.scheduleOnce(() => {
-                //设置下落动作
-                cc.tween(_handCard).to(0.2, { opacity: 255, position: cc.v3(0, 0), rotation: 0 }).start();
-            }, 0.5);
+            //设置下落动作
+            cc.tween(_handCard).to(0.1, { opacity: 255, position: cc.v3(0, 0), rotation: 0 }).start();
+            // this.scheduleOnce(() => {
+            //     //设置下落动作
+            //     cc.tween(_handCard).to(0.2, { opacity: 255, position: cc.v3(0, 0), rotation: 0 }).start();
+            // }, 0.5);
 
             //判断手牌是否可出
             // console.log(disableCard);
@@ -927,7 +931,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
     }
     /**更新操作按钮组 */
     updateMyOperationBtu(param?: any): void {
-
         this.reSetOpreationBtu();
         this.timer2 && window.clearTimeout(this.timer2);
         const eventName = this.getData().gameData.eventData.gameEventData.myGameEvent.eventName;

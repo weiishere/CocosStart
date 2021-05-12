@@ -46,6 +46,7 @@ export class CDMJDeskProxy extends BaseProxy {
     }
     /**清除桌面事件数据，主要用于展示几秒钟之后需要清除 */
     clearDeskGameEvent() {
+        
         this.getGameData().eventData.deskEventData.eventName = '';
         //this.sendNotification(CommandDefine.ShowCenterEffect);
     }
@@ -150,7 +151,6 @@ export class CDMJDeskProxy extends BaseProxy {
         (<XzddProxy>this.facade.retrieveProxy(ProxyDefine.Xzdd)).huanSanZhang(switchCardArr);
     }
     private doEventData(oprts: Array<XzddOperation>) {
-
         oprts.forEach(op => {
             const _eventName = this.getGameData().eventData.gameEventData.myGameEvent.eventName;
             const _correlationInfoData = this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;
@@ -637,9 +637,7 @@ export class CDMJDeskProxy extends BaseProxy {
     /**清理事件列表 */
     clearEventList() {
         let eventName = this.getGameData().eventData.gameEventData.myGameEvent.eventName;
-        eventName = eventName.indexOf('show') === -1 ? [] : ['show'];
-        
-        this.sendNotification(CDMJCommandDefine.ShowMyEventPush,{});
+        this.getGameData().eventData.gameEventData.myGameEvent.eventName = eventName.indexOf('show') === -1 ? [] : ['show'];
     }
     /** 游戏结束 */
     gameOver(dymjGameResult: XzddGameResult) {

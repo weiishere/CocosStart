@@ -97,6 +97,7 @@ export class XzddProxy extends ModuleProxy {
         } else if (msgType === XzddProtocol.S_Game_DoNextOperation_BroadCast) {   //推送玩家下一步的操作
             let xzddS2CDoNextOperation: XzddS2CDoNextOperation = <XzddS2CDoNextOperation>content;
             xzddS2CDoNextOperation.playerAzimuth -= 1;
+            console.log('=====~~~~~~~~~======', xzddS2CDoNextOperation.nextStep.oprts);
             this.getDeskProxy().updateNextOperationEvent(xzddS2CDoNextOperation);
         } else if (msgType === XzddProtocol.S_Game_Result_BroadCast) {   //推送游戏结束消息
             let xzddGameResult: XzddGameResult = <XzddGameResult>content;
@@ -107,7 +108,7 @@ export class XzddProxy extends ModuleProxy {
         } else if (msgType === XzddProtocol.S_Game_ShowOperation) {   //推送提示玩家操作消息
             let xzddS2CShowOperation: XzddS2CShowOperation = <XzddS2CShowOperation>content;
             xzddS2CShowOperation.playerAzimuth -= 1;
-            //console.log('===========', xzddS2CShowOperation.oprts);
+            console.log('=====!!!!!!!!!!!======', xzddS2CShowOperation.oprts);
             this.getDeskProxy().updateOperationEvent(xzddS2CShowOperation);
         } else if (msgType === XzddProtocol.S_Game_PutRsp_BroadCast) {   //推送玩家出牌消息
             let xzddS2COpPutRsp: XzddS2COpPutRsp = <XzddS2COpPutRsp>content;
