@@ -499,7 +499,9 @@ export default class CDMJDeskPanelView extends ViewComponent {
             // });
             SpriteLoadUtil.loadSprite(headWrap.getChildByName("head").getComponent(cc.Sprite), player.playerHeadImg);
         });
-        if (isReadyDone && this.getData().deskData.gameSetting.seatNumber === this.getData().deskData.playerList.length) {
+
+        // !this.getData().deskData.gameSetting.isGameOver 只有第一次游戏的时候，人满了才发送准备，避免玩家还没有点击下一局的时候，人数满了自动发送准备
+        if (isReadyDone && !this.getData().deskData.gameSetting.isGameOver && this.getData().deskData.gameSetting.seatNumber === this.getData().deskData.playerList.length) {
             this.dispatchCustomEvent(DeskPanelViewEventDefine.CDMJDeskPanelViewOnLoadComplate, null);
         }
     }
