@@ -144,6 +144,9 @@ export class ConfigProxy extends BaseProxy {
     }
 
     public loadLocalConfig(configUrl) {
+        // 在配置后面增加一个时间戳，避免缓存
+        configUrl += `?t=${new Date().getTime()}`;
+
         let isSueeccd = false;
         HttpUtil.send(configUrl, (response, request, url) => {
             this._facadeUrl = this.replaceUrl(response.facadeUrl, this.currentRemoteIp + ":" + this._port);

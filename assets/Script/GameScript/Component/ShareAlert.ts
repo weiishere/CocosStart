@@ -39,8 +39,10 @@ export default class ShareAlert extends cc.Component {
 
     loadData(inviteCode, shareUrl: string) {
         this.inviteCodeLabel.string = "邀请码：" + inviteCode;
-        
+
         this.getInviteCode();
+
+        shareUrl += `?type=transpond&inviteCode=${inviteCode}`;
 
         this.graphics.fillColor = cc.Color.BLACK;
         let qrcode = new QRCode();
