@@ -264,8 +264,8 @@ export class XzddProxy extends ModuleProxy {
         data.roomId = roomNo;
         data.vipGameSubClass = 1;
 
-        let { Latitude, Longgitude } = getLocation()
-
+        let { Latitude, Longgitude } = getLocation();
+        
         if(Latitude === '-1'){
             Latitude = '';
         }
@@ -290,6 +290,7 @@ export class XzddProxy extends ModuleProxy {
             this.joinRoomNo = null;
             this.sendNotification(CommandDefine.CloseLoadingPanel);
         });
+        this.sendNotification(CommandDefine.OpenToast, { content: '经纬度数据：' + Latitude + "|" + Longgitude });
     }
     /**
      * 发牌动画结束
