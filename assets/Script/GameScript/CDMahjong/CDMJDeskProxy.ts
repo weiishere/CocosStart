@@ -145,6 +145,8 @@ export class CDMJDeskProxy extends BaseProxy {
         this.getGameData().eventData.gameEventData.deskGameEvent.eventName = 'gameBegin';
         this.getDeskData().gameSetting.gameRoundNum = xsddS2CBeginDealData.currentGameCount;
         this.sendNotification(CDMJCommandDefine.LicensingCardPush);
+
+        this.getDeskData().gameSetting.isGameOver = false;
     }
     sureSwitchCard(switchCardArr: Array<number>) {
         this.getGameData().myCards.switchOutCardDefault = switchCardArr;
@@ -650,6 +652,8 @@ export class CDMJDeskProxy extends BaseProxy {
         })
         this.getGameData().myCards.mayHuCardsRT = [];
         this.sendNotification(CDMJCommandDefine.OpenRecordAlter, dymjGameResult);
+
+        this.getDeskData().gameSetting.isGameOver = true;
     }
 
     /**
@@ -847,6 +851,7 @@ export class CDMJDeskProxy extends BaseProxy {
         this.getDeskData().gameSetting.roomId = dymjS2CEnterRoom.roomId;
         this.getDeskData().gameSetting.seatNumber = dymjS2CEnterRoom.seatNumber;
         this.getDeskData().gameSetting.roomName = dymjS2CEnterRoom.roomName;
+        this.getDeskData().gameSetting.isGameOver = false;
         this.updateUserInfo(dymjS2CEnterRoom.players);
     }
 

@@ -37,6 +37,7 @@ import { CommandDefine } from '../MahjongConst/CommandDefine';
 import { XzddReady } from '../GameData/Xzdd/c2s/XzddReady';
 import { XzddS2CCheckHu } from '../GameData/Xzdd/s2c/XzddS2CCheckHu';
 import getLocation from '../Util/GetLocation';
+import { GameServerCode } from '../GameConst/GameServerCode';
 
 /**
  * 血战到底消息数据代理类
@@ -209,6 +210,8 @@ export class XzddProxy extends ModuleProxy {
             errorMsg = "来晚了，人数满了，换一张桌子吧！";
         } else if (errorCode === XzddErrorCode.GPS_DIST_TOO_CLOSE) {
             errorMsg = "该房间有玩家离您太近了！";
+        } else if (errorCode === GameServerCode.TOKEN_VERIFY_FAIL) {
+            errorMsg = "登录过期了，请重新登录！";
         } else {
             errorMsg = errorCode + "";
         }

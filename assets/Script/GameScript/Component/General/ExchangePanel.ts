@@ -19,7 +19,11 @@ export default class ExchangePanel extends ViewComponent {
     @property(cc.Sprite)
     bgSprite: cc.Sprite = null;
     @property(cc.Node)
+    goldBuyContent: cc.Node = null;
+    @property(cc.Node)
     goldBuyList: cc.Node = null;
+    @property(cc.Node)
+    exchangeAccessListNode: cc.Node = null;
     @property(cc.Node)
     logNode: cc.Node = null;
     @property(cc.Node)
@@ -196,7 +200,7 @@ export default class ExchangePanel extends ViewComponent {
     }
 
     hideNode() {
-        this.goldBuyList.active = false;
+        this.goldBuyContent.active = false;
         this.logNode.active = false;
         this.convertNode.active = false;
         this.tipsLabel.node.active = false;
@@ -357,65 +361,72 @@ export default class ExchangePanel extends ViewComponent {
         let facadeUrl = this.getConfigProxy().facadeUrl;
         LoginAfterHttpUtil.send(facadeUrl + "/exchange/getRechargeValues", (response) => {
             if (response.hd === "success") {
-                for (const value of response.bd) {
-                    let rechargeNode = cc.instantiate(this.rechargeValue);
-                    rechargeNode.x = 0;
-                    rechargeNode.y = 0;
-                    rechargeNode.active = true;
-                    // if (value === 0) {
-                    //     this.goldBuyList.addChild(this.vipExchange);
-                    //     this.vipExchange.on(cc.Node.EventType.TOUCH_END, (event) => {
-                    //         //const rechargeServiceUrl = this.getConfigProxy();
-                    //         cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
-                    //     });
-                    // } else {
-                    let label = rechargeNode.getChildByName("GoldLabel").getComponent(cc.Label);
-                    label.string = value;
-
-                    let goldIcon = rechargeNode.getChildByName("GoldIcon").getComponent(cc.Sprite);
-                    let spriteName = "zhuanshi-";
-                    if (value === 0) {
-                        spriteName += "6";
-                        label.string = "Vip充值";
-                    } else if (value < 50) {
-                        spriteName += "1";
-                    } else if (value >= 50 && value < 200) {
-                        spriteName += "2";
-                    } else if (value >= 200 && value < 500) {
-                        spriteName += "3";
-                    } else if (value >= 500 && value < 1000) {
-                        spriteName += "4";
-                    } else if (value >= 1000 && value < 2000) {
-                        spriteName += "5";
-                    } else {
-                        spriteName += "6";
-                    }
-
-                    goldIcon.spriteFrame = this.newFace.getSpriteFrame(spriteName);
-                    this.goldBuyList.addChild(rechargeNode);
-                    rechargeNode.on(cc.Node.EventType.TOUCH_END, (event) => {
-                        if (value === 0) {
-                            cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
-                        } else {
-                            this.exchange(label.string);
-                        }
-                    });
-                    // }
-                }
-
+                this.loadGoldList(response.bd);
             } else {
                 this.getGateProxy().toast("获得支付列表失败！");
             }
         }, (err) => {
             this.getGateProxy().toast("获得支付列表失败！");
         }, HttpUtil.METHOD_POST, param);
+    }
 
+    /**
+     * 加载金币列表
+     * @param goldArray 
+     */
+    loadGoldList(goldArray: any[]) {
+        this.goldBuyList.removeAllChildren();
+        for (const value of goldArray) {
+            let rechargeNode = cc.instantiate(this.rechargeValue);
+            rechargeNode.x = 0;
+            rechargeNode.y = 0;
+            rechargeNode.active = true;
+            // if (value === 0) {
+            //     this.goldBuyList.addChild(this.vipExchange);
+            //     this.vipExchange.on(cc.Node.EventType.TOUCH_END, (event) => {
+            //         //const rechargeServiceUrl = this.getConfigProxy();
+            //         cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
+            //     });
+            // } else {
+            let label = rechargeNode.getChildByName("GoldLabel").getComponent(cc.Label);
+            label.string = value;
+
+            let goldIcon = rechargeNode.getChildByName("GoldIcon").getComponent(cc.Sprite);
+            let spriteName = "zhuanshi-";
+            if (value === 0) {
+                spriteName += "6";
+                label.string = "Vip充值";
+            } else if (value < 50) {
+                spriteName += "1";
+            } else if (value >= 50 && value < 200) {
+                spriteName += "2";
+            } else if (value >= 200 && value < 500) {
+                spriteName += "3";
+            } else if (value >= 500 && value < 1000) {
+                spriteName += "4";
+            } else if (value >= 1000 && value < 2000) {
+                spriteName += "5";
+            } else {
+                spriteName += "6";
+            }
+
+            goldIcon.spriteFrame = this.newFace.getSpriteFrame(spriteName);
+            this.goldBuyList.addChild(rechargeNode);
+            rechargeNode.on(cc.Node.EventType.TOUCH_END, (event) => {
+                if (value === 0) {
+                    cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
+                } else {
+                    this.exchange(label.string);
+                }
+            });
+            // }
+        }
     }
 
     menuClick(event) {
         this.hideNode();
         if (event.target.name === "goldBuyItem") {
-            this.goldBuyList.active = true;
+            this.goldBuyContent.active = true;
         } else if (event.target.name === "exchangeLogItem") {
             this.exchangeLogTitleUpdate();
             this.logNode.active = true;
@@ -438,6 +449,14 @@ export default class ExchangePanel extends ViewComponent {
             this.isLastPage = false;
             this.findLog(this.pageIndex);
         }
+    }
+
+    /**
+     * 通道选择
+     * @param event 
+     */
+    exchangeSelect(event) {
+
     }
 
     // update (dt) {}
