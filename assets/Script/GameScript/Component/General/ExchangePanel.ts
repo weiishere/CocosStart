@@ -427,6 +427,8 @@ export default class ExchangePanel extends ViewComponent {
             } else {
                 spriteName += "6";
             }
+            
+            spriteName = "m_glodSign";
 
             goldIcon.spriteFrame = this.newFace.getSpriteFrame(spriteName);
             this.goldBuyList.addChild(rechargeNode);
