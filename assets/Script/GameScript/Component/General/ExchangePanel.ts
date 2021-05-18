@@ -79,7 +79,8 @@ export default class ExchangePanel extends ViewComponent {
         this.goldBuyList.removeAllChildren();
         // this.getRechargeValues();
 
-        this.getAccessData();
+        // this.getAccessData();
+        this.testAccess();
     }
     protected bindEvent(): void {
         this.closeBtn.on(cc.Node.EventType.TOUCH_END, () => {
@@ -192,7 +193,7 @@ export default class ExchangePanel extends ViewComponent {
 
 
         let accessInfo = this.accessList.find(v => v.accessId === this.selectAccessId);
-        
+
         let url = configProxy.bonusUrl + "/api/v1/recharge";
         let param = {
             userName: localCacheDataProxy.getLoginData().userName,
@@ -555,6 +556,9 @@ export default class ExchangePanel extends ViewComponent {
             exchangeScore: [10, 20, 50, 1000],
         }
         accessList.push(accessInfo);
+
+        this.accessList = accessList;
+        this.loadExchangeAccess(accessList);
     }
 
     // update (dt) {}
