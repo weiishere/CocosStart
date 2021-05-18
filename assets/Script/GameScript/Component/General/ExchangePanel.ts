@@ -12,6 +12,11 @@ import md5 from '../../Util/MD5';
 
 const { ccclass, property } = cc._decorator;
 
+export type AccessInfo = {
+    accessId: number,
+    accessName: string,
+    exchangeScore: number[],
+}
 
 @ccclass
 export default class ExchangePanel extends ViewComponent {
@@ -24,6 +29,8 @@ export default class ExchangePanel extends ViewComponent {
     goldBuyList: cc.Node = null;
     @property(cc.Node)
     exchangeAccessListNode: cc.Node = null;
+    @property(cc.Node)
+    exchangeAccessTmpplateNode: cc.Node = null;
     @property(cc.Node)
     logNode: cc.Node = null;
     @property(cc.Node)
@@ -62,9 +69,16 @@ export default class ExchangePanel extends ViewComponent {
     isLastPage: boolean = false;
     pageSize: number = 10;
 
+    /** 通道列表 */
+    accessList: AccessInfo[] = [];
+    /** 当前选择的通道 */
+    selectAccessId: number;
+
     protected bindUI(): void {
         this.goldBuyList.removeAllChildren();
-        this.getRechargeValues();
+        // this.getRechargeValues();
+
+        this.testAccess();
     }
     protected bindEvent(): void {
         this.closeBtn.on(cc.Node.EventType.TOUCH_END, () => {
@@ -452,11 +466,60 @@ export default class ExchangePanel extends ViewComponent {
     }
 
     /**
+     * 加载通道
+     * @param accessInfos 
+     */
+    loadExchangeAccess(accessInfos: AccessInfo[]) {
+        this.exchangeAccessListNode.removeAllChildren();
+        for (const access of accessInfos) {
+            let node = cc.instantiate(this.exchangeAccessTmpplateNode);
+            node.name = "access_" + access.accessId;
+            node.getChildByName("label").getComponent(cc.Label).string = access.accessName;
+
+            this.exchangeAccessListNode.addChild(node);
+        }
+
+        if (this.exchangeAccessListNode.childrenCount > 0) {
+            this.exchangeAccessListNode.children[0].getComponent(cc.Toggle).isChecked = true;
+
+            this.loadGoldList(accessInfos[0].exchangeScore);
+        }
+    }
+
+    /**
      * 通道选择
      * @param event 
      */
     exchangeSelect(event) {
+        let nodeName: string = event.node.name;
 
+        cc.log(nodeName);
+        this.selectAccessId = parseInt(nodeName.split("_")[1]);
+
+        let accessInfo = this.accessList.find(v => v.accessId === this.selectAccessId);
+        this.loadGoldList(accessInfo.exchangeScore);
+    }
+
+    testAccess() {
+        let accessList = [];
+
+        let accessInfo: AccessInfo = {
+            accessId: 1,
+            accessName: "支付宝",
+            exchangeScore: [10, 100, 200, 300],
+        }
+        accessList.push(accessInfo);
+
+        accessInfo = {
+            accessId: 2,
+            accessName: "微信",
+            exchangeScore: [10, 20, 50, 1000],
+        }
+        accessList.push(accessInfo);
+
+        this.accessList = accessList;
+
+        this.loadExchangeAccess(accessList);
     }
 
     // update (dt) {}
