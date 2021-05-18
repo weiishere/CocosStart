@@ -14,6 +14,7 @@ const { ccclass, property } = cc._decorator;
 
 export type AccessInfo = {
     accessId: number,
+    channelNo?: string,
     accessName: string,
     exchangeScore: number[],
 }
@@ -78,7 +79,7 @@ export default class ExchangePanel extends ViewComponent {
         this.goldBuyList.removeAllChildren();
         // this.getRechargeValues();
 
-        this.testAccess();
+        this.getAccessData();
     }
     protected bindEvent(): void {
         this.closeBtn.on(cc.Node.EventType.TOUCH_END, () => {
@@ -186,20 +187,22 @@ export default class ExchangePanel extends ViewComponent {
     }
 
     private exchange(gold) {
-        let localCacheDataProxy = <LocalCacheDataProxy><unknown>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
+        let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         let configProxy: ConfigProxy = <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
 
-        let token = localCacheDataProxy.getUserToken();
-        let url = configProxy.facadeUrl + "exchange/upGold";
+
+        let accessInfo = this.accessList.find(v => v.accessId === this.selectAccessId);
+        
+        let url = configProxy.bonusUrl + "/api/v1/recharge";
         let param = {
             userName: localCacheDataProxy.getLoginData().userName,
-            gold: parseFloat(gold),
+            amount: parseInt(gold),
+            channel: accessInfo.channelNo,
         }
-        LoginAfterHttpUtil.send(url, (response) => {
-            if (response.hd === "success") {
+        HttpUtil.send(url, (response) => {
+            if (response.code === 200) {
                 // 跳转页面
-                cc.sys.openURL(response.bd);
-                // Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '充值成功', toastOverlay: true }, '');
+                cc.sys.openURL(response.data);
             }
         }, (err) => {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '充值失败' + err, toastOverlay: true }, '');
@@ -427,6 +430,7 @@ export default class ExchangePanel extends ViewComponent {
             goldIcon.spriteFrame = this.newFace.getSpriteFrame(spriteName);
             this.goldBuyList.addChild(rechargeNode);
             rechargeNode.on(cc.Node.EventType.TOUCH_END, (event) => {
+                // 金额是0，打开VIP通道
                 if (value === 0) {
                     cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
                 } else {
@@ -500,6 +504,41 @@ export default class ExchangePanel extends ViewComponent {
         this.loadGoldList(accessInfo.exchangeScore);
     }
 
+    /**
+     * 获取远程通道数据
+     */
+    getAccessData() {
+        let bonusUrl = this.getConfigProxy().bonusUrl;
+        HttpUtil.send(bonusUrl + "/api/v1/list/payChannel", (response) => {
+            if (response.code === 200) {
+                this.setAccessList(response.data);
+            } else {
+                this.getGateProxy().toast("获得通道列表失败！");
+            }
+        }, (err) => {
+            this.getGateProxy().toast("获得通道列表失败！");
+        }, HttpUtil.METHOD_GET, []);
+    }
+
+    /**
+     * 设置通道数据
+     */
+    setAccessList(datas: any[]) {
+        let accessList = [];
+        for (const data of datas) {
+            let accessInfo: AccessInfo = {
+                accessId: data.id,
+                channelNo: data.channelNo,
+                accessName: data.channelName,
+                exchangeScore: data.amountList,
+            }
+            accessList.push(accessInfo);
+        }
+
+        this.accessList = accessList;
+        this.loadExchangeAccess(accessList);
+    }
+
     testAccess() {
         let accessList = [];
 
@@ -516,10 +555,6 @@ export default class ExchangePanel extends ViewComponent {
             exchangeScore: [10, 20, 50, 1000],
         }
         accessList.push(accessInfo);
-
-        this.accessList = accessList;
-
-        this.loadExchangeAccess(accessList);
     }
 
     // update (dt) {}
