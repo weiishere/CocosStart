@@ -79,8 +79,8 @@ export default class ExchangePanel extends ViewComponent {
         this.goldBuyList.removeAllChildren();
         // this.getRechargeValues();
 
-        // this.getAccessData();
-        this.testAccess();
+        this.getAccessData();
+        // this.testAccess();
     }
     protected bindEvent(): void {
         this.closeBtn.on(cc.Node.EventType.TOUCH_END, () => {
@@ -428,6 +428,8 @@ export default class ExchangePanel extends ViewComponent {
                 spriteName += "6";
             }
 
+            spriteName = "m_glodSign";
+
             goldIcon.spriteFrame = this.newFace.getSpriteFrame(spriteName);
             this.goldBuyList.addChild(rechargeNode);
             rechargeNode.on(cc.Node.EventType.TOUCH_END, (event) => {
@@ -527,11 +529,15 @@ export default class ExchangePanel extends ViewComponent {
     setAccessList(datas: any[]) {
         let accessList = [];
         for (const data of datas) {
+            let amountList: string = data.amountList;
+            let values = amountList.substring(1, amountList.length - 1).split(",");
+            let exchangeScore = [];
+            values.forEach(v => exchangeScore.push(parseInt(v)))
             let accessInfo: AccessInfo = {
                 accessId: data.id,
                 channelNo: data.channelNo,
                 accessName: data.channelName,
-                exchangeScore: data.amountList,
+                exchangeScore: exchangeScore,
             }
             accessList.push(accessInfo);
         }
