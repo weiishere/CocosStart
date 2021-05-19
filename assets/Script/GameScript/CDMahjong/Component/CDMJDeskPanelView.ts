@@ -698,7 +698,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
     }
     /**更新可胡牌 */
     updateMayHuCard(): void {
-        console.log('update----------', this.getData().gameData.myCards.mayHuCards);
         this.mainCardList.forEach(card => {
             const c = card.getComponent("CardItemView") as CardItemView;
             c.setHuCard();
@@ -786,7 +785,8 @@ export default class CDMJDeskPanelView extends ViewComponent {
             });
             _handCard.opacity = 0;
             _handCard.setPosition(0, 50);
-            _handCard.setRotation(-60);
+            //_handCard.setRotation(-60);
+            _handCard.angle = 60;
             _card.setStress(true);
             //设置下落动作
             cc.tween(_handCard).to(0.1, { opacity: 255, position: cc.v3(0, 0), rotation: 0 }).start();
@@ -936,7 +936,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.reSetOpreationBtu();
         this.timer2 && window.clearTimeout(this.timer2);
         const eventName = this.getData().gameData.eventData.gameEventData.myGameEvent.eventName;
-        console.log('eventName', eventName);
+        //console.log('eventName', eventName);
         this.isAllowShowCard = true;
         eventName.forEach(item => {
             switch (item) {
