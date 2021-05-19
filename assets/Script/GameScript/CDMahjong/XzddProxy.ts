@@ -293,7 +293,7 @@ export class XzddProxy extends ModuleProxy {
             this.joinRoomNo = null;
             this.sendNotification(CommandDefine.CloseLoadingPanel);
         });
-        this.sendNotification(CommandDefine.OpenToast, { content: '经纬度数据：' + Latitude + "|" + Longgitude });
+        //this.sendNotification(CommandDefine.OpenToast, { content: '经纬度数据：' + Latitude + "|" + Longgitude });
     }
     /**
      * 发牌动画结束
