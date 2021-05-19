@@ -74,7 +74,8 @@ export default class CDMJPosition extends cc.Component {
 
     setLine(lineNode: cc.Node, dist: number) {
         lineNode.active = true;
-        lineNode.getChildByName("label").getComponent(cc.Label).string = `${parseInt(dist.toFixed(0))}米`;
+        dist = dist / 1000;
+        lineNode.getChildByName("label").getComponent(cc.Label).string = `${parseInt(dist.toFixed(0))}千米`;
     }
 
     test() {
