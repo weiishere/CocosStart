@@ -12,6 +12,12 @@ import md5 from '../../Util/MD5';
 
 const { ccclass, property } = cc._decorator;
 
+export type AccessInfo = {
+    accessId: number,
+    channelNo?: string,
+    accessName: string,
+    exchangeScore: number[],
+}
 
 @ccclass
 export default class ExchangePanel extends ViewComponent {
@@ -19,7 +25,13 @@ export default class ExchangePanel extends ViewComponent {
     @property(cc.Sprite)
     bgSprite: cc.Sprite = null;
     @property(cc.Node)
+    goldBuyContent: cc.Node = null;
+    @property(cc.Node)
     goldBuyList: cc.Node = null;
+    @property(cc.Node)
+    exchangeAccessListNode: cc.Node = null;
+    @property(cc.Node)
+    exchangeAccessTmpplateNode: cc.Node = null;
     @property(cc.Node)
     logNode: cc.Node = null;
     @property(cc.Node)
@@ -58,9 +70,17 @@ export default class ExchangePanel extends ViewComponent {
     isLastPage: boolean = false;
     pageSize: number = 10;
 
+    /** 通道列表 */
+    accessList: AccessInfo[] = [];
+    /** 当前选择的通道 */
+    selectAccessId: number;
+
     protected bindUI(): void {
         this.goldBuyList.removeAllChildren();
-        this.getRechargeValues();
+        // this.getRechargeValues();
+
+        this.getAccessData();
+        // this.testAccess();
     }
     protected bindEvent(): void {
         this.closeBtn.on(cc.Node.EventType.TOUCH_END, () => {
@@ -168,20 +188,22 @@ export default class ExchangePanel extends ViewComponent {
     }
 
     private exchange(gold) {
-        let localCacheDataProxy = <LocalCacheDataProxy><unknown>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
+        let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         let configProxy: ConfigProxy = <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
 
-        let token = localCacheDataProxy.getUserToken();
-        let url = configProxy.facadeUrl + "exchange/upGold";
+
+        let accessInfo = this.accessList.find(v => v.accessId === this.selectAccessId);
+
+        let url = configProxy.bonusUrl + "/api/v1/recharge";
         let param = {
             userName: localCacheDataProxy.getLoginData().userName,
-            gold: parseFloat(gold),
+            amount: parseInt(gold),
+            channel: accessInfo.channelNo,
         }
-        LoginAfterHttpUtil.send(url, (response) => {
-            if (response.hd === "success") {
+        HttpUtil.send(url, (response) => {
+            if (response.code === 200) {
                 // 跳转页面
-                cc.sys.openURL(response.bd);
-                // Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '充值成功', toastOverlay: true }, '');
+                cc.sys.openURL(response.data);
             }
         }, (err) => {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '充值失败' + err, toastOverlay: true }, '');
@@ -196,7 +218,7 @@ export default class ExchangePanel extends ViewComponent {
     }
 
     hideNode() {
-        this.goldBuyList.active = false;
+        this.goldBuyContent.active = false;
         this.logNode.active = false;
         this.convertNode.active = false;
         this.tipsLabel.node.active = false;
@@ -357,65 +379,75 @@ export default class ExchangePanel extends ViewComponent {
         let facadeUrl = this.getConfigProxy().facadeUrl;
         LoginAfterHttpUtil.send(facadeUrl + "/exchange/getRechargeValues", (response) => {
             if (response.hd === "success") {
-                for (const value of response.bd) {
-                    let rechargeNode = cc.instantiate(this.rechargeValue);
-                    rechargeNode.x = 0;
-                    rechargeNode.y = 0;
-                    rechargeNode.active = true;
-                    // if (value === 0) {
-                    //     this.goldBuyList.addChild(this.vipExchange);
-                    //     this.vipExchange.on(cc.Node.EventType.TOUCH_END, (event) => {
-                    //         //const rechargeServiceUrl = this.getConfigProxy();
-                    //         cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
-                    //     });
-                    // } else {
-                    let label = rechargeNode.getChildByName("GoldLabel").getComponent(cc.Label);
-                    label.string = value;
-
-                    let goldIcon = rechargeNode.getChildByName("GoldIcon").getComponent(cc.Sprite);
-                    let spriteName = "zhuanshi-";
-                    if (value === 0) {
-                        spriteName += "6";
-                        label.string = "Vip充值";
-                    } else if (value < 50) {
-                        spriteName += "1";
-                    } else if (value >= 50 && value < 200) {
-                        spriteName += "2";
-                    } else if (value >= 200 && value < 500) {
-                        spriteName += "3";
-                    } else if (value >= 500 && value < 1000) {
-                        spriteName += "4";
-                    } else if (value >= 1000 && value < 2000) {
-                        spriteName += "5";
-                    } else {
-                        spriteName += "6";
-                    }
-
-                    goldIcon.spriteFrame = this.newFace.getSpriteFrame(spriteName);
-                    this.goldBuyList.addChild(rechargeNode);
-                    rechargeNode.on(cc.Node.EventType.TOUCH_END, (event) => {
-                        if (value === 0) {
-                            cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
-                        } else {
-                            this.exchange(label.string);
-                        }
-                    });
-                    // }
-                }
-
+                this.loadGoldList(response.bd);
             } else {
                 this.getGateProxy().toast("获得支付列表失败！");
             }
         }, (err) => {
             this.getGateProxy().toast("获得支付列表失败！");
         }, HttpUtil.METHOD_POST, param);
+    }
 
+    /**
+     * 加载金币列表
+     * @param goldArray 
+     */
+    loadGoldList(goldArray: any[]) {
+        this.goldBuyList.removeAllChildren();
+        for (const value of goldArray) {
+            let rechargeNode = cc.instantiate(this.rechargeValue);
+            rechargeNode.x = 0;
+            rechargeNode.y = 0;
+            rechargeNode.active = true;
+            // if (value === 0) {
+            //     this.goldBuyList.addChild(this.vipExchange);
+            //     this.vipExchange.on(cc.Node.EventType.TOUCH_END, (event) => {
+            //         //const rechargeServiceUrl = this.getConfigProxy();
+            //         cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
+            //     });
+            // } else {
+            let label = rechargeNode.getChildByName("GoldLabel").getComponent(cc.Label);
+            label.string = value;
+
+            let goldIcon = rechargeNode.getChildByName("GoldIcon").getComponent(cc.Sprite);
+            let spriteName = "zhuanshi-";
+            if (value === 0) {
+                spriteName += "6";
+                label.string = "Vip充值";
+            } else if (value < 50) {
+                spriteName += "1";
+            } else if (value >= 50 && value < 200) {
+                spriteName += "2";
+            } else if (value >= 200 && value < 500) {
+                spriteName += "3";
+            } else if (value >= 500 && value < 1000) {
+                spriteName += "4";
+            } else if (value >= 1000 && value < 2000) {
+                spriteName += "5";
+            } else {
+                spriteName += "6";
+            }
+
+            spriteName = "m_glodSign";
+
+            goldIcon.spriteFrame = this.newFace.getSpriteFrame(spriteName);
+            this.goldBuyList.addChild(rechargeNode);
+            rechargeNode.on(cc.Node.EventType.TOUCH_END, (event) => {
+                // 金额是0，打开VIP通道
+                if (value === 0) {
+                    cc.sys.openURL(this.getConfigProxy().rechargeServiceUrl);
+                } else {
+                    this.exchange(label.string);
+                }
+            });
+            // }
+        }
     }
 
     menuClick(event) {
         this.hideNode();
         if (event.target.name === "goldBuyItem") {
-            this.goldBuyList.active = true;
+            this.goldBuyContent.active = true;
         } else if (event.target.name === "exchangeLogItem") {
             this.exchangeLogTitleUpdate();
             this.logNode.active = true;
@@ -438,6 +470,101 @@ export default class ExchangePanel extends ViewComponent {
             this.isLastPage = false;
             this.findLog(this.pageIndex);
         }
+    }
+
+    /**
+     * 加载通道
+     * @param accessInfos 
+     */
+    loadExchangeAccess(accessInfos: AccessInfo[]) {
+        this.exchangeAccessListNode.removeAllChildren();
+        for (const access of accessInfos) {
+            let node = cc.instantiate(this.exchangeAccessTmpplateNode);
+            node.name = "access_" + access.accessId;
+            node.getChildByName("label").getComponent(cc.Label).string = access.accessName;
+
+            this.exchangeAccessListNode.addChild(node);
+        }
+
+        if (this.exchangeAccessListNode.childrenCount > 0) {
+            this.exchangeAccessListNode.children[0].getComponent(cc.Toggle).isChecked = true;
+
+            this.loadGoldList(accessInfos[0].exchangeScore);
+        }
+    }
+
+    /**
+     * 通道选择
+     * @param event 
+     */
+    exchangeSelect(event) {
+        let nodeName: string = event.node.name;
+
+        cc.log(nodeName);
+        this.selectAccessId = parseInt(nodeName.split("_")[1]);
+
+        let accessInfo = this.accessList.find(v => v.accessId === this.selectAccessId);
+        this.loadGoldList(accessInfo.exchangeScore);
+    }
+
+    /**
+     * 获取远程通道数据
+     */
+    getAccessData() {
+        let bonusUrl = this.getConfigProxy().bonusUrl;
+        HttpUtil.send(bonusUrl + "/api/v1/list/payChannel", (response) => {
+            if (response.code === 200) {
+                this.setAccessList(response.data);
+            } else {
+                this.getGateProxy().toast("获得通道列表失败！");
+            }
+        }, (err) => {
+            this.getGateProxy().toast("获得通道列表失败！");
+        }, HttpUtil.METHOD_GET, []);
+    }
+
+    /**
+     * 设置通道数据
+     */
+    setAccessList(datas: any[]) {
+        let accessList = [];
+        for (const data of datas) {
+            let amountList: string = data.amountList;
+            let values = amountList.substring(1, amountList.length - 1).split(",");
+            let exchangeScore = [];
+            values.forEach(v => exchangeScore.push(parseInt(v)))
+            let accessInfo: AccessInfo = {
+                accessId: data.id,
+                channelNo: data.channelNo,
+                accessName: data.channelName,
+                exchangeScore: exchangeScore,
+            }
+            accessList.push(accessInfo);
+        }
+
+        this.accessList = accessList;
+        this.loadExchangeAccess(accessList);
+    }
+
+    testAccess() {
+        let accessList = [];
+
+        let accessInfo: AccessInfo = {
+            accessId: 1,
+            accessName: "支付宝",
+            exchangeScore: [10, 100, 200, 300],
+        }
+        accessList.push(accessInfo);
+
+        accessInfo = {
+            accessId: 2,
+            accessName: "微信",
+            exchangeScore: [10, 20, 50, 1000],
+        }
+        accessList.push(accessInfo);
+
+        this.accessList = accessList;
+        this.loadExchangeAccess(accessList);
     }
 
     // update (dt) {}

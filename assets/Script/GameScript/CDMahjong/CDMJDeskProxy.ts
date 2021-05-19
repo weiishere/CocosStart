@@ -46,6 +46,7 @@ export class CDMJDeskProxy extends BaseProxy {
     }
     /**清除桌面事件数据，主要用于展示几秒钟之后需要清除 */
     clearDeskGameEvent() {
+        
         this.getGameData().eventData.deskEventData.eventName = '';
         //this.sendNotification(CommandDefine.ShowCenterEffect);
     }
@@ -144,13 +145,14 @@ export class CDMJDeskProxy extends BaseProxy {
         this.getGameData().eventData.gameEventData.deskGameEvent.eventName = 'gameBegin';
         this.getDeskData().gameSetting.gameRoundNum = xsddS2CBeginDealData.currentGameCount;
         this.sendNotification(CDMJCommandDefine.LicensingCardPush);
+
+        this.getDeskData().gameSetting.isGameOver = false;
     }
     sureSwitchCard(switchCardArr: Array<number>) {
         this.getGameData().myCards.switchOutCardDefault = switchCardArr;
         (<XzddProxy>this.facade.retrieveProxy(ProxyDefine.Xzdd)).huanSanZhang(switchCardArr);
     }
     private doEventData(oprts: Array<XzddOperation>) {
-
         oprts.forEach(op => {
             const _eventName = this.getGameData().eventData.gameEventData.myGameEvent.eventName;
             const _correlationInfoData = this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;
@@ -637,9 +639,7 @@ export class CDMJDeskProxy extends BaseProxy {
     /**清理事件列表 */
     clearEventList() {
         let eventName = this.getGameData().eventData.gameEventData.myGameEvent.eventName;
-        eventName = eventName.indexOf('show') === -1 ? [] : ['show'];
-        
-        this.sendNotification(CDMJCommandDefine.ShowMyEventPush,{});
+        this.getGameData().eventData.gameEventData.myGameEvent.eventName = eventName.indexOf('show') === -1 ? [] : ['show'];
     }
     /** 游戏结束 */
     gameOver(dymjGameResult: XzddGameResult) {
@@ -652,6 +652,8 @@ export class CDMJDeskProxy extends BaseProxy {
         })
         this.getGameData().myCards.mayHuCardsRT = [];
         this.sendNotification(CDMJCommandDefine.OpenRecordAlter, dymjGameResult);
+
+        this.getDeskData().gameSetting.isGameOver = true;
     }
 
     /**
@@ -849,6 +851,7 @@ export class CDMJDeskProxy extends BaseProxy {
         this.getDeskData().gameSetting.roomId = dymjS2CEnterRoom.roomId;
         this.getDeskData().gameSetting.seatNumber = dymjS2CEnterRoom.seatNumber;
         this.getDeskData().gameSetting.roomName = dymjS2CEnterRoom.roomName;
+        this.getDeskData().gameSetting.isGameOver = false;
         this.updateUserInfo(dymjS2CEnterRoom.players);
     }
 

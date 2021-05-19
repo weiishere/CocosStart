@@ -37,6 +37,7 @@ import { CommandDefine } from '../MahjongConst/CommandDefine';
 import { XzddReady } from '../GameData/Xzdd/c2s/XzddReady';
 import { XzddS2CCheckHu } from '../GameData/Xzdd/s2c/XzddS2CCheckHu';
 import getLocation from '../Util/GetLocation';
+import { GameServerCode } from '../GameConst/GameServerCode';
 
 /**
  * 血战到底消息数据代理类
@@ -97,6 +98,7 @@ export class XzddProxy extends ModuleProxy {
         } else if (msgType === XzddProtocol.S_Game_DoNextOperation_BroadCast) {   //推送玩家下一步的操作
             let xzddS2CDoNextOperation: XzddS2CDoNextOperation = <XzddS2CDoNextOperation>content;
             xzddS2CDoNextOperation.playerAzimuth -= 1;
+            console.log('=====~~~~~~~~~======', xzddS2CDoNextOperation.nextStep.oprts);
             this.getDeskProxy().updateNextOperationEvent(xzddS2CDoNextOperation);
         } else if (msgType === XzddProtocol.S_Game_Result_BroadCast) {   //推送游戏结束消息
             let xzddGameResult: XzddGameResult = <XzddGameResult>content;
@@ -107,7 +109,7 @@ export class XzddProxy extends ModuleProxy {
         } else if (msgType === XzddProtocol.S_Game_ShowOperation) {   //推送提示玩家操作消息
             let xzddS2CShowOperation: XzddS2CShowOperation = <XzddS2CShowOperation>content;
             xzddS2CShowOperation.playerAzimuth -= 1;
-            //console.log('===========', xzddS2CShowOperation.oprts);
+            console.log('=====!!!!!!!!!!!======', xzddS2CShowOperation.oprts);
             this.getDeskProxy().updateOperationEvent(xzddS2CShowOperation);
         } else if (msgType === XzddProtocol.S_Game_PutRsp_BroadCast) {   //推送玩家出牌消息
             let xzddS2COpPutRsp: XzddS2COpPutRsp = <XzddS2COpPutRsp>content;
@@ -208,6 +210,8 @@ export class XzddProxy extends ModuleProxy {
             errorMsg = "来晚了，人数满了，换一张桌子吧！";
         } else if (errorCode === XzddErrorCode.GPS_DIST_TOO_CLOSE) {
             errorMsg = "该房间有玩家离您太近了！";
+        } else if (errorCode === GameServerCode.TOKEN_VERIFY_FAIL) {
+            errorMsg = "登录过期了，请重新登录！";
         } else {
             errorMsg = errorCode + "";
         }
@@ -263,8 +267,8 @@ export class XzddProxy extends ModuleProxy {
         data.roomId = roomNo;
         data.vipGameSubClass = 1;
 
-        let { Latitude, Longgitude } = getLocation()
-
+        let { Latitude, Longgitude } = getLocation();
+        
         if(Latitude === '-1'){
             Latitude = '';
         }
@@ -289,6 +293,7 @@ export class XzddProxy extends ModuleProxy {
             this.joinRoomNo = null;
             this.sendNotification(CommandDefine.CloseLoadingPanel);
         });
+        this.sendNotification(CommandDefine.OpenToast, { content: '经纬度数据：' + Latitude + "|" + Longgitude });
     }
     /**
      * 发牌动画结束

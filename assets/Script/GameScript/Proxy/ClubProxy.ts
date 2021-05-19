@@ -68,7 +68,7 @@ export class ClubProxy extends ModuleProxy {
 
         let errorStr = "";
         if (errorCode === ClubErrorCode.TOKEN_VERIFY_FAILED) {
-            this.getGateProxy().toast("TOKEN校验失败，请重新登录！");
+            this.getGateProxy().toast("登录过期了，请重新登录！");
         } else if (errorCode === ClubErrorCode.ROOM_NOT_EXIST) {
             this.getGateProxy().toast("房间不存在！");
         } else if (errorCode === ClubErrorCode.NOT_POWER) {
