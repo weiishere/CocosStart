@@ -26569,7 +26569,7 @@ declare namespace dragonBones {
          * @example
          * <pre>
          *     bone.updateGlobalTransform();
-         *     let rotation = bone.global.rotation;
+         *     let rotation = bone.global.angle;
          * </pre>
          * @version DragonBones 3.0
          * @language en_US
@@ -26580,7 +26580,7 @@ declare namespace dragonBones {
          * @example
          * <pre>
          *     bone.updateGlobalTransform();
-         *     let rotation = bone.global.rotation;
+         *     let rotation = bone.global.angle;
          * </pre>
          * @version DragonBones 3.0
          * @language zh_CN

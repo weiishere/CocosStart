@@ -379,7 +379,8 @@ export default class CardItemView extends cc.Component {
                 break;
             case 'front':
                 //对家牌
-                faceNode.setRotation(180);
+                //faceNode.setRotation(180);
+                faceNode.angle = -180;
                 if (this.mod === 'setUp') {
                     if (!cardNumber) {
                         cardComp.spriteFrame = this.mainHideCardbg;//.hideFrontCardbg;
@@ -388,7 +389,8 @@ export default class CardItemView extends cc.Component {
                         cardComp.spriteFrame = this.mainCardbg;
                         this.node.setScale(0.6);
                         faceNode.active = true;
-                        faceNode.setRotation(0);
+                        //faceNode.setRotation(0);
+                        faceNode.angle = 0;
                         faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
                     }
                 } else if (this.mod === "fall") {
@@ -411,10 +413,12 @@ export default class CardItemView extends cc.Component {
                         cardComp.spriteFrame = this.sideLieCardbg;
                         this.node.setScale(0.6);
                         faceNode.active = true;
-                        faceNode.setRotation(0);
+                        // faceNode.setRotation(0);
+                        faceNode.angle = 0;
                         faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
                     }
-                    this.node.setRotation(90);
+                     this.node.setRotation(90);
+                    // this.node.angle = -90;
                 } else if (this.mod === "fall") {
                     if (option && option.fallShowStatus && option.fallShowStatus === 'hide') {
                         cardComp.spriteFrame = this.hideLeftCardbg;//.hideFrontFallCardbg;
@@ -435,10 +439,10 @@ export default class CardItemView extends cc.Component {
                         cardComp.spriteFrame = this.hideLeftCardbg;
                         this.node.setScale(0.6);
                         faceNode.active = true;
-                        faceNode.setRotation(0);
+                        // faceNode.setRotation(0);
+                        faceNode.angle = 0;
                         faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
                     }
-                    //this.node.setRotation(90);
                 } else if (this.mod === "fall") {
                     if (option && option.fallShowStatus && option.fallShowStatus === 'hide') {
                         cardComp.spriteFrame = this.sideHideLieCardbg;//.hideFrontFallCardbg;
@@ -447,7 +451,8 @@ export default class CardItemView extends cc.Component {
                         cardComp.spriteFrame = this.sideLieCardbg;//.lieMineCardbg;
                     }
                     faceNode.setPosition(cc.v2(3, 6));
-                    faceNode.setRotation(90);
+                    // faceNode.setRotation(90);
+                    faceNode.angle = -90;
                     faceNode.setScale(0.4);
                     this.arrows.setScale(0.4);//这块整体可能放大倍数，所以指示器缩小
                     this.arrows.y -= 40;
@@ -464,10 +469,10 @@ export default class CardItemView extends cc.Component {
                         cardComp.spriteFrame = this.hideRightCardbg;
                         this.node.setScale(0.6);
                         faceNode.active = true;
-                        faceNode.setRotation(0);
+                        // faceNode.setRotation(0);
+                        faceNode.angle = 0;
                         faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
                     }
-                    //this.node.setRotation(90);
                 } else if (this.mod === "fall") {
                     if (option && option.fallShowStatus && option.fallShowStatus === 'hide') {
                         cardComp.spriteFrame = this.sideHideLieCardbg;//.hideFrontFallCardbg;
@@ -476,7 +481,8 @@ export default class CardItemView extends cc.Component {
                         cardComp.spriteFrame = this.sideLieCardbg;//.lieMineCardbg;
                     }
                     faceNode.setPosition(cc.v2(-3, 6));
-                    faceNode.setRotation(-90);
+                    // faceNode.setRotation(-90);
+                    faceNode.angle = 90;
                     faceNode.setScale(0.4);
                     this.arrows.setScale(0.4);//这块整体可能放大倍数，所以指示器缩小
                     this.arrows.y -= 40;

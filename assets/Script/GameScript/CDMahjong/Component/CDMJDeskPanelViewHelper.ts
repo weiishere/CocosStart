@@ -110,7 +110,8 @@ const helper = {
         const newNode = new cc.Node('face');
         const sprite = newNode.addComponent(cc.Sprite);
         newNode.setScale(0.8);
-        newNode.setRotation(180);
+        //newNode.setRotation(180);
+        newNode.angle = -180;
         newNode.opacity = 0;
         newNode.x += 40;
         newNode.y += 80;
