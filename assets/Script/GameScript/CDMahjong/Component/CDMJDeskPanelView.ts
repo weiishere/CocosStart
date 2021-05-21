@@ -789,11 +789,11 @@ export default class CDMJDeskPanelView extends ViewComponent {
             _handCard.angle = 60;
             _card.setStress(true);
             //设置下落动作
-            cc.tween(_handCard).to(0.1, { opacity: 255, position: cc.v3(0, 0), rotation: 0 }).start();
-            // this.scheduleOnce(() => {
-            //     //设置下落动作
-            //     cc.tween(_handCard).to(0.2, { opacity: 255, position: cc.v3(0, 0), rotation: 0 }).start();
-            // }, 0.5);
+            //cc.tween(_handCard).to(0.1, { opacity: 255, position: cc.v3(0, 0), rotation: 0 }).start();
+            this.scheduleOnce(() => {
+                //设置下落动作
+                cc.tween(_handCard).to(0.2, { opacity: 255, position: cc.v3(0, 0), rotation: 0 }).start();
+            }, 0.1);
 
             //判断手牌是否可出
             // console.log(disableCard);
