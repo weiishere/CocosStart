@@ -260,7 +260,7 @@ export class CDMJDeskProxy extends BaseProxy {
         // 如果是自己
         if (this.isMy(playerInfo.playerId)) {
             if (xzddS2CShowOperation.oprts) {
-                console.log('xzddS2CShowOperation.oprts----------', xzddS2CShowOperation.oprts);
+                //console.log('xzddS2CShowOperation.oprts----------', xzddS2CShowOperation.oprts);
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
                 this.doEventData(xzddS2CShowOperation.oprts);
             }

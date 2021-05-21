@@ -110,7 +110,8 @@ const helper = {
         const newNode = new cc.Node('face');
         const sprite = newNode.addComponent(cc.Sprite);
         newNode.setScale(0.8);
-        newNode.setRotation(180);
+        //newNode.setRotation(180);
+        newNode.angle = -180;
         newNode.opacity = 0;
         newNode.x += 40;
         newNode.y += 80;
@@ -125,7 +126,7 @@ const helper = {
         const self: CDMJDeskPanelView = this;
         if (helper.isHadHu(self, partner.playerId) && playerHuCard.children.length !== 0) return;
         const _hadHuCard = self.getData().gameData.partnerCardsList.find(item => item.playerId === partner.playerId).partnerCards.hadHuCard;
-        playerHuCard.removeAllChildren();
+        playerHuCard.destroyAllChildren();
         playerHuCard.width = 0;
         playerHuCard.height = 0;
         if (_hadHuCard !== 0) {
@@ -154,7 +155,7 @@ const helper = {
     updateOutCardHelper: function (partner: PartnerCard, playerOutCardList: cc.Node, scale: number, position: PositionType) {
         const self: CDMJDeskPanelView = this;
         if (helper.isHadHu(self, partner.playerId) && playerOutCardList.children.length !== 0) return;
-        playerOutCardList.removeAllChildren();
+        playerOutCardList.destroyAllChildren();
         partner.partnerCards.outCardList.map((item, index) => {
             const card = self.addCardToNode(playerOutCardList, item, position, "fall")
             card.setPosition(cc.v2(0, 0));
@@ -163,7 +164,7 @@ const helper = {
     },
     isAllowUpdatehelper<T>(parentNode: cc.Node, source: Array<T>, getNumber: (param: T) => number, addItemHandler: (cardNumber: T) => cc.Node, addHandler?: () => void): boolean {
         if (source.length === 0) {
-            parentNode.removeAllChildren();
+            parentNode.destroyAllChildren();
             parentNode.width = 0;
             parentNode.height = 0;
             return false;
@@ -171,7 +172,7 @@ const helper = {
             if (parentNode.children.length === source.length) {
                 return false;
             } else if (parentNode.children.length > source.length) {
-                parentNode.removeAllChildren();
+                parentNode.destroyAllChildren();
                 parentNode.width = 0;
                 parentNode.height = 0;
                 source.forEach(item => parentNode.addChild(addItemHandler(item)));
