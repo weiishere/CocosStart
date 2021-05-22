@@ -1438,10 +1438,19 @@ export default class CDMJDeskPanelView extends ViewComponent {
             layout.getChildByName('ting').active = false;
             const jobLayout = layout.getChildByName('jobLayout');
             jobLayout.getChildByName('mainCardListPanel').destroyAllChildren();
-            jobLayout.getChildByName('touchCard').destroyAllChildren();
+            jobLayout.getChildByName('mainCardListPanel').width = jobLayout.getChildByName('mainCardListPanel').height = 0;
+
+            jobLayout.getChildByName('touchCard').destroyAllChildren(); 
+            jobLayout.getChildByName('touchCard').width = jobLayout.getChildByName('touchCard').height = 0;
+
             jobLayout.getChildByName('barCard').destroyAllChildren();
+            jobLayout.getChildByName('barCard').width = jobLayout.getChildByName('barCard').height = 0;
+
             jobLayout.getChildByName('handCard').destroyAllChildren();
+            jobLayout.getChildByName('handCard').width = jobLayout.getChildByName('handCard').height = 0;
+
             jobLayout.getChildByName('huCard').destroyAllChildren();
+            jobLayout.getChildByName('huCard').width = jobLayout.getChildByName('huCard').height = 0;
         });
         //手牌
         this.node.getChildByName('headList').children.forEach(headNode => {
