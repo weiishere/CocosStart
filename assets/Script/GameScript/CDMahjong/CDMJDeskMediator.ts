@@ -176,7 +176,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                     //this.musicManager.playMusic(AudioSourceDefine.BackMusic3);
                     // MusicManager.getInstance().playMusic(AudioSourceDefine.BackMusic4);
                     const { Latitude, Longgitude } = getLocation();
-                    this.sendNotification(CommandDefine.OpenToast, { content: '桌面经纬度~~：' + Latitude + "|" + Longgitude });
+                    //this.sendNotification(CommandDefine.OpenToast, { content: '桌面经纬度~~：' + Latitude + "|" + Longgitude });
                     this.DeskPanelViewScript.bindDskOpreationEvent(node => {
                         if (node.name === 'exitIcon') {
                             let seatNumber = this.getDeskProxy().getDeskData().gameSetting.seatNumber;
@@ -412,7 +412,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 break;
             case CDMJCommandDefine.ChangePlayerGold://金币变化
                 //this.facade.sendNotification(CDMJCommandDefine.RefreshPlayerPush, {}, '');
-                this.DeskPanelViewScript.showPlayerGlodChange();
+                this.DeskPanelViewScript && this.DeskPanelViewScript.showPlayerGlodChange();
                 break;
             case CDMJCommandDefine.DingzhangDone://玩家定章完成
                 this.DeskPanelViewScript.updateMyOperationBtu();
