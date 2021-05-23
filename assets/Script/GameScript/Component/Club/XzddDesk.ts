@@ -208,13 +208,13 @@ export default class XzddDesk extends BaseDesk {
             })
         }
 
-        if(s2CClubRoomInfoBase.roomType === 0){
+        if (s2CClubRoomInfoBase.roomType === 0) {
             this.ruleStr = "首局自动开始，离线30秒自动托管，低于带入自动解散。天地胡，听牌提示，点杠花（自摸）门清中张，4番封顶，点炮可平胡，自摸加番，夹心五，对对胡两番，幺九，海底涝，海底炮，7张";
-        }else if(s2CClubRoomInfoBase.roomType === 1){
+        } else if (s2CClubRoomInfoBase.roomType === 1) {
             this.ruleStr = "首局自动开始，离线30秒自动托管，低于带入自动解散。两方，天地胡，听牌提示，点杠花（自摸）门清中张，4番封顶，换三张，自摸加番，夹心五，对对胡两番，幺九将对，海底涝，海底炮，两番起胡";
-        }else if(s2CClubRoomInfoBase.roomType === 2){
+        } else if (s2CClubRoomInfoBase.roomType === 2) {
             this.ruleStr = "首局自动开始，离线30秒自动托管，低于带入自动解散。天地胡，听牌提示，点杠花（自摸）门清中张，4番封顶，自摸加番，夹心五，对对胡两番，幺九将对，海底涝，海底炮，两番起胡，放牛必须过庄，GPS防作弊（500米）IP防作弊";
-        }else if(s2CClubRoomInfoBase.roomType === 3){
+        } else if (s2CClubRoomInfoBase.roomType === 3) {
             this.ruleStr = "首局自动开始，离线30秒自动托管，低于带入自动解散。天地胡，听牌提示，点杠花（自摸）换三张，点炮可平胡。门清中张，4番封顶，自摸加番，夹心五，对对胡两番，幺九将对，海底涝，海底炮，放牛必须过庄，GPS防作弊（500米）IP防作弊";
         }
     }
@@ -292,6 +292,9 @@ export default class XzddDesk extends BaseDesk {
             headSprite = this.head4;
         }
 
+        if (!headSprite) {
+            return;
+        }
         let nicknameLabel = headSprite.node.getChildByName("Nickname").getComponent(cc.Label);
         nicknameLabel.string = "";
         headSprite.spriteFrame = null;
