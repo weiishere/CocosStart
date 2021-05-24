@@ -46,7 +46,7 @@ export class CDMJDeskProxy extends BaseProxy {
     }
     /**清除桌面事件数据，主要用于展示几秒钟之后需要清除 */
     clearDeskGameEvent() {
-        
+
         this.getGameData().eventData.deskEventData.eventName = '';
         //this.sendNotification(CommandDefine.ShowCenterEffect);
     }
@@ -210,45 +210,49 @@ export class CDMJDeskProxy extends BaseProxy {
      * @param dymjS2CPlayerGet 
      */
     drawCard(xzddS2CPlayerGet: XzddS2CPlayerGet) {
-        // 设置剩余牌
-        this.getGameData().remainCard = xzddS2CPlayerGet.cardRemainCount;
-        let playerInfo = this.getPlayerByGameIndex(xzddS2CPlayerGet.playerAzimuth);
-        this.getGameData().positionIndex = xzddS2CPlayerGet.playerAzimuth;
-        // 如果是自己
-        if (this.isMy(playerInfo.playerId)) {
-            this.getGameData().myCards.handCard = xzddS2CPlayerGet.getMjValue;
-            if (xzddS2CPlayerGet.nextStep.oprts) {
-                this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
-                this.doEventData(xzddS2CPlayerGet.nextStep.oprts);
+        //为了试图解决摸牌杠，去掉手牌才再次摸牌，怕顺序混乱，摸牌操作延后点点
+        window.setTimeout(() => {
+            // 设置剩余牌
+            this.getGameData().remainCard = xzddS2CPlayerGet.cardRemainCount;
+            let playerInfo = this.getPlayerByGameIndex(xzddS2CPlayerGet.playerAzimuth);
+            this.getGameData().positionIndex = xzddS2CPlayerGet.playerAzimuth;
+            // 如果是自己
+            if (this.isMy(playerInfo.playerId)) {
+                this.getGameData().myCards.handCard = xzddS2CPlayerGet.getMjValue;
+                if (xzddS2CPlayerGet.nextStep.oprts) {
+                    this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
+                    this.doEventData(xzddS2CPlayerGet.nextStep.oprts);
+                } else {
+                    this.getGameData().eventData.gameEventData.myGameEvent.eventName = ['show'];
+                }
+                //不能出的牌(用户报胡之后)
+                this.getGameData().myCards.disableCard = xzddS2CPlayerGet.nextStep.datas || [];
+                const huList = (xzddS2CPlayerGet.nextStep.args && xzddS2CPlayerGet.nextStep.args.list) ? xzddS2CPlayerGet.nextStep.args.list : [];
+                this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
+                console.log(this.getGameData().myCards.mayHuCards);
+
+                if (this.getGameData().myCards.status.isBaoHu && !xzddS2CPlayerGet.nextStep.oprts) {
+                    window.setTimeout(() => {
+                        (<XzddProxy>this.facade.retrieveProxy(ProxyDefine.Xzdd)).putMahkjong(xzddS2CPlayerGet.getMjValue);
+                    }, 800);
+                }
+                // else if (this.getGameData().myCards.status.isBaoQingHu && !xzddS2CPlayerGet.nextStep.oprts) {
+                //     const arr = this.getGameData().myCards.curCardList.filter(card => this.getGameData().myCards.disableCard.some(item => item === card) ? false : true);
+                //     window.setTimeout(() => {
+                //         (<DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj)).putMahkjong(arr.length === 0 ? dymjS2CPlayerGet.getMjValue : arr[0]);
+                //     }, 800);
+                // }
             } else {
-                this.getGameData().eventData.gameEventData.myGameEvent.eventName = ['show'];
+                //console.log('dymjS2CPlayerGet.getMjValue', dymjS2CPlayerGet.getMjValue);
+                this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
+                let { partnerCards } = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
+                partnerCards.isHandCard = true;
+                partnerCards.handCard = xzddS2CPlayerGet.getMjValue;
             }
-            //不能出的牌(用户报胡之后)
-            this.getGameData().myCards.disableCard = xzddS2CPlayerGet.nextStep.datas || [];
-            const huList = (xzddS2CPlayerGet.nextStep.args && xzddS2CPlayerGet.nextStep.args.list) ? xzddS2CPlayerGet.nextStep.args.list : [];
-            this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
-            console.log(this.getGameData().myCards.mayHuCards);
 
-            if (this.getGameData().myCards.status.isBaoHu && !xzddS2CPlayerGet.nextStep.oprts) {
-                window.setTimeout(() => {
-                    (<XzddProxy>this.facade.retrieveProxy(ProxyDefine.Xzdd)).putMahkjong(xzddS2CPlayerGet.getMjValue);
-                }, 800);
-            }
-            // else if (this.getGameData().myCards.status.isBaoQingHu && !xzddS2CPlayerGet.nextStep.oprts) {
-            //     const arr = this.getGameData().myCards.curCardList.filter(card => this.getGameData().myCards.disableCard.some(item => item === card) ? false : true);
-            //     window.setTimeout(() => {
-            //         (<DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj)).putMahkjong(arr.length === 0 ? dymjS2CPlayerGet.getMjValue : arr[0]);
-            //     }, 800);
-            // }
-        } else {
-            //console.log('dymjS2CPlayerGet.getMjValue', dymjS2CPlayerGet.getMjValue);
-            this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
-            let { partnerCards } = this.getGameData().partnerCardsList.find(partener => partener.playerId === playerInfo.playerId);
-            partnerCards.isHandCard = true;
-            partnerCards.handCard = xzddS2CPlayerGet.getMjValue;
-        }
+            this.sendNotification(CDMJCommandDefine.GetGameCardPush);
+        }, 100);
 
-        this.sendNotification(CDMJCommandDefine.GetGameCardPush);
     }
 
     /**

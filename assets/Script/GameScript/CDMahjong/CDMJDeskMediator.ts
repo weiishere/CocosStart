@@ -149,10 +149,10 @@ export default class CDMJDeskMediator extends BaseMediator {
 
     public async handleNotification(notification: INotification) {
 
-        // const gameData = this.getDeskProxy().getGameData();
-        // const deskData = this.getDeskProxy().getDeskData();
-        // console.log('gameData', gameData);
-        // console.log('deskData', deskData);
+        const gameData = this.getDeskProxy().getGameData();
+        const deskData = this.getDeskProxy().getDeskData();
+        console.log('gameData', gameData);
+        console.log('deskData', deskData);
 
         switch (notification.getName()) {
             case CDMJCommandDefine.InitDeskPanel:
@@ -323,7 +323,6 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.updateCountDown();
                 break;
             case CDMJCommandDefine.ShowCardPush://玩家出牌推送
-                console.time('t1');
                 const { playerInfo, showCard } = notification.getBody();
                 this.DeskPanelViewScript.updateMyCurCardList();
                 this.DeskPanelViewScript.updateOtherCurCardList();
@@ -333,10 +332,8 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.DeskPanelViewScript.createOutCard((playerInfo as PlayerInfo).gameIndex);
                 this.playEventSound('', showCard);
                 this.DeskPanelViewScript.closeChooseCardPanel();
-                console.timeEnd('t1');
                 break;
             case CDMJCommandDefine.EventDonePush://玩家处理操作之后的推送
-                console.time('t2');
                 this.DeskPanelViewScript.updateMyCurCardList();
                 this.DeskPanelViewScript.updateOtherCurCardList();
                 this.DeskPanelViewScript.updateHandCardAndHuCard();
@@ -350,7 +347,6 @@ export default class CDMJDeskMediator extends BaseMediator {
                 this.playEventSound(eventName);
                 givePlayer && giveCard && this.DeskPanelViewScript.deleteOutCard(givePlayer.gameIndex, giveCard);//去除outcard
                 this.sendNotification(CDMJCommandDefine.ShowCenterEffect, { isMe: _body.isMe, gameIndex: playerGameIndex });
-                console.timeEnd('t2');
                 break;
             case CDMJCommandDefine.ShowCardNotificationPush://通知出牌
                 this.DeskPanelViewScript.updateMyOperationBtu();
