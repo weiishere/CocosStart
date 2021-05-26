@@ -60,6 +60,8 @@ export class XzddProxy extends ModuleProxy {
         if (this.errorCodeHandle(msgType, errorCode)) {
             return;
         }
+
+        // cc.log("msgType", msgType, "content : ", content);
         if (msgType === XzddProtocol.S_PLAYER_LOGIN) {
             // 登录成功之后直接进入房间
             this.joinRoom(this.joinRoomNo);

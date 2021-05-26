@@ -273,6 +273,10 @@ export default class XzddDesk extends BaseDesk {
             headSprite = this.head4;
         }
 
+        if (!headSprite) {
+            cc.log(`房间${this.roomNo}座位不正确${seatNo}`);
+            return;
+        }
         headSprite.node.active = true;
         let nicknameLabel = headSprite.node.getChildByName("Nickname").getComponent(cc.Label);
         nicknameLabel.string = nickname;
