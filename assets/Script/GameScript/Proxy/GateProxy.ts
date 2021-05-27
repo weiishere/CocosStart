@@ -109,7 +109,7 @@ export class GateProxy extends BaseProxy {
         let url = this.getFacadeUrl() + "/register/wechat";
         HttpUtil.send(url, (response) => {
             if (response.hd === "success") {
-                this.toast("请求完成，请稍后！" + response.bd);
+                //this.toast("请求完成，请稍后！" + response.bd);
                 this.loginAfterHandle(response.bd);
                 Facade.Instance.sendNotification(CommandDefine.closeLoginPanel, '', '')
             } else {
