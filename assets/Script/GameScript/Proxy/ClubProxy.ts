@@ -79,6 +79,8 @@ export class ClubProxy extends ModuleProxy {
             this.getGateProxy().toast("系统维护中！");
         } else if (errorCode === ClubErrorCode.NOT_SEAT) {
             this.getGateProxy().toast("房间满了，请换一张桌子吧！");
+        } else if (errorCode === ClubErrorCode.CLUB_CLOSING) {
+            this.getGateProxy().toast("暂时不能进入房间！");
         }
 
         return true;
