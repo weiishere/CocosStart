@@ -194,11 +194,11 @@ export default class ExchangePanel extends ViewComponent {
 
         let accessInfo = this.accessList.find(v => v.accessId === this.selectAccessId);
 
-        let url = configProxy.bonusUrl + "/api/v1/recharge";
+        let url = configProxy.bonusUrl + "/api/v1/capital/add/recharge";
         let param = {
             userName: localCacheDataProxy.getLoginData().userName,
             amount: parseInt(gold),
-            channel: accessInfo.channelNo,
+            channelNo: accessInfo.channelNo,
         }
         HttpUtil.send(url, (response) => {
             if (response.code === 200) {
