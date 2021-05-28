@@ -27,7 +27,7 @@
   },
   "ios": {
     "REMOTE_SERVER_ROOT": "",
-    "packageName": "org.cocos2d.demo"
+    "packageName": "org.cc.quewang"
   },
   "mac": {
     "REMOTE_SERVER_ROOT": "",

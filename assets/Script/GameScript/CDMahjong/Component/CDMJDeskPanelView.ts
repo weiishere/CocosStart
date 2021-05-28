@@ -1309,7 +1309,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
     }
     /**显示要换3张的牌(一局只会执行一次) */
     showSwitchCardList(): void {
-
         this.node.getChildByName('switchCardAlert').active = true;
         !this.timer3 && (this.timer3 = window.setInterval(() => {
             if (this.getData().gameData.switchCardCountDown !== 0) {

@@ -568,9 +568,10 @@ export class CDMJDeskProxy extends BaseProxy {
     }
 
     /**收到换三张的提示信息 */
-    chooseSwitchOutCard(chooseCardList: Array<number>): void {
+    chooseSwitchOutCard(time: number, chooseCardList: Array<number>): void {
         if (this.getGameData().myCards.switchInCard.length !== 0) return;
-        this.getGameData().switchCardCountDown = this.getGameData().countDownTime = 30;//倒计时也同时更新
+        this.getGameData().switchCardCountDown = time;//倒计时也同时更新
+        //this.getGameData().countDownTime = 0;
         //this.getGameData().myCards.switchOutCard = chooseCardList;
         this.sendNotification(CDMJCommandDefine.SwitchOutCard);
     }
