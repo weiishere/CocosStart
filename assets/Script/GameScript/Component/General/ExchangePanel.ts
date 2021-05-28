@@ -202,8 +202,8 @@ export default class ExchangePanel extends ViewComponent {
             if (response.code === 200) {
                 // 跳转页面
                 cc.sys.openURL(response.data);
-            }else{
-            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: response.msg, toastOverlay: true }, '');
+            } else {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: response.msg, toastOverlay: true }, '');
             }
         }, (err) => {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '充值失败' + err, toastOverlay: true }, '');
