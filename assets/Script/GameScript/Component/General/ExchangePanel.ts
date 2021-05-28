@@ -73,7 +73,7 @@ export default class ExchangePanel extends ViewComponent {
     /** 通道列表 */
     accessList: AccessInfo[] = [];
     /** 当前选择的通道 */
-    selectAccessId: number;
+    selectChannelNo: string;
 
     protected bindUI(): void {
         this.goldBuyList.removeAllChildren();
@@ -144,6 +144,7 @@ export default class ExchangePanel extends ViewComponent {
             }
             LoginAfterHttpUtil.send(url, (response) => {
                 if (response.hd === "success") {
+                    this.exchangePwdEditBox.string = "";
                     Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '兑换已成功提交，预计30分钟内到账，请关注！', toastOverlay: true }, '');
                 } else {
                     if (response.bd === ServerCode.PWD_ERROR) {
@@ -191,19 +192,18 @@ export default class ExchangePanel extends ViewComponent {
         let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         let configProxy: ConfigProxy = <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
 
-
-        let accessInfo = this.accessList.find(v => v.accessId === this.selectAccessId);
-
-        let url = configProxy.bonusUrl + "/api/v1/recharge";
+        let url = configProxy.bonusUrl + "/api/v1/capital/add/recharge";
         let param = {
             userName: localCacheDataProxy.getLoginData().userName,
             amount: parseInt(gold),
-            channel: accessInfo.channelNo,
+            channelNo: this.selectChannelNo,
         }
         HttpUtil.send(url, (response) => {
             if (response.code === 200) {
                 // 跳转页面
                 cc.sys.openURL(response.data);
+            } else {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: response.msg, toastOverlay: true }, '');
             }
         }, (err) => {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '充值失败' + err, toastOverlay: true }, '');
@@ -480,7 +480,7 @@ export default class ExchangePanel extends ViewComponent {
         this.exchangeAccessListNode.removeAllChildren();
         for (const access of accessInfos) {
             let node = cc.instantiate(this.exchangeAccessTmpplateNode);
-            node.name = "access_" + access.accessId;
+            node.name = "access_" + access.channelNo;
             node.getChildByName("label").getComponent(cc.Label).string = access.accessName;
 
             this.exchangeAccessListNode.addChild(node);
@@ -488,6 +488,9 @@ export default class ExchangePanel extends ViewComponent {
 
         if (this.exchangeAccessListNode.childrenCount > 0) {
             this.exchangeAccessListNode.children[0].getComponent(cc.Toggle).isChecked = true;
+
+            let nodeName: string = this.exchangeAccessListNode.children[0].name;
+            this.selectChannelNo = nodeName.split("_")[1];
 
             this.loadGoldList(accessInfos[0].exchangeScore);
         }
@@ -500,10 +503,9 @@ export default class ExchangePanel extends ViewComponent {
     exchangeSelect(event) {
         let nodeName: string = event.node.name;
 
-        cc.log(nodeName);
-        this.selectAccessId = parseInt(nodeName.split("_")[1]);
+        this.selectChannelNo = nodeName.split("_")[1];
 
-        let accessInfo = this.accessList.find(v => v.accessId === this.selectAccessId);
+        let accessInfo = this.accessList.find(v => v.channelNo === this.selectChannelNo);
         this.loadGoldList(accessInfo.exchangeScore);
     }
 

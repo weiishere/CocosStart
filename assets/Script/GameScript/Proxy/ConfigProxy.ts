@@ -13,6 +13,7 @@ export class ConfigProxy extends BaseProxy {
     private _staticUrl: string;
     private _bonusUrl: string;
     private _shareUrl: string;
+    private _downUrl: string;
     private _iosDownUrl: string;
     private _serviceUrl: string;
     private _rechargeServiceUrl: string;
@@ -120,6 +121,7 @@ export class ConfigProxy extends BaseProxy {
             if (!this._shareUrl) {
                 this._shareUrl = this.replaceUrl(response.shareUrl, replaceIp);
             }
+            this._downUrl = this.replaceUrl(response.downUrl, replaceIp);
             this._bonusUrl = this.replaceUrl(response.bonusUrl, replaceIp);
             this._iosDownUrl = this.replaceUrl(response.iosDownUrl, replaceIp);
             this._serviceUrl = response.serviceUrl;
@@ -127,7 +129,7 @@ export class ConfigProxy extends BaseProxy {
             this._leessang = response.leessang;
 
             if (this.versionCompare(this._version, response.version)) {
-                this.facade.sendNotification(CommandDefine.OpenUpdatePromptAlert, { shareUrl: this._shareUrl, iosDownUrl: this._iosDownUrl }, "");
+                this.facade.sendNotification(CommandDefine.OpenUpdatePromptAlert, { shareUrl: this._downUrl, iosDownUrl: this._iosDownUrl }, "");
             } else {
                 this.facade.sendNotification(CommandDefine.GateCommand, null, NotificationTypeDefine.CheckLogin);
             }
@@ -153,6 +155,7 @@ export class ConfigProxy extends BaseProxy {
             this._ggwUrl = this.replaceUrl(response.ggwUrl, this.currentRemoteIp + ":" + this._port);
             this._staticUrl = this.replaceUrl(response.staticUrl, this.currentRemoteIp + ":" + this._port);
             this._shareUrl = this.replaceUrl(response.shareUrl, this.currentRemoteIp + ":" + this._port);
+            this._downUrl = this.replaceUrl(response.downUrl, this.currentRemoteIp + ":" + this._port);
             this._bonusUrl = this.replaceUrl(response.bonusUrl, this.currentRemoteIp + ":" + this._port);
             this._iosDownUrl = this.replaceUrl(response.iosDownUrl, this.currentRemoteIp + ":" + this._port);
             this._serviceUrl = response.serviceUrl;
@@ -160,7 +163,7 @@ export class ConfigProxy extends BaseProxy {
             this._leessang = response.leessang;
 
             if (this.versionCompare(this._version, response.version)) {
-                this.facade.sendNotification(CommandDefine.OpenUpdatePromptAlert, this._shareUrl, "");
+                this.facade.sendNotification(CommandDefine.OpenUpdatePromptAlert, { shareUrl: this._downUrl, iosDownUrl: this._iosDownUrl }, "");
             } else {
                 this.facade.sendNotification(CommandDefine.GateCommand, null, NotificationTypeDefine.CheckLogin);
             }
@@ -216,6 +219,9 @@ export class ConfigProxy extends BaseProxy {
 
     public get shareUrl(): string {
         return this._shareUrl;
+    }
+    public get downUrl(): string {
+        return this._downUrl;
     }
     public get bonusUrl(): string {
         return this._bonusUrl;
