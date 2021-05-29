@@ -180,7 +180,7 @@ export class XzddProxy extends ModuleProxy {
             const myCards = (<CDMJDeskProxy>this.facade.retrieveProxy(CDMJProxyDefine.CDMJDesk)).repository.gameData.myCards;
             if (myCards.switchOutCardDefault.length === 3) return;
             myCards.switchOutCardDefault = xzddShowHuan3ZhangMahjongs.mahjongs;
-            this.getDeskProxy().chooseSwitchOutCard(xzddShowHuan3ZhangMahjongs.mahjongs);
+            this.getDeskProxy().chooseSwitchOutCard(xzddShowHuan3ZhangMahjongs.time,xzddShowHuan3ZhangMahjongs.mahjongs);
         } else if (msgType === XzddProtocol.S_Game_Huan3Zhang) {   //玩家操作换三张结果返回
             let xzddOpHuan3ZhangMahjongsRsp: XzddOpHuan3ZhangMahjongsRsp = <XzddOpHuan3ZhangMahjongsRsp>content;
             xzddOpHuan3ZhangMahjongsRsp.playerAzimuth -= 1;
@@ -290,7 +290,7 @@ export class XzddProxy extends ModuleProxy {
             this.joinRoomNo = null;
             this.sendNotification(CommandDefine.CloseLoadingPanel);
         });
-        this.sendNotification(CommandDefine.OpenToast, { content: '经纬度数据：' + Latitude + "|" + Longgitude });
+        //this.sendNotification(CommandDefine.OpenToast, { content: '经纬度数据：' + Latitude + "|" + Longgitude });
     }
     /**
      * 发牌动画结束

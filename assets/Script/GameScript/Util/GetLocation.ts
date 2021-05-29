@@ -12,8 +12,8 @@ const getLocation = () => {
         Latitude = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getLatitude", "()Ljava/lang/String;");
         Longgitude = jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity", "getLongitude", "()Ljava/lang/String;");
     } else if (cc.sys.OS_IOS === cc.sys.os) {
-        Latitude = jsb.reflection.callStaticMethod("AppController", "getLatitude", '');
-        Longgitude = jsb.reflection.callStaticMethod("AppController", "getLonggitude", '');
+        Latitude = jsb.reflection.callStaticMethod("AppController", "getLatitude",);
+        Longgitude = jsb.reflection.callStaticMethod("AppController", "getLonggitude");
     }
     return { Latitude, Longgitude }
 }
