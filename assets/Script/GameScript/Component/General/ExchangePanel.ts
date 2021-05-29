@@ -357,6 +357,9 @@ export default class ExchangePanel extends ViewComponent {
                             status = "兑换失败";
                         }
                     }
+                    
+                    type = value.channelName;
+
                     this.addLogContent(value.flowNo, value.createTime, type, Math.abs(value.amount), status);
                 }
             } else {
