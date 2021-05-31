@@ -98,15 +98,32 @@ export class WebSockerProxy extends Proxy {
 
         this.__wsUrl = wsUrl;
         // 如果websocket连接建立了把之前的连接close掉，重新建立连接
-        if (this.__webSocket) {
-            if (WebSocket.OPEN == this.__webSocket.readyState) {
-            } else if (WebSocket.CONNECTING == this.__webSocket.readyState) {
-                this.__webSocket.onopen = () => { };
-                this.__webSocket.onmessage = () => { };
-                this.__webSocket.onclose = () => { };
-                this.__webSocket.onerror = () => { };
-            }
+        // if (this.__webSocket) {
+        //     if (WebSocket.OPEN == this.__webSocket.readyState) {
+        //     } else if (WebSocket.CONNECTING == this.__webSocket.readyState) {
+        //         this.__webSocket.onopen = () => { };
+        //         this.__webSocket.onmessage = () => { };
+        //         this.__webSocket.onclose = () => { };
+        //         this.__webSocket.onerror = () => { };
+        //     }
 
+        //     try {
+        //         this.__webSocket.close();
+        //     } catch (error) {
+        //         cc.log('WebSocket Released', error);
+        //     }
+
+        //     this.__webSocket = null;
+        // }
+
+        // this.__webSocket = new WebSocket(this.__wsUrl);
+        // this.__webSocket.onopen = this.onWebSocketOpen.bind(this);
+        // this.__webSocket.onmessage = this.onWebSocketMessage.bind(this);
+        // this.__webSocket.onclose = this.onWebSocketClose.bind(this);
+        // this.__webSocket.onerror = this.onWebSocketError.bind(this);
+
+        // 如果websocket连接建立了把之前的连接close掉，重新建立连接
+        if (this.__webSocket && WebSocket.OPEN == this.__webSocket.readyState) {
             try {
                 this.__webSocket.close();
             } catch (error) {
