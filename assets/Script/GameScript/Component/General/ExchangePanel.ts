@@ -68,7 +68,7 @@ export default class ExchangePanel extends ViewComponent {
     findUrl: string = "";
     pageIndex: number = 1;
     isLastPage: boolean = false;
-    pageSize: number = 10;
+    pageSize: number = 5;
 
     /** 通道列表 */
     accessList: AccessInfo[] = [];

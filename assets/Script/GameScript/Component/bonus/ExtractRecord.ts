@@ -23,7 +23,7 @@ const { ccclass, property } = cc._decorator;
 export default class ExtractRecord extends ViewComponent {
 
     private loading: cc.Node = null;
-    private pageSize: number = 20;
+    private pageSize: number = 10;
     // private currentPage: number = 1;
     // private pageCount: number = 0;
     private firstPageNode: cc.Node;
