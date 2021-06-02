@@ -195,25 +195,38 @@ export default class DeskList extends ViewComponent {
             let count1 = d1.userInfos.length;
             if (count1 >= d1.maxPlayerNum) {
                 if (this.roomType >= 0 || this.selectAnte > 0) {
-                    count1 = -1;
+                    count1 = 6;
                 } else {
-                    count1 = 0;
+                    count1 = 5;
+                }
+            } else if (count1 === 0) {  //空桌往后靠
+                if (this.roomType >= 0 || this.selectAnte > 0) {
+                    count1 = 5;
+                } else {
+                    count1 = 6;
                 }
             }
+
             let count2 = d2.userInfos.length;
             if (count2 >= d2.maxPlayerNum) {
                 if (this.roomType >= 0 || this.selectAnte > 0) {
-                    count2 = -1;
+                    count2 = 6;
                 } else {
-                    count2 = 0;
+                    count2 = 5;
+                }
+            } else if (count2 === 0) {
+                if (this.roomType >= 0 || this.selectAnte > 0) {
+                    count2 = 5;
+                } else {
+                    count2 = 6;
                 }
             }
 
             // 根据座位人数排序
-            let res = count2 - count1;
+            let res = count1 - count2;
             if (res === 0) {
                 if (this.roomType < 0 && this.selectAnte === 0) {
-                    res = d2.userInfos.length - d1.userInfos.length;
+                    res = d1.userInfos.length - d2.userInfos.length;
                 }
                 if (res === 0) {
                     res = d1.basicScore - d2.basicScore;
