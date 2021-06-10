@@ -9886,7 +9886,7 @@
     "_enabled": true,
     "_string": "",
     "returnType": 0,
-    "maxLength": 8,
+    "maxLength": 6,
     "_tabIndex": 0,
     "editingDidBegan": [],
     "textChanged": [],
@@ -13649,6 +13649,9 @@
     },
     "exchangePwdEditBox": {
       "__id__": 271
+    },
+    "convertMoneyEditBox": {
+      "__id__": 251
     },
     "_id": ""
   },

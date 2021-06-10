@@ -63,12 +63,15 @@ export default class ExchangePanel extends ViewComponent {
     retrievePwd: cc.Node = null;
     @property(cc.EditBox)
     exchangePwdEditBox: cc.EditBox = null;
+    @property(cc.EditBox)
+    convertMoneyEditBox: cc.EditBox = null;
 
     /** 查询的url */
     findUrl: string = "";
     pageIndex: number = 1;
     isLastPage: boolean = false;
     pageSize: number = 5;
+    minGiveOut: number = 100;
 
     /** 通道列表 */
     accessList: AccessInfo[] = [];
@@ -87,6 +90,7 @@ export default class ExchangePanel extends ViewComponent {
             this.node.destroy();
         });
 
+        this.getMinGiveOutScore();
         this.verifyClick();
 
         this.pageNextBtn.on(cc.Node.EventType.TOUCH_END, () => {
@@ -108,6 +112,17 @@ export default class ExchangePanel extends ViewComponent {
             this.findLog(this.pageIndex);
         });
 
+        this.convertMoneyEditBox.node.on("editing-did-ended", () => {
+            if (this.convertMoneyEditBox.string.length === 0) {
+                return;
+            }
+
+            let gold = this.convertMoneyEditBox.string || 0;
+            if (gold < this.minGiveOut) {
+                this.convertMoneyEditBox.string = this.minGiveOut + "";
+            }
+        });
+
         this.retrievePwd.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenSetExchangePwd, null, '');
         });
@@ -117,7 +132,7 @@ export default class ExchangePanel extends ViewComponent {
             const getEditBox = (nodeName): cc.Node => this.node.getChildByName("ConvertNode").getChildByName(nodeName).getChildByName("EditBox");
             const alipayAccount = getEditBox('BankName').getComponent(cc.EditBox).string;
             const alipayName = getEditBox('AccountName').getComponent(cc.EditBox).string;
-            let gold = getEditBox('ConvertMoney').getComponent(cc.EditBox).string || 0;
+            let gold = this.convertMoneyEditBox.string || 0;
             if (!alipayAccount || !alipayName || !+gold) {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '您输入的提现信息有误，请修改！', toastOverlay: true }, '');
                 return;
@@ -149,6 +164,8 @@ export default class ExchangePanel extends ViewComponent {
                 } else {
                     if (response.bd === ServerCode.PWD_ERROR) {
                         Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '密码错误！', toastOverlay: true }, '');
+                    } else if (response.bd === ServerCode.MIN_GIVE_OUT) {
+                        Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '兑换金额太小了！', toastOverlay: true }, '');
                     } else {
                         Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '对不起，兑换失败！', toastOverlay: true }, '');
                     }
@@ -186,6 +203,22 @@ export default class ExchangePanel extends ViewComponent {
                 }, 1, count);
             }
         });
+    }
+
+    /**
+     * 获得最小兑换分数
+     */
+    private getMinGiveOutScore() {
+        let configProxy: ConfigProxy = <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
+        let url = configProxy.facadeUrl + "exchange/getMinGiveOutScore";
+        LoginAfterHttpUtil.send(url, (response) => {
+            if (response.hd === "success") {
+                this.minGiveOut = response.bd;
+                this.convertMoneyEditBox.placeholderLabel.string = `最小 ${this.minGiveOut}`;
+            }
+        }, (err) => {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '参数异常：' + err, toastOverlay: true }, '');
+        }, HttpUtil.METHOD_POST, {});
     }
 
     private exchange(gold) {
@@ -357,7 +390,7 @@ export default class ExchangePanel extends ViewComponent {
                             status = "兑换失败";
                         }
                     }
-                    
+
                     type = value.channelName;
 
                     this.addLogContent(value.flowNo, value.createTime, type, Math.abs(value.amount), status);
