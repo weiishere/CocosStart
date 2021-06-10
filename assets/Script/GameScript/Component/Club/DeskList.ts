@@ -67,6 +67,8 @@ export default class DeskList extends ViewComponent {
 
     private isLoadDesk: boolean = false;
 
+    private isShow: boolean = false;
+
     /** 当前显示的内容 */
     private displayRoomInfos: S2CClubRoomInfoBase[] = null;
 
@@ -93,14 +95,16 @@ export default class DeskList extends ViewComponent {
             let deskContainer = this.node.getChildByName("DeskContainer");
 
             let moveDistance = 238;
-            let isShow = this.roomTypeNode.x > -700;
+            // let isShow = this.roomTypeNode.x > -700;
             let deskAction = null;
             let action = null;
 
-            if (isShow) {
+            if (this.isShow) {
+                this.isShow = false;
                 action = cc.moveBy(0.3, -moveDistance, 0);
                 deskAction = cc.moveBy(0.3, -moveDistance, 0);
             } else {
+                this.isShow = true;
                 action = cc.moveBy(0.3, moveDistance, 0);
                 deskAction = cc.moveBy(0.3, moveDistance, 0);
             }
