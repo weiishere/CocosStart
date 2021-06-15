@@ -20,6 +20,9 @@ import List from '../../Util/List';
 
 const { ccclass, property } = cc._decorator;
 
+
+const DUAN_GOU_KA_ROOM_TYPE = 100;
+
 @ccclass
 export default class DeskList extends ViewComponent {
     @property(cc.Node)
@@ -307,7 +310,9 @@ export default class DeskList extends ViewComponent {
 
         if (this.roomType > -1) {
             this.roomInfoArray.forEach(v => {
-                if (this.roomType === v.roomType) {
+                if (this.roomType === DUAN_GOU_KA_ROOM_TYPE && v.gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+                    roomInfos.push(v);
+                } else if (v.gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI && this.roomType === v.roomType) {
                     roomInfos.push(v);
                 }
             });
@@ -323,7 +328,9 @@ export default class DeskList extends ViewComponent {
 
         if (this.roomType > -1) {
             this.roomInfoArray.forEach(v => {
-                if (this.roomType === v.roomType) {
+                if (this.roomType === DUAN_GOU_KA_ROOM_TYPE && v.gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+                    roomInfos.push(v);
+                } else if (v.gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI && this.roomType === v.roomType) {
                     roomInfos.push(v);
                 }
             });
@@ -353,9 +360,13 @@ export default class DeskList extends ViewComponent {
 
         this.roomInfoArray.push(roomInfo);
         // 如果当前添加房间类型和选中的类型不相同，就直接添加到数组中
-        if (this.roomType > -1 && this.roomType !== roomInfo.roomType) {
-            cc.log("addDesk ==== 2");
-            return;
+        if (this.roomType > -1) {
+            if (this.roomType === DUAN_GOU_KA_ROOM_TYPE && roomInfo.gameSubClass !== GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+                return;
+            } else if (roomInfo.gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI && this.roomType !== roomInfo.roomType) {
+                cc.log("addDesk ==== 2");
+                return;
+            }
         }
 
         if (this.selectAnte > 0 && this.selectAnte !== roomInfo.basicScore) {
@@ -630,6 +641,8 @@ export default class DeskList extends ViewComponent {
             this.roomType = 2;
         } else if (toggle.node.name === 'roomType43') {
             this.roomType = 3;
+        } else if (toggle.node.name === 'roomTypeDgk') {
+            this.roomType = DUAN_GOU_KA_ROOM_TYPE;
         } else {
             CommonUtil.toast("敬请期待.....")
             return;

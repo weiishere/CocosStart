@@ -1,4 +1,5 @@
 import Facade from '../../../Framework/care/Facade';
+import { GameNoDefine } from '../../GameConst/GameNoDefine';
 import { S2CClubRoomInfoBase } from '../../GameData/Club/s2c/S2CClubRoomInfoBase';
 import { CommandDefine } from '../../MahjongConst/CommandDefine';
 import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
@@ -149,14 +150,18 @@ export default class XzddDesk extends BaseDesk {
         this.head4.node.active = false;
 
         let roomType = "";
-        if (s2CClubRoomInfoBase.roomType === 0) {
-            roomType = "两人一房";
-        } else if (s2CClubRoomInfoBase.roomType === 1) {
-            roomType = "两人两房";
-        } else if (s2CClubRoomInfoBase.roomType === 2) {
-            roomType = "三人两房";
-        } else if (s2CClubRoomInfoBase.roomType === 3) {
-            roomType = "血战到底";
+        if (s2CClubRoomInfoBase.gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+            roomType = "断勾卡";
+        } else {
+            if (s2CClubRoomInfoBase.roomType === 0) {
+                roomType = "两人一房";
+            } else if (s2CClubRoomInfoBase.roomType === 1) {
+                roomType = "两人两房";
+            } else if (s2CClubRoomInfoBase.roomType === 2) {
+                roomType = "三人两房";
+            } else if (s2CClubRoomInfoBase.roomType === 3) {
+                roomType = "血战到底";
+            }
         }
 
         this.setRuleStr(s2CClubRoomInfoBase)

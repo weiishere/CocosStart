@@ -18,6 +18,7 @@ import { ResponseCode } from '../GameConst/ResponseCode';
 import { XzddProxy } from '../CDMahjong/XzddProxy';
 import { TuiTongZiProxy } from '../TuiTongZi/TuiTongZiProxy';
 import { XzddProtocol } from '../Protocol/XzddProtocol';
+import { NewDymjProxy } from '../CDMahjong/NewDymjProxy';
 
 class WebSocketData {
     gsData: any;
@@ -513,7 +514,8 @@ export class WebSockerProxy extends Proxy {
 
         // 默认注册俱乐部代理
         this.addModuleProxy(new ClubProxy(ProxyDefine.Club));
-        this.addModuleProxy(new DymjProxy(ProxyDefine.Dymj));
+        // this.addModuleProxy(new DymjProxy(ProxyDefine.Dymj));
+        this.addModuleProxy(new NewDymjProxy(ProxyDefine.Dymj));
         this.addModuleProxy(new XzddProxy(ProxyDefine.Xzdd));
         this.addModuleProxy(new TuiTongZiProxy(ProxyDefine.TuiTongZi));
     }
