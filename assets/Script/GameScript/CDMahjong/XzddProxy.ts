@@ -75,7 +75,7 @@ export class XzddProxy extends ModuleProxy {
             })
             // 这里构建麻将界面
             const takeInGlod = 200;
-            let gameSubClass = GameNoDefine.DA_YI_ER_REN_MAHJONG;
+            let gameSubClass = GameNoDefine.XUE_ZHAN_DAO_DI;
             this.sendNotification(CDMJCommandDefine.InitDeskPanel, { xzddS2CEnterRoom, takeInGlod, gameSubClass });
         } else if (msgType === XzddProtocol.S_PUSH_DESK_PLAYER_LIST) {// 推送玩家信息
             console.log('~~~~~~~~~~~推送玩家信息')
