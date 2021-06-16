@@ -148,7 +148,8 @@ export default class RecordPanel extends ViewComponent {
     getRecordPrefab(gameSubClass: number): cc.Node {
         let data = null;
         if (gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
-            data = cc.loader.getRes(PrefabDefine.DymjRecordItem, cc.Prefab);
+            // data = cc.loader.getRes(PrefabDefine.DymjRecordItem, cc.Prefab);
+            data = cc.loader.getRes(PrefabDefine.XzddRecordItem, cc.Prefab);
         } else if (gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI) {
             data = cc.loader.getRes(PrefabDefine.XzddRecordItem, cc.Prefab);
         } else if (gameSubClass === GameNoDefine.TUI_TONG_ZI) {
