@@ -457,7 +457,7 @@ export class GatePanelMediator extends BaseMediator {
                 this.openSetting(notification.getBody());
                 break;
             case CommandDefine.OpenExchangePanel:
-                this.openExchangePanel();
+                // this.openExchangePanel();
                 break;
             case CommandDefine.OpenRecordPanel:
                 this.openRecordPanel();

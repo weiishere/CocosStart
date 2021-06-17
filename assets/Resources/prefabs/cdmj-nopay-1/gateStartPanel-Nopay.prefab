@@ -283,8 +283,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        9.748,
-        -235.556,
+        50.748,
+        -256.55600000000004,
         0,
         0,
         0,
@@ -813,7 +813,7 @@
       "__id__": 9
     },
     "_children": [],
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 19
@@ -847,7 +847,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        8,
+        -217,
         0,
         0,
         0,
@@ -1027,7 +1027,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -216.5,
+        -54.5,
         1.0880185641326534e-14,
         0,
         0,
@@ -1207,7 +1207,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -51,
+        111,
         0,
         0,
         0,
@@ -1387,7 +1387,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        112.5,
+        274.5,
         0,
         0,
         0,
@@ -6138,8 +6138,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -271.246,
-        0.474,
+        -416.817,
+        -37.435,
         0,
         0,
         0,
@@ -6409,8 +6409,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 42.2,
-      "height": 44.1
+      "width": 83,
+      "height": 67
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -6421,15 +6421,15 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -128.924,
-        3.826,
+        -126.903,
+        6.251,
         0,
         0,
         0,
         0,
         1,
-        1.1,
-        1,
+        0.9,
+        0.9,
         1
       ]
     },
@@ -6462,7 +6462,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "8054fc08-e548-4c44-a324-9e317eb3fbd2"
+      "__uuid__": "267198a3-a19a-4c95-9a6f-ed43d558cfab"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -6476,7 +6476,7 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": {
-      "__uuid__": "efac0d1a-495f-4d28-8135-615e896d8604"
+      "__uuid__": "211e3353-b22e-48fe-a5d4-b22b0622d57e"
     },
     "_id": ""
   },
