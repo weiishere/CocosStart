@@ -69,11 +69,11 @@ export default class RecordDetail extends BaseRecordDetail {
             if (v.userName === userName) {
                 this.loadRecordInfo(this.recordInfo, true, v);
 
-                if (gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI) {
-                    this.loadItemContent(v.detailRemark);
-                } else {
-                    this.detailBtn.active = false;
-                }
+                // if (gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI) {
+                this.loadItemContent(v.detailRemark);
+                // } else {
+                //     this.detailBtn.active = false;
+                // }
             } else {
                 let re = cc.instantiate(this.recordInfo);
                 re.y = -124;
@@ -230,6 +230,9 @@ export default class RecordDetail extends BaseRecordDetail {
 
     loadItemContent(detailRemark: string[]) {
         this.detailItemContent.removeAllChildren();
+        if (!detailRemark) {
+            return;
+        }
         for (const detailValue of detailRemark) {
             let values = detailValue.split(",");
 

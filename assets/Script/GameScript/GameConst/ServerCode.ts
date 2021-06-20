@@ -21,4 +21,6 @@ export enum ServerCode {
     SYSTEM_MAINTAIN = -9,
 	/** 邀请码错误 */
 	INVITE_CODE_ERROR = -10,
+	/** 低于最小兑出分数 */
+	MIN_GIVE_OUT = -11,
 }

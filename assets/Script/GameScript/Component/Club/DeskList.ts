@@ -20,6 +20,9 @@ import List from '../../Util/List';
 
 const { ccclass, property } = cc._decorator;
 
+
+const DUAN_GOU_KA_ROOM_TYPE = 100;
+
 @ccclass
 export default class DeskList extends ViewComponent {
     @property(cc.Node)
@@ -67,6 +70,8 @@ export default class DeskList extends ViewComponent {
 
     private isLoadDesk: boolean = false;
 
+    private isShow: boolean = false;
+
     /** 当前显示的内容 */
     private displayRoomInfos: S2CClubRoomInfoBase[] = null;
 
@@ -93,14 +98,16 @@ export default class DeskList extends ViewComponent {
             let deskContainer = this.node.getChildByName("DeskContainer");
 
             let moveDistance = 238;
-            let isShow = this.roomTypeNode.x > -700;
+            // let isShow = this.roomTypeNode.x > -700;
             let deskAction = null;
             let action = null;
 
-            if (isShow) {
+            if (this.isShow) {
+                this.isShow = false;
                 action = cc.moveBy(0.3, -moveDistance, 0);
                 deskAction = cc.moveBy(0.3, -moveDistance, 0);
             } else {
+                this.isShow = true;
                 action = cc.moveBy(0.3, moveDistance, 0);
                 deskAction = cc.moveBy(0.3, moveDistance, 0);
             }
@@ -195,25 +202,38 @@ export default class DeskList extends ViewComponent {
             let count1 = d1.userInfos.length;
             if (count1 >= d1.maxPlayerNum) {
                 if (this.roomType >= 0 || this.selectAnte > 0) {
-                    count1 = -1;
+                    count1 = 6;
                 } else {
-                    count1 = 0;
+                    count1 = 5;
+                }
+            } else if (count1 === 0) {  //空桌往后靠
+                if (this.roomType >= 0 || this.selectAnte > 0) {
+                    count1 = 5;
+                } else {
+                    count1 = 6;
                 }
             }
+
             let count2 = d2.userInfos.length;
             if (count2 >= d2.maxPlayerNum) {
                 if (this.roomType >= 0 || this.selectAnte > 0) {
-                    count2 = -1;
+                    count2 = 6;
                 } else {
-                    count2 = 0;
+                    count2 = 5;
+                }
+            } else if (count2 === 0) {
+                if (this.roomType >= 0 || this.selectAnte > 0) {
+                    count2 = 5;
+                } else {
+                    count2 = 6;
                 }
             }
 
             // 根据座位人数排序
-            let res = count2 - count1;
+            let res = count1 - count2;
             if (res === 0) {
                 if (this.roomType < 0 && this.selectAnte === 0) {
-                    res = d2.userInfos.length - d1.userInfos.length;
+                    res = d1.userInfos.length - d2.userInfos.length;
                 }
                 if (res === 0) {
                     res = d1.basicScore - d2.basicScore;
@@ -290,7 +310,9 @@ export default class DeskList extends ViewComponent {
 
         if (this.roomType > -1) {
             this.roomInfoArray.forEach(v => {
-                if (this.roomType === v.roomType) {
+                if (this.roomType === DUAN_GOU_KA_ROOM_TYPE && v.gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+                    roomInfos.push(v);
+                } else if (v.gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI && this.roomType === v.roomType) {
                     roomInfos.push(v);
                 }
             });
@@ -306,7 +328,9 @@ export default class DeskList extends ViewComponent {
 
         if (this.roomType > -1) {
             this.roomInfoArray.forEach(v => {
-                if (this.roomType === v.roomType) {
+                if (this.roomType === DUAN_GOU_KA_ROOM_TYPE && v.gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+                    roomInfos.push(v);
+                } else if (v.gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI && this.roomType === v.roomType) {
                     roomInfos.push(v);
                 }
             });
@@ -336,9 +360,13 @@ export default class DeskList extends ViewComponent {
 
         this.roomInfoArray.push(roomInfo);
         // 如果当前添加房间类型和选中的类型不相同，就直接添加到数组中
-        if (this.roomType > -1 && this.roomType !== roomInfo.roomType) {
-            cc.log("addDesk ==== 2");
-            return;
+        if (this.roomType > -1) {
+            if (this.roomType === DUAN_GOU_KA_ROOM_TYPE && roomInfo.gameSubClass !== GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+                return;
+            } else if (roomInfo.gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI && this.roomType !== roomInfo.roomType) {
+                cc.log("addDesk ==== 2");
+                return;
+            }
         }
 
         if (this.selectAnte > 0 && this.selectAnte !== roomInfo.basicScore) {
@@ -613,6 +641,8 @@ export default class DeskList extends ViewComponent {
             this.roomType = 2;
         } else if (toggle.node.name === 'roomType43') {
             this.roomType = 3;
+        } else if (toggle.node.name === 'roomTypeDgk') {
+            this.roomType = DUAN_GOU_KA_ROOM_TYPE;
         } else {
             CommonUtil.toast("敬请期待.....")
             return;

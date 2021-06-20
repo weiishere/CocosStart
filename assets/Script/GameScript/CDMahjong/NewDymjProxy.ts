@@ -39,11 +39,12 @@ import { XzddS2CCheckHu } from '../GameData/Xzdd/s2c/XzddS2CCheckHu';
 import getLocation from '../Util/GetLocation';
 import { GameServerCode } from '../GameConst/GameServerCode';
 import { GameNoDefine } from '../GameConst/GameNoDefine';
+import { XzddProxy } from './XzddProxy';
 
 /**
  * 血战到底消息数据代理类
  */
-export class XzddProxy extends ModuleProxy {
+export class NewDymjProxy extends XzddProxy {
     joinRoomNo: number;
 
     // 是否准备房间
@@ -54,7 +55,7 @@ export class XzddProxy extends ModuleProxy {
     }
 
     getOp(): number {
-        return OperationDefine.XUE_ZHAN_DAO_DI;
+        return OperationDefine.DA_YI_ER_REN_MAHJONG;
     }
 
     handle(msgType: number, content: any, errorCode: number): void {
@@ -75,7 +76,7 @@ export class XzddProxy extends ModuleProxy {
             })
             // 这里构建麻将界面
             const takeInGlod = 200;
-            let gameSubClass = GameNoDefine.XUE_ZHAN_DAO_DI;
+            let gameSubClass = GameNoDefine.DA_YI_ER_REN_MAHJONG;
             this.sendNotification(CDMJCommandDefine.InitDeskPanel, { xzddS2CEnterRoom, takeInGlod, gameSubClass });
         } else if (msgType === XzddProtocol.S_PUSH_DESK_PLAYER_LIST) {// 推送玩家信息
             console.log('~~~~~~~~~~~推送玩家信息')
@@ -182,7 +183,7 @@ export class XzddProxy extends ModuleProxy {
             const myCards = (<CDMJDeskProxy>this.facade.retrieveProxy(CDMJProxyDefine.CDMJDesk)).repository.gameData.myCards;
             if (myCards.switchOutCardDefault.length === 3) return;
             myCards.switchOutCardDefault = xzddShowHuan3ZhangMahjongs.mahjongs;
-            this.getDeskProxy().chooseSwitchOutCard(xzddShowHuan3ZhangMahjongs.time,xzddShowHuan3ZhangMahjongs.mahjongs);
+            this.getDeskProxy().chooseSwitchOutCard(xzddShowHuan3ZhangMahjongs.time, xzddShowHuan3ZhangMahjongs.mahjongs);
         } else if (msgType === XzddProtocol.S_Game_Huan3Zhang) {   //玩家操作换三张结果返回
             let xzddOpHuan3ZhangMahjongsRsp: XzddOpHuan3ZhangMahjongsRsp = <XzddOpHuan3ZhangMahjongsRsp>content;
             xzddOpHuan3ZhangMahjongsRsp.playerAzimuth -= 1;
@@ -271,14 +272,14 @@ export class XzddProxy extends ModuleProxy {
         data.vipGameSubClass = 1;
 
         let { Latitude, Longgitude } = getLocation();
-        
+
         let latitude = Number(Latitude);
         let longitude = Number(Longgitude);
 
         if (cc.sys.isMobile && !cc.sys.isBrowser && (latitude <= 0 || longitude <= 0)) {
             // this.getGateProxy().toast("没有定位信息，请打开定位权限！");
             this.getGateProxy().toast("没有定位信息，请打开定位权限！" + latitude + " : " + longitude);
-            
+
             this.isReadyEnterRoom = false;
             this.joinRoomNo = null;
             this.sendNotification(CommandDefine.CloseLoadingPanel);

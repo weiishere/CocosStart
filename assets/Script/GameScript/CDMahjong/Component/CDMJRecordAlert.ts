@@ -12,6 +12,7 @@ import { XzddProxy } from '../XzddProxy';
 import { CDMJCommandDefine } from '../CDMJConst/CDMJCommandDefine';
 import { XzddGameUIResultItem } from '../../GameData/Xzdd/s2c/XzddGameUIResultItem';
 import { XzddGangHuTypeValue } from '../../GameData/Xzdd/s2c/XzddGangHuTypeValue';
+import { NewDymjProxy } from '../NewDymjProxy';
 
 const { ccclass, property } = cc._decorator;
 
@@ -27,6 +28,7 @@ export default class CDMJRecordAlert extends ViewComponent {
     @property(cc.Label)
     countdownLabel: cc.Label = null;
 
+    private gameSubClass: number;
 
     protected bindUI(): void {
     }
@@ -53,6 +55,9 @@ export default class CDMJRecordAlert extends ViewComponent {
     }
 
     public getXzddProxy() {
+        if (this.gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+            return <NewDymjProxy>Facade.Instance.retrieveProxy(ProxyDefine.Dymj);
+        }
         return <XzddProxy>Facade.Instance.retrieveProxy(ProxyDefine.Xzdd);
     }
 
@@ -153,6 +158,7 @@ export default class CDMJRecordAlert extends ViewComponent {
     }
 
     buildData(gameResult: XzddGameResult, gameSubClass: number = GameNoDefine.XUE_ZHAN_DAO_DI) {
+        this.gameSubClass = gameSubClass;
         let recorDetailData: RecorDetailData = {
             gameSubClass: gameSubClass,
             roomNo: gameResult.roomNo,
@@ -270,11 +276,11 @@ export default class CDMJRecordAlert extends ViewComponent {
 
     getRecordPrefab(gameSubClass: number): cc.Node {
         let data = null;
-        if (gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
-            data = cc.loader.getRes(PrefabDefine.DymjRecordDetail, cc.Prefab);
-        } else if (gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI) {
-            data = cc.loader.getRes(PrefabDefine.XdzzRecordDetailOver, cc.Prefab);
-        }
+        // if (gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+        //     data = cc.loader.getRes(PrefabDefine.DymjRecordDetail, cc.Prefab);
+        // } else if (gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI) {
+        data = cc.loader.getRes(PrefabDefine.XdzzRecordDetailOver, cc.Prefab);
+        // }
 
         if (!data) {
             return;

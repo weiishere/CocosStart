@@ -33,6 +33,8 @@ export default class GateStartPanel extends ViewComponent {
     @property(cc.Node)
     wanfaBtn: cc.Node = null;
     @property(cc.Node)
+    hlWanfaBtn: cc.Node = null;
+    @property(cc.Node)
     msgBtn: cc.Node = null;
     @property(cc.Node)
     shareBtn: cc.Node = null;
@@ -150,6 +152,18 @@ export default class GateStartPanel extends ViewComponent {
         this.wanfaBtn.on(cc.Node.EventType.TOUCH_END, () => {
             //加载帮助框
             cc.loader.loadRes('prefabs/CDMahjong/CDMJRolePanel', cc.Prefab, (error, item) => {
+                const wanfaWindow: cc.Node = cc.instantiate(item);
+                this.node.addChild(wanfaWindow);
+                wanfaWindow.getChildByName('close').once(cc.Node.EventType.TOUCH_END, () => {
+                    wanfaWindow.destroy();
+                });
+            });
+            //Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '开发中，敬请期待...', toastOverlay: true }, '');
+        });
+
+        this.hlWanfaBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            //加载帮助框
+            cc.loader.loadRes('prefabs/CDMahjong/CDMJHLRolePanel', cc.Prefab, (error, item) => {
                 const wanfaWindow: cc.Node = cc.instantiate(item);
                 this.node.addChild(wanfaWindow);
                 wanfaWindow.getChildByName('close').once(cc.Node.EventType.TOUCH_END, () => {

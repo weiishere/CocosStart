@@ -163,6 +163,8 @@ export default class NewClass extends cc.Component {
             } else {
                 if (res.bd === ServerCode.SECURITY_CODE_ERROR) {
                     Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '验证码不正确' }, '');
+                } else if (res.bd === ServerCode.PHONE_NO_EXIST) {
+                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '手机号码存在了' }, '');
                 } else {
                     Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '兑换密码修改失败' }, '');
                 }

@@ -401,6 +401,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     }
     /**绑定选定换三张牌回调 */
     switchCardDoneHandler() {
+        window.clearInterval(this.timer3);
         let switchCardArr = [];
         this.mainCardList.forEach(card => {
             const cardScript = (card.getComponent("CardItemView") as CardItemView);
@@ -1223,6 +1224,10 @@ export default class CDMJDeskPanelView extends ViewComponent {
     showCardAlert(gameIndex: number, cardNumber: number): void {
 
         if (gameIndex === undefined || this.isMe(gameIndex)) {
+
+            //自己打出牌不显示了
+            return;
+
             const _card = this.addCardToNode(this.myShowCardWrap, cardNumber, "mine", "setUp", {
                 purAddNode: node => (node.getComponent('CardItemView') as CardItemView).setStress(true)
             });
@@ -1304,7 +1309,6 @@ export default class CDMJDeskPanelView extends ViewComponent {
     }
     /**显示要换3张的牌(一局只会执行一次) */
     showSwitchCardList(): void {
-
         this.node.getChildByName('switchCardAlert').active = true;
         !this.timer3 && (this.timer3 = window.setInterval(() => {
             if (this.getData().gameData.switchCardCountDown !== 0) {

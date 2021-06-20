@@ -6168,8 +6168,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 946.6,
-      "height": 100
+      "width": 947,
+      "height": 75
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -6180,8 +6180,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -0.30000000000001137,
-        182.2,
+        0,
+        195,
         0,
         0,
         0,
@@ -6250,8 +6250,8 @@
     "alignMode": 1,
     "_target": null,
     "_alignFlags": 40,
-    "_left": -18.599999999999998,
-    "_right": -18.000000000000025,
+    "_left": -18.499999999999975,
+    "_right": -18.500000000000025,
     "_top": 0,
     "_bottom": 0,
     "_verticalCenter": 0,
@@ -6333,7 +6333,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        186.865,
+        196.642,
         0,
         0,
         0,
@@ -9886,7 +9886,7 @@
     "_enabled": true,
     "_string": "",
     "returnType": 0,
-    "maxLength": 8,
+    "maxLength": 6,
     "_tabIndex": 0,
     "editingDidBegan": [],
     "textChanged": [],
@@ -13649,6 +13649,9 @@
     },
     "exchangePwdEditBox": {
       "__id__": 271
+    },
+    "convertMoneyEditBox": {
+      "__id__": 251
     },
     "_id": ""
   },

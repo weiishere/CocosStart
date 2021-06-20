@@ -40,7 +40,7 @@ export default class MyEnterprise extends ViewComponent {
     private pageCommand1: PageCommand = new PageCommand();
     private pageCommand2: PageCommand = new PageCommand();
     private pageCommand3: PageCommand = new PageCommand();
-    private pageSize = 2;
+    private pageSize: number = 20;
     // private page1 = {
     //     level: 1,
     //     pageSize: 10,

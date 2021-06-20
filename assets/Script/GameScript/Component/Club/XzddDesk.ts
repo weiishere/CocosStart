@@ -1,4 +1,5 @@
 import Facade from '../../../Framework/care/Facade';
+import { GameNoDefine } from '../../GameConst/GameNoDefine';
 import { S2CClubRoomInfoBase } from '../../GameData/Club/s2c/S2CClubRoomInfoBase';
 import { CommandDefine } from '../../MahjongConst/CommandDefine';
 import { SpriteLoadUtil } from '../../Other/SpriteLoadUtil';
@@ -149,14 +150,18 @@ export default class XzddDesk extends BaseDesk {
         this.head4.node.active = false;
 
         let roomType = "";
-        if (s2CClubRoomInfoBase.roomType === 0) {
-            roomType = "两人一房";
-        } else if (s2CClubRoomInfoBase.roomType === 1) {
-            roomType = "两人两房";
-        } else if (s2CClubRoomInfoBase.roomType === 2) {
-            roomType = "三人两房";
-        } else if (s2CClubRoomInfoBase.roomType === 3) {
-            roomType = "血战到底";
+        if (s2CClubRoomInfoBase.gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+            roomType = "断勾卡";
+        } else {
+            if (s2CClubRoomInfoBase.roomType === 0) {
+                roomType = "两人一房";
+            } else if (s2CClubRoomInfoBase.roomType === 1) {
+                roomType = "两人两房";
+            } else if (s2CClubRoomInfoBase.roomType === 2) {
+                roomType = "三人两房";
+            } else if (s2CClubRoomInfoBase.roomType === 3) {
+                roomType = "血战到底";
+            }
         }
 
         this.setRuleStr(s2CClubRoomInfoBase)
@@ -208,14 +213,14 @@ export default class XzddDesk extends BaseDesk {
             })
         }
 
-        if(s2CClubRoomInfoBase.roomType === 0){
-            this.ruleStr = "首局自动开始，离线30秒自动托管，低于带入自动解散。天地胡，听牌提示，点杠花（自摸）门清中张，4番封顶，点炮可平胡，自摸加番，夹心五，对对胡两番，幺九，海底涝，海底炮，7张";
-        }else if(s2CClubRoomInfoBase.roomType === 1){
-            this.ruleStr = "首局自动开始，离线30秒自动托管，低于带入自动解散。两方，天地胡，听牌提示，点杠花（自摸）门清中张，4番封顶，换三张，自摸加番，夹心五，对对胡两番，幺九将对，海底涝，海底炮，两番起胡";
-        }else if(s2CClubRoomInfoBase.roomType === 2){
-            this.ruleStr = "首局自动开始，离线30秒自动托管，低于带入自动解散。天地胡，听牌提示，点杠花（自摸）门清中张，4番封顶，自摸加番，夹心五，对对胡两番，幺九将对，海底涝，海底炮，两番起胡，放牛必须过庄，GPS防作弊（500米）IP防作弊";
-        }else if(s2CClubRoomInfoBase.roomType === 3){
-            this.ruleStr = "首局自动开始，离线30秒自动托管，低于带入自动解散。天地胡，听牌提示，点杠花（自摸）换三张，点炮可平胡。门清中张，4番封顶，自摸加番，夹心五，对对胡两番，幺九将对，海底涝，海底炮，放牛必须过庄，GPS防作弊（500米）IP防作弊";
+        if (s2CClubRoomInfoBase.roomType === 0) {
+            this.ruleStr = "首局自动开始，离线15秒自动托管，低于带入自动解散。天地胡，听牌提示，点杠花（自摸）门清中张，4番封顶，点炮可平胡，自摸加番，夹心五，对对胡两番，幺九，海底涝，海底炮，7张";
+        } else if (s2CClubRoomInfoBase.roomType === 1) {
+            this.ruleStr = "首局自动开始，离线15秒自动托管，低于带入自动解散。两方，天地胡，听牌提示，点杠花（自摸）门清中张，4番封顶，换三张，自摸加番，夹心五，对对胡两番，幺九将对，海底涝，海底炮，两番起胡";
+        } else if (s2CClubRoomInfoBase.roomType === 2) {
+            this.ruleStr = "首局自动开始，离线15秒自动托管，低于带入自动解散。天地胡，听牌提示，点杠花（自摸）门清中张，4番封顶，自摸加番，夹心五，对对胡两番，幺九将对，海底涝，海底炮，两番起胡，放牛必须过庄，GPS防作弊（500米）IP防作弊";
+        } else if (s2CClubRoomInfoBase.roomType === 3) {
+            this.ruleStr = "首局自动开始，离线15秒自动托管，低于带入自动解散。天地胡，听牌提示，点杠花（自摸）换三张，点炮可平胡。门清中张，4番封顶，自摸加番，夹心五，对对胡两番，幺九将对，海底涝，海底炮，放牛必须过庄，GPS防作弊（500米）IP防作弊";
         }
     }
 
@@ -273,6 +278,10 @@ export default class XzddDesk extends BaseDesk {
             headSprite = this.head4;
         }
 
+        if (!headSprite) {
+            cc.log(`房间${this.roomNo}座位不正确${seatNo}`);
+            return;
+        }
         headSprite.node.active = true;
         let nicknameLabel = headSprite.node.getChildByName("Nickname").getComponent(cc.Label);
         nicknameLabel.string = nickname;
@@ -292,6 +301,9 @@ export default class XzddDesk extends BaseDesk {
             headSprite = this.head4;
         }
 
+        if (!headSprite) {
+            return;
+        }
         let nicknameLabel = headSprite.node.getChildByName("Nickname").getComponent(cc.Label);
         nicknameLabel.string = "";
         headSprite.spriteFrame = null;

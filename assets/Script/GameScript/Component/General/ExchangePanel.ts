@@ -63,17 +63,20 @@ export default class ExchangePanel extends ViewComponent {
     retrievePwd: cc.Node = null;
     @property(cc.EditBox)
     exchangePwdEditBox: cc.EditBox = null;
+    @property(cc.EditBox)
+    convertMoneyEditBox: cc.EditBox = null;
 
     /** 查询的url */
     findUrl: string = "";
     pageIndex: number = 1;
     isLastPage: boolean = false;
-    pageSize: number = 10;
+    pageSize: number = 5;
+    minGiveOut: number = 100;
 
     /** 通道列表 */
     accessList: AccessInfo[] = [];
     /** 当前选择的通道 */
-    selectAccessId: number;
+    selectChannelNo: string;
 
     protected bindUI(): void {
         this.goldBuyList.removeAllChildren();
@@ -87,6 +90,7 @@ export default class ExchangePanel extends ViewComponent {
             this.node.destroy();
         });
 
+        this.getMinGiveOutScore();
         this.verifyClick();
 
         this.pageNextBtn.on(cc.Node.EventType.TOUCH_END, () => {
@@ -108,6 +112,17 @@ export default class ExchangePanel extends ViewComponent {
             this.findLog(this.pageIndex);
         });
 
+        this.convertMoneyEditBox.node.on("editing-did-ended", () => {
+            if (this.convertMoneyEditBox.string.length === 0) {
+                return;
+            }
+
+            let gold = this.convertMoneyEditBox.string || 0;
+            if (gold < this.minGiveOut) {
+                this.convertMoneyEditBox.string = this.minGiveOut + "";
+            }
+        });
+
         this.retrievePwd.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenSetExchangePwd, null, '');
         });
@@ -117,7 +132,7 @@ export default class ExchangePanel extends ViewComponent {
             const getEditBox = (nodeName): cc.Node => this.node.getChildByName("ConvertNode").getChildByName(nodeName).getChildByName("EditBox");
             const alipayAccount = getEditBox('BankName').getComponent(cc.EditBox).string;
             const alipayName = getEditBox('AccountName').getComponent(cc.EditBox).string;
-            let gold = getEditBox('ConvertMoney').getComponent(cc.EditBox).string || 0;
+            let gold = this.convertMoneyEditBox.string || 0;
             if (!alipayAccount || !alipayName || !+gold) {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '您输入的提现信息有误，请修改！', toastOverlay: true }, '');
                 return;
@@ -144,10 +159,13 @@ export default class ExchangePanel extends ViewComponent {
             }
             LoginAfterHttpUtil.send(url, (response) => {
                 if (response.hd === "success") {
+                    this.exchangePwdEditBox.string = "";
                     Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '兑换已成功提交，预计30分钟内到账，请关注！', toastOverlay: true }, '');
                 } else {
                     if (response.bd === ServerCode.PWD_ERROR) {
                         Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '密码错误！', toastOverlay: true }, '');
+                    } else if (response.bd === ServerCode.MIN_GIVE_OUT) {
+                        Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '兑换金额太小了！', toastOverlay: true }, '');
                     } else {
                         Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '对不起，兑换失败！', toastOverlay: true }, '');
                     }
@@ -187,23 +205,38 @@ export default class ExchangePanel extends ViewComponent {
         });
     }
 
+    /**
+     * 获得最小兑换分数
+     */
+    private getMinGiveOutScore() {
+        let configProxy: ConfigProxy = <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
+        let url = configProxy.facadeUrl + "exchange/getMinGiveOutScore";
+        LoginAfterHttpUtil.send(url, (response) => {
+            if (response.hd === "success") {
+                this.minGiveOut = response.bd;
+                this.convertMoneyEditBox.placeholderLabel.string = `最小 ${this.minGiveOut}`;
+            }
+        }, (err) => {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '参数异常：' + err, toastOverlay: true }, '');
+        }, HttpUtil.METHOD_POST, {});
+    }
+
     private exchange(gold) {
         let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         let configProxy: ConfigProxy = <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
 
-
-        let accessInfo = this.accessList.find(v => v.accessId === this.selectAccessId);
-
-        let url = configProxy.bonusUrl + "/api/v1/recharge";
+        let url = configProxy.bonusUrl + "/api/v1/capital/add/recharge";
         let param = {
             userName: localCacheDataProxy.getLoginData().userName,
             amount: parseInt(gold),
-            channel: accessInfo.channelNo,
+            channelNo: this.selectChannelNo,
         }
         HttpUtil.send(url, (response) => {
             if (response.code === 200) {
                 // 跳转页面
                 cc.sys.openURL(response.data);
+            } else {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: response.msg, toastOverlay: true }, '');
             }
         }, (err) => {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '充值失败' + err, toastOverlay: true }, '');
@@ -357,6 +390,9 @@ export default class ExchangePanel extends ViewComponent {
                             status = "兑换失败";
                         }
                     }
+
+                    type = value.channelName;
+
                     this.addLogContent(value.flowNo, value.createTime, type, Math.abs(value.amount), status);
                 }
             } else {
@@ -480,7 +516,7 @@ export default class ExchangePanel extends ViewComponent {
         this.exchangeAccessListNode.removeAllChildren();
         for (const access of accessInfos) {
             let node = cc.instantiate(this.exchangeAccessTmpplateNode);
-            node.name = "access_" + access.accessId;
+            node.name = "access_" + access.channelNo;
             node.getChildByName("label").getComponent(cc.Label).string = access.accessName;
 
             this.exchangeAccessListNode.addChild(node);
@@ -488,6 +524,9 @@ export default class ExchangePanel extends ViewComponent {
 
         if (this.exchangeAccessListNode.childrenCount > 0) {
             this.exchangeAccessListNode.children[0].getComponent(cc.Toggle).isChecked = true;
+
+            let nodeName: string = this.exchangeAccessListNode.children[0].name;
+            this.selectChannelNo = nodeName.split("_")[1];
 
             this.loadGoldList(accessInfos[0].exchangeScore);
         }
@@ -500,10 +539,9 @@ export default class ExchangePanel extends ViewComponent {
     exchangeSelect(event) {
         let nodeName: string = event.node.name;
 
-        cc.log(nodeName);
-        this.selectAccessId = parseInt(nodeName.split("_")[1]);
+        this.selectChannelNo = nodeName.split("_")[1];
 
-        let accessInfo = this.accessList.find(v => v.accessId === this.selectAccessId);
+        let accessInfo = this.accessList.find(v => v.channelNo === this.selectChannelNo);
         this.loadGoldList(accessInfo.exchangeScore);
     }
 

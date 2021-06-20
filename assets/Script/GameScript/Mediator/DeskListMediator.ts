@@ -23,6 +23,7 @@ import { GateProxy } from '../Proxy/GateProxy';
 import { XzddProxy } from "../CDMahjong/XzddProxy";
 import PopupWindow from "../Component/General/PopupWindow";
 import XzddRuleDetail from "../Component/Club/XzddRuleDetail";
+import { NewDymjProxy } from "../CDMahjong/NewDymjProxy";
 
 export class DeskListMediator extends BaseMediator {
 
@@ -83,6 +84,10 @@ export class DeskListMediator extends BaseMediator {
 
     public getDymjProxy(): DymjProxy {
         return <DymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj);
+    }
+
+    public getNewDymjProxy(): NewDymjProxy {
+        return <NewDymjProxy>this.facade.retrieveProxy(ProxyDefine.Dymj);
     }
 
     public getXzddProxy(): XzddProxy {
@@ -200,7 +205,7 @@ export class DeskListMediator extends BaseMediator {
             console.log("准备进入到 ", s2CClubJoinRoom.roomNo);
 
             if (s2CClubJoinRoom.gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
-                this.getDymjProxy().loginGame(s2CClubJoinRoom.roomNo);
+                this.getNewDymjProxy().loginGame(s2CClubJoinRoom.roomNo);
             } else if (s2CClubJoinRoom.gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI) {
                 this.getXzddProxy().loginGame(s2CClubJoinRoom.roomNo);
             }
