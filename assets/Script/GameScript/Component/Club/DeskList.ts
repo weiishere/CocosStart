@@ -115,6 +115,11 @@ export default class DeskList extends ViewComponent {
             this.roomTypeNode.runAction(action);
         });
 
+        let children = this.roomTypeNode.getChildByName("view").getChildByName("content").children;
+        children.forEach(v => v.on(cc.Node.EventType.TOUCH_END, (event: cc.Event) => {
+            this.selectRoomType11(event.target);
+        }));
+
         this.schedule(() => {
             if (!this.isLoadDesk) {
                 return;
@@ -619,6 +624,8 @@ export default class DeskList extends ViewComponent {
     selectRoomAnte(toggle: cc.Toggle) {
         let name = toggle.node.name.replace("selectNode", "");
 
+        this.anteNode.active = false;
+
         if (name === 'All') {
             this.selectAnte = 0;
         } else {
@@ -630,18 +637,45 @@ export default class DeskList extends ViewComponent {
     }
 
     selectRoomType(toggle: cc.Toggle) {
+        // this.anteNode.active = true;
 
-        if (toggle.node.name === 'allGame') {
+        // if (toggle.node.name === 'allGame') {
+        //     this.roomType = -1;
+        // } else if (toggle.node.name === 'roomType21') {
+        //     this.roomType = 0;
+        // } else if (toggle.node.name === 'roomType22') {
+        //     this.roomType = 1;
+        // } else if (toggle.node.name === 'roomType32') {
+        //     this.roomType = 2;
+        // } else if (toggle.node.name === 'roomType43') {
+        //     this.roomType = 3;
+        // } else if (toggle.node.name === 'roomTypeDgk') {
+        //     this.roomType = DUAN_GOU_KA_ROOM_TYPE;
+        // } else {
+        //     CommonUtil.toast("敬请期待.....")
+        //     return;
+        // }
+        // this.sortRoomInfo(this.roomInfoArray);
+
+        // this.loadDeskNode();
+    }
+
+    selectRoomType11(node: cc.Node) {
+        this.anteNode.active = true;
+
+        node.position;
+
+        if (node.name === 'allGame') {
             this.roomType = -1;
-        } else if (toggle.node.name === 'roomType21') {
+        } else if (node.name === 'roomType21') {
             this.roomType = 0;
-        } else if (toggle.node.name === 'roomType22') {
+        } else if (node.name === 'roomType22') {
             this.roomType = 1;
-        } else if (toggle.node.name === 'roomType32') {
+        } else if (node.name === 'roomType32') {
             this.roomType = 2;
-        } else if (toggle.node.name === 'roomType43') {
+        } else if (node.name === 'roomType43') {
             this.roomType = 3;
-        } else if (toggle.node.name === 'roomTypeDgk') {
+        } else if (node.name === 'roomTypeDgk') {
             this.roomType = DUAN_GOU_KA_ROOM_TYPE;
         } else {
             CommonUtil.toast("敬请期待.....")
