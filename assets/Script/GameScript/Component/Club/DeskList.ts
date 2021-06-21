@@ -23,6 +23,44 @@ const { ccclass, property } = cc._decorator;
 
 const DUAN_GOU_KA_ROOM_TYPE = 100;
 
+const ROOM_LIST = [
+    {
+        gameName: "全部玩法",
+        value: -1,
+    }, {
+        gameName: "断勾卡",
+        value: DUAN_GOU_KA_ROOM_TYPE,
+    }, {
+        gameName: "两人一房",
+        value: 0,
+    }, {
+        gameName: "两人两房",
+        value: 1,
+    }, {
+        gameName: "三人两房",
+        value: 2,
+    }, {
+        gameName: "血战到底",
+        value: 3,
+    }, {
+        gameName: "四人癞子",
+        value: 88,
+    }, {
+        gameName: "二人癞子",
+        value: 88,
+    }, {
+        gameName: "四人一房",
+        value: 88,
+    }, {
+        gameName: "跑得快",
+        value: 88,
+    }, {
+        gameName: "斗地主",
+        value: 88,
+    }
+
+]
+
 @ccclass
 export default class DeskList extends ViewComponent {
     @property(cc.Node)
@@ -41,6 +79,8 @@ export default class DeskList extends ViewComponent {
     chooseSpeedPanel: cc.Node = null;
     @property(cc.Node)
     roomTypeNode: cc.Node = null;
+    @property(cc.Node)
+    roomTypeNodeContent: cc.Node = null;
     @property(cc.Node)
     triggerBar: cc.Node = null;
     @property(cc.Label)
@@ -64,7 +104,6 @@ export default class DeskList extends ViewComponent {
     private roomType: number = -1;
     private roomInfoArray: S2CClubRoomInfoBase[] = null;
     private basicScoreList: Array<number> = [];
-
     /** 所有底分 */
     private antes: number[] = [];
 
@@ -76,6 +115,7 @@ export default class DeskList extends ViewComponent {
     private displayRoomInfos: S2CClubRoomInfoBase[] = null;
 
     start() {
+        this.initRoomType();
     }
 
     protected bindUI(): void {
@@ -115,10 +155,12 @@ export default class DeskList extends ViewComponent {
             this.roomTypeNode.runAction(action);
         });
 
-        let children = this.roomTypeNode.getChildByName("view").getChildByName("content").children;
-        children.forEach(v => v.on(cc.Node.EventType.TOUCH_END, (event: cc.Event) => {
-            this.selectRoomType11(event.target);
-        }));
+        this.roomTypeNode.on("scroll-began", () => {
+            if (!this.anteNode.active) {
+                return;
+            }
+            this.anteNode.active = false;
+        })
 
         this.schedule(() => {
             if (!this.isLoadDesk) {
@@ -129,6 +171,37 @@ export default class DeskList extends ViewComponent {
             this.loadDeskNode();
         }, 5)
     }
+
+    private initRoomType() {
+        let contentNode = this.roomTypeNode.getChildByName("view").getChildByName("content");
+        let nodeTmp = contentNode.children[0];
+        contentNode.removeAllChildren();
+
+        ROOM_LIST.forEach(v => {
+            let node = cc.instantiate(nodeTmp);
+            node.name = "roomType_" + v.value;
+            node.getChildByName("txtNode").getChildByName("label").getComponent(cc.Label).string = v.gameName;
+
+            if(v.value === 88){
+                node.getChildByName("txtNode").getChildByName("more_btu").active = false;
+            }
+
+            contentNode.addChild(node);
+
+            node.on(cc.Node.EventType.TOUCH_END, () => {
+                this.selectRoomType11(node);
+            });
+        });
+    }
+
+    addButton(node: cc.Node, scale: number = 1.5) {
+        let button = node.addComponent(cc.Button);
+
+        button.transition = cc.Button.Transition.SCALE;
+        button.zoomScale = scale;
+        button.duration = 0.1;
+    }
+
     closeChooseSpeedPanel() {
         this.chooseSpeedPanel.active = false;
         if (this.chooseSpeedPanel.opacity === 0) return;
@@ -286,7 +359,14 @@ export default class DeskList extends ViewComponent {
                 res.getChildByName("label").getComponent(cc.Label).string = `${v}`;
                 res.getChildByName("label").setScale(1.5);
             }
+
+            this.addButton(res);
+            res.on(cc.Node.EventType.TOUCH_END, () => {
+                this.selectRoomAnte11(res);
+            });
         });
+
+        this.anteNode.children = this.anteNode.children.reverse();
     }
 
     updateFullAndWaitStatus() {
@@ -622,7 +702,22 @@ export default class DeskList extends ViewComponent {
     }
 
     selectRoomAnte(toggle: cc.Toggle) {
-        let name = toggle.node.name.replace("selectNode", "");
+        // let name = toggle.node.name.replace("selectNode", "");
+
+        // this.anteNode.active = false;
+
+        // if (name === 'All') {
+        //     this.selectAnte = 0;
+        // } else {
+        //     this.selectAnte = parseInt(name);
+        // }
+        // this.sortRoomInfo(this.roomInfoArray);
+
+        // this.loadDeskNode();
+    }
+
+    selectRoomAnte11(anteNode: cc.Node) {
+        let name = anteNode.name.replace("selectNode", "");
 
         this.anteNode.active = false;
 
@@ -661,26 +756,24 @@ export default class DeskList extends ViewComponent {
     }
 
     selectRoomType11(node: cc.Node) {
-        this.anteNode.active = true;
-
-        node.position;
-
-        if (node.name === 'allGame') {
-            this.roomType = -1;
-        } else if (node.name === 'roomType21') {
-            this.roomType = 0;
-        } else if (node.name === 'roomType22') {
-            this.roomType = 1;
-        } else if (node.name === 'roomType32') {
-            this.roomType = 2;
-        } else if (node.name === 'roomType43') {
-            this.roomType = 3;
-        } else if (node.name === 'roomTypeDgk') {
-            this.roomType = DUAN_GOU_KA_ROOM_TYPE;
-        } else {
+        let roomTypeTmp = parseInt(node.name.split("_")[1]);
+        if (roomTypeTmp === 88) {
             CommonUtil.toast("敬请期待.....")
+            this.anteNode.active = false;
             return;
         }
+
+        if (roomTypeTmp === this.roomType) {
+            this.anteNode.active = !this.anteNode.active;
+            return;
+        }
+
+        this.roomType = roomTypeTmp;
+        this.anteNode.active = true;
+        let po = node.convertToWorldSpaceAR(node.getPosition());
+        po = this.node.convertToNodeSpaceAR(po);
+        this.anteNode.x = po.x - node.getPosition().x;
+
         this.sortRoomInfo(this.roomInfoArray);
 
         this.loadDeskNode();
