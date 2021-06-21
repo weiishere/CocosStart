@@ -94,7 +94,7 @@
       "__id__": 1
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 3
@@ -348,7 +348,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "c130f43d-410a-4e52-acac-a4b9656165bc"
+      "__uuid__": "6eacf4f6-9cd6-4d2a-a7d4-06cfe24246d6"
     },
     "_type": 0,
     "_sizeMode": 0,
