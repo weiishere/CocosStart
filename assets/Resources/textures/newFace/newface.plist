@@ -15,7 +15,7 @@
                 <key>spriteSourceSize</key>
                 <string>{87,87}</string>
                 <key>textureRect</key>
-                <string>{{1674,600},{87,87}}</string>
+                <string>{{1646,597},{87,87}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -23,7 +23,7 @@
                 <key>vertices</key>
                 <string>87 21 87 87 37 87 0 72 0 0 66 0</string>
                 <key>verticesUV</key>
-                <string>1761 621 1761 687 1711 687 1674 672 1674 600 1740 600</string>
+                <string>1733 618 1733 684 1683 684 1646 669 1646 597 1712 597</string>
             </dict>
             <key>2hu.png</key>
             <dict>
@@ -36,7 +36,7 @@
                 <key>spriteSourceSize</key>
                 <string>{87,87}</string>
                 <key>textureRect</key>
-                <string>{{1581,1406},{87,87}}</string>
+                <string>{{969,1493},{87,87}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -44,7 +44,7 @@
                 <key>vertices</key>
                 <string>87 21 87 87 21 87 0 66 0 0 66 0</string>
                 <key>verticesUV</key>
-                <string>1668 1427 1668 1493 1602 1493 1581 1472 1581 1406 1647 1406</string>
+                <string>1056 1514 1056 1580 990 1580 969 1559 969 1493 1035 1493</string>
             </dict>
             <key>3hu.png</key>
             <dict>
@@ -57,7 +57,7 @@
                 <key>spriteSourceSize</key>
                 <string>{93,87}</string>
                 <key>textureRect</key>
-                <string>{{1642,507},{93,87}}</string>
+                <string>{{1559,606},{93,87}}</string>
                 <key>textureRotated</key>
                 <true/>
                 <key>triangles</key>
@@ -65,7 +65,7 @@
                 <key>vertices</key>
                 <string>93 23 93 87 21 87 0 66 0 14 28 0 67 0</string>
                 <key>verticesUV</key>
-                <string>1706 600 1642 600 1642 528 1663 507 1715 507 1729 535 1729 574</string>
+                <string>1623 699 1559 699 1559 627 1580 606 1632 606 1646 634 1646 673</string>
             </dict>
             <key>backHallBtu.png</key>
             <dict>
@@ -78,15 +78,15 @@
                 <key>spriteSourceSize</key>
                 <string>{181,69}</string>
                 <key>textureRect</key>
-                <string>{{737,1514},{181,69}}</string>
+                <string>{{1446,1273},{181,69}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
                 <key>triangles</key>
                 <string>1 3 4 1 2 3 0 1 4</string>
                 <key>vertices</key>
                 <string>181 69 9 69 0 57 0 0 181 0</string>
                 <key>verticesUV</key>
-                <string>918 1583 746 1583 737 1571 737 1514 918 1514</string>
+                <string>1446 1454 1446 1282 1458 1273 1515 1273 1515 1454</string>
             </dict>
             <key>back_Btu.png</key>
             <dict>
@@ -99,7 +99,7 @@
                 <key>spriteSourceSize</key>
                 <string>{74,72}</string>
                 <key>textureRect</key>
-                <string>{{1665,1497},{74,72}}</string>
+                <string>{{1446,1454},{74,72}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -107,7 +107,7 @@
                 <key>vertices</key>
                 <string>74 72 8 72 0 46 0 0 74 0</string>
                 <key>verticesUV</key>
-                <string>1739 1569 1673 1569 1665 1543 1665 1497 1739 1497</string>
+                <string>1520 1526 1454 1526 1446 1500 1446 1454 1520 1454</string>
             </dict>
             <key>borromBorad.png</key>
             <dict>
@@ -151,6 +151,27 @@
                 <key>verticesUV</key>
                 <string>1622 606 1579 606 1559 586 1559 350 1579 330 1622 330 1642 350 1642 586</string>
             </dict>
+            <key>bottom_btu.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{174,70}</string>
+                <key>spriteSourceSize</key>
+                <string>{174,70}</string>
+                <key>textureRect</key>
+                <string>{{789,1444},{174,70}}</string>
+                <key>textureRotated</key>
+                <false/>
+                <key>triangles</key>
+                <string>1 2 3 0 1 3</string>
+                <key>vertices</key>
+                <string>174 70 0 70 0 0 174 0</string>
+                <key>verticesUV</key>
+                <string>963 1514 789 1514 789 1444 963 1444</string>
+            </dict>
             <key>btu_5.png</key>
             <dict>
                 <key>aliases</key>
@@ -172,6 +193,27 @@
                 <key>verticesUV</key>
                 <string>1409 1067 1121 1067 1121 939 1409 939</string>
             </dict>
+            <key>buttom_btu2.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{174,70}</string>
+                <key>spriteSourceSize</key>
+                <string>{174,70}</string>
+                <key>textureRect</key>
+                <string>{{621,1514},{174,70}}</string>
+                <key>textureRotated</key>
+                <false/>
+                <key>triangles</key>
+                <string>1 2 3 0 1 3</string>
+                <key>vertices</key>
+                <string>174 70 0 70 0 0 174 0</string>
+                <key>verticesUV</key>
+                <string>795 1584 621 1584 621 1514 795 1514</string>
+            </dict>
             <key>button-1.png</key>
             <dict>
                 <key>aliases</key>
@@ -183,7 +225,7 @@
                 <key>spriteSourceSize</key>
                 <string>{154,54}</string>
                 <key>textureRect</key>
-                <string>{{1635,1252},{153,54}}</string>
+                <string>{{202,1431},{153,54}}</string>
                 <key>textureRotated</key>
                 <true/>
                 <key>triangles</key>
@@ -191,7 +233,7 @@
                 <key>vertices</key>
                 <string>153 49 137 54 0 54 0 0 153 0</string>
                 <key>verticesUV</key>
-                <string>1640 1405 1635 1389 1635 1252 1689 1252 1689 1405</string>
+                <string>207 1584 202 1568 202 1431 256 1431 256 1584</string>
             </dict>
             <key>button-disable.png</key>
             <dict>
@@ -204,7 +246,7 @@
                 <key>spriteSourceSize</key>
                 <string>{154,54}</string>
                 <key>textureRect</key>
-                <string>{{1581,1252},{154,54}}</string>
+                <string>{{1634,1294},{154,54}}</string>
                 <key>textureRotated</key>
                 <true/>
                 <key>triangles</key>
@@ -212,7 +254,7 @@
                 <key>vertices</key>
                 <string>154 54 0 54 0 0 154 0</string>
                 <key>verticesUV</key>
-                <string>1581 1406 1581 1252 1635 1252 1635 1406</string>
+                <string>1634 1448 1634 1294 1688 1294 1688 1448</string>
             </dict>
             <key>cardRecord.png</key>
             <dict>
@@ -225,7 +267,7 @@
                 <key>spriteSourceSize</key>
                 <string>{80,80}</string>
                 <key>textureRect</key>
-                <string>{{1357,1506},{80,80}}</string>
+                <string>{{709,1384},{80,80}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -233,7 +275,7 @@
                 <key>vertices</key>
                 <string>80 80 0 80 0 0 80 0</string>
                 <key>verticesUV</key>
-                <string>1437 1586 1357 1586 1357 1506 1437 1506</string>
+                <string>789 1464 709 1464 709 1384 789 1384</string>
             </dict>
             <key>circle.png</key>
             <dict>
@@ -267,15 +309,15 @@
                 <key>spriteSourceSize</key>
                 <string>{73,80}</string>
                 <key>textureRect</key>
-                <string>{{1688,1047},{73,80}}</string>
+                <string>{{1684,1220},{73,80}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
                 <string>73 80 0 80 0 0 73 0</string>
                 <key>verticesUV</key>
-                <string>1761 1127 1688 1127 1688 1047 1761 1047</string>
+                <string>1684 1293 1684 1220 1764 1220 1764 1293</string>
             </dict>
             <key>desk_2.png</key>
             <dict>
@@ -351,15 +393,15 @@
                 <key>spriteSourceSize</key>
                 <string>{68,80}</string>
                 <key>textureRect</key>
-                <string>{{1597,1493},{68,80}}</string>
+                <string>{{1364,1506},{68,80}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
                 <key>triangles</key>
                 <string>0 5 6 0 4 5 3 4 1 3 1 2 0 1 4</string>
                 <key>vertices</key>
                 <string>68 35 40 79 38 80 23 80 0 57 0 0 68 0</string>
                 <key>verticesUV</key>
-                <string>1665 1528 1637 1572 1635 1573 1620 1573 1597 1550 1597 1493 1665 1493</string>
+                <string>1409 1574 1365 1546 1364 1544 1364 1529 1387 1506 1444 1506 1444 1574</string>
             </dict>
             <key>end-page.png</key>
             <dict>
@@ -372,15 +414,15 @@
                 <key>spriteSourceSize</key>
                 <string>{124,50}</string>
                 <key>textureRect</key>
-                <string>{{1711,181},{124,50}}</string>
+                <string>{{619,1464},{124,50}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
                 <string>124 50 0 50 0 0 124 0</string>
                 <key>verticesUV</key>
-                <string>1711 305 1711 181 1761 181 1761 305</string>
+                <string>743 1514 619 1514 619 1464 743 1464</string>
             </dict>
             <key>first-page.png</key>
             <dict>
@@ -393,7 +435,7 @@
                 <key>spriteSourceSize</key>
                 <string>{124,50}</string>
                 <key>textureRect</key>
-                <string>{{1711,305},{124,50}}</string>
+                <string>{{1688,1293},{124,50}}</string>
                 <key>textureRotated</key>
                 <true/>
                 <key>triangles</key>
@@ -401,7 +443,7 @@
                 <key>vertices</key>
                 <string>124 50 0 50 0 0 124 0</string>
                 <key>verticesUV</key>
-                <string>1711 429 1711 305 1761 305 1761 429</string>
+                <string>1688 1417 1688 1293 1738 1293 1738 1417</string>
             </dict>
             <key>game-brnn.png</key>
             <dict>
@@ -582,7 +624,7 @@
                 <key>spriteSourceSize</key>
                 <string>{162,61}</string>
                 <key>textureRect</key>
-                <string>{{924,1444},{162,61}}</string>
+                <string>{{459,1520},{162,61}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -590,7 +632,7 @@
                 <key>vertices</key>
                 <string>162 61 0 61 0 0 162 0</string>
                 <key>verticesUV</key>
-                <string>1086 1505 924 1505 924 1444 1086 1444</string>
+                <string>621 1581 459 1581 459 1520 621 1520</string>
             </dict>
             <key>girl2.png</key>
             <dict>
@@ -645,7 +687,7 @@
                 <key>spriteSourceSize</key>
                 <string>{90,90}</string>
                 <key>textureRect</key>
-                <string>{{1668,1407},{90,90}}</string>
+                <string>{{1684,1130},{90,90}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -653,7 +695,7 @@
                 <key>vertices</key>
                 <string>90 90 0 90 0 0 90 0 11 17 17 78 78 72 72 11</string>
                 <key>verticesUV</key>
-                <string>1758 1497 1668 1497 1668 1407 1758 1407 1679 1424 1685 1485 1746 1479 1740 1418</string>
+                <string>1774 1220 1684 1220 1684 1130 1774 1130 1695 1147 1701 1208 1762 1202 1756 1141</string>
             </dict>
             <key>icon-exchange.png</key>
             <dict>
@@ -666,7 +708,7 @@
                 <key>spriteSourceSize</key>
                 <string>{175,85}</string>
                 <key>textureRect</key>
-                <string>{{1446,1285},{175,85}}</string>
+                <string>{{1689,955},{175,85}}</string>
                 <key>textureRotated</key>
                 <true/>
                 <key>triangles</key>
@@ -674,7 +716,7 @@
                 <key>vertices</key>
                 <string>175 5 175 72 65 85 34 85 0 17 0 0 42 0</string>
                 <key>verticesUV</key>
-                <string>1526 1460 1459 1460 1446 1350 1446 1319 1514 1285 1531 1285 1531 1327</string>
+                <string>1769 1130 1702 1130 1689 1020 1689 989 1757 955 1774 955 1774 997</string>
             </dict>
             <key>icon-fx.png</key>
             <dict>
@@ -687,7 +729,7 @@
                 <key>spriteSourceSize</key>
                 <string>{113,43}</string>
                 <key>textureRect</key>
-                <string>{{1698,687},{113,43}}</string>
+                <string>{{1569,1417},{113,43}}</string>
                 <key>textureRotated</key>
                 <true/>
                 <key>triangles</key>
@@ -695,7 +737,7 @@
                 <key>vertices</key>
                 <string>113 43 0 43 0 0 113 0</string>
                 <key>verticesUV</key>
-                <string>1698 800 1698 687 1741 687 1741 800</string>
+                <string>1569 1530 1569 1417 1612 1417 1612 1530</string>
             </dict>
             <key>icon-hl.png</key>
             <dict>
@@ -708,15 +750,15 @@
                 <key>spriteSourceSize</key>
                 <string>{112,49}</string>
                 <key>textureRect</key>
-                <string>{{1245,1505},{112,49}}</string>
+                <string>{{1520,1414},{112,49}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
                 <key>triangles</key>
                 <string>3 4 5 2 3 5 0 1 2 0 2 5</string>
                 <key>vertices</key>
                 <string>112 8 112 41 46 49 0 49 0 0 38 0</string>
                 <key>verticesUV</key>
-                <string>1357 1513 1357 1546 1291 1554 1245 1554 1245 1505 1283 1505</string>
+                <string>1561 1526 1528 1526 1520 1460 1520 1414 1569 1414 1569 1452</string>
             </dict>
             <key>icon-plus.png</key>
             <dict>
@@ -750,7 +792,7 @@
                 <key>spriteSourceSize</key>
                 <string>{117,54}</string>
                 <key>textureRect</key>
-                <string>{{428,1520},{117,54}}</string>
+                <string>{{1056,1505},{117,54}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -758,7 +800,7 @@
                 <key>vertices</key>
                 <string>115 10 117 12 117 42 35 54 0 54 0 0 35 0</string>
                 <key>verticesUV</key>
-                <string>543 1530 545 1532 545 1562 463 1574 428 1574 428 1520 463 1520</string>
+                <string>1171 1515 1173 1517 1173 1547 1091 1559 1056 1559 1056 1505 1091 1505</string>
             </dict>
             <key>icon-zj.png</key>
             <dict>
@@ -771,15 +813,15 @@
                 <key>spriteSourceSize</key>
                 <string>{109,54}</string>
                 <key>textureRect</key>
-                <string>{{269,1460},{109,54}}</string>
+                <string>{{1698,828},{109,54}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
                 <key>triangles</key>
                 <string>3 5 6 3 4 5 0 1 2 0 2 3 6 0 3</string>
                 <key>vertices</key>
                 <string>57 11 109 11 109 44 34 54 0 54 0 0 46 0</string>
                 <key>verticesUV</key>
-                <string>326 1471 378 1471 378 1504 303 1514 269 1514 269 1460 315 1460</string>
+                <string>1741 885 1741 937 1708 937 1698 862 1698 828 1752 828 1752 874</string>
             </dict>
             <key>icon-zs.png</key>
             <dict>
@@ -792,7 +834,7 @@
                 <key>spriteSourceSize</key>
                 <string>{118,46}</string>
                 <key>textureRect</key>
-                <string>{{1127,1505},{118,46}}</string>
+                <string>{{1173,1505},{118,46}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -800,7 +842,7 @@
                 <key>vertices</key>
                 <string>118 7 118 46 0 46 0 0 52 0</string>
                 <key>verticesUV</key>
-                <string>1245 1512 1245 1551 1127 1551 1127 1505 1179 1505</string>
+                <string>1291 1512 1291 1551 1173 1551 1173 1505 1225 1505</string>
             </dict>
             <key>icon_help.png</key>
             <dict>
@@ -813,15 +855,15 @@
                 <key>spriteSourceSize</key>
                 <string>{73,69}</string>
                 <key>textureRect</key>
-                <string>{{1692,429},{73,69}}</string>
+                <string>{{1291,1505},{73,69}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
                 <string>73 69 0 69 0 0 73 0</string>
                 <key>verticesUV</key>
-                <string>1692 502 1692 429 1761 429 1761 502</string>
+                <string>1364 1574 1291 1574 1291 1505 1364 1505</string>
             </dict>
             <key>icon_msg.png</key>
             <dict>
@@ -834,15 +876,15 @@
                 <key>spriteSourceSize</key>
                 <string>{76,72}</string>
                 <key>textureRect</key>
-                <string>{{1689,955},{76,72}}</string>
+                <string>{{1698,684},{76,72}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
                 <key>triangles</key>
                 <string>0 4 5 2 3 4 1 4 0 1 2 4</string>
                 <key>vertices</key>
                 <string>76 72 0 72 0 13 6 5 24 0 76 0</string>
                 <key>verticesUV</key>
-                <string>1689 1031 1689 955 1748 955 1756 961 1761 979 1761 1031</string>
+                <string>1774 756 1698 756 1698 697 1704 689 1722 684 1774 684</string>
             </dict>
             <key>icon_set.png</key>
             <dict>
@@ -855,7 +897,7 @@
                 <key>spriteSourceSize</key>
                 <string>{76,72}</string>
                 <key>textureRect</key>
-                <string>{{918,1514},{76,72}}</string>
+                <string>{{1698,756},{76,72}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -863,7 +905,7 @@
                 <key>vertices</key>
                 <string>76 72 0 72 0 13 6 5 24 0 76 0</string>
                 <key>verticesUV</key>
-                <string>994 1586 918 1586 918 1527 924 1519 942 1514 994 1514</string>
+                <string>1774 828 1698 828 1698 769 1704 761 1722 756 1774 756</string>
             </dict>
             <key>inner_bg.png</key>
             <dict>
@@ -876,7 +918,7 @@
                 <key>spriteSourceSize</key>
                 <string>{56,56}</string>
                 <key>textureRect</key>
-                <string>{{709,1384},{56,56}}</string>
+                <string>{{1612,1528},{56,56}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -884,7 +926,7 @@
                 <key>vertices</key>
                 <string>56 56 0 56 0 0 56 0</string>
                 <key>verticesUV</key>
-                <string>765 1440 709 1440 709 1384 765 1384</string>
+                <string>1668 1584 1612 1584 1612 1528 1668 1528</string>
             </dict>
             <key>loatSign.png</key>
             <dict>
@@ -918,7 +960,7 @@
                 <key>spriteSourceSize</key>
                 <string>{80,80}</string>
                 <key>textureRect</key>
-                <string>{{1437,1506},{80,80}}</string>
+                <string>{{1612,1448},{80,80}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -926,7 +968,7 @@
                 <key>vertices</key>
                 <string>80 80 0 80 0 0 80 0</string>
                 <key>verticesUV</key>
-                <string>1517 1586 1437 1586 1437 1506 1517 1506</string>
+                <string>1692 1528 1612 1528 1612 1448 1692 1448</string>
             </dict>
             <key>main-bottom.png</key>
             <dict>
@@ -981,7 +1023,7 @@
                 <key>spriteSourceSize</key>
                 <string>{31,31}</string>
                 <key>textureRect</key>
-                <string>{{1126,579},{31,31}}</string>
+                <string>{{743,1464},{31,31}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -989,7 +1031,7 @@
                 <key>vertices</key>
                 <string>31 31 0 31 0 0 31 0</string>
                 <key>verticesUV</key>
-                <string>1157 610 1126 610 1126 579 1157 579</string>
+                <string>774 1495 743 1495 743 1464 774 1464</string>
             </dict>
             <key>mini-bg.png</key>
             <dict>
@@ -1012,6 +1054,27 @@
                 <key>verticesUV</key>
                 <string>2 1581 2 1431 202 1431 202 1581</string>
             </dict>
+            <key>more_btu.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{0,0}</string>
+                <key>spriteSize</key>
+                <string>{22,22}</string>
+                <key>spriteSourceSize</key>
+                <string>{28,28}</string>
+                <key>textureRect</key>
+                <string>{{1752,828},{22,22}}</string>
+                <key>textureRotated</key>
+                <false/>
+                <key>triangles</key>
+                <string>1 2 3 0 1 3</string>
+                <key>vertices</key>
+                <string>25 25 3 25 3 3 25 3</string>
+                <key>verticesUV</key>
+                <string>1774 850 1752 850 1752 828 1774 828</string>
+            </dict>
             <key>next-page.png</key>
             <dict>
                 <key>aliases</key>
@@ -1023,15 +1086,15 @@
                 <key>spriteSourceSize</key>
                 <string>{133,49}</string>
                 <key>textureRect</key>
-                <string>{{1662,181},{133,49}}</string>
+                <string>{{963,1444},{133,49}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
                 <string>133 49 0 49 0 0 133 0</string>
                 <key>verticesUV</key>
-                <string>1662 314 1662 181 1711 181 1711 314</string>
+                <string>1096 1493 963 1493 963 1444 1096 1444</string>
             </dict>
             <key>off_Btu.png</key>
             <dict>
@@ -1044,7 +1107,7 @@
                 <key>spriteSourceSize</key>
                 <string>{182,50}</string>
                 <key>textureRect</key>
-                <string>{{1642,325},{182,50}}</string>
+                <string>{{1584,1235},{182,50}}</string>
                 <key>textureRotated</key>
                 <true/>
                 <key>triangles</key>
@@ -1052,7 +1115,7 @@
                 <key>vertices</key>
                 <string>182 4 182 46 38 50 0 50 0 0 38 0</string>
                 <key>verticesUV</key>
-                <string>1688 507 1646 507 1642 363 1642 325 1692 325 1692 363</string>
+                <string>1630 1417 1588 1417 1584 1273 1584 1235 1634 1235 1634 1273</string>
             </dict>
             <key>on_Btu.png</key>
             <dict>
@@ -1065,7 +1128,7 @@
                 <key>spriteSourceSize</key>
                 <string>{177,50}</string>
                 <key>textureRect</key>
-                <string>{{1531,1285},{177,50}}</string>
+                <string>{{1634,1117},{177,50}}</string>
                 <key>textureRotated</key>
                 <true/>
                 <key>triangles</key>
@@ -1073,7 +1136,7 @@
                 <key>vertices</key>
                 <string>177 50 0 50 0 4 139 0 177 0</string>
                 <key>verticesUV</key>
-                <string>1531 1462 1531 1285 1577 1285 1581 1424 1581 1462</string>
+                <string>1634 1294 1634 1117 1680 1117 1684 1256 1684 1294</string>
             </dict>
             <key>panel4.png</key>
             <dict>
@@ -1107,15 +1170,15 @@
                 <key>spriteSourceSize</key>
                 <string>{120,39}</string>
                 <key>textureRect</key>
-                <string>{{1722,1127},{120,39}}</string>
+                <string>{{1126,579},{120,39}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
                 <key>triangles</key>
                 <string>0 3 4 1 2 3 0 1 3</string>
                 <key>vertices</key>
                 <string>120 39 0 39 0 3 3 0 120 0</string>
                 <key>verticesUV</key>
-                <string>1722 1247 1722 1127 1758 1127 1761 1130 1761 1247</string>
+                <string>1246 618 1126 618 1126 582 1129 579 1246 579</string>
             </dict>
             <key>pre-page.png</key>
             <dict>
@@ -1128,15 +1191,15 @@
                 <key>spriteSourceSize</key>
                 <string>{133,49}</string>
                 <key>textureRect</key>
-                <string>{{994,1505},{133,49}}</string>
+                <string>{{1715,117},{133,49}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
                 <key>triangles</key>
                 <string>1 2 3 0 1 3</string>
                 <key>vertices</key>
                 <string>133 49 0 49 0 0 133 0</string>
                 <key>verticesUV</key>
-                <string>1127 1554 994 1554 994 1505 1127 1505</string>
+                <string>1715 250 1715 117 1764 117 1764 250</string>
             </dict>
             <key>quickBtu.png</key>
             <dict>
@@ -1149,7 +1212,7 @@
                 <key>spriteSourceSize</key>
                 <string>{179,69}</string>
                 <key>textureRect</key>
-                <string>{{1692,2},{179,69}}</string>
+                <string>{{1515,1235},{179,69}}</string>
                 <key>textureRotated</key>
                 <true/>
                 <key>triangles</key>
@@ -1157,7 +1220,7 @@
                 <key>vertices</key>
                 <string>179 69 0 69 0 0 179 0</string>
                 <key>verticesUV</key>
-                <string>1692 181 1692 2 1761 2 1761 181</string>
+                <string>1515 1414 1515 1235 1584 1235 1584 1414</string>
             </dict>
             <key>ract3.png</key>
             <dict>
@@ -1170,7 +1233,7 @@
                 <key>spriteSourceSize</key>
                 <string>{30,30}</string>
                 <key>textureRect</key>
-                <string>{{1662,127},{30,30}}</string>
+                <string>{{1662,282},{30,30}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -1178,7 +1241,7 @@
                 <key>vertices</key>
                 <string>30 30 0 30 0 0 30 0</string>
                 <key>verticesUV</key>
-                <string>1692 157 1662 157 1662 127 1692 127</string>
+                <string>1692 312 1662 312 1662 282 1692 282</string>
             </dict>
             <key>ract_1.png</key>
             <dict>
@@ -1191,7 +1254,7 @@
                 <key>spriteSourceSize</key>
                 <string>{155,53}</string>
                 <key>textureRect</key>
-                <string>{{1689,1252},{155,53}}</string>
+                <string>{{1662,127},{155,53}}</string>
                 <key>textureRotated</key>
                 <true/>
                 <key>triangles</key>
@@ -1199,7 +1262,7 @@
                 <key>vertices</key>
                 <string>155 53 0 53 0 0 155 0</string>
                 <key>verticesUV</key>
-                <string>1689 1407 1689 1252 1742 1252 1742 1407</string>
+                <string>1662 282 1662 127 1715 127 1715 282</string>
             </dict>
             <key>sure-ex.png</key>
             <dict>
@@ -1296,7 +1359,7 @@
                 <key>spriteSourceSize</key>
                 <string>{676,70}</string>
                 <key>textureRect</key>
-                <string>{{549,908},{676,70}}</string>
+                <string>{{389,908},{676,70}}</string>
                 <key>textureRotated</key>
                 <true/>
                 <key>triangles</key>
@@ -1304,7 +1367,7 @@
                 <key>vertices</key>
                 <string>676 70 0 70 0 0 676 0</string>
                 <key>verticesUV</key>
-                <string>549 1584 549 908 619 908 619 1584</string>
+                <string>389 1584 389 908 459 908 459 1584</string>
             </dict>
             <key>titla-left.png</key>
             <dict>
@@ -1317,7 +1380,7 @@
                 <key>spriteSourceSize</key>
                 <string>{613,81}</string>
                 <key>textureRect</key>
-                <string>{{389,908},{612,80}}</string>
+                <string>{{459,908},{612,80}}</string>
                 <key>textureRotated</key>
                 <true/>
                 <key>triangles</key>
@@ -1325,7 +1388,7 @@
                 <key>vertices</key>
                 <string>613 81 1 81 1 1 613 1</string>
                 <key>verticesUV</key>
-                <string>389 1520 389 908 469 908 469 1520</string>
+                <string>459 1520 459 908 539 908 539 1520</string>
             </dict>
             <key>title-right.png</key>
             <dict>
@@ -1338,7 +1401,7 @@
                 <key>spriteSourceSize</key>
                 <string>{613,81}</string>
                 <key>textureRect</key>
-                <string>{{469,908},{612,80}}</string>
+                <string>{{539,908},{612,80}}</string>
                 <key>textureRotated</key>
                 <true/>
                 <key>triangles</key>
@@ -1346,7 +1409,7 @@
                 <key>vertices</key>
                 <string>613 81 1 81 1 1 613 1</string>
                 <key>verticesUV</key>
-                <string>469 1520 469 908 549 908 549 1520</string>
+                <string>539 1520 539 908 619 908 619 1520</string>
             </dict>
             <key>trigger.png</key>
             <dict>
@@ -1401,15 +1464,15 @@
                 <key>spriteSourceSize</key>
                 <string>{66,226}</string>
                 <key>textureRect</key>
-                <string>{{202,1520},{66,226}}</string>
+                <string>{{1367,1067},{66,226}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
                 <key>triangles</key>
                 <string>0 3 4 1 2 3 0 1 3</string>
                 <key>vertices</key>
                 <string>66 217 17 226 0 226 0 0 66 0</string>
                 <key>verticesUV</key>
-                <string>211 1586 202 1537 202 1520 428 1520 428 1586</string>
+                <string>1433 1284 1384 1293 1367 1293 1367 1067 1433 1067</string>
             </dict>
             <key>triggerBar2.png</key>
             <dict>
@@ -1422,7 +1485,7 @@
                 <key>spriteSourceSize</key>
                 <string>{66,226}</string>
                 <key>textureRect</key>
-                <string>{{1367,1067},{66,226}}</string>
+                <string>{{1433,1047},{66,226}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -1430,7 +1493,7 @@
                 <key>vertices</key>
                 <string>66 226 50 226 0 218 0 9 45 0 66 0</string>
                 <key>verticesUV</key>
-                <string>1433 1293 1417 1293 1367 1285 1367 1076 1412 1067 1433 1067</string>
+                <string>1499 1273 1483 1273 1433 1265 1433 1056 1478 1047 1499 1047</string>
             </dict>
             <key>typeBtu1.png</key>
             <dict>
@@ -1443,7 +1506,7 @@
                 <key>spriteSourceSize</key>
                 <string>{174,70}</string>
                 <key>textureRect</key>
-                <string>{{1548,1182},{174,70}}</string>
+                <string>{{795,1514},{174,70}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -1451,7 +1514,7 @@
                 <key>vertices</key>
                 <string>174 70 0 70 0 0 174 0</string>
                 <key>verticesUV</key>
-                <string>1722 1252 1548 1252 1548 1182 1722 1182</string>
+                <string>969 1584 795 1584 795 1514 969 1514</string>
             </dict>
             <key>typeBtu2.png</key>
             <dict>
@@ -1464,7 +1527,7 @@
                 <key>spriteSourceSize</key>
                 <string>{187,70}</string>
                 <key>textureRect</key>
-                <string>{{737,1444},{187,70}}</string>
+                <string>{{1499,1047},{187,70}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -1472,7 +1535,7 @@
                 <key>vertices</key>
                 <string>187 70 0 70 0 0 187 0</string>
                 <key>verticesUV</key>
-                <string>924 1514 737 1514 737 1444 924 1444</string>
+                <string>1686 1117 1499 1117 1499 1047 1686 1047</string>
             </dict>
             <key>winCard.png</key>
             <dict>
@@ -1485,7 +1548,7 @@
                 <key>spriteSourceSize</key>
                 <string>{80,80}</string>
                 <key>textureRect</key>
-                <string>{{1517,1493},{80,80}}</string>
+                <string>{{1692,1500},{80,80}}</string>
                 <key>textureRotated</key>
                 <false/>
                 <key>triangles</key>
@@ -1493,7 +1556,7 @@
                 <key>vertices</key>
                 <string>80 80 0 80 0 0 80 0</string>
                 <key>verticesUV</key>
-                <string>1597 1573 1517 1573 1517 1493 1597 1493</string>
+                <string>1772 1580 1692 1580 1692 1500 1772 1500</string>
             </dict>
             <key>winSign.png</key>
             <dict>
@@ -1548,7 +1611,7 @@
                 <key>spriteSourceSize</key>
                 <string>{83,67}</string>
                 <key>textureRect</key>
-                <string>{{202,1431},{83,67}}</string>
+                <string>{{1692,1417},{83,67}}</string>
                 <key>textureRotated</key>
                 <true/>
                 <key>triangles</key>
@@ -1556,7 +1619,7 @@
                 <key>vertices</key>
                 <string>83 42 58 67 22 67 0 45 0 17 46 0 83 0</string>
                 <key>verticesUV</key>
-                <string>227 1514 202 1489 202 1453 224 1431 252 1431 269 1477 269 1514</string>
+                <string>1717 1500 1692 1475 1692 1439 1714 1417 1742 1417 1759 1463 1759 1500</string>
             </dict>
             <key>zhuanshi-1.png</key>
             <dict>
@@ -1569,15 +1632,15 @@
                 <key>spriteSourceSize</key>
                 <string>{115,106}</string>
                 <key>textureRect</key>
-                <string>{{1433,1179},{115,106}}</string>
+                <string>{{1666,2},{115,106}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
                 <key>triangles</key>
                 <string>0 1 6 4 5 6 3 4 6 3 6 1 3 1 2 0 6 7</string>
                 <key>vertices</key>
                 <string>115 26 115 51 66 106 47 105 0 51 0 17 29 0 103 0</string>
                 <key>verticesUV</key>
-                <string>1548 1205 1548 1230 1499 1285 1480 1284 1433 1230 1433 1196 1462 1179 1536 1179</string>
+                <string>1746 117 1721 117 1666 68 1667 49 1721 2 1755 2 1772 31 1772 105</string>
             </dict>
             <key>zhuanshi-2.png</key>
             <dict>
@@ -1611,15 +1674,15 @@
                 <key>spriteSourceSize</key>
                 <string>{129,115}</string>
                 <key>textureRect</key>
-                <string>{{1559,606},{129,115}}</string>
+                <string>{{256,1460},{129,115}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
                 <key>triangles</key>
                 <string>0 5 6 3 4 5 2 0 1 2 3 0 0 3 5</string>
                 <key>vertices</key>
                 <string>129 72 129 115 0 115 0 42 4 15 39 0 100 0</string>
                 <key>verticesUV</key>
-                <string>1602 735 1559 735 1559 606 1632 606 1659 610 1674 645 1674 706</string>
+                <string>385 1532 385 1575 256 1575 256 1502 260 1475 295 1460 356 1460</string>
             </dict>
             <key>zhuanshi-4.png</key>
             <dict>
@@ -1632,7 +1695,7 @@
                 <key>spriteSourceSize</key>
                 <string>{135,118}</string>
                 <key>textureRect</key>
-                <string>{{1570,1047},{135,118}}</string>
+                <string>{{1642,462},{135,118}}</string>
                 <key>textureRotated</key>
                 <true/>
                 <key>triangles</key>
@@ -1640,7 +1703,7 @@
                 <key>vertices</key>
                 <string>135 106 67 118 0 118 0 70 27 4 38 0 135 0</string>
                 <key>verticesUV</key>
-                <string>1582 1182 1570 1114 1570 1047 1618 1047 1684 1074 1688 1085 1688 1182</string>
+                <string>1654 597 1642 529 1642 462 1690 462 1756 489 1760 500 1760 597</string>
             </dict>
             <key>zhuanshi-5.png</key>
             <dict>
@@ -1653,15 +1716,15 @@
                 <key>spriteSourceSize</key>
                 <string>{137,132}</string>
                 <key>textureRect</key>
-                <string>{{1433,1047},{137,132}}</string>
+                <string>{{1642,325},{137,132}}</string>
                 <key>textureRotated</key>
-                <false/>
+                <true/>
                 <key>triangles</key>
                 <string>4 5 6 3 4 6 1 3 6 1 2 3 0 1 6</string>
                 <key>vertices</key>
                 <string>137 9 137 132 0 132 0 67 32 3 35 0 57 0</string>
                 <key>verticesUV</key>
-                <string>1570 1056 1570 1179 1433 1179 1433 1114 1465 1050 1468 1047 1490 1047</string>
+                <string>1765 462 1642 462 1642 325 1707 325 1771 357 1774 360 1774 382</string>
             </dict>
             <key>zhuanshi-6.png</key>
             <dict>
@@ -1674,15 +1737,15 @@
                 <key>spriteSourceSize</key>
                 <string>{135,118}</string>
                 <key>textureRect</key>
-                <string>{{619,1444},{135,118}}</string>
+                <string>{{1499,1117},{135,118}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
                 <key>triangles</key>
                 <string>4 5 6 2 4 6 2 3 4 1 2 6 0 1 6</string>
                 <key>vertices</key>
                 <string>135 17 135 118 0 118 0 28 14 17 36 0 83 0</string>
                 <key>verticesUV</key>
-                <string>720 1579 619 1579 619 1444 709 1444 720 1458 737 1480 737 1527</string>
+                <string>1634 1134 1634 1235 1499 1235 1499 1145 1513 1134 1535 1117 1582 1117</string>
             </dict>
         </dict>
         <key>metadata</key>
@@ -1696,9 +1759,9 @@
             <key>realTextureFileName</key>
             <string>newface.png</string>
             <key>size</key>
-            <string>{1763,1588}</string>
+            <string>{1776,1586}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:98c321db73d9ec1bcd8a9912217b78ce:557afdedcec7cda1125e2c4a77263009:a1d9c5c662a5fa87b4bb651e3e925a77$</string>
+            <string>$TexturePacker:SmartUpdate:18394bbf37838dd894682950352ee540:dc10c541f4487c47fb9db3db749779e0:a1d9c5c662a5fa87b4bb651e3e925a77$</string>
             <key>textureFileName</key>
             <string>newface.png</string>
         </dict>
