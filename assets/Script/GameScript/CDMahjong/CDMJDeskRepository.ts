@@ -34,7 +34,7 @@ export type BarType = {
     barType: 0 | 1 | 2,
 }
 
-export type DeskEventName = "" | "gameBegin" | "gameEnd" | "show" | "touch" | "bar" | "hu" | "setFace" | "ting" | "xiayu" | "guafeng" | "zimo"
+export type DeskEventName = "" | "gameBegin" | "gameEnd" | "show" | "touch" | "bar" | "hu" | "qingHu" | "setFace" | "ting" | "xiayu" | "guafeng" | "zimo"
 
 export type RecordType = {
     /**牌局第几局 */
@@ -91,6 +91,8 @@ export type PartnerCard = {
             /**胡类型 -1，未胡， 0：点炮 1：自摸 2：抢杠 */
             huType: number,
             giveHuPlayerIndex: number,
+            /**报请胡 */
+            isBaoQingHu: boolean,
             /** 是否报胡 */
             isBaoHu: boolean
         }
@@ -122,6 +124,8 @@ export type GameData = {
             huType: number,
             /**引炮者 */
             giveHuPlayerIndex: number,
+            /**报请胡 */
+            isBaoQingHu: boolean,
             /** 是否报胡 */
             isBaoHu: boolean
         }
@@ -146,7 +150,7 @@ export type GameData = {
         /**桌面事件 */
         deskEventData: {
             /**桌面事件名称 */
-            eventName: '' | 'gameBegin' | 'gameEnd' | 'faceAction' | 'playerIn' | 'playerOut' | 'playerReady' | 'playerOffline' | 'playerOnline' | 'notice' | 'roundGameBegin' | 'roundGameEnd'
+            eventName: '' | 'gameBegin' | 'gameEnd' | 'faceAction' | 'playerIn' | 'playerOut' | 'playerReady' | 'playerOffline' | 'playerOnline' | 'notice' | 'roundGameBegin' | 'roundGameEnd' | 'otherQingHu'
             /**桌面事件相关信息 */
             correlationInfoData?: any
         },
@@ -155,7 +159,7 @@ export type GameData = {
             /**玩家（本方）游戏事件名称（杠、碰、胡等） */
             myGameEvent: {
                 /**游戏事件队列（杠和胡一般一起传） */
-                eventName: Array<'' | 'show' | 'touch' | 'bar' | 'hu' | 'tianHu' | 'ready' | 'setFace' | 'ting'>,
+                eventName: Array<'' | 'show' | 'touch' | 'bar' | 'hu' | 'tianHu' | 'ready' | 'setFace' | 'ting' | 'qingHu' | 'tingQingHu'>,
                 /**游戏事件相关信息 */
                 correlationInfoData?: any
             },
@@ -218,6 +222,7 @@ export class DeskRepository {
                 isHadHu: false,
                 huType: -1,
                 giveHuPlayerIndex: -1,
+                isBaoQingHu: false,
                 isBaoHu: false
             },
             cardsChoose: [],
@@ -246,6 +251,7 @@ export class DeskRepository {
                         isHadHu: false,
                         huType: -1,
                         giveHuPlayerIndex: -1,
+                        isBaoQingHu: false,
                         isBaoHu: false
                     }
                 },

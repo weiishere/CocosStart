@@ -937,15 +937,16 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.reSetOpreationBtu();
         this.timer2 && window.clearTimeout(this.timer2);
         const eventName = this.getData().gameData.eventData.gameEventData.myGameEvent.eventName;
-        //console.log('eventName', eventName);
+        //console.log('------------------------eventName', eventName);
         this.isAllowShowCard = true;
         eventName.forEach(item => {
             switch (item) {
                 case 'touch': this.opreationBtus.touch_btu.active = true; break;
                 case 'bar': this.opreationBtus.bar_btu.active = true; break;
                 case 'hu': this.opreationBtus.hu_btu.active = true; break;
-                //case 'qingHu': this.opreationBtus.qingHu_btu.active = true; break;
+                case 'qingHu': this.opreationBtus.qingHu_btu.active = true; break;
                 case 'ting': this.opreationBtus.baoHu_btu.active = true; break;
+                case 'tingQingHu': this.opreationBtus.baoQingHu_btu.active = true; break;
                 case 'show': this.opreationBtus.show_btu.active = true; this.opreationBtus.show_btu.opacity = 255; this.opreationBtus.show_btu.y = -150; break;
                 case 'ready': this.opreationBtus.ready_btu.active = true; break;
                 case 'setFace':

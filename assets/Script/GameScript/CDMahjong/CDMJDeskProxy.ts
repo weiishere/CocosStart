@@ -91,6 +91,7 @@ export class CDMJDeskProxy extends BaseProxy {
                             "isHadHu": false,
                             "huType": -1,
                             "giveHuPlayerIndex": -1,
+                            "isBaoQingHu": false,
                             "isBaoHu": false
                         }
                     }
@@ -166,7 +167,7 @@ export class CDMJDeskProxy extends BaseProxy {
                 _correlationInfoData['peng'] = op.peng;
             } else if (op.oprtType === XzddOperationType.HU) {
                 _eventName.push("hu");
-                //if (op.hu.isQingHu) this.getGameData().eventData.deskEventData.eventName = "otherQingHu";
+                if (op.hu.isQingHu) this.getGameData().eventData.deskEventData.eventName = "otherQingHu";
                 _correlationInfoData['hu'] = op.hu;
                 if (op.hu.huType === 1) {
                     this.getGameData().myCards.mayHuCards = [];//自摸的时候不显示
@@ -181,13 +182,13 @@ export class CDMJDeskProxy extends BaseProxy {
                     _eventName.push("hu");
                     _correlationInfoData['hu'] = Object.assign(op.ting, { isTianHu: true });
                 }
-                // else if (op.ting.isBaoQingHu) {
-                //     //报请胡
-                //     _eventName.push("tingQingHu");
-                //     _correlationInfoData['ting'] = Object.assign(op.ting, { isBaoQingHu: true });
-                //     this.getGameData().myCards.cardsChoose = [];//可能有多种报牌方式
-                //     op.ting.list && op.ting.list.forEach(item => this.getGameData().myCards.cardsChoose.push(item.putValue));//list为空表示没有出牌情况下的报牌
-                // } 
+                else if (op.ting.isBaoQingHu) {
+                    //报请胡
+                    _eventName.push("tingQingHu");
+                    _correlationInfoData['ting'] = Object.assign(op.ting, { isBaoQingHu: true });
+                    this.getGameData().myCards.cardsChoose = [];//可能有多种报牌方式
+                    op.ting.list && op.ting.list.forEach(item => this.getGameData().myCards.cardsChoose.push(item.putValue));//list为空表示没有出牌情况下的报牌
+                } 
                 else {
                     //一般报牌
                     _eventName.push("ting");
@@ -199,10 +200,10 @@ export class CDMJDeskProxy extends BaseProxy {
 
                 _eventName.push("setFace");
             }
-            // else if (op.oprtType === XzddOperationType.QING_HU) {
-            //     _eventName.push("qingHu");
-            //     _correlationInfoData['qingHu'] = op.hu;
-            // }
+            else if (op.oprtType === XzddOperationType.QING_HU) {
+                _eventName.push("qingHu");
+                _correlationInfoData['qingHu'] = op.hu;
+            }
         });
     }
     /**
@@ -749,6 +750,7 @@ export class CDMJDeskProxy extends BaseProxy {
                         isHadHu: huCard > 0,
                         huType: player.huValues.length !== 0 ? player.huValues[0].huType : -1,
                         giveHuPlayerIndex: player.huValues.length !== 0 ? player.huValues[0].playerAzimuth : -1,
+                        isBaoQingHu: isBaoQingHu,
                         isBaoHu: isBaoHu
                     },
                     switchOutCardDefault: [],
@@ -788,6 +790,7 @@ export class CDMJDeskProxy extends BaseProxy {
                             isHadHu: huCard > 0,
                             huType: player.huValues.length !== 0 ? player.huValues[0].huType : -1,
                             giveHuPlayerIndex: player.huValues.length !== 0 ? player.huValues[0].playerAzimuth : -1,
+                            isBaoQingHu: isBaoQingHu,
                             /** 是否报胡 */
                             isBaoHu: isBaoHu
                         }
