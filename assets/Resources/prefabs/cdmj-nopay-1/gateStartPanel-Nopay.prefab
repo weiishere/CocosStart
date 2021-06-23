@@ -3504,7 +3504,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 170,
+      "width": 102,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -3556,8 +3556,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "雀神俱乐部",
-    "_N$string": "雀神俱乐部",
+    "_string": "俱乐部",
+    "_N$string": "俱乐部",
     "_fontSize": 34,
     "_lineHeight": 40,
     "_enableWrapText": true,

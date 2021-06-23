@@ -23,6 +23,7 @@ import getLocation from "../Util/GetLocation";
 import CDMJPosition, { PlayerData } from "./Component/CDMJPosition";
 import { LocalCacheDataProxy } from "../Proxy/LocalCacheDataProxy";
 import { NewDymjProxy } from "./NewDymjProxy";
+import { DymjMusicManager } from "../Other/DymjMusicManager";
 
 
 
@@ -142,7 +143,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                     //const _correlationInfoData = this.getDeskProxy().repository.gameData.eventData.gameEventData.deskGameEvent.correlationInfoData;
                     // CDMJMusicManager.baoHu(1);
                     break;
-                //case 'qingHu': CDMJMusicManager.qingHu(1); break;
+                case 'qingHu': DymjMusicManager.qingHu(1); break;
                 case 'hu': CDMJMusicManager.dianPao("boy"); break;
             }
         }
@@ -254,7 +255,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                             }
                         } else if (node.name === 'qingHu') {
                             //请胡
-                            //this.sendNotification(CDMJCommandDefine.ShowCard, { cardNumber: (correlationInfoData.qingHu as DymjHu).mjValue, isQingHu: true })
+                            this.sendNotification(CDMJCommandDefine.ShowCard, { cardNumber: (correlationInfoData.qingHu).mjValue, isQingHu: true })
                             this.getCdmjProxy().operation(XzddOperationType.QING_HU, (correlationInfoData.qingHu as XzddHu).mjValue);
                         } else if (node.name === 'pass') {
                             //过
@@ -365,7 +366,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                 break;
             case CDMJCommandDefine.ShowMyEventPush://通知本方有事件
                 this.DeskPanelViewScript.updateMyOperationBtu(notification.getBody().suggestFaceSetType);
-                //notification.getBody().isZhuaQinghu && this.playEventSound('qingHu');//有可能是对方请胡，自己要抓请胡，需要语音提示
+                notification.getBody().isZhuaQinghu && this.playEventSound('qingHu');//有可能是对方请胡，自己要抓请胡，需要语音提示
                 break;
             case CDMJCommandDefine.ShowCard://本方出牌
                 const { cardNumber, isQingHu } = notification.getBody();

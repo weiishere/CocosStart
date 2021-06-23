@@ -508,6 +508,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     }
     /**更新自己主牌 */
     updateMyCurCardList(effectDone?: () => void): void {
+        console.log('isHadHu-----',helper.isHadHu(this, this.getSelfPlayer().userName))
         if (helper.isHadHu(this, this.getSelfPlayer().userName) && this.mainCardListPanel.children.length !== 0) return;
         this.mainCardList = [];
         const self = this;
