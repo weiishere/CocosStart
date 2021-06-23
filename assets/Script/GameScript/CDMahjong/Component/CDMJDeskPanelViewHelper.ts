@@ -190,6 +190,7 @@ const helper = {
             }
         }
     },
+    /**如果已经胡牌了返回true */
     isHadHu: (that: CDMJDeskPanelView, playerId: string): boolean => {
         const _gameIndex = that.getIndexByPlayerId(playerId).gameIndex;
         let playerHuCard: cc.Node;
