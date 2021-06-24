@@ -709,7 +709,7 @@ export default class DeskList extends ViewComponent {
         // if (name === 'All') {
         //     this.selectAnte = 0;
         // } else {
-        //     this.selectAnte = parseInt(name);
+        //     this.selectAnte = Number(name);
         // }
         // this.sortRoomInfo(this.roomInfoArray);
 
@@ -724,7 +724,7 @@ export default class DeskList extends ViewComponent {
         if (name === 'All') {
             this.selectAnte = 0;
         } else {
-            this.selectAnte = parseInt(name);
+            this.selectAnte = Number(name);
         }
         this.sortRoomInfo(this.roomInfoArray);
 

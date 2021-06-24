@@ -324,6 +324,10 @@ export class GatePanelMediator extends BaseMediator {
         if (!this.gameStartPanel) {
             return;
         }
+
+        if (this.gateStartPanelScript.notiveLabel != null && this.gateStartPanelScript.notiveLabel.isValid) {
+            this.gateStartPanelScript.notiveLabel.string = content;
+        }
         if (!this.scrollMsgNode) {
             this.scrollMsgNode = cc.instantiate(cc.loader.getRes(PrefabDefine.ScrollMsgNode, cc.Prefab)) as cc.Node;
             this.gateStartPanelScript.leessangNode.addChild(this.scrollMsgNode);

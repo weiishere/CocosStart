@@ -64,6 +64,8 @@ export default class GateStartPanel extends ViewComponent {
     goldNode: cc.Node = null;
     @property(cc.Node)
     leessangNode: cc.Node = null;
+    @property(cc.Label)
+    notiveLabel: cc.Label = null;
 
     private mahjongEntrance: cc.Node;
     private pdkEntrance: cc.Node;
