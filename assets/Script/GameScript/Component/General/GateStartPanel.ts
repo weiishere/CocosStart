@@ -235,7 +235,7 @@ export default class GateStartPanel extends ViewComponent {
     updateClubSimpleInfo() {
         let url = this.getConfigProxy().facadeUrl + "club/getCreateRoomInfo";
         let param = {
-            gameSubClass: GameNoDefine.XUE_ZHAN_DAO_DI,
+            gameSubClass: 0,
         }
         LoginAfterHttpUtil.send(url, (result) => {
             if (result.hd === 'success') {
