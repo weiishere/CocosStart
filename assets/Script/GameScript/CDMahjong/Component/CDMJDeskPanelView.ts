@@ -621,37 +621,39 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**更新杠碰牌 */
     updateBarAndTouchCard(): void {
         //先更新杠牌
-        myhelper.isAllowUpdatehelper<BarType>(this.barCard, this.getData().gameData.myCards.barCard, (param: BarType) => param.barCard, (item) => {
-            const barItem = new cc.Node('barItem');
-            const layoutCom = barItem.addComponent(cc.Layout);
-            layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
-            if (item.barType === 0 || item.barType === 1) {
-                this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 0));
-                this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-72, 0));
-                this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-144, 0) });//.setPosition(cc.v2(-144, 0));
-                this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 28) });//.setPosition(cc.v2(-72, 28));
-            } else if (item.barType === 2) {
-                //----------------------------------------暗杠,最上面一张需要盖住
-                this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 0));
-                this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-72, 0));
-                this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-144, 0) });//.setPosition(cc.v2(-144, 0));
-                this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 29), fallShowStatus: 'hide' });//.setPosition(cc.v2(-72, 28));
-            }
-            return barItem;
-        })
+        if (!(helper.isHadHu(this, this.getSelfPlayer().userName) && this.rightMainCardListPanel.children.length !== 0)) {
+            myhelper.isAllowUpdatehelper<BarType>(this.barCard, this.getData().gameData.myCards.barCard, (param: BarType) => param.barCard, (item) => {
+                const barItem = new cc.Node('barItem');
+                const layoutCom = barItem.addComponent(cc.Layout);
+                layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
+                if (item.barType === 0 || item.barType === 1) {
+                    this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 0));
+                    this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-72, 0));
+                    this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-144, 0) });//.setPosition(cc.v2(-144, 0));
+                    this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 28) });//.setPosition(cc.v2(-72, 28));
+                } else if (item.barType === 2) {
+                    //----------------------------------------暗杠,最上面一张需要盖住
+                    this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 0));
+                    this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-72, 0));
+                    this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-144, 0) });//.setPosition(cc.v2(-144, 0));
+                    this.addCardToNode(barItem, item.barCard, "mine", "fall", { position: cc.v2(-72, 29), fallShowStatus: 'hide' });//.setPosition(cc.v2(-72, 28));
+                }
+                return barItem;
+            })
+            //-----碰牌
+            myhelper.isAllowUpdatehelper<number>(this.touchCard, this.getData().gameData.myCards.touchCard, (param) => param, (cardNumber) => {
+                const touchItem = new cc.Node('touchItem');
+                const layoutCom = touchItem.addComponent(cc.Layout);
+                layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
+                this.addCardToNode(touchItem, cardNumber, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-36, 0));
+                this.addCardToNode(touchItem, cardNumber, "mine", "fall", { position: cc.v2(72, 0) });//.setPosition(cc.v2(36, 0));
+                this.addCardToNode(touchItem, cardNumber, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 28));
+                return touchItem;
+            }, () => {
+                this.updateMayHuCard();
+            })
+        }
 
-        //-----碰牌
-        myhelper.isAllowUpdatehelper<number>(this.touchCard, this.getData().gameData.myCards.touchCard, (param) => param, (cardNumber) => {
-            const touchItem = new cc.Node('touchItem');
-            const layoutCom = touchItem.addComponent(cc.Layout);
-            layoutCom.resizeMode = cc.Layout.ResizeMode.CONTAINER;
-            this.addCardToNode(touchItem, cardNumber, "mine", "fall", { position: cc.v2(-72, 0) });//.setPosition(cc.v2(-36, 0));
-            this.addCardToNode(touchItem, cardNumber, "mine", "fall", { position: cc.v2(72, 0) });//.setPosition(cc.v2(36, 0));
-            this.addCardToNode(touchItem, cardNumber, "mine", "fall", { position: cc.v2(0, 0) });//.setPosition(cc.v2(0, 28));
-            return touchItem;
-        }, () => {
-            this.updateMayHuCard();
-        })
         //更新其他玩家杠/碰
         this.getData().gameData.partnerCardsList.forEach(partner => {
             const _gameIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;

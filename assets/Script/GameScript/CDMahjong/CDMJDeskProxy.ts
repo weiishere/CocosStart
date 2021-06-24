@@ -229,7 +229,7 @@ export class CDMJDeskProxy extends BaseProxy {
                 this.getGameData().myCards.disableCard = xzddS2CPlayerGet.nextStep.datas || [];
                 const huList = (xzddS2CPlayerGet.nextStep.args && xzddS2CPlayerGet.nextStep.args.list) ? xzddS2CPlayerGet.nextStep.args.list : [];
                 this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
-                console.log(this.getGameData().myCards.mayHuCards);
+                //console.log(this.getGameData().myCards.mayHuCards);
 
                 if (this.getGameData().myCards.status.isBaoHu && !xzddS2CPlayerGet.nextStep.oprts) {
                     window.setTimeout(() => {
@@ -331,7 +331,7 @@ export class CDMJDeskProxy extends BaseProxy {
             this.getGameData().myCards.disableCard = xzddS2CDoNextOperation.nextStep.datas || [];
             const huList = (xzddS2CDoNextOperation.nextStep.args && xzddS2CDoNextOperation.nextStep.args.list) ? xzddS2CDoNextOperation.nextStep.args.list : [];
             this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
-            console.log(this.getGameData().myCards.mayHuCards);
+            //console.log(this.getGameData().myCards.mayHuCards);
             //this.doEventData(dymjS2CDoNextOperation.nextStep.oprts);
         }
         this.sendNotification(CDMJCommandDefine.ShowCardNotificationPush);
