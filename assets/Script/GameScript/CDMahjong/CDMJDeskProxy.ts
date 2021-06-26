@@ -269,7 +269,7 @@ export class CDMJDeskProxy extends BaseProxy {
                 this.getGameData().eventData.gameEventData.myGameEvent.eventName = [];
                 this.doEventData(xzddS2CShowOperation.oprts);
             }
-            const isZhuaQinghu = false;//this.getGameData().eventData.deskEventData.eventName === 'otherQingHu' ? true : false;
+            const isZhuaQinghu = this.getGameData().eventData.deskEventData.eventName === 'otherQingHu' ? true : false;
             this.getGameData().eventData.deskEventData.eventName = '';
             this.sendNotification(CDMJCommandDefine.ShowMyEventPush, { eventName: this.getGameData().eventData.gameEventData.myGameEvent.eventName, isZhuaQinghu });
         }
