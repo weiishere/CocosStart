@@ -106,6 +106,7 @@ export default class MyPlayer extends ViewComponent {
                             myPlayerItemNode.getChildByName("regTime").getComponent(cc.Label).string = element.createDate;
                             myPlayerItemNode.getChildByName("ww_sq").active = (userOrderInfo.accountType === 666 || userOrderInfo.accountType === 888);//element.accountType === 666;//是否显示分配比例按钮
                             (myPlayerItemNode.getComponent('MyPlayerItem') as MyPlayerItem).init(element);
+                            myPlayerItemNode.getChildByName("toggle").getComponent(cc.Toggle).isChecked = (element.status === 0);
                             SpriteLoadUtil.loadSprite(myPlayerItemNode.getChildByName("head").getComponent(cc.Sprite), element.headUrl);
                             this.scrollViewContent.addChild(myPlayerItemNode);
                         });
