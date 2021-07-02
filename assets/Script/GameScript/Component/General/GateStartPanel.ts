@@ -175,21 +175,22 @@ export default class GateStartPanel extends ViewComponent {
             //Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '开发中，敬请期待...', toastOverlay: true }, '');
         });
 
-        // this.msgBtn.on(cc.Node.EventType.TOUCH_END, () => {
-        //     Facade.Instance.sendNotification(CommandDefine.OpenGiveAwayPanel, {}, '');
-        // });
+        this.msgBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            //Facade.Instance.sendNotification(CommandDefine.OpenGiveAwayPanel, {}, '');
+            Facade.Instance.sendNotification(CommandDefine.OpenMyPlayer, null, '');
+        });
 
-        // this.shareBtn.on(cc.Node.EventType.TOUCH_END, () => {
-        //     Facade.Instance.sendNotification(CommandDefine.OpenShare, null, '');
-        // });
+        this.shareBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenShare, null, '');
+        });
 
         this.logBtn.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenRecordPanel, null, '');
         });
 
-        // this.bonusBtn.on(cc.Node.EventType.TOUCH_END, () => {
-        //     Facade.Instance.sendNotification(CommandDefine.OpenBonusIndex, null, '');
-        // });
+        this.bonusBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenBonusIndex, null, '');
+        });
 
         // this.serviceBtn.on(cc.Node.EventType.TOUCH_END, () => {
         //     cc.sys.openURL(this.getConfigProxy().serviceUrl);

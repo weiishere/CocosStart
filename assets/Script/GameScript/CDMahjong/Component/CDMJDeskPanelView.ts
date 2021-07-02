@@ -95,7 +95,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         zimoWarn: null,
         gameBeginWarn: null
     }
-    private opreationBtus: { ready_btu: cc.Node, show_btu: cc.Node, bar_btu: cc.Node, touch_btu: cc.Node, hu_btu: cc.Node, selfHu_btu: cc.Node, pass_btu: cc.Node, baoQingHu_btu: cc.Node, qingHu_btu: cc.Node, baoHu_btu: cc.Node, setFaceBtus: cc.Node } = {
+    private opreationBtus: { ready_btu: cc.Node, show_btu: cc.Node, bar_btu: cc.Node, touch_btu: cc.Node, hu_btu: cc.Node, selfHu_btu: cc.Node, pass_btu: cc.Node, baoQingHu_btu: cc.Node, qingHu_btu: cc.Node, baoHu_btu: cc.Node, setFaceBtus: cc.Node, zhuaQingHu_btu: cc.Node } = {
         ready_btu: null,
         show_btu: null,
         bar_btu: null,
@@ -106,7 +106,8 @@ export default class CDMJDeskPanelView extends ViewComponent {
         baoQingHu_btu: null,
         qingHu_btu: null,
         baoHu_btu: null,
-        setFaceBtus: null
+        setFaceBtus: null,
+        zhuaQingHu_btu: null
     }
     private deskAiming: { left: cc.Node, top: cc.Node, bottom: cc.Node, right: cc.Node } = {
         left: null,
@@ -140,6 +141,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         return this.getData().deskData.playerList.find(player => player.gameIndex === playerIndex);
     }
     getData(): DeskRepository {
+
         return (Facade.Instance.retrieveProxy(CDMJProxyDefine.CDMJDesk) as CDMJDeskProxy).repository;
     }
     isMe(index?, playerId?): boolean {
@@ -283,6 +285,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         this.opreationBtus.bar_btu = this.opreationArea.getChildByName("bar");
         this.opreationBtus.touch_btu = this.opreationArea.getChildByName("touch");
         this.opreationBtus.hu_btu = this.opreationArea.getChildByName("hu");
+        this.opreationBtus.zhuaQingHu_btu = this.opreationArea.getChildByName("zhuaQingHu");
         this.opreationBtus.selfHu_btu = this.opreationArea.getChildByName("selfHu");
         this.opreationBtus.pass_btu = this.opreationArea.getChildByName("pass");
         this.opreationBtus.qingHu_btu = this.opreationArea.getChildByName("qingHu");
@@ -508,11 +511,12 @@ export default class CDMJDeskPanelView extends ViewComponent {
     }
     /**更新自己主牌 */
     updateMyCurCardList(effectDone?: () => void): void {
-        console.log('isHadHu-----',helper.isHadHu(this, this.getSelfPlayer().userName))
+        console.log('isHadHu-----', (helper.isHadHu(this, this.getSelfPlayer().userName) && this.mainCardListPanel.children.length !== 0))
         if (helper.isHadHu(this, this.getSelfPlayer().userName) && this.mainCardListPanel.children.length !== 0) return;
         this.mainCardList = [];
         const self = this;
         this.mainCardListPanel.destroyAllChildren();
+        console.log('destroyAllChildren');
         this.getData().gameData.myCards.curCardList.map(item => {
             const card = this.addCardToNode(this.mainCardListPanel, item, "mine", 'setUp', {
                 touchEndCallback: function () {
@@ -964,6 +968,8 @@ export default class CDMJDeskPanelView extends ViewComponent {
                     const action = cc.repeatForever(cc.sequence(cc.scaleTo(0.2, 1.05), cc.scaleTo(0.2, 0.95), cc.callFunc(() => { })));
                     setFaceNodeBut.runAction(action);
                     break;
+                case 'zhuaQingHu':
+                    this.opreationBtus.zhuaQingHu_btu.active = true; break;
                 //case 'tingQingHu': this.opreationBtus.baoQingHu_btu.active = true; break;
             }
         });
@@ -1024,7 +1030,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
             }
             //po = isMe ? -250 : 250;
         }
-        effectNode.active = true;
+        effectNode && (effectNode.active = true);
         effectNode.opacity = 100;
         effectNode.setScale(0.3);
         effectNode.position = cc.v3(pox, po);
@@ -1153,15 +1159,17 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**更新outcard */
     updateOutCard(): void {
         //先更新自己
-        this.outCardList.destroyAllChildren();
-        this.getData().gameData.myCards.outCardList.map((item, index) => {
-            const card = this.addCardToNode(this.outCardList, item, "mine", "fall")
-            card.setPosition(cc.v2(0, 0));
-            card.setScale(0.6, 0.6);
-            // if (index === 0) {
-            //     (card.getComponent("CardItemView") as CardItemView).setArrows(true);
-            // }
-        });
+        if (!helper.isHadHu(this, this.getSelfPlayer().userName) && this.outCardList.children.length !== 0) {
+            this.outCardList.destroyAllChildren();
+            this.getData().gameData.myCards.outCardList.map((item, index) => {
+                const card = this.addCardToNode(this.outCardList, item, "mine", "fall")
+                card.setPosition(cc.v2(0, 0));
+                card.setScale(0.6, 0.6);
+                // if (index === 0) {
+                //     (card.getComponent("CardItemView") as CardItemView).setArrows(true);
+                // }
+            });
+        }
         this.getData().gameData.partnerCardsList.forEach(partner => {
             const _gameIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;
             if (this.positionNode[_gameIndex].name === 'p-top') {
