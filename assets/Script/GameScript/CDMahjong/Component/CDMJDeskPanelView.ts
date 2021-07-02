@@ -1153,15 +1153,17 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**更新outcard */
     updateOutCard(): void {
         //先更新自己
-        this.outCardList.destroyAllChildren();
-        this.getData().gameData.myCards.outCardList.map((item, index) => {
-            const card = this.addCardToNode(this.outCardList, item, "mine", "fall")
-            card.setPosition(cc.v2(0, 0));
-            card.setScale(0.6, 0.6);
-            // if (index === 0) {
-            //     (card.getComponent("CardItemView") as CardItemView).setArrows(true);
-            // }
-        });
+        if (!helper.isHadHu(this, this.getSelfPlayer().userName) && this.outCardList.children.length !== 0) {
+            this.outCardList.destroyAllChildren();
+            this.getData().gameData.myCards.outCardList.map((item, index) => {
+                const card = this.addCardToNode(this.outCardList, item, "mine", "fall")
+                card.setPosition(cc.v2(0, 0));
+                card.setScale(0.6, 0.6);
+                // if (index === 0) {
+                //     (card.getComponent("CardItemView") as CardItemView).setArrows(true);
+                // }
+            });
+        }
         this.getData().gameData.partnerCardsList.forEach(partner => {
             const _gameIndex = this.getIndexByPlayerId(partner.playerId).gameIndex;
             if (this.positionNode[_gameIndex].name === 'p-top') {
