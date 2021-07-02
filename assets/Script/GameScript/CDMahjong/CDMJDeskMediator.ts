@@ -237,6 +237,10 @@ export default class CDMJDeskMediator extends BaseMediator {
                                 this.getCdmjProxy().operation(XzddOperationType.HU, (correlationInfoData.hu as XzddHu).mjValue);
                             }
 
+                        } else if (node.name === 'zhuaQingHu') {
+                            //抓请胡
+                            this.getCdmjProxy().operation(XzddOperationType.HU, (correlationInfoData.hu as XzddHu).mjValue);
+
                         } else if (node.name === 'baoHu') {
                             //一般报胡
                             if (this.getDeskProxy().repository.gameData.myCards.cardsChoose.length === 0) {

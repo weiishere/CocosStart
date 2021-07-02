@@ -153,6 +153,8 @@ export class XzddProxy extends ModuleProxy {
             xzddGameReconnData.lastPutPlayerAzimuth -= 1;
             xzddGameReconnData.waitingPlayerAzimuth -= 1;
             this.getDeskProxy().gameReconnect(xzddGameReconnData);
+            
+            console.log(this.getDeskProxy().repository);
         } else if (msgType === XzddProtocol.S_PUSH_EXIT_ROOM) {   //推送玩家退出游戏消息
         } else if (msgType === XzddProtocol.S_PUSH_DISSOLVE_RESULT) {   //房间解散消息
             let xzddS2CDissolveResult: XzddS2CDissolveResult = <XzddS2CDissolveResult>content;

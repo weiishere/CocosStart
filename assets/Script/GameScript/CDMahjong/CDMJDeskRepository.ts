@@ -159,7 +159,7 @@ export type GameData = {
             /**玩家（本方）游戏事件名称（杠、碰、胡等） */
             myGameEvent: {
                 /**游戏事件队列（杠和胡一般一起传） */
-                eventName: Array<'' | 'show' | 'touch' | 'bar' | 'hu' | 'tianHu' | 'ready' | 'setFace' | 'ting' | 'qingHu' | 'tingQingHu'>,
+                eventName: Array<'' | 'show' | 'touch' | 'bar' | 'hu' | 'tianHu' | 'ready' | 'setFace' | 'ting' | 'qingHu' | 'tingQingHu' | 'zhuaQingHu'>,
                 /**游戏事件相关信息 */
                 correlationInfoData?: any
             },

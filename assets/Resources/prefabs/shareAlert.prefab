@@ -178,7 +178,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "5abc1f26-559b-45f6-be80-1bc872c58723"
+      "__uuid__": "3107d8fe-64a9-4607-9ae7-abb042233259"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -269,8 +269,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 381,
-      "height": 585
+      "width": 327,
+      "height": 381
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -281,8 +281,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        349.644,
-        17.930000000000007,
+        449,
+        -141.332,
         0,
         0,
         0,
@@ -349,8 +349,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        5.282,
-        -39.525,
+        2.012,
+        24.248,
         0,
         0,
         0,
@@ -508,9 +508,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 91,
-      "g": 88,
-      "b": 88,
+      "r": 235,
+      "g": 246,
+      "b": 138,
       "a": 255
     },
     "_contentSize": {
@@ -528,7 +528,7 @@
       "ctor": "Float64Array",
       "array": [
         5.868,
-        -208.695,
+        -148.192,
         0,
         0,
         0,
@@ -612,10 +612,10 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "65274103-eb91-431c-b728-c04cbf97978f"
+      "__uuid__": "21ced281-f515-4d1d-9dcb-5fe6672a4a01"
     },
     "_type": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 0,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -625,7 +625,9 @@
     "_fillStart": 0,
     "_fillRange": 0,
     "_isTrimmedMode": true,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "a229616e-6a0e-4798-876a-23fc4a72b8d3"
+    },
     "_id": ""
   },
   {
@@ -640,8 +642,8 @@
     "_target": null,
     "_alignFlags": 33,
     "_left": 0,
-    "_right": 126.856,
-    "_top": 64.57,
+    "_right": 54.5,
+    "_top": 325.832,
     "_bottom": 0,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,

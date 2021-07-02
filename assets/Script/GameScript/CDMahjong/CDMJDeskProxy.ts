@@ -157,7 +157,6 @@ export class CDMJDeskProxy extends BaseProxy {
         oprts.forEach(op => {
             const _eventName = this.getGameData().eventData.gameEventData.myGameEvent.eventName;
             const _correlationInfoData = this.getGameData().eventData.gameEventData.myGameEvent.correlationInfoData;
-
             if (op.oprtType === XzddOperationType.GANG) {
                 _eventName.push("bar");
                 this.getGameData().myCards.cardsChoose = op.gang.mjValues;
@@ -166,8 +165,12 @@ export class CDMJDeskProxy extends BaseProxy {
                 _eventName.push("touch");
                 _correlationInfoData['peng'] = op.peng;
             } else if (op.oprtType === XzddOperationType.HU) {
-                _eventName.push("hu");
-                if (op.hu.isQingHu) this.getGameData().eventData.deskEventData.eventName = "otherQingHu";
+                if (op.hu.isWuDui) {
+                    this.getGameData().eventData.deskEventData.eventName = "otherQingHu"
+                    _eventName.push("zhuaQingHu");
+                } else {
+                    _eventName.push("hu");
+                }
                 _correlationInfoData['hu'] = op.hu;
                 if (op.hu.huType === 1) {
                     this.getGameData().myCards.mayHuCards = [];//自摸的时候不显示
@@ -188,7 +191,7 @@ export class CDMJDeskProxy extends BaseProxy {
                     _correlationInfoData['ting'] = Object.assign(op.ting, { isBaoQingHu: true });
                     this.getGameData().myCards.cardsChoose = [];//可能有多种报牌方式
                     op.ting.list && op.ting.list.forEach(item => this.getGameData().myCards.cardsChoose.push(item.putValue));//list为空表示没有出牌情况下的报牌
-                } 
+                }
                 else {
                     //一般报牌
                     _eventName.push("ting");
@@ -757,8 +760,9 @@ export class CDMJDeskProxy extends BaseProxy {
                     //switchOutCard: [],
                     switchInCard: []
                 }
-
-
+                // console.log(this.getGameData().myCards);
+                // console.log(this.repository.gameData.myCards);
+                // console.log((this.facade.retrieveProxy(CDMJProxyDefine.CDMJDesk) as CDMJDeskProxy).repository);
             } else {
                 let partnerCard: PartnerCard = {
                     /**对家ID */
