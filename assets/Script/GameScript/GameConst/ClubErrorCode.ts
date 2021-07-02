@@ -27,4 +27,6 @@ export enum ClubErrorCode {
     SYSTEM_MAINTAIN = 1012,
     /** 没有可用位置了 */
     NOT_SEAT = 1013,
+	/** 禁止玩游戏 */
+	FORBID_GAME = 1014,
 }

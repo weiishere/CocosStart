@@ -81,6 +81,8 @@ export class ClubProxy extends ModuleProxy {
             this.getGateProxy().toast("房间满了，请换一张桌子吧！");
         } else if (errorCode === ClubErrorCode.CLUB_CLOSING) {
             this.getGateProxy().toast("暂时不能进入房间！");
+        } else if (errorCode === ClubErrorCode.FORBID_GAME) {
+            this.getGateProxy().toast("已被禁用，请联系上级！");
         }
 
         return true;
