@@ -1024,6 +1024,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
             }
             //po = isMe ? -250 : 250;
         }
+        if (!effectNode) return;
         effectNode.active = true;
         effectNode.opacity = 100;
         effectNode.setScale(0.3);
@@ -1448,7 +1449,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
             jobLayout.getChildByName('mainCardListPanel').destroyAllChildren();
             jobLayout.getChildByName('mainCardListPanel').width = jobLayout.getChildByName('mainCardListPanel').height = 0;
 
-            jobLayout.getChildByName('touchCard').destroyAllChildren(); 
+            jobLayout.getChildByName('touchCard').destroyAllChildren();
             jobLayout.getChildByName('touchCard').width = jobLayout.getChildByName('touchCard').height = 0;
 
             jobLayout.getChildByName('barCard').destroyAllChildren();
