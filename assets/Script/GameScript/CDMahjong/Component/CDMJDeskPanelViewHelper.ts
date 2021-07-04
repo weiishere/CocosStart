@@ -135,7 +135,7 @@ const helper = {
         //对家是否听牌
         const status = self.getData().gameData.partnerCardsList.find(item => item.playerId === partner.playerId).partnerCards.status;
         if (status.isBaoHu) {
-            tingNode.active = false;
+            tingNode.active = true;
         }
         huNode.active = status.isHadHu;
         if (status.isHadHu) {

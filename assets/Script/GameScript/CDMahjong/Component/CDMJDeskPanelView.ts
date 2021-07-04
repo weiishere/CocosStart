@@ -1030,7 +1030,8 @@ export default class CDMJDeskPanelView extends ViewComponent {
             }
             //po = isMe ? -250 : 250;
         }
-        effectNode && (effectNode.active = true);
+        if (!effectNode) return;
+        (effectNode.active = true);
         effectNode.opacity = 100;
         effectNode.setScale(0.3);
         effectNode.position = cc.v3(pox, po);

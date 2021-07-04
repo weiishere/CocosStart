@@ -34,6 +34,7 @@ import { XzddOpHuan3ZhangMahjongsRsp } from '../GameData/Xzdd/s2c/XzddOpHuan3Zha
 import { XzddOpHuan3ZhangMahjongsBroadCast } from '../GameData/Xzdd/s2c/XzddOpHuan3ZhangMahjongsBroadCast';
 import { XzddS2CCheckHu } from '../GameData/Xzdd/s2c/XzddS2CCheckHu';
 import { CommandDefine } from '../MahjongConst/CommandDefine';
+import { NewDymjProxy } from './NewDymjProxy';
 
 export class CDMJDeskProxy extends BaseProxy {
     public repository: DeskRepository;
@@ -233,11 +234,10 @@ export class CDMJDeskProxy extends BaseProxy {
                 this.getGameData().myCards.disableCard = xzddS2CPlayerGet.nextStep.datas || [];
                 const huList = (xzddS2CPlayerGet.nextStep.args && xzddS2CPlayerGet.nextStep.args.list) ? xzddS2CPlayerGet.nextStep.args.list : [];
                 this.getGameData().myCards.mayHuCards = huList.map(item => ({ putCard: item.putValue, huList: item.huList.map(hu => ({ huCard: hu.huValue, fanShu: hu.fanNum, remainNum: hu.remainNum })) }));
-                console.log(this.getGameData().myCards.mayHuCards);
-
                 if (this.getGameData().myCards.status.isBaoHu && !xzddS2CPlayerGet.nextStep.oprts) {
                     window.setTimeout(() => {
-                        (<XzddProxy>this.facade.retrieveProxy(ProxyDefine.Xzdd)).putMahkjong(xzddS2CPlayerGet.getMjValue);
+                        this.sendNotification(CDMJCommandDefine.ShowCard, { cardNumber: xzddS2CPlayerGet.getMjValue, isQingHu: false });
+                        //(<XzddProxy>this.facade.retrieveProxy(ProxyDefine.Xzdd)).putMahkjong(xzddS2CPlayerGet.getMjValue);
                     }, 800);
                 }
                 // else if (this.getGameData().myCards.status.isBaoQingHu && !xzddS2CPlayerGet.nextStep.oprts) {
@@ -874,6 +874,7 @@ export class CDMJDeskProxy extends BaseProxy {
     playerInteractMsg(msgContent: string) {
         this.sendNotification(CDMJCommandDefine.ShowDeskChatMsg, { msgContent })
     }
+
     getGameData(): GameData {
         return this.repository.gameData;
     }

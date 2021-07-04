@@ -1,6 +1,6 @@
 {
   "ver": "2.3.5",
-  "uuid": "d033aaa5-869f-4306-98e2-2322eb9766f2",
+  "uuid": "9245f82d-a02e-413d-9e3d-ef452af002d7",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -11,10 +11,10 @@
   "height": 750,
   "platformSettings": {},
   "subMetas": {
-    "deskBg2": {
+    "deskBg_b": {
       "ver": "1.0.4",
-      "uuid": "8ec3ddc4-7220-4713-a2ee-e28333ec91e2",
-      "rawTextureUuid": "d033aaa5-869f-4306-98e2-2322eb9766f2",
+      "uuid": "013fa744-47b8-4d3a-8e17-b3a4374f0a21",
+      "rawTextureUuid": "9245f82d-a02e-413d-9e3d-ef452af002d7",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,
