@@ -792,10 +792,10 @@
       "height": 80,
       "rawWidth": 198,
       "rawHeight": 80,
-      "borderTop": 0,
-      "borderBottom": 0,
-      "borderLeft": 0,
-      "borderRight": 0,
+      "borderTop": 11,
+      "borderBottom": 15,
+      "borderLeft": 17,
+      "borderRight": 17,
       "vertices": {
         "triangles": [
           0,
