@@ -13,7 +13,7 @@ import { ConfigProxy } from "../../Proxy/ConfigProxy";
 import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
 import { HttpUtil } from "../../Util/HttpUtil";
 import AllotSetting from "./AllotSetting";
-
+import PlayerSetting from "./PlayerSetting";
 
 const { ccclass, property } = cc._decorator;
 
@@ -22,6 +22,9 @@ export default class MyPlayerItem extends cc.Component {
 
     @property(cc.Node)
     AllotBtu: cc.Node = null;
+
+    @property(cc.Node)
+    SetBtu: cc.Node = null;
 
     @property(cc.Toggle)
     AllotToggle: cc.Toggle = null;
@@ -45,6 +48,13 @@ export default class MyPlayerItem extends cc.Component {
             cc.loader.loadRes(PrefabDefine.AllotSettingAlert, cc.Prefab, (err, item) => {
                 const node: cc.Node = cc.instantiate(item);
                 (node.getComponent("AllotSetting") as AllotSetting).init(this.data);
+                cc.find("Canvas").addChild(node);
+            });
+        }, this);
+        this.SetBtu.on(cc.Node.EventType.TOUCH_END, () => {
+            cc.loader.loadRes(PrefabDefine.PlayerSettingAlert, cc.Prefab, (err, item) => {
+                const node: cc.Node = cc.instantiate(item);
+                (node.getComponent("PlayerSetting") as PlayerSetting).init(this.data);
                 cc.find("Canvas").addChild(node);
             });
         }, this);

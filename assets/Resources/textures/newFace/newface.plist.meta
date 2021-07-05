@@ -702,10 +702,10 @@
       "height": 54,
       "rawWidth": 154,
       "rawHeight": 54,
-      "borderTop": 0,
-      "borderBottom": 0,
-      "borderLeft": 0,
-      "borderRight": 0,
+      "borderTop": 12,
+      "borderBottom": 27,
+      "borderLeft": 28.5,
+      "borderRight": 30.5,
       "vertices": {
         "triangles": [
           1,
@@ -765,10 +765,10 @@
       "height": 54,
       "rawWidth": 154,
       "rawHeight": 54,
-      "borderTop": 0,
-      "borderBottom": 0,
-      "borderLeft": 0,
-      "borderRight": 0,
+      "borderTop": 14,
+      "borderBottom": 29,
+      "borderLeft": 32,
+      "borderRight": 26,
       "vertices": {
         "triangles": [
           1,

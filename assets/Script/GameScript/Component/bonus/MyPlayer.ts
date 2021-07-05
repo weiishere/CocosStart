@@ -31,6 +31,12 @@ export default class MyPlayer extends ViewComponent {
     @property(cc.Node)
     scrollViewContent: cc.Node = null;
 
+    @property(cc.EditBox)
+    searchEditbox: cc.EditBox = null;
+
+    @property(cc.Node)
+    searchBtu: cc.Node = null;
+
     private _closeCallBack: () => void;
 
     // LIFE-CYCLE CALLBACKS:
@@ -74,6 +80,9 @@ export default class MyPlayer extends ViewComponent {
             this.node.destroy();
             this._closeCallBack && this._closeCallBack();
         }, this);
+        this.searchBtu.on(cc.Node.EventType.TOUCH_END, () => {
+            this.httpRequest(1);
+        }, this);
     }
     getConfigProxy() {
         return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
@@ -87,7 +96,7 @@ export default class MyPlayer extends ViewComponent {
         self.loading.active = true;
         this.scrollViewContent.removeAllChildren();
         getUserOrderInfo(localCacheDataProxy.getLoginData().userName, ({ data }) => {
-            HttpUtil.send(bonusUrl + `/api/v1/gamePlayer?userName=${localCacheDataProxy.getLoginData().userName}&pageSize=${this.pageSize}&currentPage=${currentPage}`, res => {
+            HttpUtil.send(bonusUrl + `/api/v1/gamePlayer?key=${this.searchEditbox.string}&userName=${localCacheDataProxy.getLoginData().userName}&pageSize=${this.pageSize}&currentPage=${currentPage}`, res => {
                 self.loading.active = false;
                 if (res.code === 200) {
                     // const p = parseInt((res.data.totalNum / this.pageSize) + '');

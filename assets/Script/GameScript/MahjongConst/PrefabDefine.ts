@@ -38,6 +38,7 @@ export enum PrefabDefine {
     MyEnterPrise = "prefabs/bonus/myEnterPrise",
     MyEnterPriseItem = "prefabs/bonus/enterPriseItem",
     AllotSettingAlert = "prefabs/bonus/allotSettingAlert",
+    PlayerSettingAlert = "prefabs/bonus/playerSettingAlert",
     ChatBox = "prefabs/chatBox",
     ReloadPanel = "prefabs/markReloadBg",
     ScoreChooseBtu = "prefabs/scoreChooseBtu",
