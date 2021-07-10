@@ -143,6 +143,13 @@ export default class XzddDesk extends BaseDesk {
         });
     }
 
+    /**
+     * 继承父类，点击桌子，弹出详情窗口
+     */
+    deskClickEvent() {
+        Facade.Instance.sendNotification(CommandDefine.OpenXzddRuleDetail, { content: this.ruleStr, roomNo: this.roomNo }, null);
+    }
+
     initData(s2CClubRoomInfoBase: S2CClubRoomInfoBase) {
         this.head1.node.active = false;
         this.head2.node.active = false;

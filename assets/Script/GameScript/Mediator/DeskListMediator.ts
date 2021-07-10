@@ -136,7 +136,7 @@ export class DeskListMediator extends BaseMediator {
         let roomInfo = this.getViewScript().getRoomInfo(data.roomNo);
 
         let script = <XzddRuleDetail>ruleDetail.getComponent("XzddRuleDetail");
-        script.loadData(data.content, roomInfo.userInfos);
+        script.loadData(data.content, roomInfo.userInfos, data.roomNo);
     }
 
     public handleNotification(notification: INotification): void {

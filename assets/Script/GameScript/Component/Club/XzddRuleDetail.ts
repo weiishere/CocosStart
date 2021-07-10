@@ -1,11 +1,13 @@
+import Facade from "../../../Framework/care/Facade";
+import ViewComponent from "../../Base/ViewComponent";
+import { DeskListEventDefine } from "../../GameConst/Event/DeskListEventDefine";
 import { S2CClubRoomPlayerInfo } from "../../GameData/Club/s2c/S2CClubRoomPlayerInfo";
 import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
 
 const { ccclass, property } = cc._decorator;
 
 @ccclass
-export default class XzddRuleDetail extends cc.Component {
-
+export default class XzddRuleDetail extends ViewComponent {
     @property(cc.Label)
     content: cc.Label = null;
     @property(cc.Node)
@@ -15,8 +17,12 @@ export default class XzddRuleDetail extends cc.Component {
 
     graphics: cc.Graphics;
 
-    onLoad() {
+    roomNo: number = 0;
+
+    protected bindUI(): void {
         this.playerList.removeAllChildren();
+    }
+    protected bindEvent(): void {
     }
 
     start() {
@@ -26,8 +32,14 @@ export default class XzddRuleDetail extends cc.Component {
         this.node.destroy();
     }
 
-    loadData(content: string, userInfos: S2CClubRoomPlayerInfo[]) {
+    enterRoom() {
+        this.close();
+        this.dispatchCustomEvent(DeskListEventDefine.JoinDeskEvent, this.roomNo);
+    }
+
+    loadData(content: string, userInfos: S2CClubRoomPlayerInfo[], roomNo?: number) {
         this.content.string = content;
+        this.roomNo = roomNo;
         if (userInfos === null || userInfos.length === 0) {
             return;
         }
