@@ -124,13 +124,17 @@ export class WebSockerProxy extends Proxy {
         // this.__webSocket.onerror = this.onWebSocketError.bind(this);
 
         // 如果websocket连接建立了把之前的连接close掉，重新建立连接
-        if (this.__webSocket && WebSocket.OPEN == this.__webSocket.readyState) {
+        if (this.__webSocket) {
+            this.__webSocket.onopen = () => { };
+            this.__webSocket.onmessage = () => { };
+            this.__webSocket.onclose = () => { };
+            this.__webSocket.onerror = () => { };
+            
             try {
                 this.__webSocket.close();
             } catch (error) {
                 cc.log('WebSocket Released', error);
             }
-
             this.__webSocket = null;
         }
 
