@@ -28,6 +28,7 @@ export enum CommandDefine {
     ChangeUser = "ChangeUser",
     OpenMyCenter = "OpenMyCenter",
     OpenShare = "OpenShare",
+    OpenQYQPanel = "OpenQYQPanel",
     OpenGiveAwayPanel = "OpenGiveAwayPanel",
     OpenLoadingPanel = "OpenLoadingPanel",
     CloseLoadingPanel = "CloseLoadingPanel",

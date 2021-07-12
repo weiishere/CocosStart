@@ -105,7 +105,7 @@ export default class MyPlayer extends ViewComponent {
                     //const userOrderInfo = JSON.parse(window.localStorage['userOrderInfo']);
                     const userOrderInfo = data;//JSON.parse(cc.sys.localStorage.getItem('userOrderInfo'));
                     cc.loader.loadRes(PrefabDefine.MyPlayerItem, cc.Prefab, (err, myPlayerItem) => {
-                        this.node.getChildByName("bg3_hl").getChildByName("playerNum").getComponent(cc.Label).string = "您目前的玩家数量：" + res.data.totalNum;
+                        this.node.getChildByName("bg3_hl").getChildByName("playerNum").getComponent(cc.Label).string = "玩家数量：" + res.data.totalNum;
                         res.data.list.forEach(element => {
                             const myPlayerItemNode: cc.Node = cc.instantiate(myPlayerItem);
                             myPlayerItemNode.getChildByName("name").getComponent(cc.Label).string = element.nickName;

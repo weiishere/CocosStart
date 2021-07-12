@@ -46,4 +46,5 @@ export enum PrefabDefine {
     BindSuperior = "prefabs/bindSuperior",
     SetExchangePwd = "prefabs/setExchangePwd",
     CDMJPosition = "prefabs/CDMahjong/CDMJPosition",
+    QYQPanel = "prefabs/cdmj-nopay-1/qyqPanel",
 }

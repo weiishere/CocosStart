@@ -134,16 +134,49 @@ export default class PlayerSetting extends ViewComponent {
     start() {
         this.node.getChildByName("label_nackname").getComponent(cc.Label).string += this.data.nickName;
         this.node.getChildByName("label_pid").getComponent(cc.Label).string += this.data.userName;
-        this.node.getChildByName("label_phone").getComponent(cc.Label).string += this.data.phoneNo;
+        this.node.getChildByName("label_phone").getComponent(cc.Label).string += this.data.createDate.split(' ')[0];
         this.node.getChildByName("label_had_pay").getComponent(cc.Label).string += this.data.alreadyPay;
         this.node.getChildByName("label_total_pay").getComponent(cc.Label).string += this.data.totalPay;
-        this.node.getChildByName("label_ balance").getComponent(cc.Label).string += this.data.balance;
+        this.node.getChildByName("label_balance").getComponent(cc.Label).string += this.data.balance;
 
         this.CloseBtu.on(cc.Node.EventType.TOUCH_END, () => {
             this.node.destroy();
         }, true);
     }
 
+    glodGive(e, eventData) {
+        if (this.loading.active === true) return;
+        this.loading.active = true;
+        let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
+        const param = {
+            playerName: this.data['userName'],
+            amount: this.TextSet.string,
+            type: eventData === 'add' ? 1 : -1,
+            loginName: localCacheDataProxy.getLoginData().userName
+        }
+        let bonusUrl = this.getConfigProxy().bonusUrl;
+        HttpUtil.send(bonusUrl + `/api/v1/give`, res => {
+            this.loading.active = false;
+            if (res.code === 200) {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: `操作（${(eventData === 'add' ? '加分' : '减分') + param.amount}）已完成`, toastOverlay: true }, '');
+                this.data.balance = parseFloat(this.data.balance) + (parseFloat(param.amount) * param.type);
+                this.node.getChildByName("label_balance").getComponent(cc.Label).string = '余额：' + this.data.balance;
+                this.TextSet.string = '';
+            } else {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
+            }
+            this.loading.active = false;
+        }, (err) => {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '数据服务未响应', toastOverlay: true }, '');
+            this.loading.active = false;
+        }, HttpUtil.METHOD_POST, param);
+    }
+
+    amountChangeHalder(e: string, target: cc.EditBox, customEventData) {
+        if (parseFloat(e) > 1000) {
+
+        }
+    }
 
     // update (dt) {}
 }

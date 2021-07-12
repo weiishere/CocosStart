@@ -40,6 +40,7 @@ export class GatePanelMediator extends BaseMediator {
     /** 个人中心窗口 */
     private myCenterNode: cc.Node;
     private shareNode: cc.Node;
+    private qyqNode: cc.Node;
     /** 赠送窗口 */
     private giveAwatPanelNode: cc.Node;
 
@@ -77,6 +78,7 @@ export class GatePanelMediator extends BaseMediator {
             PrefabDefine.RecordDetailList,
             PrefabDefine.MyCenter,
             PrefabDefine.ShareAlert,
+            PrefabDefine.QYQPanel,
             PrefabDefine.GiveAwayPanel,
             PrefabDefine.BonusIndex,
             PrefabDefine.MyPlayer,
@@ -187,7 +189,7 @@ export class GatePanelMediator extends BaseMediator {
         let recordPanelResource = cc.loader.getRes(PrefabDefine.RecordPanel, cc.Prefab);
         let recordPanelPrefab = cc.instantiate(recordPanelResource);
 
-        this.gameStartPanel.addChild(recordPanelPrefab);
+        this.viewComponent.addChild(recordPanelPrefab);
     }
 
     /** 打开战绩详情 */
@@ -221,6 +223,12 @@ export class GatePanelMediator extends BaseMediator {
 
         let localCache = this.getLocalCacheDataProxy();
         script.loadData(localCache.getInviteCode(), this.getConfigProxy().shareUrl);
+    }
+    /**打开亲友圈面板 */
+    private openQYQPanel() {
+        let qyqResource = cc.loader.getRes(PrefabDefine.QYQPanel, cc.Prefab);
+        this.qyqNode = cc.instantiate(qyqResource);
+        this.viewComponent.addChild(this.qyqNode);
     }
 
     /** 打开赠送界面 */
@@ -358,6 +366,7 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.OpenRecordDetailList,
             CommandDefine.OpenMyCenter,
             CommandDefine.OpenShare,
+            CommandDefine.OpenQYQPanel,
             CommandDefine.OpenGiveAwayPanel,
             CommandDefine.OpenLoadingPanel,
             CommandDefine.CloseLoadingPanel,
@@ -474,6 +483,9 @@ export class GatePanelMediator extends BaseMediator {
                 break;
             case CommandDefine.OpenShare:
                 this.openShare();
+                break;
+            case CommandDefine.OpenQYQPanel:
+                this.openQYQPanel();
                 break;
             case CommandDefine.OpenGiveAwayPanel:
                 this.openGiveAwayPanel();

@@ -479,8 +479,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 499,
-      "height": 117
+      "width": 230,
+      "height": 70
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -491,8 +491,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        0,
-        276.5,
+        1.649,
+        295.462,
         0,
         0,
         0,
@@ -543,7 +543,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 80,
+      "width": 68,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -556,7 +556,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        20.454,
+        6.439,
         0,
         0,
         0,
@@ -597,7 +597,7 @@
     "_dstBlendFactor": 771,
     "_string": "详情",
     "_N$string": "详情",
-    "_fontSize": 40,
+    "_fontSize": 34,
     "_lineHeight": 40,
     "_enableWrapText": true,
     "_N$file": null,
@@ -640,10 +640,10 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "a2f25c12-162f-4ce7-9582-b9378d8c7220"
+      "__uuid__": "a89d94e3-d007-45dc-a463-77d05d73772c"
     },
     "_type": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 0,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -654,7 +654,7 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": {
-      "__uuid__": "211e3353-b22e-48fe-a5d4-b22b0622d57e"
+      "__uuid__": "a78d4ce0-69f0-41c0-9909-3af3bc4bcb93"
     },
     "_id": ""
   },
@@ -671,7 +671,7 @@
     "_alignFlags": 1,
     "_left": 0,
     "_right": 0,
-    "_top": -35,
+    "_top": -30.46199999999999,
     "_bottom": 0,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,
@@ -940,7 +940,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        -235.41100000000006,
+        -221.72299999999996,
         0,
         0,
         0,
@@ -1120,7 +1120,7 @@
     "_left": 0,
     "_right": 0,
     "_top": 0,
-    "_bottom": 24.58899999999997,
+    "_bottom": 38.277000000000015,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,
     "_isAbsLeft": true,

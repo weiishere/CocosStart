@@ -43,6 +43,13 @@ export default class GateStartPanel extends ViewComponent {
     @property(cc.Node)
     bonusBtn: cc.Node = null;
     @property(cc.Node)
+    NoticeBtn: cc.Node = null;
+    @property(cc.Node)
+    StoreBtn: cc.Node = null;
+    @property(cc.Node)
+    HezuoBtn: cc.Node = null;
+
+    @property(cc.Node)
     serviceBtn: cc.Node = null;
     @property(cc.Node)
     exchangeEntrance: cc.Node = null;
@@ -91,9 +98,15 @@ export default class GateStartPanel extends ViewComponent {
 
     protected async bindEvent() {
         let lianmeng = this.node.getChildByName("m_ract");
-        this.addButton(lianmeng);
-        lianmeng.on(cc.Node.EventType.TOUCH_END, () => {
+        //this.addButton(lianmeng);
+        lianmeng.getChildByName('btu_QYQ').on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenQYQPanel, null, '');
+        });
+        lianmeng.getChildByName('btu_jrfj').on(cc.Node.EventType.TOUCH_END, () => {
             this.joinClub();
+        });
+        lianmeng.getChildByName('btu_cjfj').on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '抱歉，您的钻石不足...', toastOverlay: false }, '');
         });
 
         this.headSprite.node.on(cc.Node.EventType.TOUCH_END, () => {
@@ -199,6 +212,18 @@ export default class GateStartPanel extends ViewComponent {
         // this.goldNode.on(cc.Node.EventType.TOUCH_END, () => {
         //     Facade.Instance.sendNotification(CommandDefine.OpenExchangePanel, null, '')
         // });
+
+        this.NoticeBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenNoticeAlert, {
+                content: this.getConfigProxy().leessang, callback: () => { }
+            }, null);
+        });
+        this.StoreBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '抱歉，商城功能暂未开发，敬请期待...', toastOverlay: true }, '');
+        });
+        this.HezuoBtn.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '敬请期待...', toastOverlay: true }, '');
+        });
     }
 
     getConfigProxy() {

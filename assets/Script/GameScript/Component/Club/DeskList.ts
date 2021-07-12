@@ -17,6 +17,7 @@ import Facade from '../../../Framework/care/Facade';
 import { ProxyDefine } from '../../MahjongConst/ProxyDefine';
 import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
 import List from '../../Util/List';
+import { CommandDefine } from '../../MahjongConst/CommandDefine';
 
 const { ccclass, property } = cc._decorator;
 
@@ -94,6 +95,15 @@ export default class DeskList extends ViewComponent {
     @property(cc.Node)
     selectNode: cc.Node = null;
 
+    @property(cc.Node)
+    shouyi_btu: cc.Node = null;
+
+    @property(cc.Node)
+    chengyuan_btu: cc.Node = null;
+
+    @property(cc.Node)
+    zhanji_btu: cc.Node = null;
+
     waitHandleDesk = [];
 
     /** 可视范围个数 */
@@ -170,6 +180,16 @@ export default class DeskList extends ViewComponent {
             this.isLoadDesk = false;
             this.loadDeskNode();
         }, 5)
+
+        this.shouyi_btu.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenBonusIndex, null, '');
+        });
+        this.chengyuan_btu.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenMyPlayer, null, '');
+        });
+        this.zhanji_btu.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenRecordPanel, null, '');
+        });
     }
 
     private initRoomType() {
