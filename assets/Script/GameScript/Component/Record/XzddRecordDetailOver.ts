@@ -64,6 +64,7 @@ export default class OpenRecordAlter extends BaseRecordDetail {
 
     loadData(showBG: boolean, userName: string, roomNo: number, currentGameCount: number, totalGameCount: number,
         playerData: Array<PlayerRecordData>, gameSubClass: number, timer?: string) {
+        this.recordList.removeAllChildren();
         this._playerData = playerData;
         this._gamePlayerNum = this._playerData.length;
         this._thisUserName = userName;
@@ -149,11 +150,11 @@ export default class OpenRecordAlter extends BaseRecordDetail {
         let userInfoLabel = recordInfo.getChildByName("radiusRect").getChildByName("user").getComponent(cc.Label);
 
         if (playerData.winloss >= 0) {
-            let color = cc.color().fromHEX("#FF0000")
+            let color = cc.color().fromHEX("#ebaa77")
             winlossLabel.node.color = color;
             winlossLabel.string = "+" + playerData.winloss;
         } else {
-            let color = cc.color().fromHEX("#008567")
+            let color = cc.color().fromHEX("#75b7ed")
             winlossLabel.node.color = color;
             winlossLabel.string = playerData.winloss + "";
         }
