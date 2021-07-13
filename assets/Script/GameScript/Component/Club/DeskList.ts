@@ -43,21 +43,21 @@ const ROOM_LIST = [
     }, {
         gameName: "血战到底",
         value: 3,
-    // }, {
-    //     gameName: "四人癞子",
-    //     value: 88,
-    // }, {
-    //     gameName: "二人癞子",
-    //     value: 88,
-    // }, {
-    //     gameName: "四人一房",
-    //     value: 88,
-    // }, {
-    //     gameName: "跑得快",
-    //     value: 88,
-    // }, {
-    //     gameName: "斗地主",
-    //     value: 88,
+        // }, {
+        //     gameName: "四人癞子",
+        //     value: 88,
+        // }, {
+        //     gameName: "二人癞子",
+        //     value: 88,
+        // }, {
+        //     gameName: "四人一房",
+        //     value: 88,
+        // }, {
+        //     gameName: "跑得快",
+        //     value: 88,
+        // }, {
+        //     gameName: "斗地主",
+        //     value: 88,
     }
 
 ]
@@ -139,9 +139,13 @@ export default class DeskList extends ViewComponent {
         });
 
         this.kuaiSuBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            this.openChooseSpeedPanel((score) => {
-                this.dispatchCustomEvent(DeskListEventDefine.SpeedJoinDeskEvent, score);
-            })
+            if (this.chooseSpeedPanel.active === true) {
+                this.closeChooseSpeedPanel();
+            } else {
+                this.openChooseSpeedPanel((score) => {
+                    this.dispatchCustomEvent(DeskListEventDefine.SpeedJoinDeskEvent, score);
+                })
+            }
         });
 
         this.triggerBar.on(cc.Node.EventType.TOUCH_END, () => {
@@ -202,7 +206,7 @@ export default class DeskList extends ViewComponent {
             node.name = "roomType_" + v.value;
             node.getChildByName("txtNode").getChildByName("label").getComponent(cc.Label).string = v.gameName;
 
-            if(v.value === 88){
+            if (v.value === 88) {
                 node.getChildByName("txtNode").getChildByName("more_btu").active = false;
             }
 

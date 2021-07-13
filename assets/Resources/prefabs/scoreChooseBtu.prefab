@@ -100,9 +100,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 61,
-      "g": 61,
-      "b": 60,
+      "r": 242,
+      "g": 242,
+      "b": 205,
       "a": 255
     },
     "_contentSize": {
@@ -204,7 +204,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "ced28f95-18b1-48b5-9711-92b81da9449f"
+      "__uuid__": "a54d0cbe-071f-412c-91ab-24dac68a9fed"
     },
     "_type": 1,
     "_sizeMode": 0,
@@ -218,7 +218,7 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": {
-      "__uuid__": "a229616e-6a0e-4798-876a-23fc4a72b8d3"
+      "__uuid__": "54b49872-d627-4456-bf68-992ff350868f"
     },
     "_id": ""
   },
