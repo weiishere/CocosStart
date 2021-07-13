@@ -89,9 +89,13 @@ export default class DeskList extends ViewComponent {
         });
 
         this.kuaiSuBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            this.openChooseSpeedPanel((score) => {
-                this.dispatchCustomEvent(DeskListEventDefine.SpeedJoinDeskEvent, score);
-            })
+            if (this.chooseSpeedPanel.active === true) {
+                this.closeChooseSpeedPanel();
+            } else {
+                this.openChooseSpeedPanel((score) => {
+                    this.dispatchCustomEvent(DeskListEventDefine.SpeedJoinDeskEvent, score);
+                })
+            }
         });
 
         this.triggerBar.on(cc.Node.EventType.TOUCH_END, () => {
