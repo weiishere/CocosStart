@@ -186,7 +186,7 @@ export default class DeskList extends ViewComponent {
         }, 5)
 
         this.shouyi_btu.on(cc.Node.EventType.TOUCH_END, () => {
-            Facade.Instance.sendNotification(CommandDefine.OpenBonusIndex, null, '');
+            Facade.Instance.sendNotification(CommandDefine.OpenMyEnterPrise, null, '');
         });
         this.chengyuan_btu.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenMyPlayer, null, '');

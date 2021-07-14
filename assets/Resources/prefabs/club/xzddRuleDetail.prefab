@@ -1257,7 +1257,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 620,
-      "height": 31.5
+      "height": 36.54
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1310,8 +1310,8 @@
     "_dstBlendFactor": 771,
     "_string": "暂无内容",
     "_N$string": "暂无内容",
-    "_fontSize": 25,
-    "_lineHeight": 25,
+    "_fontSize": 22.1,
+    "_lineHeight": 30,
     "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,

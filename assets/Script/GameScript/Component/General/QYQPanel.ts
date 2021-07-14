@@ -9,6 +9,8 @@ const {ccclass, property} = cc._decorator;
 import Facade from "../../../Framework/care/Facade";
 import ViewComponent from "../../Base/ViewComponent";
 import { CommandDefine } from "../../MahjongConst/CommandDefine";
+import { ProxyDefine } from "../../MahjongConst/ProxyDefine";
+import { GateProxy } from "../../Proxy/GateProxy";
 
 @ccclass
 export default class QYQPanel extends ViewComponent {
@@ -22,6 +24,8 @@ export default class QYQPanel extends ViewComponent {
     @property(cc.Node)
     Btu_jr: cc.Node = null;
 
+    @property(cc.Node)
+    Btu_into: cc.Node = null;
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
@@ -36,6 +40,9 @@ export default class QYQPanel extends ViewComponent {
         this.Btu_jr.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '请联系上级代理...', toastOverlay: false }, '');
         });
+        this.Btu_into.on(cc.Node.EventType.TOUCH_END, () => {
+            this.getGateProxy().joinClub();
+        });
     }
     bindUI(){
 
@@ -44,6 +51,8 @@ export default class QYQPanel extends ViewComponent {
     start () {
 
     }
-
+    getGateProxy() {
+        return <GateProxy>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
+    }
     // update (dt) {}
 }

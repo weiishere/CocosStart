@@ -99,7 +99,7 @@ export default class MyBonus extends ViewComponent {
                 if (!err) {
                     this.node.active = false;
                     const node: cc.Node = cc.instantiate(prefab);
-                    cc.find('Canvas/GateStartPanel').addChild(node);
+                    cc.find('Canvas').addChild(node);
                     node.getComponent('MyPlayer').closeCallBack(() => {
                         this.node.active = true;
                     });
@@ -112,7 +112,7 @@ export default class MyBonus extends ViewComponent {
                 if (!err) {
                     this.node.active = false;
                     const node: cc.Node = cc.instantiate(prefab);
-                    cc.find('Canvas/GateStartPanel').addChild(node);
+                    cc.find('Canvas').addChild(node);
                     node.getComponent('MyEnterprise').closeCallBack(() => {
                         this.node.active = true;
                     });
@@ -125,7 +125,7 @@ export default class MyBonus extends ViewComponent {
                 if (!err) {
                     this.node.active = false;
                     const node: cc.Node = cc.instantiate(prefab);
-                    cc.find('Canvas/GateStartPanel').addChild(node);
+                    cc.find('Canvas').addChild(node);
                     node.getComponent('LeaderEnterprise').closeCallBack(() => {
                         this.node.active = true;
                     });
@@ -139,7 +139,7 @@ export default class MyBonus extends ViewComponent {
                 if (!err) {
                     this.node.active = false;
                     const node: cc.Node = cc.instantiate(prefab);
-                    cc.find('Canvas/GateStartPanel').addChild(node);
+                    cc.find('Canvas').addChild(node);
                     node.getComponent('ExtractRecord').closeCallBack(() => {
                         this.node.active = true;
                     });
