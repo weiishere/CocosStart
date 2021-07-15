@@ -131,12 +131,20 @@ export default class XzddDesk extends BaseDesk {
     head4: cc.Sprite = null;
     @property(cc.Node)
     detailBtn: cc.Node = null;
+    @property(cc.Node)
+    deskTypeInfo: cc.Node = null;
+    @property(cc.Node)
+    clickBG: cc.Node = null;
 
     _maxPlayerNum: number;
     ruleStr: string;
 
+    typeInfoY: number = 57;
+
     bindEvent() {
-        super.bindEvent();
+        // super.bindEvent();
+
+        this.clickBG.on(cc.Node.EventType.TOUCH_END, this.deskClickEvent.bind(this));
 
         this.detailBtn.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenXzddRuleDetail, { content: this.ruleStr, roomNo: this.roomNo }, null);
@@ -182,7 +190,8 @@ export default class XzddDesk extends BaseDesk {
         this.enterLimit = s2CClubRoomInfoBase.enterLimit;
         this.roomType = s2CClubRoomInfoBase.roomType;
         this.roomTypeLabel.string = roomType;
-        this.anteLabel.string = `分:${s2CClubRoomInfoBase.basicScore}`;
+        // this.anteLabel.string = `分:${s2CClubRoomInfoBase.basicScore}`;
+        this.anteLabel.string = `${s2CClubRoomInfoBase.basicScore}米`;
         this.enterLimitLabel.string = `入:${s2CClubRoomInfoBase.enterLimit}`;
         this.setRoundCount(s2CClubRoomInfoBase.currentGameCount, s2CClubRoomInfoBase.gameCount);
 
@@ -234,10 +243,12 @@ export default class XzddDesk extends BaseDesk {
     setDeskBG() {
         if (this._maxPlayerNum === 2) {
             this.deskBG.getComponent("ExtendSprite").index = 0;
+            this.deskTypeInfo.y = this.typeInfoY + 5;
         } else if (this._maxPlayerNum === 3) {
             this.deskBG.getComponent("ExtendSprite").index = 1;
         } else if (this._maxPlayerNum === 4) {
             this.deskBG.getComponent("ExtendSprite").index = 2;
+            this.deskTypeInfo.y = this.typeInfoY - 10;
         }
     }
 
