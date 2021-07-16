@@ -19,6 +19,7 @@ import MyCenter from '../Component/General/MyCenter';
 import NoticeAlert from "../Component/General/NoticeAlert";
 import RecordDetailList from "../Component/Record/RecordDetailList";
 import GateStartPanel from "../Component/General/GateStartPanel";
+import QYQPanel from "../Component/General/QYQPanel";
 
 export class GatePanelMediator extends BaseMediator {
     //private gatePanelView: GatePanelView = null;
@@ -575,6 +576,11 @@ export class GatePanelMediator extends BaseMediator {
             case CommandDefine.UpdateClubSimpleInfo:
                 if (this.gameStartPanel) {
                     this.gateStartPanelScript.updateClubSimpleInfo();
+                }
+
+                if (this.qyqNode && this.qyqNode.isValid) {
+                    let script = this.qyqNode.getComponent(QYQPanel);
+                    script.updateClubSimpleInfo();
                 }
                 break;
         }
