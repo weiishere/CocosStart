@@ -4943,10 +4943,10 @@
       "height": 30,
       "rawWidth": 30,
       "rawHeight": 30,
-      "borderTop": 0,
-      "borderBottom": 0,
-      "borderLeft": 0,
-      "borderRight": 0,
+      "borderTop": 4,
+      "borderBottom": 4,
+      "borderLeft": 3,
+      "borderRight": 4,
       "vertices": {
         "triangles": [
           1,

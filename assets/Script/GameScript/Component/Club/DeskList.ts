@@ -104,6 +104,10 @@ export default class DeskList extends ViewComponent {
     @property(cc.Node)
     zhanji_btu: cc.Node = null;
 
+    @property(cc.Node)
+    hongli_btu: cc.Node = null;
+
+    
     waitHandleDesk = [];
 
     /** 可视范围个数 */
@@ -197,6 +201,12 @@ export default class DeskList extends ViewComponent {
         this.zhanji_btu.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenRecordPanel, null, '');
         });
+
+        this.hongli_btu.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenBonusIndex, null, '');
+        });
+
+        
     }
 
     private initRoomType() {

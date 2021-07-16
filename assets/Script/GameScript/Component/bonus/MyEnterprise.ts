@@ -25,6 +25,9 @@ export default class MyEnterprise extends ViewComponent {
     @property(cc.Node)
     scrollView: cc.Node = null;
 
+    @property(cc.Node)
+    tiqu_btu: cc.Node = null;
+    
     @property(cc.SpriteFrame)
     spriteFrameChoose: cc.SpriteFrame = null;
 
@@ -119,6 +122,10 @@ export default class MyEnterprise extends ViewComponent {
             this.node.destroy();
             this._closeCallBack && this._closeCallBack();
         }, this);
+
+        this.tiqu_btu.on(cc.Node.EventType.TOUCH_END, () => {
+            Facade.Instance.sendNotification(CommandDefine.OpenBonusIndex, null, '');
+        });
     }
     start() {
         this.pageCommand = this.pageCommand1;

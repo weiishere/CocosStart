@@ -249,7 +249,7 @@ export default class GateStartPanel extends ViewComponent {
     }
 
     updateGold(gold: number) {
-        if (this.goldLabel) this.goldLabel.string = gold + "";
+        //if (this.goldLabel) this.goldLabel.string = gold + "";
     }
 
     updateClubWaitDeskLabel(value: number) {
