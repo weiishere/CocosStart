@@ -25,7 +25,7 @@ export default class QYQPanel extends ViewComponent {
     Btu_jr: cc.Node = null;
 
     @property(cc.Node)
-    Btu_into: cc.Node = null;
+    qyq_panel_bg: cc.Node = null;
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
@@ -40,7 +40,7 @@ export default class QYQPanel extends ViewComponent {
         this.Btu_jr.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '请联系上级代理...', toastOverlay: false }, '');
         });
-        this.Btu_into.on(cc.Node.EventType.TOUCH_END, () => {
+        this.qyq_panel_bg.on(cc.Node.EventType.TOUCH_END, () => {
             this.getGateProxy().joinClub();
         });
     }
