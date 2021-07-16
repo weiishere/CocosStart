@@ -45,6 +45,8 @@ export default class UserHeader extends ViewComponent {
 
     }
     showAcount(loginData) {
+        
+        //Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: 'loginData:'+JSON.stringify(loginData), toastOverlay: false }, '');
         const { head, nickname, userName, gold } = loginData;
         this.nickname.string = nickname;
         this.uid.string = userName;
