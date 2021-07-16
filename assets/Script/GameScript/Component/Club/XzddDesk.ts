@@ -139,8 +139,6 @@ export default class XzddDesk extends BaseDesk {
     _maxPlayerNum: number;
     ruleStr: string;
 
-    typeInfoY: number = 57;
-
     bindEvent() {
         // super.bindEvent();
 
@@ -243,12 +241,10 @@ export default class XzddDesk extends BaseDesk {
     setDeskBG() {
         if (this._maxPlayerNum === 2) {
             this.deskBG.getComponent("ExtendSprite").index = 0;
-            this.deskTypeInfo.y = this.typeInfoY + 5;
         } else if (this._maxPlayerNum === 3) {
             this.deskBG.getComponent("ExtendSprite").index = 1;
         } else if (this._maxPlayerNum === 4) {
             this.deskBG.getComponent("ExtendSprite").index = 2;
-            this.deskTypeInfo.y = this.typeInfoY - 10;
         }
     }
 

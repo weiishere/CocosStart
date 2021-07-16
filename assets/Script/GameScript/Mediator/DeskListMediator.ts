@@ -241,7 +241,6 @@ export class DeskListMediator extends BaseMediator {
     }
 
     private showDeskList(s2CJoinClubInfo: S2CJoinClubInfo) {
-        console.log('-----------------showDeskList-----------------:');
         let prefab = cc.loader.getRes(this.prefabSource(), cc.Prefab)
         if (!prefab) {
             cc.log("获取预制组件失败 ", this.prefabSource());
@@ -256,11 +255,12 @@ export class DeskListMediator extends BaseMediator {
         }
         this.view = cc.instantiate(prefab);
         this.viewComponent.addChild(this.view);
-        try {
-            this.loadData(s2CJoinClubInfo);
-        } catch (e) {
-            this.sendNotification(CommandDefine.OpenToast, { content: 'error:'+e, toastOverlay: false }, '');
-        }
+        // try {
+        this.loadData(s2CJoinClubInfo);
+        // } catch (e) {
+        //     this.view.getChildByName("label").getComponent(cc.Label).string = e;
+        //     // this.sendNotification(CommandDefine.OpenToast, { content: 'error:'+e, toastOverlay: false }, '');
+        // }
         this.userHeaderScript = this.getViewScript().getUserHeaderScript();
         // const userInfoPanel = cc.loader.getRes(PrefabDefine.UserInfoPanel, cc.Prefab);
         // let _userInfoPanel = cc.instantiate(userInfoPanel) as cc.Node;

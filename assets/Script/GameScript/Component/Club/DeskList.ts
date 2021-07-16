@@ -121,6 +121,9 @@ export default class DeskList extends ViewComponent {
 
     private isShow: boolean = false;
 
+    /** 是否点击过房间类型，用于处理底分显示位置 */
+    private isClickRoomType: boolean = false;
+
     /** 当前显示的内容 */
     private displayRoomInfos: S2CClubRoomInfoBase[] = null;
 
@@ -378,6 +381,7 @@ export default class DeskList extends ViewComponent {
             if (v === -1) {
                 res.name = "selectNodeAll";
                 res.getChildByName("label").getComponent(cc.Label).string = `全部`;
+                res.getChildByName("label").setScale(1.5);
             } else {
                 res.name = "selectNode" + v;
                 res.getChildByName("label").getComponent(cc.Label).string = `${v}`;
@@ -390,7 +394,7 @@ export default class DeskList extends ViewComponent {
             });
         });
 
-        this.anteNode.children = this.anteNode.children.reverse();
+        this.anteNode.children.reverse();
     }
 
     updateFullAndWaitStatus() {
@@ -787,10 +791,12 @@ export default class DeskList extends ViewComponent {
             return;
         }
 
-        if (roomTypeTmp === this.roomType) {
+        if (roomTypeTmp === this.roomType && this.isClickRoomType) {
             this.anteNode.active = !this.anteNode.active;
             return;
         }
+
+        this.isClickRoomType = true;
 
         this.roomType = roomTypeTmp;
         this.anteNode.active = true;
