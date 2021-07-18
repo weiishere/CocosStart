@@ -688,7 +688,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 74.58,
+      "width": 42.81,
       "height": 23.94
     },
     "_anchorPoint": {
@@ -701,7 +701,7 @@
       "ctor": "Float64Array",
       "array": [
         0.698,
-        123.392,
+        19.242,
         0,
         0,
         0,
@@ -740,8 +740,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "第0/8局",
-    "_N$string": "第0/8局",
+    "_string": "0 / 8",
+    "_N$string": "0 / 8",
     "_fontSize": 22,
     "_lineHeight": 19,
     "_enableWrapText": true,
@@ -1685,7 +1685,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 206.64,
+      "width": 207.69,
       "height": 70
     },
     "_anchorPoint": {
@@ -1698,7 +1698,7 @@
       "ctor": "Float64Array",
       "array": [
         0.9,
-        38,
+        46,
         0,
         0,
         0,
@@ -1749,7 +1749,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 55.98,
+      "width": 57.03,
       "height": 23.94
     },
     "_anchorPoint": {
@@ -1761,7 +1761,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -103.32,
+        -103.845,
         0,
         0,
         0,
@@ -1810,7 +1810,7 @@
     "_isSystemFontUsed": true,
     "_spacingX": 0,
     "_batchAsBitmap": false,
-    "_styleFlags": 0,
+    "_styleFlags": 1,
     "_underlineHeight": 0,
     "_N$horizontalAlign": 1,
     "_N$verticalAlign": 1,
@@ -1869,7 +1869,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        29.990000000000002,
+        30.515,
         0,
         0,
         0,
@@ -1918,7 +1918,7 @@
     "_isSystemFontUsed": true,
     "_spacingX": 0,
     "_batchAsBitmap": false,
-    "_styleFlags": 0,
+    "_styleFlags": 1,
     "_underlineHeight": 0,
     "_N$horizontalAlign": 1,
     "_N$verticalAlign": 1,
@@ -2090,7 +2090,7 @@
     "_enabled": true,
     "_layoutSize": {
       "__type__": "cc.Size",
-      "width": 206.64,
+      "width": 207.69,
       "height": 70
     },
     "_resize": 1,

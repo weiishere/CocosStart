@@ -30,6 +30,8 @@ export default class QYQPanel extends ViewComponent {
 
     @property(cc.Node)
     qyq_panel_bg: cc.Node = null;
+    @property(cc.Label)
+    deskInfo: cc.Label = null;
     // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
@@ -49,31 +51,43 @@ export default class QYQPanel extends ViewComponent {
         });
     }
     bindUI() {
-        let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
-        if (localCacheDataProxy.getLoginData().status === 2) {
-            this.qyq_panel_bg.active = false;
-        }
-        let url = this.getConfigProxy().facadeUrl + "club/getCreateRoomInfo";
-        let param = {
-            gameSubClass: 0,
-        }
-        LoginAfterHttpUtil.send(url, (result) => {
-            if (result.hd === 'success') {
-                this.qyq_panel_bg.getChildByName('Label_zs').getComponent(cc.Label).string = '桌数：' + result.bd.gameRoomCount;
-            }
-        }, (err) => {
 
-        }, HttpUtil.METHOD_POST, param)
     }
     getConfigProxy() {
         return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
     }
 
     start() {
+        this.updateClubSimpleInfo();
 
+        this.updateQyqPanel();
     }
     getGateProxy() {
         return <GateProxy>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
+    }
+
+
+    getLocalCacheDataProxy(): LocalCacheDataProxy {
+        return <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
+    }
+
+    updateQyqPanel() {
+        let status = this.getLocalCacheDataProxy().getLoginData().status;
+        this.qyq_panel_bg.active = status !== 2;
+    }
+
+    updateClubSimpleInfo() {
+        let url = this.getConfigProxy().facadeUrl + "club/getCreateRoomInfo";
+        let param = {
+            gameSubClass: 0,
+        }
+        LoginAfterHttpUtil.send(url, (result) => {
+            if (result.hd === 'success') {
+                this.deskInfo.string = `桌数：${result.bd.gameRoomCount}`;
+            }
+        }, (err) => {
+
+        }, HttpUtil.METHOD_POST, param)
     }
     // update (dt) {}
 }
