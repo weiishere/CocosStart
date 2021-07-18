@@ -5,12 +5,16 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 import Facade from "../../../Framework/care/Facade";
 import ViewComponent from "../../Base/ViewComponent";
 import { CommandDefine } from "../../MahjongConst/CommandDefine";
 import { ProxyDefine } from "../../MahjongConst/ProxyDefine";
+import { ConfigProxy } from "../../Proxy/ConfigProxy";
 import { GateProxy } from "../../Proxy/GateProxy";
+import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
+import { HttpUtil } from "../../Util/HttpUtil";
+import { LoginAfterHttpUtil } from "../../Util/LoginAfterHttpUtil";
 
 @ccclass
 export default class QYQPanel extends ViewComponent {
@@ -30,7 +34,7 @@ export default class QYQPanel extends ViewComponent {
 
     // onLoad () {}
 
-    bindEvent(){
+    bindEvent() {
         this.closeBtn.on(cc.Node.EventType.TOUCH_END, () => {
             this.node.destroy();
         });
@@ -44,11 +48,28 @@ export default class QYQPanel extends ViewComponent {
             this.getGateProxy().joinClub();
         });
     }
-    bindUI(){
+    bindUI() {
+        let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
+        if (localCacheDataProxy.getLoginData().status === 2) {
+            this.qyq_panel_bg.active = false;
+        }
+        let url = this.getConfigProxy().facadeUrl + "club/getCreateRoomInfo";
+        let param = {
+            gameSubClass: 0,
+        }
+        LoginAfterHttpUtil.send(url, (result) => {
+            if (result.hd === 'success') {
+                this.qyq_panel_bg.getChildByName('Label_zs').getComponent(cc.Label).string = '桌数：' + result.bd.gameRoomCount;
+            }
+        }, (err) => {
 
+        }, HttpUtil.METHOD_POST, param)
+    }
+    getConfigProxy() {
+        return <ConfigProxy>Facade.Instance.retrieveProxy(ProxyDefine.Config);
     }
 
-    start () {
+    start() {
 
     }
     getGateProxy() {
