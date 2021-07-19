@@ -2120,8 +2120,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -149.876,
-        -92.262,
+        -113.284,
+        -45.215,
         0,
         0,
         0,
@@ -2216,7 +2216,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 123.37,
+      "width": 106.68,
       "height": 30.24
     },
     "_anchorPoint": {
@@ -2228,8 +2228,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -33.108,
-        -81.718,
+        -52.275,
+        -86.945,
         0,
         0,
         0,
@@ -2268,8 +2268,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "桌数：50",
-    "_N$string": "桌数：50",
+    "_string": "桌数：0",
+    "_N$string": "桌数：0",
     "_fontSize": 30,
     "_lineHeight": 24,
     "_enableWrapText": true,
@@ -2517,7 +2517,7 @@
       "__id__": 24
     },
     "deskInfo": {
-      "__id__": 51
+      "__id__": 56
     },
     "_id": ""
   },

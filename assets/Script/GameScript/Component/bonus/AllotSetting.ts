@@ -75,13 +75,13 @@ export default class AllotSetting extends ViewComponent {
         let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         this.SureBtu.on(cc.Node.EventType.TOUCH_END, () => {
             const num = +this.TextSet.getComponent(cc.EditBox).string;
-            if (this.thisRatio > +num) {
-                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '授权比例不能调低', toastOverlay: true }, '');
-                this.TextSet.getComponent(cc.EditBox).string = this.thisRatio + '';
-                this.Slider.progress = this.thisRatio / 100;
-                this.node.getChildByName("biliValue").getComponent(cc.Label).string = (100 - this.thisRatio).toFixed(2) + "%";
-                return;
-            }
+            // if (this.thisRatio > +num) {
+            //     Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '授权比例不能调低', toastOverlay: true }, '');
+            //     this.TextSet.getComponent(cc.EditBox).string = this.thisRatio + '';
+            //     this.Slider.progress = this.thisRatio / 100;
+            //     this.node.getChildByName("biliValue").getComponent(cc.Label).string = (100 - this.thisRatio).toFixed(2) + "%";
+            //     return;
+            // }
             // if(isNaN(num)){ }
             const param = {
                 loginUser: localCacheDataProxy.getLoginData().userName,
