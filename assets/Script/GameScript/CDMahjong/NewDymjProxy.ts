@@ -279,12 +279,15 @@ export class NewDymjProxy extends XzddProxy {
         if (cc.sys.isMobile && !cc.sys.isBrowser && (latitude <= 0 || longitude <= 0)) {
             // this.getGateProxy().toast("没有定位信息，请打开定位权限！");
             this.getGateProxy().toast("没有定位信息，请打开定位权限！" + latitude + " : " + longitude);
+            // this.isReadyEnterRoom = false;
+            // this.joinRoomNo = null;
+            // this.sendNotification(CommandDefine.CloseLoadingPanel);
+            // return;
 
-            this.isReadyEnterRoom = false;
-            this.joinRoomNo = null;
-            this.sendNotification(CommandDefine.CloseLoadingPanel);
-            return;
+            latitude = 0;
+            longitude = 0;
         }
+        
         data.latitude = Number(Latitude);  // 纬度
         data.longitude = Number(Longgitude); // 经度
 
