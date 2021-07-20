@@ -173,7 +173,7 @@ export default class XzddDesk extends BaseDesk {
             } else if (s2CClubRoomInfoBase.roomType === 2) {
                 roomType = "三人两房";
             } else if (s2CClubRoomInfoBase.roomType === 3) {
-                roomType = "血战到底";
+                roomType = "四家";
             }
         }
 
@@ -206,35 +206,39 @@ export default class XzddDesk extends BaseDesk {
     }
 
     setRuleStr(s2CClubRoomInfoBase: S2CClubRoomInfoBase) {
-        this.ruleStr = "首局自动开始 离线30秒自动托管 ";
-        if (s2CClubRoomInfoBase.roomType === 0) {
-            this.ruleStr += "7张 "
-        }
-        let gameParamObj = JSON.parse(s2CClubRoomInfoBase.gameParam);
+        // this.ruleStr = "首局自动开始 离线30秒自动托管 ";
+        // if (s2CClubRoomInfoBase.roomType === 0) {
+        //     this.ruleStr += "7张 "
+        // }
+        // let gameParamObj = JSON.parse(s2CClubRoomInfoBase.gameParam);
 
-        this.ruleStr += `${gameParamObj.maxFanNum}番封顶 `;
-        let rules: number[] = gameParamObj.rules;
+        // this.ruleStr += `${gameParamObj.maxFanNum}番封顶 `;
+        // let rules: number[] = gameParamObj.rules;
 
-        if (rules) {
-            rules.forEach((v, i) => {
-                let ruleName = MahjongVipRule.getRuleName(v);
-                if (ruleName) {
-                    this.ruleStr += ruleName + " ";
-                }
-                if (v === MahjongVipRule.TIAN_DI_HU) {
-                    this.ruleStr += "对对胡 ";
-                }
-            })
-        }
+        // if (rules) {
+        //     rules.forEach((v, i) => {
+        //         let ruleName = MahjongVipRule.getRuleName(v);
+        //         if (ruleName) {
+        //             this.ruleStr += ruleName + " ";
+        //         }
+        //         if (v === MahjongVipRule.TIAN_DI_HU) {
+        //             this.ruleStr += "对对胡 ";
+        //         }
+        //     })
+        // }
 
-        if (s2CClubRoomInfoBase.roomType === 0) {
-            this.ruleStr = "首局自动开始，离线15秒自动托管，低于带入自动解散。天地胡，听牌提示，点杠花（自摸）门清中张，4番封顶，点炮可平胡，自摸加番，夹心五，对对胡两番，幺九，海底涝，海底炮，7张";
-        } else if (s2CClubRoomInfoBase.roomType === 1) {
-            this.ruleStr = "首局自动开始，离线15秒自动托管，低于带入自动解散。两方，天地胡，听牌提示，点杠花（自摸）门清中张，4番封顶，换三张，自摸加番，夹心五，对对胡两番，幺九将对，海底涝，海底炮，两番起胡";
-        } else if (s2CClubRoomInfoBase.roomType === 2) {
-            this.ruleStr = "首局自动开始，离线15秒自动托管，低于带入自动解散。天地胡，听牌提示，点杠花（自摸）门清中张，4番封顶，自摸加番，夹心五，对对胡两番，幺九将对，海底涝，海底炮，两番起胡，放牛必须过庄，GPS防作弊（500米）IP防作弊";
-        } else if (s2CClubRoomInfoBase.roomType === 3) {
-            this.ruleStr = "首局自动开始，离线15秒自动托管，低于带入自动解散。天地胡，听牌提示，点杠花（自摸）换三张，点炮可平胡。门清中张，4番封顶，自摸加番，夹心五，对对胡两番，幺九将对，海底涝，海底炮，放牛必须过庄，GPS防作弊（500米）IP防作弊";
+        if (s2CClubRoomInfoBase.gameSubClass === GameNoDefine.DA_YI_ER_REN_MAHJONG) {
+            this.ruleStr = "5翻 自摸加翻 10张 幺九将对 夹心五 中张 对对胡1翻 中途不可解散不可退出";
+        } else if (s2CClubRoomInfoBase.gameSubClass === GameNoDefine.XUE_ZHAN_DAO_DI) {
+            if (s2CClubRoomInfoBase.roomType === 0) {
+                this.ruleStr = "4翻 自摸加翻 7张 清一色0翻 距离0 将对幺九 门清中张 大对子2翻 天地胡 夹心五 两分起胡 中途不可退出不可解散";
+            } else if (s2CClubRoomInfoBase.roomType === 1) {
+                this.ruleStr = "4翻 自摸加翻 13张 清一色2翻 距离0 将对幺九 门清中张 大对子2翻 天地胡 夹心五 两分起胡 换三张 中途不可退出不可解散";
+            } else if (s2CClubRoomInfoBase.roomType === 2) {
+                this.ruleStr = "4翻 自摸加翻 距离100 将对幺九 门清中张 对对胡2翻 天地胡 夹心五 放牛必须过庄 中途不可退出不可解散 同ip禁止加入";
+            } else if (s2CClubRoomInfoBase.roomType === 3) {
+                this.ruleStr = "4翻 自摸加翻 距离100 将对幺九 门清中张 大对子2翻 天地胡 夹心五 放牛必须过庄 中途不可退出不可解散 同ip禁止加入";
+            }
         }
     }
 
