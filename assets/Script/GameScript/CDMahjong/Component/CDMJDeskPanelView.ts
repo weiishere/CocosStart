@@ -573,6 +573,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
         if (this.getData().gameData.myCards.curCardList.length !== 0) {
             [this.deskBtus.cardRecord, this.deskBtus.winCard].forEach(item => item.active = true);
         }
+        /* 去掉发牌特效动作
         if (effectDone) {
             this.reSetOpreationBtu();
             this.mainCardListPanel.children.forEach(item => {
@@ -591,7 +592,8 @@ export default class CDMJDeskPanelView extends ViewComponent {
                 if (index === this.mainCardListPanel.children.length - 1) { effectDone(); }
             }, 0.06, this.mainCardListPanel.children.length - 1);
 
-        }
+        }*/
+        effectDone && effectDone();
         //this.deskBtus.winCard.active = this.getData().gameData.myCards.mayHuCardsRT.length !== 0;
     }
     /**更新其他玩家的主牌 */
@@ -1321,7 +1323,9 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**显示要换3张的牌(一局只会执行一次) */
     showSwitchCardList(): void {
         this.node.getChildByName('switchCardAlert').active = true;
+        console.log('换三张');
         !this.timer3 && (this.timer3 = window.setInterval(() => {
+            console.log('换三张'+this.getData().gameData.switchCardCountDown);
             if (this.getData().gameData.switchCardCountDown !== 0) {
                 this.getData().gameData.switchCardCountDown--;
                 this.node.getChildByName('switchCardAlert').getChildByName('input_btu').getChildByName('btuStr').getComponent(cc.Label).string = `确定(${this.getData().gameData.switchCardCountDown}s)`;

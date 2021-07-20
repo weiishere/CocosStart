@@ -18,6 +18,7 @@ import { ProxyDefine } from '../../MahjongConst/ProxyDefine';
 import { LocalCacheDataProxy } from '../../Proxy/LocalCacheDataProxy';
 import List from '../../Util/List';
 import { CommandDefine } from '../../MahjongConst/CommandDefine';
+import { getUserOrderInfo } from '../bonus/MyBonus';
 
 const { ccclass, property } = cc._decorator;
 
@@ -107,7 +108,7 @@ export default class DeskList extends ViewComponent {
     @property(cc.Node)
     hongli_btu: cc.Node = null;
 
-    
+
     waitHandleDesk = [];
 
     /** 可视范围个数 */
@@ -205,8 +206,15 @@ export default class DeskList extends ViewComponent {
         this.hongli_btu.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenBonusIndex, null, '');
         });
+        let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
+        getUserOrderInfo(localCacheDataProxy.getLoginData().userName, ({ data }) => {
+            if (data.accountType === 666) {
+                //盟主
+                this.shouyi_btu.active = true;
+                this.chengyuan_btu.active = true;
+            }
+        });
 
-        
     }
 
     private initRoomType() {
