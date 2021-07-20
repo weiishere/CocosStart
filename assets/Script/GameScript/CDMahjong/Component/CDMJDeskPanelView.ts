@@ -405,6 +405,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**绑定选定换三张牌回调 */
     switchCardDoneHandler() {
         window.clearInterval(this.timer3);
+        this.timer3 = 0;
         let switchCardArr = [];
         this.mainCardList.forEach(card => {
             const cardScript = (card.getComponent("CardItemView") as CardItemView);
@@ -511,12 +512,12 @@ export default class CDMJDeskPanelView extends ViewComponent {
     }
     /**更新自己主牌 */
     updateMyCurCardList(effectDone?: () => void): void {
-        console.log('isHadHu-----', (helper.isHadHu(this, this.getSelfPlayer().userName) && this.mainCardListPanel.children.length !== 0))
+        //console.log('isHadHu-----', (helper.isHadHu(this, this.getSelfPlayer().userName) && this.mainCardListPanel.children.length !== 0))
         if (helper.isHadHu(this, this.getSelfPlayer().userName) && this.mainCardListPanel.children.length !== 0) return;
         this.mainCardList = [];
         const self = this;
         this.mainCardListPanel.destroyAllChildren();
-        console.log('destroyAllChildren');
+        //console.log('destroyAllChildren');
         this.getData().gameData.myCards.curCardList.map(item => {
             const card = this.addCardToNode(this.mainCardListPanel, item, "mine", 'setUp', {
                 touchEndCallback: function () {
@@ -1323,15 +1324,15 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**显示要换3张的牌(一局只会执行一次) */
     showSwitchCardList(): void {
         this.node.getChildByName('switchCardAlert').active = true;
-        console.log('换三张');
         !this.timer3 && (this.timer3 = window.setInterval(() => {
-            console.log('换三张'+this.getData().gameData.switchCardCountDown);
+            console.log('换三张' + this.getData().gameData.switchCardCountDown);
             if (this.getData().gameData.switchCardCountDown !== 0) {
                 this.getData().gameData.switchCardCountDown--;
                 this.node.getChildByName('switchCardAlert').getChildByName('input_btu').getChildByName('btuStr').getComponent(cc.Label).string = `确定(${this.getData().gameData.switchCardCountDown}s)`;
             } else {
                 //this.node.getChildByName('switchCardAlert').active = false;
                 window.clearInterval(this.timer3);
+                this.timer3 = 0;
             }
         }, 1000));
         const switchCards = this.getData().gameData.myCards.switchOutCardDefault;

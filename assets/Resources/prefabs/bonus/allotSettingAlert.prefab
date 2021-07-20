@@ -290,7 +290,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 595,
+      "width": 620,
       "height": 342
     },
     "_anchorPoint": {
@@ -357,7 +357,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 555,
+      "width": 580,
       "height": 262
     },
     "_anchorPoint": {
@@ -540,7 +540,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 220,
+      "width": 230,
       "height": 65
     },
     "_anchorPoint": {
@@ -604,7 +604,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 150,
+      "width": 175,
       "height": 31.5
     },
     "_anchorPoint": {
@@ -656,8 +656,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "盟主比例授权",
-    "_N$string": "盟主比例授权",
+    "_string": "合伙人比例授权",
+    "_N$string": "合伙人比例授权",
     "_fontSize": 25,
     "_lineHeight": 25,
     "_enableWrapText": true,
@@ -877,8 +877,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        125.892,
-        75.579,
+        109.526,
+        77.216,
         0,
         0,
         0,
@@ -973,7 +973,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 293.32,
+      "width": 318.88,
       "height": 30.24
     },
     "_anchorPoint": {
@@ -1025,8 +1025,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "分配到该盟主的百分比(不低于)：",
-    "_N$string": "分配到该盟主的百分比(不低于)：",
+    "_string": "分配到该合伙人的百分比(不低于) ：",
+    "_N$string": "分配到该合伙人的百分比(不低于) ：",
     "_fontSize": 20,
     "_lineHeight": 24,
     "_enableWrapText": true,
@@ -1211,7 +1211,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        141,
+        147.546,
         22,
         0,
         0,
@@ -2030,7 +2030,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        87.617,
+        110.529,
         -101.9,
         0,
         0,
@@ -2322,7 +2322,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -5,
+        13.003,
         -35,
         0,
         0,
@@ -2367,15 +2367,15 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 167,
+      "g": 165,
+      "b": 123,
       "a": 255
     },
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 300,
-      "height": 20
+      "height": 10
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -2484,8 +2484,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 32,
-      "height": 32
+      "width": 36,
+      "height": 36
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -2501,8 +2501,8 @@
         0,
         0,
         0,
-        0,
-        1,
+        0.7071067811865475,
+        0.7071067811865476,
         1,
         1,
         0
@@ -2512,7 +2512,7 @@
       "__type__": "cc.Vec3",
       "x": 0,
       "y": 0,
-      "z": 0
+      "z": 90
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -2537,10 +2537,10 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "e7aba14b-f956-4480-b254-8d57832e273f"
+      "__uuid__": "5afbe0e9-c6e6-4d19-9a8c-9c80c5a56fc4"
     },
     "_type": 1,
-    "_sizeMode": 2,
+    "_sizeMode": 0,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -2550,7 +2550,9 @@
     "_fillStart": 0,
     "_fillRange": 0,
     "_isTrimmedMode": true,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "a229616e-6a0e-4798-876a-23fc4a72b8d3"
+    },
     "_id": ""
   },
   {
@@ -2717,8 +2719,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        273.179,
-        135.368,
+        286.272,
+        140.278,
         0,
         0,
         0,
