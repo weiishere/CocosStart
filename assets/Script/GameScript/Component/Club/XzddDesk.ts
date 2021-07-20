@@ -139,13 +139,15 @@ export default class XzddDesk extends BaseDesk {
     _maxPlayerNum: number;
     ruleStr: string;
 
+    s2CClubRoomInfoBase: S2CClubRoomInfoBase;
+
     bindEvent() {
         // super.bindEvent();
 
         this.clickBG.on(cc.Node.EventType.TOUCH_END, this.deskClickEvent.bind(this));
 
         this.detailBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            Facade.Instance.sendNotification(CommandDefine.OpenXzddRuleDetail, { content: this.ruleStr, roomNo: this.roomNo }, null);
+            Facade.Instance.sendNotification(CommandDefine.OpenXzddRuleDetail, { content: this.ruleStr, roomNo: this.roomNo, s2CClubRoomInfoBase: this.s2CClubRoomInfoBase }, null);
         });
     }
 
@@ -153,10 +155,11 @@ export default class XzddDesk extends BaseDesk {
      * 继承父类，点击桌子，弹出详情窗口
      */
     deskClickEvent() {
-        Facade.Instance.sendNotification(CommandDefine.OpenXzddRuleDetail, { content: this.ruleStr, roomNo: this.roomNo }, null);
+        Facade.Instance.sendNotification(CommandDefine.OpenXzddRuleDetail, { content: this.ruleStr, roomNo: this.roomNo, s2CClubRoomInfoBase: this.s2CClubRoomInfoBase }, null);
     }
 
     initData(s2CClubRoomInfoBase: S2CClubRoomInfoBase) {
+        this.s2CClubRoomInfoBase = s2CClubRoomInfoBase;
         this.head1.node.active = false;
         this.head2.node.active = false;
         this.head3.node.active = false;

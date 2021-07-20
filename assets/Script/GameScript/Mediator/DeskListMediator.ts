@@ -133,10 +133,10 @@ export class DeskListMediator extends BaseMediator {
         let ruleDetail: cc.Node = cc.instantiate(res);
         this.view.addChild(ruleDetail);
 
-        let roomInfo = this.getViewScript().getRoomInfo(data.roomNo);
+        let roomInfo = this.getViewScript().getRoomInfo(data.s2CClubRoomInfoBase.roomNo);
 
         let script = <XzddRuleDetail>ruleDetail.getComponent("XzddRuleDetail");
-        script.loadData(data.content, roomInfo.userInfos, data.roomNo);
+        script.loadData(data.content, roomInfo.userInfos, data.s2CClubRoomInfoBase);
     }
 
     public handleNotification(notification: INotification): void {
