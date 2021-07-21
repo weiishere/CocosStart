@@ -94,6 +94,8 @@ export class GateProxy extends BaseProxy {
                     this.toast("邀请码错误！");
                 } else if (errorCode === ResponseCode.USER_NOT_EXIST) {
                     this.toast("账号不存在，请重新注册！");
+                } else if (errorCode === ResponseCode.USER_DISABLE) {
+                    this.toast("账号被禁用，请联系上级！");
                 }
             }
         }, (err) => {
