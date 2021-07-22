@@ -764,13 +764,13 @@ export default class CDMJDeskPanelView extends ViewComponent {
         const self = this;
         if (this.getData().gameData.myCards.handCard === 0) {
             this.handCard.destroyAllChildren();
-            this.handCard.width = 0;
+            // this.handCard.width = 0;
             this.handCard.height = 0;
         }
         if ((this.getData().gameData.myCards.handCard !== 0 && this.handCard.children.length === 0)) {
             //先检测本方手牌
             this.handCard.destroyAllChildren();//.destroyAllChildren();
-            this.handCard.width = 0;
+            // this.handCard.width = 0;
             this.handCard.height = 0;
             const _handCard = this.addCardToNode(this.handCard, this.getData().gameData.myCards.handCard, "mine", 'setUp', {
                 active: true,

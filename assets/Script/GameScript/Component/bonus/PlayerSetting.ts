@@ -70,22 +70,22 @@ export default class PlayerSetting extends ViewComponent {
         let bonusUrl = this.getConfigProxy().bonusUrl;
         //确认
         // this.loading.active = true;
-        //0正常，1,不能登录了，2不能进入俱乐部和游戏
+        //0正常，1,禁赛，2不能看到亲友圈
         this.PlayerPromiseBtu.on(cc.Node.EventType.TOUCH_END, () => {
             if (this.loading.active === true) { return; }
             this.loading.active = true;
             let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
             const param = {
                 userName: this.data['userName'],
-                status: this.data.status === 0 ? 1 : 0,
+                status: this.data.status === 2 ? 1 : 2,
                 loginUser: localCacheDataProxy.getLoginData().userName
             }
             this.httpRequestStartOrStop(param);
         }, true);
         //禁赛
         this.PlayerPlayBtu.on(cc.Node.EventType.TOUCH_END, () => {
-            if (this.data.status === 1) {
-                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '请首先“邀请入圈”', toastOverlay: true }, '');
+            if (this.data.status === 2) {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '玩家未被邀请入圈，请执行“邀请入圈”', toastOverlay: true }, '');
                 return;
             }
             if (this.loading.active === true) { return; }
@@ -93,7 +93,7 @@ export default class PlayerSetting extends ViewComponent {
             let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
             const param = {
                 userName: this.data['userName'],
-                status: this.data.status === 2 ? 0 : 2,
+                status: this.data.status === 1 ? 0 : 1,
                 loginUser: localCacheDataProxy.getLoginData().userName
             }
             this.httpRequestStartOrStop(param);
@@ -120,15 +120,16 @@ export default class PlayerSetting extends ViewComponent {
         }, HttpUtil.METHOD_POST, param);
     }
     updateBtuStatus(status) {
+        //0正常，1,禁赛，2不能看到亲友圈
         if (status === 0) {
             this.PlayerPromiseBtu.getChildByName("label").getComponent(cc.Label).string = '删除成员';
             this.PlayerPlayBtu.getChildByName("label").getComponent(cc.Label).string = '禁赛';
         } else if (status === 1) {
-            this.PlayerPromiseBtu.getChildByName("label").getComponent(cc.Label).string = '邀请入圈';
-            this.PlayerPlayBtu.getChildByName("label").getComponent(cc.Label).string = '禁赛';
-        } else if (status === 2) {
             this.PlayerPromiseBtu.getChildByName("label").getComponent(cc.Label).string = '删除成员';
             this.PlayerPlayBtu.getChildByName("label").getComponent(cc.Label).string = '解除禁赛';
+        } else if (status === 2) {
+            this.PlayerPromiseBtu.getChildByName("label").getComponent(cc.Label).string = '邀请成员';
+            this.PlayerPlayBtu.getChildByName("label").getComponent(cc.Label).string = '禁赛';
         }
     }
     start() {

@@ -73,7 +73,9 @@ export default class QYQPanel extends ViewComponent {
 
     updateQyqPanel() {
         let status = this.getLocalCacheDataProxy().getLoginData().status;
-        this.qyq_panel_bg.active = status !== 2;
+        if (status === 2) {
+            this.qyq_panel_bg.active = false;
+        }
     }
 
     updateClubSimpleInfo() {
