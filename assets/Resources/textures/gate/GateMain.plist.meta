@@ -705,9 +705,9 @@
       "height": 51,
       "rawWidth": 364,
       "rawHeight": 51,
-      "borderTop": 18,
-      "borderBottom": 23,
-      "borderLeft": 32,
+      "borderTop": 14,
+      "borderBottom": 16,
+      "borderLeft": 18,
       "borderRight": 26,
       "spriteType": "normal",
       "subMetas": {}

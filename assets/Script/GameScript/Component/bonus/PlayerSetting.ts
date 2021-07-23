@@ -77,7 +77,7 @@ export default class PlayerSetting extends ViewComponent {
             let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
             const param = {
                 userName: this.data['userName'],
-                status: this.data.status === 2 ? 1 : 2,
+                status: this.data.status === 2 ? 0 : 2,
                 loginUser: localCacheDataProxy.getLoginData().userName
             }
             this.httpRequestStartOrStop(param);
@@ -136,7 +136,7 @@ export default class PlayerSetting extends ViewComponent {
         this.node.getChildByName("label_nackname").getComponent(cc.Label).string += this.data.nickName;
         this.node.getChildByName("label_pid").getComponent(cc.Label).string += this.data.userName;
         this.node.getChildByName("label_phone").getComponent(cc.Label).string += this.data.createDate.split(' ')[0];
-        this.node.getChildByName("label_had_pay").getComponent(cc.Label).string += this.data.alreadyPay;
+        this.node.getChildByName("label_had_pay").getComponent(cc.Label).string += this.data.totalBalance;
         this.node.getChildByName("label_total_pay").getComponent(cc.Label).string += this.data.totalPay;
         this.node.getChildByName("label_balance").getComponent(cc.Label).string += this.data.balance;
 

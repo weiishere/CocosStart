@@ -75,6 +75,7 @@ export default class QYQPanel extends ViewComponent {
         let status = this.getLocalCacheDataProxy().getLoginData().status;
         if (status === 2) {
             this.qyq_panel_bg.active = false;
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '抱歉，您尚未被邀请到亲友圈', toastOverlay: true }, '');
         }
     }
 
