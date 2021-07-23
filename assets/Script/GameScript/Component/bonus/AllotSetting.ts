@@ -129,7 +129,7 @@ export default class AllotSetting extends ViewComponent {
                 this.thisRatio = (+(1 - this.remailRatio).toFixed(2) * 100);
                 this.TextSet.string = this.thisRatio + '';
                 this.Slider.progress = +(1 - this.remailRatio).toFixed(2);
-                this.node.getChildByName("titleLabel").getComponent(cc.Label).string = `分配到该合伙人的百分比(不低于${this.thisRatio}%) ：`;
+                //this.node.getChildByName("titleLabel").getComponent(cc.Label).string = `分配到该合伙人的百分比(不低于${this.thisRatio}%) ：`;
             } else {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
             }

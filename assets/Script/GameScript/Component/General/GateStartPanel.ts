@@ -104,11 +104,11 @@ export default class GateStartPanel extends ViewComponent {
         });
         lianmeng.getChildByName('btu_jrfj').on(cc.Node.EventType.TOUCH_END, () => {
             //this.joinClub();
-            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '抱歉，没有可用房间加入了', toastOverlay: false }, '');
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '抱歉，没有可用房间加入了', toastOverlay: true }, '');
 
         });
         lianmeng.getChildByName('btu_cjfj').on(cc.Node.EventType.TOUCH_END, () => {
-            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '抱歉，您的钻石不足...', toastOverlay: false }, '');
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '抱歉，您的钻石不足...', toastOverlay: true }, '');
         });
 
         this.headSprite.node.on(cc.Node.EventType.TOUCH_END, () => {

@@ -877,7 +877,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        109.526,
+        117.673,
         77.216,
         0,
         0,
@@ -973,7 +973,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 318.88,
+      "width": 245.56,
       "height": 30.24
     },
     "_anchorPoint": {
@@ -985,7 +985,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -107.188,
+        -84.375,
         23.112,
         0,
         0,
@@ -1025,8 +1025,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "分配到该合伙人的百分比(不低于) ：",
-    "_N$string": "分配到该合伙人的百分比(不低于) ：",
+    "_string": "分配到该合伙人的百分比 ：",
+    "_N$string": "分配到该合伙人的百分比 ：",
     "_fontSize": 20,
     "_lineHeight": 24,
     "_enableWrapText": true,
@@ -1093,7 +1093,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        243.853,
+        191.482,
         23.165,
         0,
         0,
@@ -1199,7 +1199,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 164,
+      "width": 120,
       "height": 49
     },
     "_anchorPoint": {
@@ -1211,7 +1211,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        147.546,
+        106.696,
         22,
         0,
         0,
@@ -1266,7 +1266,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 164,
+      "width": 120,
       "height": 49
     },
     "_anchorPoint": {
@@ -1459,7 +1459,7 @@
     "_dstBlendFactor": 771,
     "_string": "",
     "_N$string": "",
-    "_fontSize": 20,
+    "_fontSize": 24,
     "_lineHeight": 25,
     "_enableWrapText": false,
     "_N$file": null,
@@ -1543,7 +1543,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 162,
+      "width": 118,
       "height": 49
     },
     "_anchorPoint": {
@@ -1555,7 +1555,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -80,
+        -58,
         24.5,
         0,
         0,
@@ -1595,10 +1595,10 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "请输入分配到的百分比",
-    "_N$string": "请输入分配到的百分比",
-    "_fontSize": 16,
-    "_lineHeight": 25,
+    "_string": "请输入",
+    "_N$string": "请输入",
+    "_fontSize": 24,
+    "_lineHeight": 24,
     "_enableWrapText": false,
     "_N$file": null,
     "_isSystemFontUsed": true,

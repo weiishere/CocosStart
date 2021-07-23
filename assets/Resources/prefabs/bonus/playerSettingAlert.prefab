@@ -997,7 +997,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -102.148,
+        -80.965,
         81.441,
         0,
         0,
@@ -1213,7 +1213,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -100.908,
+        -79.725,
         20.618,
         0,
         0,
@@ -1417,7 +1417,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 80,
+      "width": 140,
       "height": 30.24
     },
     "_anchorPoint": {
@@ -1429,7 +1429,7 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -311.395,
+        -316.283,
         20.919,
         0,
         0,
@@ -1469,8 +1469,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "已支付：",
-    "_N$string": "已支付：",
+    "_string": "该条线总积分：",
+    "_N$string": "该条线总积分：",
     "_fontSize": 20,
     "_lineHeight": 24,
     "_enableWrapText": true,

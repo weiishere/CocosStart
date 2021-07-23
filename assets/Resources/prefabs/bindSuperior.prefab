@@ -391,9 +391,7 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_spriteFrame": {
-      "__uuid__": "a54d0cbe-071f-412c-91ab-24dac68a9fed"
-    },
+    "_spriteFrame": null,
     "_type": 1,
     "_sizeMode": 0,
     "_fillType": 0,
@@ -405,9 +403,7 @@
     "_fillStart": 0,
     "_fillRange": 0,
     "_isTrimmedMode": true,
-    "_atlas": {
-      "__uuid__": "54b49872-d627-4456-bf68-992ff350868f"
-    },
+    "_atlas": null,
     "_id": ""
   },
   {
@@ -464,7 +460,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "cb72557a-ef88-45c9-9919-a9b73b772e0b"
+      "__uuid__": "c837efba-ff83-4d22-848f-0aa6261d80d6"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -522,8 +518,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 499,
-      "height": 117
+      "width": 250,
+      "height": 80
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -535,7 +531,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        243.75,
+        260.045,
         0,
         0,
         0,
@@ -586,7 +582,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 160,
+      "width": 144,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -599,7 +595,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        18.815,
+        7.409,
         0,
         0,
         0,
@@ -640,7 +636,7 @@
     "_dstBlendFactor": 771,
     "_string": "绑定上级",
     "_N$string": "绑定上级",
-    "_fontSize": 40,
+    "_fontSize": 36,
     "_lineHeight": 40,
     "_enableWrapText": true,
     "_N$file": null,
@@ -683,10 +679,10 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "a2f25c12-162f-4ce7-9582-b9378d8c7220"
+      "__uuid__": "a89d94e3-d007-45dc-a463-77d05d73772c"
     },
     "_type": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 0,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -697,7 +693,7 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": {
-      "__uuid__": "211e3353-b22e-48fe-a5d4-b22b0622d57e"
+      "__uuid__": "a78d4ce0-69f0-41c0-9909-3af3bc4bcb93"
     },
     "_id": ""
   },
@@ -919,7 +915,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 190,
+      "width": 342,
       "height": 47.88
     },
     "_anchorPoint": {
@@ -931,8 +927,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -248.649,
-        97.629,
+        -225.836,
+        27.561,
         0,
         0,
         0,
@@ -971,8 +967,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "绑定上级：",
-    "_N$string": "绑定上级：",
+    "_string": "请输入上级邀请码：",
+    "_N$string": "请输入上级邀请码：",
     "_fontSize": 38,
     "_lineHeight": 38,
     "_enableWrapText": true,
@@ -1049,8 +1045,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        64.743,
-        93.3,
+        159.254,
+        29.75,
         0,
         0,
         0,
@@ -1564,7 +1560,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 154,
+      "width": 153,
       "height": 54
     },
     "_anchorPoint": {
