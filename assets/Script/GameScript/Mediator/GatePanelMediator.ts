@@ -17,6 +17,7 @@ import { UserGold } from '../GameData/UserGold';
 import { WebSockerProxy } from '../Proxy/WebSocketProxy';
 import MyCenter from '../Component/General/MyCenter';
 import NoticeAlert from "../Component/General/NoticeAlert";
+import NoticeCooAlert from "../Component/General/NoticeCooAlert";
 import RecordDetailList from "../Component/Record/RecordDetailList";
 import GateStartPanel from "../Component/General/GateStartPanel";
 import QYQPanel from "../Component/General/QYQPanel";
@@ -69,6 +70,7 @@ export class GatePanelMediator extends BaseMediator {
         return [
             PrefabDefine.ToastPanel,
             PrefabDefine.NoticeAlert,
+            PrefabDefine.NoticeCooAlert,
             PrefabDefine.PromptWindow,
             PrefabDefine.ScrollMsgNode,
             PrefabDefine.UserInfoPanel,
@@ -381,6 +383,7 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.UpdateClubSimpleInfo,
             CommandDefine.OpenBindSuperior,
             CommandDefine.OpenSetExchangePwd,
+            CommandDefine.OpenCooAlert
         ];
     }
 
@@ -466,6 +469,11 @@ export class GatePanelMediator extends BaseMediator {
                 const noticeAlertPrefab: cc.Node = cc.instantiate(cc.loader.getRes(PrefabDefine.NoticeAlert, cc.Prefab));
                 this.viewComponent.addChild(noticeAlertPrefab);
                 (noticeAlertPrefab.getComponent('NoticeAlert') as NoticeAlert).show(noticeContent, closeCallback);
+                break;
+            case CommandDefine.OpenCooAlert:
+                const cooAlertPrefab: cc.Node = cc.instantiate(cc.loader.getRes(PrefabDefine.NoticeCooAlert, cc.Prefab));
+                this.viewComponent.addChild(cooAlertPrefab);
+                (cooAlertPrefab.getComponent('NoticeCooAlert') as NoticeCooAlert).show();
                 break;
             case CommandDefine.OpenSetting:
                 this.openSetting(notification.getBody());
