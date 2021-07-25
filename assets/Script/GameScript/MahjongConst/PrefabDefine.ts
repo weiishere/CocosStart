@@ -43,6 +43,7 @@ export enum PrefabDefine {
     ReloadPanel = "prefabs/markReloadBg",
     ScoreChooseBtu = "prefabs/scoreChooseBtu",
     NoticeAlert = "prefabs/noticePromptAlert",
+    NoticeCooAlert = "prefabs/PromptCooAlert",
     BindSuperior = "prefabs/bindSuperior",
     SetExchangePwd = "prefabs/setExchangePwd",
     CDMJPosition = "prefabs/CDMahjong/CDMJPosition",

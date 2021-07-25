@@ -224,7 +224,8 @@ export default class GateStartPanel extends ViewComponent {
             Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '抱歉，商城功能暂未开发，敬请期待...', toastOverlay: true }, '');
         });
         this.HezuoBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '敬请期待...', toastOverlay: true }, '');
+            //Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '敬请期待...', toastOverlay: true }, '');
+            Facade.Instance.sendNotification(CommandDefine.OpenCooAlert, { }, null);
         });
     }
 
