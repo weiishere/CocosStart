@@ -592,7 +592,7 @@ export class GatePanelMediator extends BaseMediator {
                     script.updateClubSimpleInfo();
                 }
                 break;
-            case CommandDefine.UpdateClubSimpleInfo:
+            case CommandDefine.UpdateUserStatus:
                 if (this.qyqNode != null && this.qyqNode.isValid) {
                     let qyqPanel = this.qyqNode.getComponent(QYQPanel);
                     qyqPanel.updateQyqPanel(false);
