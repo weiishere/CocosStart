@@ -44,21 +44,15 @@ const ROOM_LIST = [
     }, {
         gameName: "血战到底",
         value: 3,
-        // }, {
-        //     gameName: "四人癞子",
-        //     value: 88,
-        // }, {
-        //     gameName: "二人癞子",
-        //     value: 88,
-        // }, {
-        //     gameName: "四人一房",
-        //     value: 88,
-        // }, {
-        //     gameName: "跑得快",
-        //     value: 88,
-        // }, {
-        //     gameName: "斗地主",
-        //     value: 88,
+    }, {
+        gameName: "跑得快",
+        value: 88,
+    }, {
+        gameName: "牛牛",
+        value: 88,
+    }, {
+        gameName: "炸金花",
+        value: 88,
     }
 
 ]
