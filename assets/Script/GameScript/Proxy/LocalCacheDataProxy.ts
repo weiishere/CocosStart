@@ -41,6 +41,13 @@ export class LocalCacheDataProxy extends Proxy {
         this.setLoginData(loginData);
     }
 
+    updateUserStatus(status: number) {
+        let loginData = this.getLoginData();
+        loginData.status = status;
+
+        this.setLoginData(loginData);
+    }
+
     /**
      * 获得用户TOKEN
      */
@@ -68,7 +75,7 @@ export class LocalCacheDataProxy extends Proxy {
         this.setCache(LocalCacheDataProxy.INVITE_CODE, inviteCode);
     }
 
-    getIsSetExchangePwd(){
+    getIsSetExchangePwd() {
         return this.getCache(LocalCacheDataProxy.IS_SET_EXCHANGE_PWD);
     }
 

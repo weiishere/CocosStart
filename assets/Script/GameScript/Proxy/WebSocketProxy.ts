@@ -129,7 +129,7 @@ export class WebSockerProxy extends Proxy {
             this.__webSocket.onmessage = () => { };
             this.__webSocket.onclose = () => { };
             this.__webSocket.onerror = () => { };
-            
+
             try {
                 this.__webSocket.close();
             } catch (error) {
@@ -205,8 +205,14 @@ export class WebSockerProxy extends Proxy {
                 this.sendNotification(CommandDefine.ForcedOffline, null);
                 break;
             case OperationDefine.LOCK_ForceOffline:
-                this.getGateProxy().toast("你的账号被禁用了，请联系客服或者上级代理");
-                this.sendNotification(CommandDefine.ForcedOffline, null);
+                let status = parseInt(dt.content);
+
+                // 此代码用于显示或者隐藏亲友圈入口
+                this.getLocalCacheDataProxy().updateUserStatus(status);
+                this.sendNotification(CommandDefine.UpdateUserStatus, status);
+                // 下面的代码用于 status === 1 为禁用时，踢出游戏
+                // this.getGateProxy().toast("你的账号被禁用了，请联系客服或者上级代理");
+                // this.sendNotification(CommandDefine.ForcedOffline, status);
                 break;
             case OperationDefine.NOTICE_UPDATE:
                 let notice = JSON.parse(dt.content);

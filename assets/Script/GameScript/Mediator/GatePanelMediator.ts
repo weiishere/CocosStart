@@ -381,6 +381,7 @@ export class GatePanelMediator extends BaseMediator {
             CommandDefine.UpdateClubSimpleInfo,
             CommandDefine.OpenBindSuperior,
             CommandDefine.OpenSetExchangePwd,
+            CommandDefine.UpdateUserStatus,
         ];
     }
 
@@ -581,6 +582,12 @@ export class GatePanelMediator extends BaseMediator {
                 if (this.qyqNode && this.qyqNode.isValid) {
                     let script = this.qyqNode.getComponent(QYQPanel);
                     script.updateClubSimpleInfo();
+                }
+                break;
+            case CommandDefine.UpdateClubSimpleInfo:
+                if (this.qyqNode != null && this.qyqNode.isValid) {
+                    let qyqPanel = this.qyqNode.getComponent(QYQPanel);
+                    qyqPanel.updateQyqPanel(false);
                 }
                 break;
         }

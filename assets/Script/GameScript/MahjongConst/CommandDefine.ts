@@ -34,6 +34,7 @@ export enum CommandDefine {
     CloseLoadingPanel = "CloseLoadingPanel",
     /** 强制下线 */
     ForcedOffline = "ForcedOffline",
+    UpdateUserStatus = "updateUserStatus",
     //牌桌
     /**更新玩家信息 */
     RefreshPlayerPush = "RefreshPlayer",

@@ -49,6 +49,7 @@ export default class QYQPanel extends ViewComponent {
         this.qyq_panel_bg.on(cc.Node.EventType.TOUCH_END, () => {
             this.getGateProxy().joinClub();
         });
+
     }
     bindUI() {
 
@@ -66,16 +67,19 @@ export default class QYQPanel extends ViewComponent {
         return <GateProxy>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
     }
 
-
     getLocalCacheDataProxy(): LocalCacheDataProxy {
         return <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
     }
 
-    updateQyqPanel() {
+    updateQyqPanel(isToast: boolean = true) {
         let status = this.getLocalCacheDataProxy().getLoginData().status;
         if (status === 2) {
             this.qyq_panel_bg.active = false;
-            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '抱歉，您尚未被邀请到亲友圈', toastOverlay: true }, '');
+            if (isToast) {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '抱歉，您尚未被邀请到亲友圈', toastOverlay: true }, '');
+            }
+        } else {
+            this.qyq_panel_bg.active = true;
         }
     }
 
