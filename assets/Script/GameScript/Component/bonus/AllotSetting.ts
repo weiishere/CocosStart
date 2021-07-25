@@ -40,7 +40,7 @@ export default class AllotSetting extends ViewComponent {
 
     private data = null;
     private loading: cc.Node = null
-    private lastRemailRatio: number = 0;
+    private myRemailRatio: number = 0;
     private remailRatio: number = 0;
     private thisRatio: number = 0;
     // onLoad () {}
@@ -54,12 +54,17 @@ export default class AllotSetting extends ViewComponent {
             //console.log(data.progress);
             const p = data.progress.toFixed(2);
             this.TextSet.string = (p * 100).toFixed(0) + '';
-            this.node.getChildByName("biliValue").getComponent(cc.Label).string = (+(1 - p) * 100).toFixed(0) + '%';
+            const total = this.myRemailRatio + this.remailRatio;
+            this.node.getChildByName("biliValue").getComponent(cc.Label).string = ((total * (1 - p)) * 100).toFixed(2) + '%';
+            //(+(1 - p) * 100).toFixed(0) + '%';
         });
         this.TextSet.node.on('text-changed', (data) => {
             //console.log(data.string);
             this.Slider.progress = (data.string / 100);
-            this.node.getChildByName("biliValue").getComponent(cc.Label).string = +((100 - data.string)).toFixed(2) + '%';
+            const total = this.myRemailRatio + this.remailRatio;
+            //this.node.getChildByName("biliValue").getComponent(cc.Label).string = (+((100 - data.string)).toFixed(2) * this.myRemailRatio) + '%';
+            this.node.getChildByName("biliValue").getComponent(cc.Label).string = ((total * (100 - data.string))).toFixed(2) + '%';
+
         });
 
     }
@@ -119,17 +124,23 @@ export default class AllotSetting extends ViewComponent {
         let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         //${/*localCacheDataProxy.getLoginData().userName*/}
         this.loading.active = true;
-        HttpUtil.send(bonusUrl + `/api/v1/account/leader?userName=${this.data.userName}`, res => {
+        HttpUtil.send(bonusUrl + `/api/v1/account/leader?userName=${this.data.userName}&loginUser=${localCacheDataProxy.getLoginData().userName}`, res => {
             this.loading.active = false;
             if (res.code === 200) {
-                this.lastRemailRatio = res.data;
-                this.remailRatio = +(1 - res.data).toFixed(2);
-                this.node.getChildByName("biliValue").getComponent(cc.Label).string = (this.remailRatio * 100).toFixed(2) + "%";
-                this.TextSet.placeholder = ``;
-                this.thisRatio = (+(1 - this.remailRatio).toFixed(2) * 100);
-                this.TextSet.string = this.thisRatio + '';
-                this.Slider.progress = +(1 - this.remailRatio).toFixed(2);
-                //this.node.getChildByName("titleLabel").getComponent(cc.Label).string = `分配到该合伙人的百分比(不低于${this.thisRatio}%) ：`;
+                try {
+                    this.myRemailRatio = res.data.loginBonus;
+                    this.remailRatio = +(res.data.userBonus).toFixed(2);
+                    this.node.getChildByName("biliValue2").getComponent(cc.Label).string = ((this.myRemailRatio + this.remailRatio) * 100).toFixed(2) + "%";
+                    this.node.getChildByName("biliValue").getComponent(cc.Label).string = (this.myRemailRatio * 100).toFixed(2) + "%";
+                    // this.TextSet.placeholder = ``;
+                    //this.thisRatio = +(this.remailRatio * 100).toFixed(2);
+                    this.TextSet.string = (this.remailRatio / (this.myRemailRatio + this.remailRatio)) * 100 + '';
+                    this.Slider.progress = this.remailRatio / (this.myRemailRatio + this.remailRatio);
+                    //this.node.getChildByName("titleLabel").getComponent(cc.Label).string = `分配到该合伙人的百分比(不低于${this.thisRatio}%) ：`;
+                } catch (e) {
+                    Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '数据异常：' + e, toastOverlay: true }, '');
+                }
+
             } else {
                 Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
             }
