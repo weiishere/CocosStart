@@ -148,7 +148,7 @@ export default class MyEnterprise extends ViewComponent {
         //${/*localCacheDataProxy.getLoginData().userName*/}
         self.loading.active = true;
         this.scrollView.removeAllChildren();
-        HttpUtil.send(bonusUrl + `/api/v1/my/achievement?userName=${localCacheDataProxy.getLoginData().userName}&pageSize=${this.pageSize}&level=${level}&currentPage=${this.pageCommand.currentPage}`, res => {
+        HttpUtil.send(bonusUrl + `/api/v1/achievement?userName=${localCacheDataProxy.getLoginData().userName}&pageSize=${this.pageSize}&currentPage=${this.pageCommand.currentPage}`, res => {
             self.loading.active = false;
             if (res.code === 200) {
                 this.pageCommand.init(res.data.totalNum, this.pageSize);

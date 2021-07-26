@@ -984,15 +984,15 @@ export default class CDMJDeskPanelView extends ViewComponent {
             this.isAllowShowCard = false;
             window.clearTimeout(this.timer2);
             this.timer2 = window.setTimeout(() => {
-                // let index = 0;
-                // this.schedule(() => {
-                //     cc.tween(activeBtu[index]).to(0.2, { position: cc.v3(0, 15), opacity: 255 }, { easing: 'easeBackInOut' }).to(0.08, { position: cc.v3(0, 0) }).call(() => { }).start();
-                //     index++;
-                // }, 0.2, activeBtu.length - 1);
-                activeBtu.forEach(item => {
-                    item.setPosition(cc.v3(0, 0));
-                    item.opacity = 255;
-                });
+                let index = 0;
+                this.schedule(() => {
+                    cc.tween(activeBtu[index]).to(0.2, { position: cc.v3(0, 15), opacity: 255 }, { easing: 'easeBackInOut' }).to(0.08, { position: cc.v3(0, 0) }).call(() => { }).start();
+                    index++;
+                }, 0.08, activeBtu.length - 1);
+                // activeBtu.forEach(item => {
+                //     item.setPosition(cc.v3(0, 0));
+                //     item.opacity = 255;
+                // });
 
 
             }, 50);

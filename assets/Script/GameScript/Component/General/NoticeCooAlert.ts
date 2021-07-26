@@ -29,8 +29,8 @@ export default class NoticeCooAlert extends ViewComponent {
     }
     show() {
         this.node.active = true;
-        // this.node.opacity = 0;
-        // this.node.scale = 0.9;
+        this.node.opacity = 0;
+        this.node.scale = 0.9;
         // if (content) this.content = content;
         
         cc.tween(this.node).to(0.1, { opacity: 255, scale: 1 }).call(() => {  }).start();
