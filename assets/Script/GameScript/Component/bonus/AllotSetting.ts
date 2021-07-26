@@ -129,7 +129,7 @@ export default class AllotSetting extends ViewComponent {
             if (res.code === 200) {
                 try {
                     this.myRemailRatio = res.data.loginBonus;
-                    this.remailRatio = +(res.data.userBonus).toFixed(2);
+                    this.remailRatio = res.data.userBonus;
                     this.node.getChildByName("biliValue2").getComponent(cc.Label).string = ((this.myRemailRatio + this.remailRatio) * 100).toFixed(2) + "%";
                     this.node.getChildByName("biliValue").getComponent(cc.Label).string = (this.myRemailRatio * 100).toFixed(2) + "%";
                     // this.TextSet.placeholder = ``;
