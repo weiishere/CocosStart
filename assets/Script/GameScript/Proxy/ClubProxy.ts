@@ -74,7 +74,7 @@ export class ClubProxy extends ModuleProxy {
         } else if (errorCode === ClubErrorCode.NOT_POWER) {
             this.getGateProxy().toast("暂无权限！");
         } else if (errorCode === ClubErrorCode.MY_DIAMOND_LACK) {
-            this.getGateProxy().toast("您的金币不足！");
+            this.getGateProxy().toast("您的积分不足！");
         } else if (errorCode === ClubErrorCode.SYSTEM_MAINTAIN) {
             this.getGateProxy().toast("系统维护中！");
         } else if (errorCode === ClubErrorCode.NOT_SEAT) {
