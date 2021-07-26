@@ -157,6 +157,10 @@ export class WebSockerProxy extends Proxy {
         this.stopHeartbeatHandle();
 
         this.send({ op: OperationDefine.Authentication, un: this.loginData.userName, tk: this.tokenData });
+
+        if (this.isReconnect) {
+            this.getGateProxy().toast("重连成功");
+        }
     }
 
     onWebSocketMessage(event: MessageEvent) {
@@ -189,6 +193,11 @@ export class WebSockerProxy extends Proxy {
         }
 
         if (this.errorCodeHandle(errorCode)) {
+            // 如果重连之后出现错误，又重新启动心跳
+            if (this.isReconnect) {
+                this.getGateProxy().toast("重连成功出现错误，错误码为：" + errorCode);
+                this.startHeartbeatHandle(200);
+            }
             return;
         }
 
@@ -277,6 +286,7 @@ export class WebSockerProxy extends Proxy {
     gateWayLoginRes(resData) {
         // websocket重连之后进行的处理
         if (this.isReconnect) {
+            this.getGateProxy().toast("恭喜你，重连成功了！");
             this.sendNotification(CommandDefine.WebSocketReconnect, null);
 
             let userData = JSON.parse(resData.dt.content);
@@ -378,7 +388,7 @@ export class WebSockerProxy extends Proxy {
     heartbeatHandle() {
         // cc.log("heartbeatHandle===========================");
         if (this.__webSocket) {
-            if (WebSocket.OPEN == this.__webSocket.readyState) {
+            if (WebSocket.OPEN === this.__webSocket.readyState) {
                 // 心跳超过2次就重新连接
                 if (this.heartbeatNotResultCount >= 2) {
                     this.connect(this.__wsUrl);
@@ -471,10 +481,19 @@ export class WebSockerProxy extends Proxy {
 
     onWebSocketClose(event: Event) {
         cc.log("onWebSocketClose", event);
+
+        if (this.isReconnect) {
+            this.getGateProxy().toast("重连断开");
+        }
     }
 
     onWebSocketError(event: Event) {
         cc.log("onWebSocketError", event);
+
+        if (this.isReconnect) {
+            this.getGateProxy().toast("重连失败");
+        }
+
     }
 
     addModuleProxy(moduleProxy: ModuleProxy) {
