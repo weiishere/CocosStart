@@ -34,18 +34,20 @@ export default class CDMJRecordAlert extends ViewComponent {
     }
     protected bindEvent(): void {
         this.closeBtn.on(cc.Node.EventType.TOUCH_START, () => {
-            cc.tween(this.closeBtn).to(0.1, { scale: 1.1 }).to(0.1, { scale: 1 }).call(() => this.node.destroy()).start();
+            this.node.destroy()
+            // cc.tween(this.closeBtn).to(0.1, { scale: 1.1 }).to(0.1, { scale: 1 }).call(() => this.node.destroy()).start();
         });
         this.quitRoom.on(cc.Node.EventType.TOUCH_START, () => {
-            cc.tween(this.quitRoom).to(0.1, { scale: 1.1 }).to(0.1, { scale: 1 }).call(() => {
-                Facade.Instance.sendNotification(CDMJCommandDefine.QuitGame, {}, '');
-            }).start();
+            Facade.Instance.sendNotification(CDMJCommandDefine.QuitGame, {}, '');
+            // cc.tween(this.quitRoom).to(0.1, { scale: 1.1 }).to(0.1, { scale: 1 }).call(() => {
+            // }).start();
         });
 
         this.goOnBtn.on(cc.Node.EventType.TOUCH_START, () => {
-            cc.tween(this.goOnBtn).to(0.1, { scale: 1.1 }).to(0.1, { scale: 1 }).call(() => {
-                this.getXzddProxy().goOn();
-            }).start();
+            this.node.destroy();
+            this.getXzddProxy().goOn();
+            // cc.tween(this.goOnBtn).to(0.1, { scale: 1.1 }).to(0.1, { scale: 1 }).call(() => {
+            // }).start();
 
         });
     }

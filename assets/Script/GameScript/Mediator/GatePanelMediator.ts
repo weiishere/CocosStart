@@ -456,7 +456,7 @@ export class GatePanelMediator extends BaseMediator {
                 if (this.toastActive && !toastOverlay) {
                     return;
                 }
-                this.toastActive = true;
+                // this.toastActive = true;
 
                 let toastPrefab = cc.loader.getRes(PrefabDefine.ToastPanel, cc.Prefab);
                 const _toastPrefab = cc.instantiate(toastPrefab);

@@ -153,7 +153,7 @@ export class XzddProxy extends ModuleProxy {
             xzddGameReconnData.lastPutPlayerAzimuth -= 1;
             xzddGameReconnData.waitingPlayerAzimuth -= 1;
             this.getDeskProxy().gameReconnect(xzddGameReconnData);
-            
+
             console.log(this.getDeskProxy().repository);
         } else if (msgType === XzddProtocol.S_PUSH_EXIT_ROOM) {   //推送玩家退出游戏消息
         } else if (msgType === XzddProtocol.S_PUSH_DISSOLVE_RESULT) {   //房间解散消息
@@ -184,7 +184,7 @@ export class XzddProxy extends ModuleProxy {
             const myCards = (<CDMJDeskProxy>this.facade.retrieveProxy(CDMJProxyDefine.CDMJDesk)).repository.gameData.myCards;
             if (myCards.switchOutCardDefault.length === 3) return;
             myCards.switchOutCardDefault = xzddShowHuan3ZhangMahjongs.mahjongs;
-            this.getDeskProxy().chooseSwitchOutCard(xzddShowHuan3ZhangMahjongs.time,xzddShowHuan3ZhangMahjongs.mahjongs);
+            this.getDeskProxy().chooseSwitchOutCard(xzddShowHuan3ZhangMahjongs.time, xzddShowHuan3ZhangMahjongs.mahjongs);
         } else if (msgType === XzddProtocol.S_Game_Huan3Zhang) {   //玩家操作换三张结果返回
             let xzddOpHuan3ZhangMahjongsRsp: XzddOpHuan3ZhangMahjongsRsp = <XzddOpHuan3ZhangMahjongsRsp>content;
             xzddOpHuan3ZhangMahjongsRsp.playerAzimuth -= 1;
@@ -249,6 +249,7 @@ export class XzddProxy extends ModuleProxy {
                 return;
             }
         }
+        cc.log(`登录到 ${roomNo}, 是否重连 ${isReconnect}`)
         this.sendNotification(CommandDefine.OpenLoadingPanel);
 
         this.isReadyEnterRoom = true;
@@ -273,7 +274,7 @@ export class XzddProxy extends ModuleProxy {
         data.vipGameSubClass = 1;
 
         let { Latitude, Longgitude } = getLocation();
-        
+
         let latitude = Number(Latitude);
         let longitude = Number(Longgitude);
 

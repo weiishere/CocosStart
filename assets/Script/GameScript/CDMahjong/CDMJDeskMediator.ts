@@ -101,7 +101,7 @@ export default class CDMJDeskMediator extends BaseMediator {
             CDMJCommandDefine.OpenEntrustPanel,
             CDMJCommandDefine.OpenChatBox,
             CDMJCommandDefine.ShowDeskChatMsg,
-            CDMJCommandDefine.WebSocketReconnect,
+            CommandDefine.WebSocketReconnect,
             CDMJCommandDefine.ChangePlayerGold,
             CDMJCommandDefine.DingzhangDone,
             CDMJCommandDefine.AllDingzhangDone,
@@ -414,9 +414,11 @@ export default class CDMJDeskMediator extends BaseMediator {
                 const { msgContent } = notification.getBody();
                 this.DeskPanelViewScript.openChatMsgNotice(JSON.parse(msgContent));
                 break;
-            case CDMJCommandDefine.WebSocketReconnect://重连
-                if (this.getDeskProxy().getDeskData().gameSetting.roomId) {
-                    this.getCdmjProxy().loginGame(this.getDeskProxy().getDeskData().gameSetting.roomId, true);
+            case CommandDefine.WebSocketReconnect://重连
+                let roomId = this.getDeskProxy().getDeskData().gameSetting.roomId;
+                cc.log(`游戏中收到重连消息，当前进入的房间号 ${roomId}`);
+                if (roomId) {
+                    this.getCdmjProxy().loginGame(roomId, true);
                 }
                 break;
             case CDMJCommandDefine.ChangePlayerGold://金币变化
