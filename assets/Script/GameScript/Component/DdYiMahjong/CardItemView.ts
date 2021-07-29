@@ -358,7 +358,7 @@ export default class CardItemView extends cc.Component {
         const faceNode = this.node.getChildByName('face');
         this.arrows = this.node.getChildByName('cardArrows');
         this.arrows2 = this.node.getChildByName('cardArrows2');
-        faceNode.setScale(0.9, 0.9);
+        //faceNode.setScale(0.5, 0.5);
         switch (this.position) {
             case 'mine':
                 //玩家牌
@@ -366,6 +366,7 @@ export default class CardItemView extends cc.Component {
                     cardComp.spriteFrame = this.mainCardbg;
                     this.isActive = (option && option.active) ? true : false;
                     this.bindEvent(option && option.touchEndCallback);
+                    this.node.setScale(0.95);
                 } else if (this.mod === "fall") {
                     if (option && option.fallShowStatus && option.fallShowStatus === 'hide') {
                         cardComp.spriteFrame = this.hideFrontCardbg;//this.hideFrontFallCardbg;
@@ -374,6 +375,7 @@ export default class CardItemView extends cc.Component {
                         cardComp.spriteFrame = this.lieMineCardbg;
                     }
                     faceNode.setPosition(cc.v2(0, 22));
+                    faceNode.setScale(0.9, 0.8);
                 }
                 faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
                 break;
@@ -385,6 +387,7 @@ export default class CardItemView extends cc.Component {
                     if (!cardNumber) {
                         cardComp.spriteFrame = this.mainHideCardbg;//.hideFrontCardbg;
                         faceNode.active = false;
+                        this.node.setScale(0.6);
                     } else {
                         cardComp.spriteFrame = this.mainCardbg;
                         this.node.setScale(0.6);
@@ -400,6 +403,7 @@ export default class CardItemView extends cc.Component {
                     } else {
                         cardComp.spriteFrame = this.lieMineCardbg;
                     }
+                    faceNode.setScale(1,0.9);
                     faceNode.setPosition(cc.v2(0, 6));
                     faceNode.getComponent(cc.Sprite).spriteFrame = this[this.cardDir[cardNumber] as string];
                 }
