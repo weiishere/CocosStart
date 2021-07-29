@@ -383,10 +383,10 @@ export default class CDMJDeskPanelView extends ViewComponent {
     /**绑定游戏操作事件（杠碰胡等） */
     bindGameOpreationEvent(callBack: (node: cc.Node, correlationInfoData) => void): void {
         this.opreationArea.on('gameOpreation', (eventData) => {
-            cc.tween(eventData.target).to(0.1, { scale: 0.95, position: cc.v2(0, -5) }).call(() => {
+            cc.tween(eventData.target).to(0.06, { scale: 0.95, position: cc.v2(0, -5) }).to(0.06, { scale: 1, position: cc.v2(0, 0) }).call(() => {
                 //console.log(`按下${eventData.target.name}`, eventData.target);
                 callBack(eventData.target as cc.Node, this.getData().gameData.eventData.gameEventData.myGameEvent.correlationInfoData);
-            }).to(0.1, { scale: 1, position: cc.v2(0, 0) }).start();
+            }).start();
         }, this);
     }
     /**绑定桌面操作事件（设置、记录按钮等） */
