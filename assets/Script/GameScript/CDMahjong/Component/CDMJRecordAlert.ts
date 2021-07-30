@@ -44,7 +44,11 @@ export default class CDMJRecordAlert extends ViewComponent {
         });
 
         this.goOnBtn.on(cc.Node.EventType.TOUCH_START, () => {
-            this.node.destroy();
+            this.schedule(() => {
+                if (this.node.isValid) {
+                    this.node.destroy();
+                }
+            }, 500);
             this.getXzddProxy().goOn();
             // cc.tween(this.goOnBtn).to(0.1, { scale: 1.1 }).to(0.1, { scale: 1 }).call(() => {
             // }).start();
