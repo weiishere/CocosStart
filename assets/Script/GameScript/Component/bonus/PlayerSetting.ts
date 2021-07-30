@@ -16,6 +16,7 @@ import { ConfigProxy } from "../../Proxy/ConfigProxy";
 import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
 import { HttpUtil } from "../../Util/HttpUtil";
 import { getUserOrderInfo, initNoRecoreNode } from './MyBonus';
+import PointsSetRecord from "./PointsSetRecord";
 
 @ccclass
 export default class PlayerSetting extends ViewComponent {
@@ -43,6 +44,9 @@ export default class PlayerSetting extends ViewComponent {
 
     @property(cc.Label)
     PlayerId: cc.Label = null;
+
+    @property(cc.Node)
+    RecordBtu: cc.Node = null;
 
     private data = null;
     private loading: cc.Node = null
@@ -102,6 +106,14 @@ export default class PlayerSetting extends ViewComponent {
         this.PlayerPlayBtu.on(cc.Node.EventType.TOUCH_END, () => {
 
         }, true);
+        //记录
+        this.RecordBtu.on(cc.Node.EventType.TOUCH_END, () => {
+            cc.loader.loadRes(PrefabDefine.PointsSetRecord, cc.Prefab, (err, item) => {
+                const node: cc.Node = cc.instantiate(item);
+                (node.getComponent("PointsSetRecord") as PointsSetRecord).init(this.data);
+                cc.find("Canvas").addChild(node);
+            });
+        }, this);
     }
     httpRequestStartOrStop(param) {
         let bonusUrl = this.getConfigProxy().bonusUrl;
@@ -146,6 +158,10 @@ export default class PlayerSetting extends ViewComponent {
     }
 
     glodGive(e, eventData) {
+        if (!this.TextSet.string) {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '请输入分数/额度', toastOverlay: true }, '');
+            return;
+        }
         if (this.loading.active === true) return;
         this.loading.active = true;
         let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);

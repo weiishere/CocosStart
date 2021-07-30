@@ -86,6 +86,7 @@ export default class CDMJDeskPanelView extends ViewComponent {
     private scheduleCallBack: () => void;
     private cardChooseAlert: cc.Node;
     private isAllowShowCard = true;//是否允许出牌
+    private scaleBase = 1;
     private gameEventWarn: { touchWarn: cc.Node, huWarn: cc.Node, burWarn: cc.Node, xiayuWarn: cc.Node, guafengWarn: cc.Node, zimoWarn: cc.Node, gameBeginWarn: cc.Node } = {
         touchWarn: null,
         huWarn: null,
@@ -231,9 +232,12 @@ export default class CDMJDeskPanelView extends ViewComponent {
         const leftJobLayout = this.node.getChildByName("leftJobNode").getChildByName("jobLayout");//左方工作区
         const rightJobLayout = this.node.getChildByName("rightJobNode").getChildByName("jobLayout");//右方工作区
         const deskAiming = this.node.getChildByName("desk").getChildByName("deskCenter");//方向盘
-
+        this.scaleBase = cc.view.getVisibleSize().width / 1334;
+        jobLayout.setScale(jobLayout.scale * this.scaleBase);
         //#region 玩家的节点
         this.mainCardListPanel = jobLayout.getChildByName("mainCardListPanel");
+
+        
         this.handCard = jobLayout.getChildByName("handCard");
         this.touchCard = jobLayout.getChildByName("touchCard");
         this.barCard = jobLayout.getChildByName("barCard");
@@ -871,8 +875,8 @@ export default class CDMJDeskPanelView extends ViewComponent {
             if (this.positionNode[_gameIndex].name === 'p-top') {
                 //更新对家手牌
                 this.frontHandCard.destroyAllChildren();
-                this.frontHandCard.width = 0;
-                this.frontHandCard.height = 0;
+                //this.frontHandCard.width = 0;
+                //this.frontHandCard.height = 0;
                 if (partner.partnerCards.isHandCard) {
                     this.addCardToNode(this.frontHandCard, this.isSuper ? partner.partnerCards.handCard : 0, "front", 'setUp', {
                         purAddNode: node => {

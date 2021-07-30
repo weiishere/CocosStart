@@ -32,6 +32,10 @@ export enum PrefabDefine {
     BonusIndex = "prefabs/bonus/bonusIndex",
     ExtractRecord = "prefabs/bonus/extractRecord",
     ExtractRecordItem = "prefabs/bonus/extractRecordItem",
+
+    PointsSetRecord = "prefabs/bonus/pointsSetRecord",
+    PointsSetRecordItem = "prefabs/bonus/pointsSetRecordItem",
+
     LeaderEnterPrise = "prefabs/bonus/leaderEnterPrise",
     MyPlayer = "prefabs/bonus/myPlayer",
     MyPlayerItem = "prefabs/bonus/myPlayerItem",
