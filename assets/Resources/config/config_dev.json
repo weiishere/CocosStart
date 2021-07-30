@@ -1,7 +1,7 @@
 {
-	"otherUrl": "https://www.sceagledata.com/gate.json",
+	"otherUrl": "https://www.wokaipump.com/gate.json",
 	"port": "",
 	"configName": "/config/config1.json",
-	"configUrl": "http://www.sceagledata.com/config/config.json",
-	"version": "1.0.1"
+	"configUrl": "http://www.wokaipump.com/config/config.json",
+	"version": "1.0.3"
 }

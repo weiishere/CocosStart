@@ -26,6 +26,8 @@ export default class Setting extends ViewComponent {
     closeBtn: cc.Node = null;
     @property(cc.Node)
     openUrlBtn: cc.Node = null;
+    @property(cc.Label)
+    tipLabel: cc.Label = null;
 
     shareUrl: string;
     iosDownUrl: string;
@@ -54,8 +56,10 @@ export default class Setting extends ViewComponent {
     start() {
 
     }
-    init({ shareUrl, iosDownUrl }) {
+    init({ shareUrl, iosDownUrl, version, toVersion }) {
         this.shareUrl = shareUrl;
         this.iosDownUrl = iosDownUrl;
+
+        this.tipLabel.string = `您当前使用的版本(${version})不是最新版，为保证最佳的游戏体验，请更新至最新版本(${toVersion})`;
     }
 }

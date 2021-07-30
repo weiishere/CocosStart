@@ -129,7 +129,8 @@ export class ConfigProxy extends BaseProxy {
             this._leessang = response.leessang;
 
             if (this.versionCompare(this._version, response.version)) {
-                this.facade.sendNotification(CommandDefine.OpenUpdatePromptAlert, { shareUrl: this._downUrl, iosDownUrl: this._iosDownUrl }, "");
+                // this.facade.sendNotification(CommandDefine.OpenUpdatePromptAlert, { shareUrl: this._downUrl, iosDownUrl: this._iosDownUrl }, "");
+                this.facade.sendNotification(CommandDefine.OpenUpdatePromptAlert, { shareUrl: this._downUrl, iosDownUrl: this._iosDownUrl, version: this._version, toVersion: response.version }, "");
             } else {
                 this.facade.sendNotification(CommandDefine.GateCommand, null, NotificationTypeDefine.CheckLogin);
             }
@@ -163,7 +164,7 @@ export class ConfigProxy extends BaseProxy {
             this._leessang = response.leessang;
 
             if (this.versionCompare(this._version, response.version)) {
-                this.facade.sendNotification(CommandDefine.OpenUpdatePromptAlert, { shareUrl: this._downUrl, iosDownUrl: this._iosDownUrl }, "");
+                this.facade.sendNotification(CommandDefine.OpenUpdatePromptAlert, { shareUrl: this._downUrl, iosDownUrl: this._iosDownUrl, version: this._version, toVersion: response.version }, "");
             } else {
                 this.facade.sendNotification(CommandDefine.GateCommand, null, NotificationTypeDefine.CheckLogin);
             }
