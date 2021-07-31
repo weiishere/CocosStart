@@ -60,6 +60,6 @@ export default class Setting extends ViewComponent {
         this.shareUrl = shareUrl;
         this.iosDownUrl = iosDownUrl;
 
-        this.tipLabel.string = `您当前使用的版本(${version})不是最新版，为保证最佳的游戏体验，请更新至最新版本(${toVersion})`;
+        this.tipLabel.string = `您当前使用的版本(${version})不是最新版，为保证最佳的游戏体验，请更新至最新版本(${toVersion})/n（注：若出现更新无效或者重复提示更新等异常情况，烦请删除原App再下载）`;
     }
 }

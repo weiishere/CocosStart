@@ -936,7 +936,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        -112.86500000000001,
+        -139.564,
         0,
         0,
         0,
@@ -1209,7 +1209,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 600,
-      "height": 112.99999999999999
+      "height": 187.44
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -1221,7 +1221,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        42,
+        49.12,
         0,
         0,
         0,
@@ -1260,10 +1260,10 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "您当前使用的版本不是最新版，为保证最佳的\n游戏体验，请下载最新版本并更新！",
-    "_N$string": "您当前使用的版本不是最新版，为保证最佳的\n游戏体验，请下载最新版本并更新！",
-    "_fontSize": 30,
-    "_lineHeight": 50,
+    "_string": "您当前使用的版本(${version})不是最新版，为保证最佳的游戏体验，请更新至最新版本(${toVersion})/n（注：若出现更新无效或者重复提示更新等异常情况，烦请删除原App再下载）",
+    "_N$string": "您当前使用的版本(${version})不是最新版，为保证最佳的游戏体验，请更新至最新版本(${toVersion})/n（注：若出现更新无效或者重复提示更新等异常情况，烦请删除原App再下载）",
+    "_fontSize": 26,
+    "_lineHeight": 44,
     "_enableWrapText": true,
     "_N$file": null,
     "_isSystemFontUsed": true,
@@ -1271,7 +1271,7 @@
     "_batchAsBitmap": false,
     "_styleFlags": 0,
     "_underlineHeight": 0,
-    "_N$horizontalAlign": 1,
+    "_N$horizontalAlign": 0,
     "_N$verticalAlign": 1,
     "_N$fontFamily": "Arial",
     "_N$overflow": 3,
