@@ -32,7 +32,11 @@ const helper = {
             if (_count >= 3) this.mainCardList.forEach(card => (card.getComponent("CardItemView") as CardItemView).reSetChooseFalse());
         } else {
             //花色相同
-            if (chooseSwitchCard.length === 3) return false;
+            //if (chooseSwitchCard.length === 3) return false;
+            if (chooseSwitchCard.length === 3) {
+                const _last = self.mainCardList.filter(card => (card.getComponent("CardItemView") as CardItemView).isChoose)[2];
+                (_last.getComponent("CardItemView") as CardItemView).reSetChooseFalse();
+            }
         }
         return _count < 3 ? false : true;
     },

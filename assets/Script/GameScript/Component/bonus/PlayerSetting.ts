@@ -15,6 +15,7 @@ import { ProxyDefine } from "../../MahjongConst/ProxyDefine";
 import { ConfigProxy } from "../../Proxy/ConfigProxy";
 import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
 import { HttpUtil } from "../../Util/HttpUtil";
+import { LoginAfterHttpUtil } from "../../Util/LoginAfterHttpUtil";
 import { getUserOrderInfo, initNoRecoreNode } from './MyBonus';
 import PointsSetRecord from "./PointsSetRecord";
 
@@ -131,6 +132,23 @@ export default class PlayerSetting extends ViewComponent {
             this.loading.active = false;
         }, HttpUtil.METHOD_POST, param);
     }
+    getUserInfoHttpReques() {
+        let bonusUrl = this.getConfigProxy().bonusUrl;
+        this.loading.active = true;
+        LoginAfterHttpUtil.send(this.getConfigProxy().facadeUrl + `user/getUserInfo`, res => {
+            if (res.hd === 'success') {
+                this.node.getChildByName("label_balance").getComponent(cc.Label).string += res.bd.gold;
+            } else {
+                Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: res.msg, toastOverlay: true }, '');
+            }
+            this.loading.active = false;
+        }, (err) => {
+            Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '数据服务未响应', toastOverlay: true }, '');
+            this.loading.active = false;
+        }, HttpUtil.METHOD_POST, {
+            userName: this.data.userName
+        });
+    }
     updateBtuStatus(status) {
         //0正常，1,禁赛，2不能看到亲友圈
         if (status === 0) {
@@ -150,8 +168,8 @@ export default class PlayerSetting extends ViewComponent {
         this.node.getChildByName("label_phone").getComponent(cc.Label).string += this.data.createDate.split(' ')[0];
         this.node.getChildByName("label_had_pay").getComponent(cc.Label).string += this.data.totalBalance;
         this.node.getChildByName("label_total_pay").getComponent(cc.Label).string += this.data.totalPay;
-        this.node.getChildByName("label_balance").getComponent(cc.Label).string += this.data.balance;
-
+        
+        this.getUserInfoHttpReques();
         this.CloseBtu.on(cc.Node.EventType.TOUCH_END, () => {
             this.node.destroy();
         }, true);

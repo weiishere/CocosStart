@@ -1731,10 +1731,10 @@
       "height": 100,
       "rawWidth": 794,
       "rawHeight": 100,
-      "borderTop": 0,
+      "borderTop": 31,
       "borderBottom": 0,
-      "borderLeft": 12,
-      "borderRight": 12,
+      "borderLeft": 38,
+      "borderRight": 33,
       "vertices": {
         "triangles": [
           1,

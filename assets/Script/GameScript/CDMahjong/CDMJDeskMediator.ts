@@ -263,6 +263,10 @@ export default class CDMJDeskMediator extends BaseMediator {
                             this.getCdmjProxy().operation(XzddOperationType.QING_HU, (correlationInfoData.qingHu as XzddHu).mjValue);
                         } else if (node.name === 'pass') {
                             //过
+                            if (this.getDeskProxy().repository.gameData.eventData.gameEventData.myGameEvent.eventName
+                                .some(item => ['hu', 'zhuaQingHu', 'qingHu', 'tianHu'].indexOf(item) !== -1)) {
+                                this.sendNotification(CommandDefine.OpenToast, { content: '提示：您放弃了此次胡牌...' });
+                            }
                             this.getDeskProxy().clearEventList();
                             this.getCdmjProxy().operation(XzddOperationType.XIAO, 0);
                         } else if (node.name === "ding-wan") {
