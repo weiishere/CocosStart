@@ -351,16 +351,18 @@ export default class CDMJDeskPanelView extends ViewComponent {
         //#endregion
         let clickCount = 0;
         this.schedule(() => { clickCount = 0; }, 10);
-        deskAiming.on(cc.Node.EventType.TOUCH_START, () => {
-            if (clickCount >= 3) {
-                this.isSuper = !this.isSuper;
-                clickCount = 0;
-                this.updateOtherCurCardList();
-                this.updateHandCardAndHuCard();
-            } else {
-                clickCount++;
-            }
-        }, this);
+
+        //禁用查看对方牌
+        // deskAiming.on(cc.Node.EventType.TOUCH_START, () => {
+        //     if (clickCount >= 3) {
+        //         this.isSuper = !this.isSuper;
+        //         clickCount = 0;
+        //         this.updateOtherCurCardList();
+        //         this.updateHandCardAndHuCard();
+        //     } else {
+        //         clickCount++;
+        //     }
+        // }, this);
 
         //this.dispatchCustomEvent(DeskPanelViewEventDefine.CDMJDeskPanelViewOnLoadComplate, null);
         //预加载表情
@@ -611,21 +613,24 @@ export default class CDMJDeskPanelView extends ViewComponent {
                 if (helper.isHadHu(this, partner.playerId) && this.frontMainCardListPanel.children.length !== 0) return;
                 this.frontMainCardListPanel.destroyAllChildren();
                 for (let i = 0, l = partner.partnerCards.curCardList.length; i < l; i++) {
-                    this.addCardToNode(this.frontMainCardListPanel, this.isSuper ? partner.partnerCards.curCardList[i] : 0, "front", 'setUp', { scale: 0.5 });
+                    //this.addCardToNode(this.frontMainCardListPanel, this.isSuper ? partner.partnerCards.curCardList[i] : 0, "front", 'setUp', { scale: 0.5 });
+                    this.addCardToNode(this.frontMainCardListPanel, 0, "front", 'setUp', { scale: 0.5 });
                 }
             } else if (this.positionNode[playerIndex].name === 'p-left') {
                 //更新左方主牌
                 if (helper.isHadHu(this, partner.playerId) && this.leftMainCardListPanel.children.length !== 0) return;
                 this.leftMainCardListPanel.destroyAllChildren();
                 for (let i = 0, l = partner.partnerCards.curCardList.length; i < l; i++) {
-                    this.addCardToNode(this.leftMainCardListPanel, this.isSuper ? partner.partnerCards.curCardList[i] : 0, "left", 'setUp');
+                    // this.addCardToNode(this.leftMainCardListPanel, this.isSuper ? partner.partnerCards.curCardList[i] : 0, "left", 'setUp');
+                    this.addCardToNode(this.leftMainCardListPanel, 0, "left", 'setUp');
                 }
             } else if (this.positionNode[playerIndex].name === 'p-right') {
                 //更新右方主牌
                 if (helper.isHadHu(this, partner.playerId) && this.rightMainCardListPanel.children.length !== 0) return;
                 this.rightMainCardListPanel.destroyAllChildren();
                 for (let i = 0, l = partner.partnerCards.curCardList.length; i < l; i++) {
-                    this.addCardToNode(this.rightMainCardListPanel, this.isSuper ? partner.partnerCards.curCardList[i] : 0, "right", 'setUp');
+                    // this.addCardToNode(this.rightMainCardListPanel, this.isSuper ? partner.partnerCards.curCardList[i] : 0, "right", 'setUp');
+                    this.addCardToNode(this.rightMainCardListPanel, 0, "right", 'setUp');
                 }
             }
         });
