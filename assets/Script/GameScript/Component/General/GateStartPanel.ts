@@ -18,6 +18,7 @@ import { SpriteLoadUtil } from "../../Other/SpriteLoadUtil";
 import { LoginAfterHttpUtil } from "../../Util/LoginAfterHttpUtil";
 import { HttpUtil } from "../../Util/HttpUtil";
 import { GameNoDefine } from "../../GameConst/GameNoDefine";
+import { LocalCacheDataProxy } from "../../Proxy/LocalCacheDataProxy";
 
 @ccclass
 export default class GateStartPanel extends ViewComponent {
@@ -86,6 +87,10 @@ export default class GateStartPanel extends ViewComponent {
 
     getGateProxy() {
         return <GateProxy>Facade.Instance.retrieveProxy(ProxyDefine.Gate);
+    }
+
+    getLocalCacheDataProxy() {
+        return <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
     }
 
     addButton(node: cc.Node, scale: number = 1.05) {
@@ -200,7 +205,7 @@ export default class GateStartPanel extends ViewComponent {
         });
 
         this.logBtn.on(cc.Node.EventType.TOUCH_END, () => {
-            Facade.Instance.sendNotification(CommandDefine.OpenRecordPanel, null, '');
+            Facade.Instance.sendNotification(CommandDefine.OpenRecordPanel, this.getLocalCacheDataProxy().getLoginData().userName, '');
         });
 
         this.bonusBtn.on(cc.Node.EventType.TOUCH_END, () => {
@@ -225,7 +230,7 @@ export default class GateStartPanel extends ViewComponent {
         });
         this.HezuoBtn.on(cc.Node.EventType.TOUCH_END, () => {
             //Facade.Instance.sendNotification(CommandDefine.OpenToast, { content: '敬请期待...', toastOverlay: true }, '');
-            Facade.Instance.sendNotification(CommandDefine.OpenCooAlert, { }, null);
+            Facade.Instance.sendNotification(CommandDefine.OpenCooAlert, {}, null);
         });
     }
 

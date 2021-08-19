@@ -21,6 +21,7 @@ import NoticeCooAlert from "../Component/General/NoticeCooAlert";
 import RecordDetailList from "../Component/Record/RecordDetailList";
 import GateStartPanel from "../Component/General/GateStartPanel";
 import QYQPanel from "../Component/General/QYQPanel";
+import RecordPanel from "../Component/Record/RecordPanel";
 
 export class GatePanelMediator extends BaseMediator {
     //private gatePanelView: GatePanelView = null;
@@ -188,11 +189,14 @@ export class GatePanelMediator extends BaseMediator {
     }
 
     /** 打开战绩 */
-    private openRecordPanel() {
+    private openRecordPanel(userName: string) {
         let recordPanelResource = cc.loader.getRes(PrefabDefine.RecordPanel, cc.Prefab);
-        let recordPanelPrefab = cc.instantiate(recordPanelResource);
+        let recordPanelPrefab: cc.Node = cc.instantiate(recordPanelResource);
 
         this.viewComponent.addChild(recordPanelPrefab);
+
+        let recordPanel = recordPanelPrefab.getComponent(RecordPanel);
+        recordPanel.loadData(userName);
     }
 
     /** 打开战绩详情 */
@@ -483,7 +487,7 @@ export class GatePanelMediator extends BaseMediator {
                 // this.openExchangePanel();
                 break;
             case CommandDefine.OpenRecordPanel:
-                this.openRecordPanel();
+                this.openRecordPanel(notification.getBody());
                 break;
             case CommandDefine.OpenRecordDetailList:
                 this.openRecordDetailList(notification.getBody());

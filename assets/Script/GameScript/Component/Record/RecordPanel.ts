@@ -49,6 +49,8 @@ export default class RecordPanel extends ViewComponent {
     /** 是否最后一页 */
     isLastPage: boolean;
 
+    userName: string;
+
 
     protected bindUI(): void {
     }
@@ -91,11 +93,17 @@ export default class RecordPanel extends ViewComponent {
     }
 
     start() {
+        // this.getRecoldLog(this.pageIndex);
+    }
+
+    loadData(userName: string){
+        this.userName = userName;
         this.getRecoldLog(this.pageIndex);
     }
 
     getMyUserName() {
-        return this.getLocalCacheDataProxy().getLoginData().userName;
+        // return this.getLocalCacheDataProxy().getLoginData().userName;
+        return this.userName;
     }
 
     getRecoldLog(pageIndex: number) {

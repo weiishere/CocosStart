@@ -187,6 +187,7 @@ export default class DeskList extends ViewComponent {
             this.loadDeskNode();
         }, 5)
 
+        let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         this.shouyi_btu.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenMyEnterPrise, null, '');
         });
@@ -194,13 +195,12 @@ export default class DeskList extends ViewComponent {
             Facade.Instance.sendNotification(CommandDefine.OpenMyPlayer, null, '');
         });
         this.zhanji_btu.on(cc.Node.EventType.TOUCH_END, () => {
-            Facade.Instance.sendNotification(CommandDefine.OpenRecordPanel, null, '');
+            Facade.Instance.sendNotification(CommandDefine.OpenRecordPanel, localCacheDataProxy.getLoginData().userName, '');
         });
 
         this.hongli_btu.on(cc.Node.EventType.TOUCH_END, () => {
             Facade.Instance.sendNotification(CommandDefine.OpenBonusIndex, null, '');
         });
-        let localCacheDataProxy = <LocalCacheDataProxy>Facade.Instance.retrieveProxy(ProxyDefine.LocalCacheData);
         getUserOrderInfo(localCacheDataProxy.getLoginData().userName, ({ data }) => {
             if (data.accountType === 666) {
                 //盟主
