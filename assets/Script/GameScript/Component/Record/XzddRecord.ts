@@ -23,7 +23,8 @@ export default class XzddRecord extends BaseRecord {
 
     protected bindEvent(): void {
         this.detailBtn.on(cc.Node.EventType.TOUCH_END, (event) => {
-            Facade.Instance.sendNotification(CommandDefine.OpenRecordDetailList, this.roomRoundNo, "");
+            // Facade.Instance.sendNotification(CommandDefine.OpenRecordDetailList, this.roomRoundNo, "");
+            Facade.Instance.sendNotification(CommandDefine.OpenRecordDetailList, { "roomRoundNo": this.roomRoundNo, "userName": this.myUserName }, "");
         });
     }
 
@@ -94,7 +95,7 @@ export default class XzddRecord extends BaseRecord {
         this._gamePlayerNum = data.roomPlayerCreditDtos.length;
 
         let myRoomPlayerCreditDto = this.getRoomPlayerCreditByUserName(data.roomPlayerCreditDtos, userName);
-        let palyerItem = this.createPlayerItemPlus(myRoomPlayerCreditDto, "自己");
+        let palyerItem = this.createPlayerItemPlus(myRoomPlayerCreditDto, "本家");
         playerInfoNode.addChild(palyerItem);
 
         let roomPlayerCreditDto = null;

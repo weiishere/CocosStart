@@ -202,7 +202,7 @@ export default class CDMJDeskMediator extends BaseMediator {
                             // } else {
                             //     this.sendNotification(CDMJCommandDefine.OpenToast, { content: '抱歉，暂无对战记录~' });
                             // }
-                            this.sendNotification(CDMJCommandDefine.OpenRecordDetailList, this.roundMark, "");
+                            this.sendNotification(CDMJCommandDefine.OpenRecordDetailList, { "roomRoundNo": this.roundMark, "userName": this.getLocalCacheDataProxy().getLoginData().userName }, "");
                         } else if (node.name === 'helpIcon') {
                             this.DeskPanelViewScript.openHelperAlert();
                         } else if (node.name === 'setIcon') {

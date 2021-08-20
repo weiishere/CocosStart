@@ -117,7 +117,7 @@ export default class RecordDetail extends BaseRecordDetail {
         }
         if (isMy) {
             this.detailBtn.active = true;
-            userInfoLabel.string = "自己";
+            userInfoLabel.string = "本家";
         } else {
             userInfoLabel.string = "对家";
             recordInfo.getChildByName("win").active = false;

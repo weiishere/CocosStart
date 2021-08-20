@@ -19,7 +19,7 @@ export default class DymjRecord extends BaseRecord {
 
     protected bindEvent(): void {
         this.detailBtn.on(cc.Node.EventType.TOUCH_END, (event) => {
-            Facade.Instance.sendNotification(CommandDefine.OpenRecordDetailList, this.roomRoundNo, "");
+            Facade.Instance.sendNotification(CommandDefine.OpenRecordDetailList, { "roomRoundNo": this.roomRoundNo, "userName": this.myUserName }, "");
         });
     }
 

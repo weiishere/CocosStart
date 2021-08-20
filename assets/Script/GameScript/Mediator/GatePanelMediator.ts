@@ -200,13 +200,13 @@ export class GatePanelMediator extends BaseMediator {
     }
 
     /** 打开战绩详情 */
-    private openRecordDetailList(roomRoundNo) {
+    private openRecordDetailList(data: any) {
         let recordDetailListResource = cc.loader.getRes(PrefabDefine.RecordDetailList, cc.Prefab);
         let recordDetailListPrefab = cc.instantiate(recordDetailListResource);
         this.viewComponent.addChild(recordDetailListPrefab);
 
         let script = <RecordDetailList>recordDetailListPrefab.getComponent("RecordDetailList");
-        script.loadData(roomRoundNo);
+        script.loadData(data.roomRoundNo, data.userName);
     }
 
     /** 打开个人中心 */

@@ -49,6 +49,9 @@ export default class PlayerSetting extends ViewComponent {
     @property(cc.Node)
     RecordBtu: cc.Node = null;
 
+    @property(cc.Node)
+    playerGameRecord: cc.Node = null;
+
     private data = null;
     private loading: cc.Node = null
     private lastRemailRatio: number = 0;
@@ -115,6 +118,12 @@ export default class PlayerSetting extends ViewComponent {
                 cc.find("Canvas").addChild(node);
             });
         }, this);
+
+        this.playerGameRecord.on(cc.Node.EventType.TOUCH_END, () => {
+            let userName = this.data['userName'];
+            Facade.Instance.sendNotification(CommandDefine.OpenRecordPanel, userName, '');
+        });
+
     }
     httpRequestStartOrStop(param) {
         let bonusUrl = this.getConfigProxy().bonusUrl;
@@ -168,7 +177,7 @@ export default class PlayerSetting extends ViewComponent {
         this.node.getChildByName("label_phone").getComponent(cc.Label).string += this.data.createDate.split(' ')[0];
         this.node.getChildByName("label_had_pay").getComponent(cc.Label).string += this.data.totalBalance;
         this.node.getChildByName("label_total_pay").getComponent(cc.Label).string += this.data.totalPay;
-        
+
         this.getUserInfoHttpReques();
         this.CloseBtu.on(cc.Node.EventType.TOUCH_END, () => {
             this.node.destroy();

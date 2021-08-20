@@ -81,7 +81,7 @@ export default class RecordDetail extends BaseRecordDetail {
 
         playerData.forEach(v => {
             if (v.userName === userName) {
-                this.loadRecordInfo(this.recordInfo, true, v, "自己");
+                this.loadRecordInfo(this.recordInfo, true, v, "本家");
 
                 this.loadItemContent(v.detailRemark);
             } else {
@@ -297,7 +297,7 @@ export default class RecordDetail extends BaseRecordDetail {
         this.detailItem.active = false;
         if (event.target.name === "thisToggle") {
             seatNo = thisSeatNo;
-            userInfoStr = "自己";
+            userInfoStr = "本家";
         } else if (event.target.name === "oppositionToggle") {
             seatNo = this.getOppositionSeatNo(thisSeatNo);
             userInfoStr = "对家";

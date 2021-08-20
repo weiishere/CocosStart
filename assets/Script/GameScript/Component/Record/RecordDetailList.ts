@@ -34,6 +34,8 @@ export default class RecordDetailList extends ViewComponent {
     @property(cc.Node)
     remarkLabel: cc.Node = null;
 
+    userName: string;
+
 
     protected bindUI(): void {
     }
@@ -54,7 +56,8 @@ export default class RecordDetailList extends ViewComponent {
     start() {
     }
 
-    loadData(roomRoundNo: string) {
+    loadData(roomRoundNo: string, userName: string) {
+        this.userName = userName;
         this.recordContent.removeAllChildren();
         let url = this.getConfigProxy().facadeUrl + "record/getRoomPlayLogs";
         let param = {
@@ -137,7 +140,7 @@ export default class RecordDetailList extends ViewComponent {
         let script = <BaseRecordDetail>recordDetailNode.getComponent(BaseRecordDetail);
         this.recordContent.addChild(recordDetailNode);
 
-        script.loadData(true, this.getLocalCacheDataProxy().getLoginData().userName, recorDetailData.roomNo, recorDetailData.currentGameCount,
+        script.loadData(true, this.userName, recorDetailData.roomNo, recorDetailData.currentGameCount,
             totalLength, recorDetailData.playerData, recorDetailData.gameSubClass, recorDetailData.gameTime);
     }
 
