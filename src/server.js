@@ -23,11 +23,19 @@ const config = require('../webpack.config.js');
 const app = new Koa();
 const views = require('koa-views')
 //const { Symbol } = require('./db');
-
+const { client } = require('./lib/binancer');
 const compiler = webpack(config);
 // const {buy} = require('./marginServer');
 // buy();
 // 由于webpack-dev-middleware是一个标准的express中间件，在Koa中不能直接使用它，因此需要将webpack-dev-middleware封装一下，以便Koa能够直接使用。
+
+async function getInfo() {
+    const data = await client.futuresPositionRisk();
+}
+
+getInfo();
+
+
 const devMiddleware = (compiler, opts) => {
     const middleware = webpackDevMiddleware(compiler, opts);
     return async (ctx, next) => {
