@@ -19,7 +19,8 @@
     "antd": "^4.4.3",
     "axios": "^0.19.2",
     "binance-api-node": "^0.10.4",
-    "echarts": "^4.8.0",
+    "ccxt": "^1.57.74",
+    "echarts": "^5.2.1",
     "format-datetime": "^1.0.2",
     "fs": "^0.0.1-security",
     "jquery": "^3.5.1",
@@ -45,6 +46,7 @@
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
     "stompjs": "^2.3.3",
+    "ta-lib": "^0.11.0",
     "uuid": "^8.2.0"
   },
   "devDependencies": {

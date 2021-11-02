@@ -6,15 +6,15 @@ import { WsRoute } from '@src/config'
 import { requester } from '@src/tool/Requester'
 import api from '@client/api';
 import { apiDateCode, System } from '@src/config';
-import KLineMargin from '@components/marginComponents/KLineMargin'
-import LongShort from '@components/marginComponents/LongShort'
-import RecordList from '@components/marginComponents/RecordList'
-import ControlPanel from '@components/marginComponents/ControlPanel'
-import PlusMinus from '@components/marginComponents/PlusMinus'
-import Information from '@components/marginComponents/Information'
+import KLineMargin from '@components/HedgeMarginComponents/KLineMargin'
+import LongShort from '@components/HedgeMarginComponents/LongShort'
+import RecordList from '@components/HedgeMarginComponents/RecordList'
+import ControlPanel from '@components/HedgeMarginComponents/ControlPanel'
+import PlusMinus from '@components/HedgeMarginComponents/PlusMinus'
+import Information from '@components/HedgeMarginComponents/Information'
 import './style/marginStyle.less'
 
-export default function Margin() {
+export default function HedgeMargin() {
     return <div className='marginWrapper'>
         <div className='k-line-mobile'>
             <KLineMargin />

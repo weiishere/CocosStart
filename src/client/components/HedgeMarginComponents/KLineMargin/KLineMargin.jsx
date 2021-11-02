@@ -337,33 +337,33 @@ export default function KLineMargin() {
         var myChart = echarts.init(document.getElementById("k-line-mobile"), 'dark');
         myChart.setOption(option(localStorage.getItem("klineSymbol") || ''));
         let timer;
-        const change = (symbol) => {
+        // const change = (symbol) => {
             
-            localStorage.setItem("klineSymbol", symbol);
-            const key = 'loading';
-            message.loading({ content: 'K线数据请求中..', key, duration: 0, style: { marginTop: '-3.2rem' } });
-            initKlineData(myChart, localStorage.getItem("klineSymbol"), () => {
-                message.success({ content: `K线成功切换为${symbol}`, key, duration: 2, style: { marginTop: '-3.2rem' } });
-                theSymbol = symbol;
-            });
-        }
-        EventHub.getInstance().addEventListener('chooseSymbol', 'kl_chooseSymbol', payload => {
-            change(payload.symbol);
-        });
-        EventHub.getInstance().addEventListener('switchTactics', 'kl_switchTactics', payload => {
-            change(payload.symbol);
-        });
+        //     localStorage.setItem("klineSymbol", symbol);
+        //     const key = 'loading';
+        //     message.loading({ content: 'K线数据请求中..', key, duration: 0, style: { marginTop: '-3.2rem' } });
+        //     initKlineData(myChart, localStorage.getItem("klineSymbol"), () => {
+        //         message.success({ content: `K线成功切换为${symbol}`, key, duration: 2, style: { marginTop: '-3.2rem' } });
+        //         theSymbol = symbol;
+        //     });
+        // }
+        // EventHub.getInstance().addEventListener('chooseSymbol', 'kl_chooseSymbol', payload => {
+        //     change(payload.symbol);
+        // });
+        // EventHub.getInstance().addEventListener('switchTactics', 'kl_switchTactics', payload => {
+        //     change(payload.symbol);
+        // });
         EventHub.getInstance().addEventListener('mapTacticsList', 'kl_mapTacticsList', payload => {
             const target = payload.find(item => item.target);
             //console.log(target.symbol)
-            if (target && target.symbol !== theSymbol && !timer) {
-                //change(target.symbol);
-                timer = window.setTimeout(() => {
-                    timer && window.clearTimeout(timer);
-                    timer = undefined;
-                    change(target.symbol);
-                }, 10000);
-            }
+            // if (target && target.symbol !== theSymbol && !timer) {
+            //     //change(target.symbol);
+            //     timer = window.setTimeout(() => {
+            //         timer && window.clearTimeout(timer);
+            //         timer = undefined;
+            //         change(target.symbol);
+            //     }, 10000);
+            // }
             if (target && target.KLineItem5m.present.startTime && target.symbol === theSymbol) {
                 symbolTicker = target.ticker;
                 const { startTime, isFinal, open, close, low, high } = target.KLineItem5m.present;

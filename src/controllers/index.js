@@ -10,10 +10,12 @@ const bian_api = require('./binance-api');
 const api = require('./api');
 const user = require('./user');
 const strategy = require('./strategy')
+const macdApi = require('./macdApi')
 
 module.exports = {
     bian_api,
     api,
     user,
-    strategy
+    strategy,
+    macdApi
 }

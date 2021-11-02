@@ -37,7 +37,7 @@ const getHash = () => {
     let hash = location.hash + '';
     return hash.substring(1, hash.length);
 }
-export default function App() {
+export default function Spot() {
     const [tacticeName, setTacticeName] = React.useState('');
     const [symbol, setSymbol] = React.useState('');
     const [user, setUser] = React.useState(null);

@@ -16,6 +16,7 @@ const System = {
   API_server_port: '3000',
   Public_path: '/public/',
   api_base_url: 'https://api.binance.com/api/v3/',
+  fapi_base_url: 'https://fapi.binance.com',
   user_4620:{
     apiKey: 'tcvljRQuIZhQundkZhDTEiqUInTYzJqmqC0gTUTqnusUVKrbRmC0tYNIBDOqeAKj',
     apiSecret: 'MECvMJFQu3yXLgvaHBimrUIi5GOQzdo0I1W9C1Jh09bjL5igfCFGhjbUmuDkK4fh',

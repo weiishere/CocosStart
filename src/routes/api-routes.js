@@ -42,3 +42,6 @@ module.exports = router
   .post('/api/updateAdvancedRestran', controllers.api.updateAdvancedRestran)
   .post('/api/clearNormalInfo', controllers.api.clearNormalInfo)
   .post('/api/updateLoadUpBuy', controllers.api.updateLoadUpBuy)
+
+  .get('/api/macd/getKlineAndMacd',controllers.macdApi.getKlineAndMacd)
+  .get('/api/macd/backTestMacd',controllers.macdApi.backTestMacd)

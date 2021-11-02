@@ -301,9 +301,9 @@ module.exports = {
         data: result,
         msg: 'success'
       } : {
-          msg: 'getRoundResultList错误',
-          code: apiDateCode.serverError
-        }
+        msg: 'getRoundResultList错误',
+        code: apiDateCode.serverError
+      }
     } catch (e) {
       resultData = {
         msg: 'getRoundResultList:获取错误' + e,
@@ -323,9 +323,9 @@ module.exports = {
         data: result,
         msg: 'success'
       } : {
-          msg: 'getSimpleRoundResultList错误:',
-          code: apiDateCode.serverError
-        }
+        msg: 'getSimpleRoundResultList错误:',
+        code: apiDateCode.serverError
+      }
     } catch (e) {
       resultData = {
         msg: 'getSimpleRoundResultList:获取错误:' + e,

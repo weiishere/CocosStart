@@ -99,8 +99,13 @@ module.exports = {
             chunk: 'app'
         }),
         new HtmlWebpackPlugin({
-            filename: 'margin.html',
-            template: './src/margin.html',
+            filename: 'hedgeMargin.html',
+            template: './src/hedgeMargin.html',
+            chunk: 'app'
+        }),
+        new HtmlWebpackPlugin({
+            filename: 'macdMargin.html',
+            template: './src/macdMargin.html',
             chunk: 'app'
         }),
         //这个主要是将生成的vendor.dll.js文件加上hash值插入到页面中。

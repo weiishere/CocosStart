@@ -9,14 +9,16 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App.jsx'
-import Margin from './Margin.jsx'
+import Spot from './Spot.jsx'
+import HedgeMargin from './HedgeMargin.jsx'
+import MacdMargin from './MacdMargin.jsx'
 import { BrowserRouter, Route } from 'react-router-dom'
 
 ReactDOM.render(
 	<BrowserRouter>
-		<Route path="/dist/index.html" exact component={App}></Route>
-		<Route path="/dist/margin.html" component={Margin}></Route>
+		<Route path="/dist/index.html" exact component={Spot}></Route>
+		<Route path="/dist/hedgeMargin.html" component={HedgeMargin}></Route>
+		<Route path="/dist/macdMargin.html" component={MacdMargin}></Route>
 	</BrowserRouter>,
 	document.getElementById('root')
 );

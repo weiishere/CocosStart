@@ -31,5 +31,8 @@ export default {
     unbindStrategy: '/api/strategy/unbind',
     getSimpleRoundResult: '/api/roundResult/getSimple',
     getRoundResult: '/api/roundResult/get',
-    getParameterDesc: '/api/getParameterDesc'
+    getParameterDesc: '/api/getParameterDesc',
+
+    getKlineAndMacd: '/api/macd/getKlineAndMacd',
+    backTestMacd: '/api/macd/backTestMacd'
 }
